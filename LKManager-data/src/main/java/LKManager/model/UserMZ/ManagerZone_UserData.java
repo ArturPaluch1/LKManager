@@ -2,9 +2,12 @@ package LKManager.model.UserMZ;
 
 
 
+import lombok.AllArgsConstructor;
+
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 
+@AllArgsConstructor
 @XmlRootElement(name = "ManagerZone_UserData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({UserData.class, Team.class})
@@ -27,10 +30,7 @@ private UserData UserData;
 
 
 
-    public ManagerZone_UserData(UserData userData) {
-        this.UserData = userData;
 
-    }
 
     public ManagerZone_UserData() {
     }

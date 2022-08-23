@@ -22,6 +22,9 @@ public class Match   implements Serializable {
     private int typeId;
     private MatchTeam team;
 
+private String opponentUserName;
+    private String UserName;
+
     private List<MatchTeam> teamlist= new ArrayList();
 
     public Match(int id, String date, String status, String type, String typeName, int typeId) {
@@ -93,5 +96,21 @@ public class Match   implements Serializable {
 
     public List<MatchTeam> getTeamlist() {
         return teamlist;
+    }
+
+    public String getopponentUserName() {
+        return opponentUserName;
+    }
+
+    public void setopponentUserName(String opponentUserName) {
+        this.opponentUserName = opponentUserName;
+    }
+
+    public String getUserName() {
+        return UserName;
+    }
+
+    public void setUserName(String userName) {
+        UserName = userName;
     }
 }

@@ -1,1 +1,10 @@
+LKManager\controllers\IndexController.class
+LKManager\controllers\TMController.class
+LKManager\controllers\MatchesPlayedController.class
 LKManager\controllers\MatchesPlannedController.class
+LKManager\Bootstrap\TeamTM.class
+LKManager\controllers\IndexController$1.class
+LKManager\controllers\LKController.class
+LKManager\controllers\UserController.class
+LKManager\Bootstrap\DataLoader.class
+LKManager\LKManagerApplication.class

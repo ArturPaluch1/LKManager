@@ -1,10 +1,15 @@
 package LKManager.model.UserMZ;
 
+import lombok.AllArgsConstructor;
+import lombok.Setter;
+
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
+@Setter
 @XmlRootElement(name = "UserData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class UserData  implements Serializable{
@@ -27,13 +32,7 @@ private List<Team> teamlist= new ArrayList();
         this.teamlist.add(team);
     }
 
-    public UserData(String username, Integer id, String countryShortname, String userImage, Team team) {
-        this.username = username;
-        this.userId = id;
-        this.countryShortname = countryShortname;
-        this.userImage = userImage;
-        this.Team = team;
-    }
+
 
 
    /* public Team getTeam() {
@@ -50,36 +49,28 @@ private List<Team> teamlist= new ArrayList();
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+
 
     @XmlAttribute
     public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
+
 
     @XmlAttribute
     public String getCountryShortname() {
         return countryShortname;
     }
 
-    public void setCountryShortname(String countryShortname) {
-        this.countryShortname = countryShortname;
-    }
+
 
     @XmlAttribute
     public String getUserImage() {
         return userImage;
     }
 
-    public void setUserImage(String userImage) {
-        this.userImage = userImage;
-    }
+
 
     public UserData() {
     }

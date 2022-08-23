@@ -29,6 +29,10 @@ public  class URLs {
 
     }
 
+    public static URL MakeUserURL(int idTeam) throws MalformedURLException {
+        return new URL( "http://www.managerzone.com/xml/manager_data.php?sport_id=1&team_id="+idTeam);
+
+    }
 
     public static URL MakePlayedMatchesURL(int userId) throws MalformedURLException {
         return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+String.valueOf(userId)+"&match_status=1&limit=100");
@@ -66,7 +70,7 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
         ManagerZone_UserData user = (ManagerZone_UserData) jaxbUnmarshaller.unmarshal( url);
         //  user1 = (ManagerZone_UserData) jaxbUnmarshaller.unmarshal(doc);
 
-        System.out.println(user);
+    //    System.out.println(user);
         return user.getUserData();
 
 

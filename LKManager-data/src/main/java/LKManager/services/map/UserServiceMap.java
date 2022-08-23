@@ -29,10 +29,12 @@ public class UserServiceMap implements UserService {
       return URLs.URLtoUserData(url) ;
     }
     @Override
-    public UserData findById(int id) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+    public UserData findById(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+
+URL url = URLs.MakeUserURL(Teamid);
    //     URL url=  MakeUserURL(id);
     //    Document doc = MakeDocumentFromUrl(url);
-        return null; //ParseXMLtoUserData(doc);
+        return URLs.URLtoUserData(url); //ParseXMLtoUserData(doc);
 
     }
 
