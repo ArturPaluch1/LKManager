@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" th:replace = "~{fragments/layout :: layout (~{::body},'home')}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div>
+   <h1>pp</h1>
+</div>
+<table class="table table-striped">
+    <thead>
+    <tr>
+
+        <th style="width: 150px">Data </th>
+        <th style="width: 150px">Drużyna 1 </th>
+        <th style="width: 150px">user </th>
+        <th style="width: 10px"> </th>
+        <th style="width: 5px"> </th>
+        <th style="width: 10px"> </th>
+        <th style="width: 150px">Drużyna 2 </th>
+        <th style="width: 150px">user </th>
+    <tr>
+    </thead>
+    <tbody>
+    <tr th:each="result : ${Results}">
+        <td th:text="${result.getDate()}" style="width: 150px">Joe</td>
+        <td th:text="${result.getTeamlist().get(0).getTeamName()}"style="width: 150px">1</td>
+        <td th:text="${result.getUserName()}"style="width: 150px" >1</td>
+
+        <td th:text="${result.getTeamlist().get(0).getGoals()}"style="width: 10px">Joe</td>
+        <td style="width: 255"> : </td>
+        <td th:text="${result.getTeamlist().get(1).getGoals()}"style="width: 10px">Joe</td>
+
+        <td th:text="${result.getTeamlist().get(1).getTeamName()}"style="width: 150px">1</td>
+        <td th:text="${result.getopponentUserName}"style="width: 150px">1</td>
+    </tr>
+    </tbody>
+
+</table>
+
+</body>
+</html>
