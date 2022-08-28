@@ -53,7 +53,7 @@ public class LKController {
             for (Match match : matches) {
 
                 LocalDate ld = LocalDate.parse(match.getDate(), formatter);
-                if (ld.getDayOfWeek().equals(DayOfWeek.TUESDAY) && match.getType().equals("friendly")) {
+                if (ld.getDayOfWeek().equals(DayOfWeek.FRIDAY) && match.getType().equals("friendly")) {
 
                     if (match.getTeamlist().get(0).getTeamName().equals(user.getTeamlist().get(0).getTeamName())) {
                         opponentName = userService.findById(match.getTeamlist().get(1).getTeamId()).getUsername();

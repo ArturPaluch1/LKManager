@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>LKManager-web</artifactId>
+    <artifactId>lk_manager-web</artifactId>
     <properties>
         <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
 
