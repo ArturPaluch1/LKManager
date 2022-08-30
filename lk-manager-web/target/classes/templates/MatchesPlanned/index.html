@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace = "~{fragments/layoutUPSG :: layout (~{::body},'home')}">
+<head>
+    <meta charset="UTF-8">
+    <title>Matches</title>
+</head>
+<body>
+<h1 th:text="'Index Page'">Index Page</h1>
+<h2 th:text="${user}">user</h2>
+
+<table class ="table table-striped">
+    <thead>
+    <tr>id </tr>
+    <tr>date</tr>
+    <tr>type </tr>
+    <tr>Team1 </tr>
+    <tr>: </tr>
+    <tr>Team2 </tr>
+    </thead>
+    <tbody>
+    <tr th:each="match : ${matches}">
+        <td th:text="${match.getDate()}">1</td>
+
+        <td th:text="${match.getTeamlist().get(0).getTeamName()}">1</td>
+
+        <td >-</td>
+
+        <td th:text="${match.getTeamlist().get(1).getTeamName()}">1</td>
+
+    </tr>
+
+    </tbody>
+</table>
+</body>
+</html>

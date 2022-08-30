@@ -7,16 +7,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="LKManager-data" />
-        <module name="LKManager-web" />
+        <module name="lk-manager-data" />
+        <module name="lk-manager-web" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="LKManager" options="-parameters" />
-      <module name="LKManager-data" options="-parameters" />
-      <module name="LKManager-web" options="-parameters" />
+      <module name="lk-manager-data" options="-parameters" />
+      <module name="lk-manager-web" options="-parameters" />
     </option>
   </component>
 </project>
