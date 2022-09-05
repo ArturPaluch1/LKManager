@@ -11,7 +11,7 @@
 
     <artifactId>lk_manager-web</artifactId>
     <properties>
-        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
+   <!--     <spring-boot.repackage.skip>true</spring-boot.repackage.skip>-->
 
         <!-- Web dependencies -->
         <webjars-bootstrap.version>3.3.6</webjars-bootstrap.version>
@@ -20,6 +20,39 @@
         <wro4j.version>1.8.0</wro4j.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!--  <dependency>
+              <groupId>org.springframework.boot</groupId>
+              <artifactId>spring-boot-starter-web</artifactId>
+          </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <version>2.7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+        </dependency>
+
+
+
+
+
+
     <dependency>
         <artifactId>lk-manager-data</artifactId>
         <groupId>LKManager</groupId>
@@ -30,7 +63,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-        <dependency>
+     <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
@@ -71,7 +104,11 @@
             <artifactId>bootstrap</artifactId>
             <version>${webjars-bootstrap.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>5.3.20</version>
+        </dependency>
        <!-- <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -80,6 +117,13 @@
         <!-- end of webjars -->
     </dependencies>
     <build>
+
+
+
+
+
+
+
         <plugins>
             <plugin>
                 <groupId>ro.isdc.wro4j</groupId>
@@ -124,20 +168,34 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
 
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <executions>
+
+                </configuration>
+     <!--           <executions>
                     <execution>
                         <goals>
-                            <goal>repackage</goal>
+              <goal>repackage</goal>
+                            <goal>build-image</goal>
                         </goals>
                     </execution>
-                </executions>
+                </executions>-->
             </plugin>
+
+           <!-- <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+
+                <configuration>
+                    &lt;!&ndash;	<autoVersionSubmodules>true</autoVersionSubmodules> &ndash;&gt;
+                    <goals>
+                        install
+                    </goals>
+
+                </configuration>
+            </plugin>
+-->
+
+
         </plugins>
     </build>
 </project>

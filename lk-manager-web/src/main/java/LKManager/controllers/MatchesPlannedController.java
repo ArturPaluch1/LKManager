@@ -31,7 +31,7 @@ public class MatchesPlannedController {
     public String index(Model model) throws IOException, SAXException, ParserConfigurationException {
 
         List<Match> mecze1=new ArrayList<>();
-        for (var item: new TeamTM(userService).LoadTMRzeszow()
+        for (var item: new TeamTM(userService).LoadLKUPSGV()
              ) {
             try {
                 List<Match> mecze = matchService.findPlannedByUsername (item.getUsername()).getMatches();

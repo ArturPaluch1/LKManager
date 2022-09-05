@@ -11,6 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.xml.sax.SAXException;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -25,6 +27,9 @@ import java.util.regex.Pattern;
 
 @Controller
 public class IndexController {
+
+
+
 
 
     // @RequestMapping({"","/","index.html"})
@@ -129,7 +134,7 @@ public class IndexController {
   /*    links = (Element) doc1.get(0).childNode(3).childNode(1);
         for (Node node: links.childNodes()
              ) {
-            
+
         }*/
     /*    for (Element link : links.getElementsByTag("span")) {
 
@@ -378,7 +383,7 @@ if(i==1)
         model.addAttribute("matches", matches);
         model.addAttribute("teams", teams);
         model.addAttribute("runda", runda);
-        //   model.addAttribute("oo", node);
+        //   model.addAttribute("oo", node);*/
         return "index";
     }
 

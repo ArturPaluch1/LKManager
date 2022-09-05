@@ -4,6 +4,7 @@ LKManager\controllers\MatchesPlayedController.class
 LKManager\controllers\MatchesPlannedController.class
 LKManager\Bootstrap\TeamTM.class
 LKManager\controllers\IndexController$1.class
+LKManager\controllers\Options.class
 LKManager\controllers\LKController.class
 LKManager\controllers\UserController.class
 LKManager\Bootstrap\DataLoader.class
