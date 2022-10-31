@@ -4,6 +4,7 @@ import LKManager.model.MatchesMz.Matches;
 import LKManager.model.UserMZ.ManagerZone_UserData;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.map.UserServiceMap;
+import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
@@ -13,7 +14,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-
+@Service
 public  class URLs {
 
     private  UserService userService;
