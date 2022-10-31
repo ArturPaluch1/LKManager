@@ -18,7 +18,7 @@ public class UserData  implements Serializable{
     private Integer userId;
     private String countryShortname;
     private String userImage;
-    private Team Team;
+   // private Team Team;
 
 private List<Team> teamlist= new ArrayList();
 
@@ -34,13 +34,12 @@ private List<Team> teamlist= new ArrayList();
 
 
 
-
-   /* public Team getTeam() {
-        return Team;
-    }*/
+    /* public Team getTeam() {
+            return Team;
+        }*/
     @XmlElement(name = "Team")
     public void setTeam(Team team) {
-        this.Team = team;
+     //   this.Team = team;
         this.teamlist.add(team);
     }
 

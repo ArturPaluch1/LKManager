@@ -4,8 +4,13 @@ import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.UserService;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -13,11 +18,30 @@ public class TeamTM {
 
     private final UserService userService;
     private List<UserData> skladTM;
+private List<UserData> calyUPSG;
+
 
     public TeamTM(UserService userService) {
         this.userService = userService;
         skladTM = new ArrayList<>();
 
+    }
+
+    public List<UserData> LoadCalyUPSG() throws ParserConfigurationException, JAXBException, SAXException, IOException {
+
+        List<String> nicki = Arrays.asList("szczepinho", "mark_oh", "k0niak", "lapatrenera", "mrcszef", "paulikmaster", "kyo555", "kamilosin", "kloc213", "szuram",
+                "ciosek_999", "kingsajz", "rejbonaldinho", "speedylfc", "harry84", "yaretzky", "piko66", "wredny", "czajas", "wwojtek80", "olborinho", "hetman_zmc", "bruno43",
+                "hadriano", "tomaszewsky", "kozi69", "pawcio1980", "mnowak", "domodelu");
+        List<UserData> skladUPSG= new ArrayList<>();
+        for (var nick: nicki
+             ) {
+            UserData user = new UserData();
+            user.setUsername(nick);
+            user.setTeamlist(new Team());
+            user.getTeamlist().get(0).setTeamName(userService.findByUsername(nick).getTeamlist().get(0).getTeamName());
+            skladUPSG.add(user);
+        }
+return skladUPSG;
     }
 
     public List<UserData> LoadTMRzeszow() {

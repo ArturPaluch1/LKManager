@@ -10,11 +10,12 @@ import org.xml.sax.SAXException;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Set;
 
 @Service
-public class UserServiceMap implements UserService {
+public class UserServiceMap implements UserService, Serializable {
 
 
     @Override

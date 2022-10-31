@@ -14,7 +14,7 @@ import java.io.Serializable;
 public class ManagerZone_UserData  implements Serializable  {
 
 
-private UserData UserData;
+private  UserData UserData;
 
 
 

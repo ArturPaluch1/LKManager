@@ -88,10 +88,14 @@ private String opponentUserName;
     }
 
 
-@XmlElement(name = "Team")
+
     public void setTeam(MatchTeam team) {
         this.team = team;
         teamlist.add(team);
+    }
+    @XmlElement(name = "Team")
+    public MatchTeam getTeam() {
+        return team;
     }
 
     public List<MatchTeam> getTeamlist() {

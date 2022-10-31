@@ -12,6 +12,7 @@ import org.xml.sax.SAXException;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,7 @@ import java.util.Set;
 import static LKManager.services.URLs.URLtoMatches;
 
 @Service
-public class MatchServiceMap implements MatchService{
+public class MatchServiceMap implements MatchService, Serializable {
 
     @Override
     public Set<Match> findAll() {

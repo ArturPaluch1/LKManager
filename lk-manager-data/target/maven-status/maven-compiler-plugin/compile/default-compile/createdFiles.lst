@@ -1,4 +1,6 @@
 LKManager\services\map\MatchServiceMap.class
+LK\GrajekTurniejowy.class
+LK\Terminarz.class
 LKManager\model\MatchesMz\Match.class
 LKManager\services\TMTeamService.class
 LKManager\services\MatchService.class
@@ -11,6 +13,7 @@ LKManager\services\UserService.class
 LKManager\model\MatchesMz\Matches.class
 LKManager\model\UserMZ\UserData.class
 LKManager\services\DocumentManager.class
+LK\Runda.class
 LKManager\model\UserMZ\Team.class
 LKManager\services\URLs.class
 LKManager\services\map\UserServiceMap.class

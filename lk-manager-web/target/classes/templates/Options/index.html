@@ -7,240 +7,45 @@
 
 </head>
 <body>
-<div>
+<a class="button button-primary" href="/projects">View Projects</a>
+    <table class="table table-striped"  id="tabela">
+        <thead>
+        <tr>
+            tempppppppppppppppppppppppppppppppppppppppppppppppppp
+            <th style="width: 150px">runda </th>
+            <th style="width: 150px">punkty </th>
+            <th style="width: 150px"> Drużyna 1</th>
+            <th style="width: 10px">wynik </th>
+            <th style="width: 5px">Drużyna 2 </th>
+            <th style="width: 10px"> punkty</th>
+            <th style="width: 150px"> </th>
+            <th style="width: 150px">user </th>
+        <tr>
+        </thead>
+        <tbody>
+        <tr th:each="result : ${mecze}">
+            <td th:text="${result.getRunda()}"style="width: 10px">Joe</td>
+            <td th:text="${result.getGrajekTurniejowy1().getPunkty()}" style="width: 50px"></td>
+            <td th:text="${result.getGrajekTurniejowy1().getGrajek().getUsername()}" style="width: 150px">Joe</td>
+         <!--   <td th:text="${result.grajekTurniejowy1.getGrajek().getTeamlist().get(0).getTeamName()}"style="width: 150px">1</td>-->
+            <td th:text="${result.getWynik1}"style="width: 150px" >1</td>
+           <!-- <td th:text="${result.wynik2}" style="width: 150px">Joe</td>-->
+            <td th:text="${result.getGrajekTurniejowy2().getGrajek().getUsername()}" style="width: 150px">Joe</td>
+         <td th:text="${result.grajekTurniejowy2.punkty}" style="width: 50px"></td>
+   <!--   <td th:text="  ${result.grajekTurniejowy2.getGrajek().getTeamlist().get(0).getTeamName()}"    style="width: 150px"></td>
+            -->
+         </tr>
+        </tbody>
 
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" th:href="@{/}"><span></span></a>
+    </table>
 
-            </div>
-            <div class="navbar-collapse collapse" id="navbar1">
-                <ul class="nav navbar-nav navbar-left">
-
-                    <li th:fragment="menuItem (path,active,title,glyph,text)" class="active" th:class="${active==menu ? 'active' : ''}">
-                        <a th:href="@{__${path}__}" th:title="${title}">
-                            <span th:class="'glyphicon  glyphicon-'+${glyph}" class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                            <span th:text="${text}">Template</span>
-                        </a>
-                    </li>
-
-
-
-                    <li th:replace="::menuItem ('/tm','tm','tm page','','UPSG1')">
-                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                        <span>Find owners</span>
-                    </li>
-                    <li th:replace="::menuItem ('/lk','lk','lk','','UPSG2')">
-                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                        <span>Find owners1</span>
-                    </li>
-                    <li th:replace="::menuItem ('/vets.html','vets','','','UPSG3')">
-                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                        <span>Veterinarians</span>
-                    </li>
-                    <li
-
-                            th:replace="::menuItem ('/vets.html','vets','','','UPSG4')">
-                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                        <span>Veterinarians</span>
-                    </li>
-                    <li th:replace="::menuItem ('/vets.html','vets','','','UPSG5')">
-                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                        <span>Veterinarians</span>
-                    </li>
-                    <li th:replace="::menuItem ('/oups','error','search','search','UPSG1')">
-                        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
-                        <span>Error</span>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-    </nav>
-</div>
-<div>
-    <button id="bob" >Skopiuj</button>
-    <button th:onclick="|window.location.href='/wyswietlRozegrane'|">wyswietlRozegrane</button>
-    <button th:onclick="|window.location.href='/wyswietlNierozegrane'|">wyswietlNierozegrane</button>
 
 
 </div>
-<table class="table table-striped"  id="tabela">
-    <thead>
-    <tr>
-tempppppppppppppppppppppppppppppppppppppppppppppppppp
-        <th style="width: 150px">Data </th>
-        <th style="width: 150px">Drużyna 1 </th>
-        <th style="width: 150px">user </th>
-        <th style="width: 10px"> </th>
-        <th style="width: 5px"> </th>
-        <th style="width: 10px"> </th>
-        <th style="width: 150px">Drużyna 2 </th>
-        <th style="width: 150px">user </th>
-    <tr>
-    </thead>
-    <tbody>
-    <tr th:each="result : ${Results}">
-        <td th:text="${result.getDate()}" style="width: 150px">Joe</td>
-        <td th:text="${result.getTeamlist().get(0).getTeamName()}"style="width: 150px">1</td>
-        <td th:text="${result.getUserName()}"style="width: 150px" >1</td>
-
-        <td th:text="${result.getTeamlist().get(0).getGoals()}"style="width: 10px">Joe</td>
-        <td style="width: 255"> : </td>
-        <td th:text="${result.getTeamlist().get(1).getGoals()}"style="width: 10px">Joe</td>
-
-        <td th:text="${result.getTeamlist().get(1).getTeamName()}"style="width: 150px">1</td>
-        <td th:text="${result.getopponentUserName}"style="width: 150px">1</td>
-    </tr>
-    </tbody>
-
-</table>
-
-<script>
-
-var tabela= document.getElementById("tabela");
-var data;
-var result="";
- var tempstring="";
- var tempwyniki="";
-
-for (let i in tabela.rows) {
-  let row = tabela.rows[i]
-  console.log("row"+i)
-
-   if(i==2)
-   {
-   data=row.cells[0].textContent;
-   result+=row.cells[0].textContent;
-
-   }
-
-
-   for (let j in row.cells) {
-  let col = row.cells[j]
-  console.log(j+"<< jjj");
-
-
-  if(i>1 && i%2!=0  )
-  {
-
-  		  switch(j)
-   {
-     case '1':
-     {
-     tempstring+="\r\n"+col.textContent;
-
-     break;
-     }
-      case '2':
-     {
-      tempstring+=" ("+col.textContent+")";
-     break;
-     }
-      case '6':
-     {
-        tempstring+="- "+col.textContent;
-     break;
-     }
-      case '7':
-     {
-       tempstring+=" ("+col.textContent+")"+tempwyniki;
-      tempwyniki="";
-        console.log("ooooooooooooo"+tempwyniki);
-     break;
-     }
-      case '3':
-     {
-  tempwyniki+=col.textContent+":";
-     break;
-     }
-      case '5':
-     {
- tempwyniki+=""+col.textContent+" ";
-
-     break;
-     }
-case "item":
-{
-console.log("tempstring: "+tempstring);
-break;
-}
-  }
-  }
-  else if(i>1 && i%2==0  )
-  {
-
-  		  switch(j)
-   {
-     case '1':
-     {
-
-     break;
-     }
-      case '2':
-     {
-
-     break;
-     }
-      case '6':
-
-     {
-     break;
-     }
-      case '7':
-     {
-
-     break;
-     }
-      case '3':
-     {
-       tempwyniki+=col.textContent+":";
-     break;
-     }
-      case '5':
-     {
-       tempwyniki+=""+col.textContent+" ";
-     break;
-     }
-case "item":
-{
-result+=tempstring;
-console.log("++++++++++++");
-break;
-}
-  }
-
-   }
-
-
-     console.log(j+" ***"+col.textContent)
-   }
-
-}
-console.log("tempstring: "+tempstring);
-console.log("data:"+data);
-data=data.substr(0,11);
-data=data+"\r\n";
-tempstring=data+tempstring;
- console.log("result->"+result);
 
 
 
 
-var btn= document.getElementById("bob");
-bob.onclick = function(){
-btn.textContent="sam";
 
- navigator.clipboard.writeText(tempstring);
- alert("Copied the text: " + tempstring);
-console.log("oo");
-
-
-
-
-};
-
-</script>
 </body>
 </html>
