@@ -9,14 +9,16 @@
         <outputRelativeToContentRoot value="true" />
         <module name="lk-manager-data" />
         <module name="lk-manager-web" />
+        <module name="lk_manager-web" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="LKManager" options="-parameters" />
+      <module name="LKManager" options="" />
       <module name="lk-manager-data" options="-parameters" />
       <module name="lk-manager-web" options="-parameters" />
+      <module name="lk_manager-web" options="-parameters" />
     </option>
   </component>
 </project>

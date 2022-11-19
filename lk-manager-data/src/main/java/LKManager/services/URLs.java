@@ -3,7 +3,6 @@ package LKManager.services;
 import LKManager.model.MatchesMz.Matches;
 import LKManager.model.UserMZ.ManagerZone_UserData;
 import LKManager.model.UserMZ.UserData;
-import LKManager.services.map.UserServiceMap;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -21,7 +20,7 @@ public  class URLs {
 
     public URLs() {
 
-        this.userService = new UserServiceMap() {
+        this.userService = new UserServiceImpl() {
         };
     }
 

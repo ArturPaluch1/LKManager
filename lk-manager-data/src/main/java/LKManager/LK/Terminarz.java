@@ -1,6 +1,5 @@
-package LK;
+package LKManager.LK;
 
-import LKManager.model.MatchesMz.Match;
 import LKManager.model.MatchesMz.MatchTeam;
 
 import javax.xml.bind.annotation.*;
@@ -23,7 +22,7 @@ public class Terminarz implements Serializable {
     public Terminarz() {
     }
   //  @XmlElementWrapper(name="terminarz")
-    @XmlElement(name = "Match")
+    @XmlElement(name = "Runda")
     public List<Runda> getTerminarz() {
         return terminarz;
     }

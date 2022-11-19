@@ -1,10 +1,8 @@
 package LKManager.model.MatchesMz;
 
-import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 
 import javax.xml.bind.annotation.*;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,19 +19,59 @@ public class Match   implements Serializable {
     private String typeName;
     private int typeId;
     private MatchTeam team;
+private String userMatchResult1="";
+    private String userMatchResult2="";
+    private String opponentMatchResult1="";
+    private String opponentMatchResult2="";
 
-private String opponentUserName;
-    private String UserName;
+private UserData opponentUser;
+    private UserData user;
 
     private List<MatchTeam> teamlist= new ArrayList();
 
-    public Match(int id, String date, String status, String type, String typeName, int typeId) {
+    public Match(int id, String date, String status, String type, String typeName, int typeId, UserData user) {
         this.id = id;
         this.date = date;
         this.status = status;
         this.type = type;
         this.typeName = typeName;
         this.typeId = typeId;
+        this.user = user;
+
+    }
+    @XmlAttribute
+    public String getUserMatchResult1() {
+        return userMatchResult1;
+    }
+
+    public void setUserMatchResult1(String userMatchResult1) {
+        this.userMatchResult1 = userMatchResult1;
+    }
+    @XmlAttribute
+    public String getOpponentMatchResult1() {
+        return opponentMatchResult1;
+    }
+
+    public void setOpponentMatchResult1(String opponentMatchResult1) {
+        this.opponentMatchResult1 = opponentMatchResult1;
+    }
+
+    @XmlAttribute
+    public String getUserMatchResult2() {
+        return userMatchResult2;
+    }
+
+    public void setUserMatchResult2(String userMatchResult2) {
+        this.userMatchResult2 = userMatchResult2;
+    }
+
+    @XmlAttribute
+    public String getOpponentMatchResult2() {
+        return opponentMatchResult2;
+    }
+
+    public void setOpponentMatchResult2(String opponentMatchResult2) {
+        this.opponentMatchResult2 = opponentMatchResult2;
     }
 
     public Match() {
@@ -102,19 +140,21 @@ private String opponentUserName;
         return teamlist;
     }
 
-    public String getopponentUserName() {
-        return opponentUserName;
+    @XmlElement
+    public UserData getopponentUser() {
+        return opponentUser;
     }
 
-    public void setopponentUserName(String opponentUserName) {
-        this.opponentUserName = opponentUserName;
+    public void setopponentUser(UserData opponentUser) {
+        this.opponentUser = opponentUser;
     }
 
-    public String getUserName() {
-        return UserName;
+    @XmlElement
+    public UserData getUser() {
+        return user;
     }
 
-    public void setUserName(String userName) {
-        UserName = userName;
+    public void setUser(UserData user) {
+        this.user = user;
     }
 }

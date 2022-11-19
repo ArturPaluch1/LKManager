@@ -1,15 +1,13 @@
 package LKManager.controllers.LK;
 
-import LKManager.Bootstrap.TeamTM;
+import LKManager.services.TeamTM;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.MatchService;
 import LKManager.services.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -34,8 +32,14 @@ public class LKController {
     }
 
 
-    @RequestMapping({"LK.html", "LK", "lk", "lk.html", "html"} )
+    @RequestMapping({"LKManager.html", "LKManager/LK", "lk", "lk.html", "html"} )
     public String index()  {
+
+// tu testuje files
+
+
+
+
 
 
 
@@ -47,7 +51,7 @@ public String wyswietlRozegrane(Model model)throws IOException, SAXException, Pa
     {
         List<Match> tempMatches = new ArrayList<>();
 
-        String opponentName = "";
+        UserData opponent = new UserData();
 
         TeamTM rzeszow= new TeamTM(userService);
 
@@ -65,16 +69,16 @@ public String wyswietlRozegrane(Model model)throws IOException, SAXException, Pa
                 if (ld.getDayOfWeek().equals(DayOfWeek.FRIDAY) && match.getType().equals("friendly")) {
 
                     if (match.getTeamlist().get(0).getTeamName().equals(user.getTeamlist().get(0).getTeamName())) {
-                        opponentName = userService.findById(match.getTeamlist().get(1).getTeamId()).getUsername();
-                        match.setopponentUserName(opponentName);
-                        match.setUserName(user.getUsername());
+                        opponent = userService.findById(match.getTeamlist().get(1).getTeamId());
+                        match.setopponentUser(opponent);
+                        match.setUser(user);
                         tempMatches.add(match);
 
                     } else {
-                        opponentName = userService.findById(match.getTeamlist().get(0).getTeamId()).getUsername();
-                        match.setopponentUserName(opponentName);
+                        opponent = userService.findById(match.getTeamlist().get(0).getTeamId());
+                        match.setopponentUser(opponent);
                         String opponentTeamName = match.getTeamlist().get(0).getTeamName();
-                        match.setUserName(user.getUsername());
+                        match.setUser(user);
                         byte opponentScore = match.getTeamlist().get(0).getGoals();
 
 
@@ -95,14 +99,14 @@ public String wyswietlRozegrane(Model model)throws IOException, SAXException, Pa
         model.addAttribute("Results", tempMatches);
 
 
-return "LK/index";
+return "LKManager/LK/index";
     }
     @RequestMapping(value="/wyswietlNierozegrane")
   public String  wyswietlNierozegrane(Model model) throws ParserConfigurationException, JAXBException, SAXException, IOException {
 
         List<Match> tempMatches = new ArrayList<>();
 
-        String opponentName = "";
+        UserData opponent =new UserData();
 
         TeamTM rzeszow= new TeamTM(userService);
 
@@ -120,16 +124,16 @@ return "LK/index";
                 if (ld.getDayOfWeek().equals(DayOfWeek.FRIDAY) && match.getType().equals("friendly")) {
 
                     if (match.getTeamlist().get(0).getTeamName().equals(user.getTeamlist().get(0).getTeamName())) {
-                        opponentName = userService.findById(match.getTeamlist().get(1).getTeamId()).getUsername();
-                        match.setopponentUserName(opponentName);
-                        match.setUserName(user.getUsername());
+                        opponent = userService.findById(match.getTeamlist().get(1).getTeamId());
+                        match.setopponentUser(opponent);
+                        match.setUser(user);
                         tempMatches.add(match);
 
                     } else {
-                        opponentName = userService.findById(match.getTeamlist().get(0).getTeamId()).getUsername();
-                        match.setopponentUserName(opponentName);
+                        opponent = userService.findById(match.getTeamlist().get(0).getTeamId());
+                        match.setopponentUser(opponent);
                         String opponentTeamName = match.getTeamlist().get(0).getTeamName();
-                        match.setUserName(user.getUsername());
+                        match.setUser(user);
                         byte opponentScore = match.getTeamlist().get(0).getGoals();
 
 
@@ -149,6 +153,6 @@ return "LK/index";
 
         model.addAttribute("Results", tempMatches);
 
-        return "LK/index";
+        return "LKManager/LK/index";
     }
 }

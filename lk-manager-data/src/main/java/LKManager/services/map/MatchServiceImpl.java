@@ -20,7 +20,7 @@ import java.util.Set;
 import static LKManager.services.URLs.URLtoMatches;
 
 @Service
-public class MatchServiceMap implements MatchService, Serializable {
+public class MatchServiceImpl implements MatchService, Serializable {
 
     @Override
     public Set<Match> findAll() {

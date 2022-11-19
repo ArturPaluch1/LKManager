@@ -1,19 +1,23 @@
-package LKManager.Bootstrap;
+package LKManager.services;
 
+import LKManager.LK.SkladUPSG;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
-import LKManager.services.UserService;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-
+@Service
 public class TeamTM {
 
     private final UserService userService;
@@ -35,13 +39,102 @@ private List<UserData> calyUPSG;
         List<UserData> skladUPSG= new ArrayList<>();
         for (var nick: nicki
              ) {
+            var grajek= userService.findByUsername(nick);
+
             UserData user = new UserData();
             user.setUsername(nick);
             user.setTeamlist(new Team());
-            user.getTeamlist().get(0).setTeamName(userService.findByUsername(nick).getTeamlist().get(0).getTeamName());
+            user.setUserId(grajek.getUserId());
+            user.getTeamlist().get(0).setTeamName(grajek.getTeamlist().get(0).getTeamName());
+            user.getTeamlist().get(0).setTeamId(grajek.getTeamlist().get(0).getTeamId());
             skladUPSG.add(user);
         }
 return skladUPSG;
+    }
+
+    public List<UserData> LoadLigaPSG() throws ParserConfigurationException, JAXBException, SAXException, IOException {
+
+        List<String> nicki = Arrays.asList/*("szczepinho", "mark_oh", "k0niak", "lapatrenera", "mrcszef", "paulikmaster", "kyo555", "kamilosin", "kloc213", "szuram",
+                "ciosek_999", "kingsajz", "rejbonaldinho", "speedylfc", "harry84", "yaretzky", "piko66", "wredny", "czajas", "wwojtek80", "olborinho", "hetman_zmc", "bruno43",
+                "hadriano", "tomaszewsky", "kozi69", "pawcio1980", "mnowak", "domodelu");
+*/
+                ("marc0888" ,"ciosek_999","mnowak","szuram" ,"harry84" ,"jerzykw","olborinho" ,"piko66",
+                        "yarek", "kamilosin","kingsajz","domodelu","szczepinho","hetman_zmc", "wwojtek80");
+        List<UserData> skladUPSG= new ArrayList<>();
+        for (var nick: nicki
+        ) {
+            var grajek= userService.findByUsername(nick);
+
+            UserData user = new UserData();
+            user.setUsername(nick);
+            user.setTeamlist(new Team());
+            user.setUserId(grajek.getUserId());
+            user.getTeamlist().get(0).setTeamName(grajek.getTeamlist().get(0).getTeamName());
+            user.getTeamlist().get(0).setTeamId(grajek.getTeamlist().get(0).getTeamId());
+            skladUPSG.add(user);
+        }
+        return skladUPSG;
+    }
+
+  public void zapiszUPSGDoXML() throws ParserConfigurationException, IOException, SAXException, JAXBException {
+        SkladUPSG skladUPSG = new SkladUPSG(this.LoadLigaPSG());
+      jaxbObjectToXML(skladUPSG);
+    }
+
+    public SkladUPSG  wczytajUPSGZXML()
+    {
+        return jaxbXMLToObject("lk-manager-web/src/main/java/LKManager/XMLData/skladUPSG.xml");
+    }
+
+    private SkladUPSG jaxbXMLToObject(String skladPath) {
+        SkladUPSG sklad= null;
+        try {
+            JAXBContext ctx = JAXBContext.newInstance(SkladUPSG.class);
+            Unmarshaller unmarshaller = ctx.createUnmarshaller();
+
+            File file = new File(skladPath);
+
+            if (file.exists()) {
+
+                sklad = (SkladUPSG) unmarshaller.unmarshal(file);
+
+
+
+
+              //  System.out.println(terminarz1.getTerminarz());
+                return sklad;
+            }
+            else
+            {
+                return null;
+            }
+
+        } catch (JAXBException e) {
+            return null;
+        }
+
+
+    }
+    private void jaxbObjectToXML(SkladUPSG calySklad) {
+        try {
+            //Create JAXB Context
+            JAXBContext jaxbContext = JAXBContext.newInstance(SkladUPSG.class);
+
+            //Create Marshaller
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+
+            //Required formatting??
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+
+            //Store XML to File
+            File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/skladUPSG.xml");
+
+            //Writes XML file to file-system
+            jaxbMarshaller.marshal(calySklad, file);
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public List<UserData> LoadTMRzeszow() {

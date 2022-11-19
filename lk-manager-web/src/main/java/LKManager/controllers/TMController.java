@@ -1,13 +1,10 @@
 package LKManager.controllers;
 
-import LKManager.Bootstrap.TeamTM;
+import LKManager.services.TeamTM;
 import LKManager.model.MatchesMz.Match;
-import LKManager.model.MatchesMz.Matches;
-import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.MatchService;
 import LKManager.services.UserService;
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,7 +39,7 @@ public class TMController {
 
         List<Match> tempMatches = new ArrayList<>();
 
-        String opponentName = "";
+        UserData opponent = new UserData();
 
         TeamTM rzeszow= new TeamTM(userService);
 
@@ -59,16 +56,16 @@ public class TMController {
                 if (ld.getDayOfWeek().equals(DayOfWeek.TUESDAY) && match.getType().equals("friendly")) {
 
                     if (match.getTeamlist().get(0).getTeamName().equals(user.getTeamlist().get(0).getTeamName())) {
-                        opponentName = userService.findById(match.getTeamlist().get(1).getTeamId()).getUsername();
-                        match.setopponentUserName(opponentName);
-                        match.setUserName(user.getUsername());
+                        opponent = userService.findById(match.getTeamlist().get(1).getTeamId());
+                        match.setopponentUser(opponent);
+                        match.setUser(user);
                         tempMatches.add(match);
 
                     } else {
-                        opponentName = userService.findById(match.getTeamlist().get(0).getTeamId()).getUsername();
-                        match.setopponentUserName(opponentName);
+                        opponent = userService.findById(match.getTeamlist().get(0).getTeamId());
+                        match.setopponentUser(opponent);
                         String opponentTeamName = match.getTeamlist().get(0).getTeamName();
-                        match.setUserName(user.getUsername());
+                        match.setUser(user);
                         byte opponentScore = match.getTeamlist().get(0).getGoals();
 
 

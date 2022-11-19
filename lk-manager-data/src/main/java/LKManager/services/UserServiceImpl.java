@@ -1,4 +1,4 @@
-package LKManager.services.map;
+package LKManager.services;
 
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.DocumentManager;
@@ -15,7 +15,7 @@ import java.net.URL;
 import java.util.Set;
 
 @Service
-public class UserServiceMap implements UserService, Serializable {
+public class UserServiceImpl implements UserService, Serializable {
 
 
     @Override

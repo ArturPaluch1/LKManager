@@ -1,4 +1,4 @@
-package LK;
+package LKManager.LK;
 
 import LKManager.model.UserMZ.UserData;
 

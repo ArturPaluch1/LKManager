@@ -1,8 +1,7 @@
 package LKManager.controllers;
 
-import LKManager.Bootstrap.TeamTM;
+import LKManager.services.TeamTM;
 import LKManager.model.MatchesMz.Match;
-import LKManager.model.MatchesMz.Matches;
 import LKManager.services.MatchService;
 import LKManager.services.UserService;
 import org.springframework.stereotype.Controller;
@@ -13,8 +12,12 @@ import org.xml.sax.SAXException;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class MatchesPlannedController {
@@ -31,14 +34,21 @@ public class MatchesPlannedController {
     public String index(Model model) throws IOException, SAXException, ParserConfigurationException {
 
         List<Match> mecze1=new ArrayList<>();
-        for (var item: new TeamTM(userService).LoadLKUPSGV()
-             ) {
-            try {
-                List<Match> mecze = matchService.findPlannedByUsername (item.getUsername()).getMatches();
+      //  for (var item: new TeamTM(userService).LoadLKUPSGV()  ) {
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        boolean licznikNieOpponent=true;
+        for (var item: new TeamTM(userService).wczytajUPSGZXML().getSkladUPSG()){
+            if(licznikNieOpponent==true)
+            {
+            try {
+
+                List<Match> mecze = matchService.findPlannedByUsername (item.getUsername()).getMatches();
+                mecze.stream().filter(a -> LocalDate.parse(a.getDate(), formatter).isAfter(LocalDate.now())).collect(Collectors.toList());
                 for (Match mecz:mecze
                 ) {
-                    if(mecz.getType().equals("friendly"))
+                    if(mecz.getType().equals("friendly")&&LocalDate.parse(mecz.getDate(), formatter).getDayOfWeek().equals(DayOfWeek.TUESDAY))
                     {
                         mecze1.add(mecz);
                     }
@@ -46,11 +56,18 @@ public class MatchesPlannedController {
 
                 }
 
+                licznikNieOpponent=false;
+                continue;
 
 
             } catch (JAXBException e) {
                 e.printStackTrace();
             }
+
+            }
+
+            licznikNieOpponent=true;
+
         }
         model.addAttribute("matches", mecze1);
 

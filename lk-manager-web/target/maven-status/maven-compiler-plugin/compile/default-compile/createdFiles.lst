@@ -3,11 +3,10 @@ LKManager\controllers\TMController.class
 LKManager\controllers\MatchesPlayedController.class
 LKManager\controllers\LK\LKController.class
 LKManager\controllers\MatchesPlannedController.class
-LKManager\Bootstrap\TeamTM.class
 LKManager\controllers\LK\tabelaController.class
 LKManager\controllers\IndexController$1.class
+LKManager\controllers\LK\wynikiController.class
 LKManager\controllers\Options$GrajekTurniejowy.class
-LKManager\controllers\LK\terminarzController$ListyGrajkow.class
 LKManager\controllers\Options.class
 LKManager\algorytmKomiwojazer.class
 LKManager\controllers\Options$Macierze.class

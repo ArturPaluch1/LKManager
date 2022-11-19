@@ -1,7 +1,6 @@
-package LK;
+package LKManager.LK;
 
 import LKManager.model.MatchesMz.Match;
-import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 
 import javax.xml.bind.annotation.*;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlSeeAlso({Match.class})
+@XmlSeeAlso({Match.class, UserData.class})
 public class Runda implements Serializable {
 private int nr;
 private List<Match> mecze;

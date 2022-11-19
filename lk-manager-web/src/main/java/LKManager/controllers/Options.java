@@ -1,6 +1,6 @@
 package LKManager.controllers;
 
-import LKManager.Bootstrap.TeamTM;
+import LKManager.services.TeamTM;
 import LKManager.algorytmPary;
 import LKManager.controllers.LKsystemSzwajcarski.Mecz;
 import LKManager.model.UserMZ.Team;

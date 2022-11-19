@@ -47,6 +47,15 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--
+
+        <dependency>
+            <groupId>LKManager</groupId>
+            <artifactId>lk_manager-web</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        -->
 
     </dependencies>
     <build>

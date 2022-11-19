@@ -8,8 +8,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
-@Setter
+
+
 @XmlRootElement(name = "UserData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class UserData  implements Serializable{
@@ -18,7 +18,17 @@ public class UserData  implements Serializable{
     private Integer userId;
     private String countryShortname;
     private String userImage;
-   // private Team Team;
+
+    public UserData getOpponentUser() {
+        return opponentUser;
+    }
+
+    public void setOpponentUser(UserData opponentUser) {
+        this.opponentUser = opponentUser;
+    }
+
+    //  private Team team;
+    private UserData opponentUser;
 
 private List<Team> teamlist= new ArrayList();
 
@@ -32,23 +42,55 @@ private List<Team> teamlist= new ArrayList();
         this.teamlist.add(team);
     }
 
+    public UserData(String username, Integer userId, String countryShortname, String userImage, List<Team> teamlist) {
+        this.username = username;
+        this.userId = userId;
+        this.countryShortname = countryShortname;
+        this.userImage = userImage;
+        this.teamlist = teamlist;
 
 
-    /* public Team getTeam() {
+    }
+
+/* public Team getTeam() {
             return Team;
         }*/
-    @XmlElement(name = "Team")
+   /* @XmlElement(name = "Team")
     public void setTeam(Team team) {
      //   this.Team = team;
         this.teamlist.add(team);
     }
+*/
+//public Team getTeam()
+//{
+ //   return team;
+//}
+
 
     @XmlAttribute
     public String getUsername() {
         return username;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
+    public void setUserId(Integer setUserId) {
+        this.userId = setUserId;
+    }
+
+    public void setCountryShortname(String countryShortname) {
+        this.countryShortname = countryShortname;
+    }
+
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
+    }
+
+    public void setTeamlist(List<Team> teamlist) {
+        this.teamlist = teamlist;
+    }
 
     @XmlAttribute
     public Integer getUserId() {
@@ -73,16 +115,14 @@ private List<Team> teamlist= new ArrayList();
 
     public UserData() {
     }
-
     @Override
     public String toString() {
         return "UserData{" +
                 "username='" + username + '\'' +
-                ", id=" + userId +
-                ", country='" + countryShortname + '\'' +
+                ", userId=" + userId +
+                ", countryShortname='" + countryShortname + '\'' +
                 ", userImage='" + userImage + '\'' +
-                ", team1='" + teamlist.get(0) + '\'' +
-                ", team2='" + teamlist.get(1) + '\'' +
+                ", teamlist=" + teamlist +
                 '}';
     }
 }
