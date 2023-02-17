@@ -15,7 +15,11 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +56,7 @@ public class TerminarzServiceImpl implements TerminarzService {
                 tempData.setMonth(calyTerminarz.get(calyTerminarz.size() - 1).getData().getMonth());
                 tempData.setDay(calyTerminarz.get(calyTerminarz.size() - 1).getData().getDay());
                 tempData.add(d);
+
                 runda = new Runda(j, tempData);
             } else {
                 runda = new Runda(j, data);
@@ -71,8 +76,9 @@ public class TerminarzServiceImpl implements TerminarzService {
                // tempMatch.setUserName(listyGrajkow.getGrajkiA().get(i).getUsername());
              //   tempMatch.setopponentUser(listyGrajkow.getGrajkiB().get(i).getUsername());
                 runda.getMecze().add(tempMatch);
-            }
 
+            }
+runda.setStatus(Runda.status.nierozegrana);
             calyTerminarz.add(runda);
             System.out.println("=======" + runda.getNr() + " === " + runda.getData());
             listyGrajkow.przesunListy();
@@ -113,6 +119,7 @@ public class TerminarzServiceImpl implements TerminarzService {
             tempuser.setUsername("pauza");
             Team tempTeam= new Team();
             tempTeam.setTeamName(" ");
+            tempTeam.setTeamId(0);
             tempuser.setTeamlist(tempTeam);
             grajki.add(tempuser);
         }
@@ -130,14 +137,28 @@ public class TerminarzServiceImpl implements TerminarzService {
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
             //Store XML to File
+            ///////////////////////////////////////////////
+           // File targetFile = new File("/Data/skladUPSG.xml");
+         /*   InputStream in = this.getClass().getPackageName()
+                    getResourceAsStream("/Data/terminarz.xml");
+             File file1 = new File(in.toString());
+            OutputStream file = new FileOutputStream(file1);
+*/
+ //  Path source = Paths.get(this.getClass().getResource("/").getPath());
+    //        Path newFolder = Paths.get(source.toAbsolutePath() + "/newFolder/");
 
-
-            File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+        //    testText = new String(this.getClass().getResourceAsStream("/test.txt").readAllBytes());
+         //   Files.createDirectories(newFolder);
+           // File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+     /////////////////////////////////////////////////////////////////
+         //   File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+            File file = new File("Data/terminarz.xml");
 
             //Writes XML file to file-system
             jaxbMarshaller.marshal(calyTerminarz, file);
+
         } catch (JAXBException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
     }

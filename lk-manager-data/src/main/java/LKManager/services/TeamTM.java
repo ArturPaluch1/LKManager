@@ -21,7 +21,7 @@ import java.util.List;
 public class TeamTM {
 
     private final UserService userService;
-    private List<UserData> skladTM;
+    private final List<UserData> skladTM;
 private List<UserData> calyUPSG;
 
 
@@ -58,8 +58,9 @@ return skladUPSG;
                 "ciosek_999", "kingsajz", "rejbonaldinho", "speedylfc", "harry84", "yaretzky", "piko66", "wredny", "czajas", "wwojtek80", "olborinho", "hetman_zmc", "bruno43",
                 "hadriano", "tomaszewsky", "kozi69", "pawcio1980", "mnowak", "domodelu");
 */
-                ("marc0888" ,"ciosek_999","mnowak","szuram" ,"harry84" ,"jerzykw","olborinho" ,"piko66",
-                        "yarek", "kamilosin","kingsajz","domodelu","szczepinho","hetman_zmc", "wwojtek80");
+                //szuram   domodelu
+                ("marc0888" ,  "ciosek_999" ,"mnowak","speedylfc" ,"harry84" ,"jerzykw","olborinho" ,"piko66" ,"domodelu" ,"kingsajz",
+                        "szuram"  , "kamilosin","yarek","k0niak","szczepinho","hetman_zmc", "wwojtek80");
         List<UserData> skladUPSG= new ArrayList<>();
         for (var nick: nicki
         ) {
@@ -83,7 +84,9 @@ return skladUPSG;
 
     public SkladUPSG  wczytajUPSGZXML()
     {
-        return jaxbXMLToObject("lk-manager-web/src/main/java/LKManager/XMLData/skladUPSG.xml");
+
+        return jaxbXMLToObject("Data/skladUPSG.xml");
+      //  return jaxbXMLToObject("lk-manager-web/src/main/java/LKManager/XMLData/skladUPSG.xml");
     }
 
     private SkladUPSG jaxbXMLToObject(String skladPath) {
@@ -127,7 +130,10 @@ return skladUPSG;
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
             //Store XML to File
-            File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/skladUPSG.xml");
+             new File("Data").mkdir();
+            File file = new File("Data/skladUPSG.xml");
+
+            //   File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/skladUPSG.xml");
 
             //Writes XML file to file-system
             jaxbMarshaller.marshal(calySklad, file);

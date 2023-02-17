@@ -6,12 +6,17 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 
 @SpringBootApplication
 public class LKManagerApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(LKManagerApplication.class, args);
 
 	}

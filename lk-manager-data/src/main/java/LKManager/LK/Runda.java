@@ -18,7 +18,7 @@ public class Runda implements Serializable {
 private int nr;
 private List<Match> mecze;
     private XMLGregorianCalendar data;
-
+private status status;
 
     public Runda(int nr, XMLGregorianCalendar data) {
         this.nr = nr;
@@ -27,6 +27,14 @@ private List<Match> mecze;
     }
 
     public Runda() {
+    }
+    @XmlAttribute
+    public Runda.status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Runda.status status) {
+        this.status = status;
     }
 
     @XmlAttribute
@@ -54,5 +62,11 @@ private List<Match> mecze;
 
     public void setData(XMLGregorianCalendar data) {
         this.data = data;
+    }
+
+
+   public enum status{
+    nierozegrana,
+    rozegrana
     }
 }

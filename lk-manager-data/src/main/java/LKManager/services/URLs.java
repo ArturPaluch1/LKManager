@@ -16,7 +16,7 @@ import java.net.URL;
 @Service
 public  class URLs {
 
-    private  UserService userService;
+    private final UserService userService;
 
     public URLs() {
 
@@ -35,7 +35,7 @@ public  class URLs {
     }
 
     public static URL MakePlayedMatchesURL(int userId) throws MalformedURLException {
-        return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+String.valueOf(userId)+"&match_status=1&limit=100");
+        return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ userId +"&match_status=1&limit=100");
 
     }
     public  URL MakePlayedMatchesURL(String username) throws IOException, ParserConfigurationException, JAXBException, SAXException {
@@ -45,7 +45,7 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
     }
 
     public static URL MakeOngoingMatchesURL(int userId) throws MalformedURLException {
-        return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+String.valueOf(userId)+"&match_status=2&limit=100");
+        return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ userId +"&match_status=2&limit=100");
 
     }
     public  URL MakeOngoingMatchesURL(String username) throws IOException, ParserConfigurationException, JAXBException, SAXException {

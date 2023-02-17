@@ -247,7 +247,7 @@ GrajekPrzeciwnicy[] tab= new GrajekPrzeciwnicy[listaGrajekTurniejowy.size()];
             tab[i].id=i;
             for( var j = 0; j < listaGrajekTurniejowy.size(); j++ )
             {
-                if(m.A[i][j]!=false)
+                if(m.A[i][j])
                 {
                     tab[i].przeciwnikWaga.put(j, m.W[i][j]);
                 }
@@ -333,7 +333,7 @@ meczeList=alg.ZrobTerminarz(1);
             tab1[i].id=i;
             for( var j = 0; j < listaGrajekTurniejowy.size(); j++ )
             {
-                if(m.A[i][j]!=false)
+                if(m.A[i][j])
                 {
                     tab1[i].przeciwnikWaga.put(j, m.W[i][j]);
                 }
@@ -844,16 +844,16 @@ if(mecz.getWynik1()=="" && mecz.getWynik2()=="" )
          mecz.getGrajekTurniejowy2().punkty++;
          //todo
          //zamienic na wynik na podstawie xmla
-         mecz.setWynik1(userW1.toString()+" : "+userW2.toString());
+         mecz.setWynik1(userW1.toString()+" : "+ userW2);
      }
      else if(userW1>userW2)
      {
-         mecz.setWynik1(userW1.toString()+" : "+userW2.toString());
+         mecz.setWynik1(userW1 +" : "+ userW2);
          user.punkty+=3;
      }
      else if(userW1<userW2)
      {
-         mecz.setWynik1(userW1.toString()+" : "+userW2.toString());
+         mecz.setWynik1(userW1 +" : "+ userW2);
          mecz.getGrajekTurniejowy2().punkty+=3;
      }
      else
@@ -886,7 +886,7 @@ if(runda!=1)
     for (var grajek:listaGrajekTurniejowy
          ) {
 
- if(       grajek.wolnyLos==true)
+ if(grajek.wolnyLos)
  {
 bylWolnyGlos=true;
 break;
@@ -899,7 +899,7 @@ break;
         listaGrajekTurniejowy=SortujGrajkow(listaGrajekTurniejowy);
 if(bylWolnyGlos)
 {
-    if(listaGrajekTurniejowy.get(listaGrajekTurniejowy.size()-1).wolnyLos==false)
+    if(!listaGrajekTurniejowy.get(listaGrajekTurniejowy.size() - 1).wolnyLos)
     {
         meczeList=   TworzTerminarz2(listaGrajekTurniejowy, meczeList, runda);
     }
@@ -907,7 +907,7 @@ if(bylWolnyGlos)
     {
         for(int i=listaGrajekTurniejowy.size();  i >0; i--)
         {
-            if(listaGrajekTurniejowy.get(i-1).wolnyLos==false)
+            if(!listaGrajekTurniejowy.get(i - 1).wolnyLos)
             {
                 GrajekTurniejowy temp=listaGrajekTurniejowy.get(i-1);
                 listaGrajekTurniejowy.remove(i-1);
@@ -1009,7 +1009,7 @@ else //bez wolnego losu
 
         List<Mecz> tempMeczeList= new ArrayList<>();
 
-        while(UdaloSie==false)
+        while(!UdaloSie)
         {
             while(!tempListaGrajekTurniejowy.isEmpty())
             {

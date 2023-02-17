@@ -56,11 +56,11 @@ public  List<Mecz> ZrobTerminarz(int runda)
     m=wejscie.size();
 
 
-    List<Integer> wejscie1= Arrays.asList(new Integer[]{0 ,8 ,0 ,7,
-            1 ,8 ,1, 6, 1, 5,
+    List<Integer> wejscie1= Arrays.asList(0,8,0,7,
+            1,8,1, 6, 1, 5,
             2, 5,
-            3, 9 ,3 ,8, 3, 6,
-            4, 8, 4 ,7});
+            3, 9,3,8, 3, 6,
+            4, 8, 4,7);
     //  n=wejscie.size();
 
 //n=10;

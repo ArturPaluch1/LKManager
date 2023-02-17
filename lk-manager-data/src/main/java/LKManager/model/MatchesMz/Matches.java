@@ -15,7 +15,7 @@ import java.util.List;
 public class Matches implements Serializable {
 
 
-    private List<Match> matches=new ArrayList<>();
+    private final List<Match> matches=new ArrayList<>();
 private Match match;
     public Matches() {
     }

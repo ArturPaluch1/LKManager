@@ -193,7 +193,7 @@ if(i==1)
                             if (!n3.toString().equals(" ") && !n3.toString().equals("<br>")) {
                                 if (readNode(n3).contains("unda")) {
                                     if (sprawdzDate(n3)) {
-                                        System.out.println("----------------\n" + n3.toString());
+                                        System.out.println("----------------\n" + n3);
                                         int n3i = ((Element) n3).elementSiblingIndex();
                                         for (Node n4 : n2.childNodes()
                                         ) {

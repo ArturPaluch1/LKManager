@@ -1,5 +1,6 @@
 package LKManager.controllers.LK;
 
+import LKManager.LK.Runda;
 import LKManager.LK.Terminarz;
 import LKManager.LKManagerApplication;
 import LKManager.services.TeamTM;
@@ -7,6 +8,7 @@ import LKManager.services.*;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,7 +27,9 @@ public class wynikiController {
    private final TerminarzService terminarzService;
     private Integer numerRundy;
     private  Terminarz terminarz;
-private  final WynikiService wynikiService;
+
+
+    private  final WynikiService wynikiService;
 
     public wynikiController(UserService userService, MatchService matchService, URLs urLs, TerminarzService terminarzService, WynikiService wynikiService) {
         this.userService = userService;
@@ -50,8 +54,8 @@ private  final WynikiService wynikiService;
 
 
 
-        terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-
+      //  terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+        terminarz=terminarzService.wczytajTerminarz("Data/terminarz.xml");
         if(terminarz!= null)
         {
         // terminarz= terminarzService.wczytajTerminarz("static.resources/terminarz.xml");
@@ -101,8 +105,11 @@ private  final WynikiService wynikiService;
 //return "redirect:/LKManager.LK/terminarz";
     }
 
-    @PostMapping("/aktualizuj")
-    public String aktualizujWyniki() throws ParserConfigurationException, JAXBException, SAXException, IOException, DatatypeConfigurationException, URISyntaxException {
+
+
+
+    @PostMapping ("/aktualizuj")
+    public String aktualizujWyniki(Model model) throws ParserConfigurationException, JAXBException, SAXException, IOException, DatatypeConfigurationException, URISyntaxException {
         if(numerRundy== null)
         {
             numerRundy=1;
@@ -116,17 +123,34 @@ private  final WynikiService wynikiService;
         }
         else
         {
-            terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+        //    terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+            terminarz=terminarzService.wczytajTerminarz("Data/terminarz.xml");
             if(terminarz== null)
             {
+
                 //todo
                 //dodac error zrob najpierw terminarz
             }
 
         }
 
-        wynikiService.aktualizujWyniki(numerRundy,terminarz,matchService);
-        return "redirect:/wyniki";
+// runda -1 bo rundy od 1 a indeksy w liscie od 0
+if(terminarz.getTerminarz().get(numerRundy-1).getStatus()== Runda.status.rozegrana)
+{
+    // TODO: 2022-11-23   error, że czy na pewno chcesz zmienić rozegrana runde
+
+
+    return "redirect:/wyniki";
+}
+else
+{
+    terminarz.getTerminarz().get(numerRundy-1).setStatus(Runda.status.rozegrana);
+    wynikiService.aktualizujWyniki(numerRundy,terminarz,matchService);
+
+    return "redirect:/wyniki";
+}
+
+
 
 
   /*//////////////////////////////////////////////////////////

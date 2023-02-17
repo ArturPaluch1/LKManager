@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" th:replace = "~{fragments/layout :: layout (~{::body},'home')}">
+<html lang="en" th:replace="~{fragments/layout :: layout (~{::body},'home')}" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
 
     <meta charset="UTF-8">
@@ -10,58 +10,7 @@
 <body>
 
 
-<div>
 
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" th:href="@{/}"><span></span></a>
-
-            </div>
-            <div class="navbar-collapse collapse" id="navbar1">
-                <ul class="nav navbar-nav navbar-left">
-
-                    <li th:fragment="menuItem (path,active,title,glyph,text)" class="active" th:class="${active==menu ? 'active' : ''}">
-                        <a th:href="@{__${path}__}" th:title="${title}">
-                            <span th:class="'glyphicon  glyphicon-'+${glyph}" class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                            <span th:text="${text}">Template</span>
-                        </a>
-                    </li>
-
-
-
-                    <li th:replace="::menuItem ('/tm','tm','tm page','','tm')">
-                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                        <span>Find owners</span>
-                    </li>
-                    <li th:replace="::menuItem ('/lk','lk','lk','','tm wyniki')">
-                        <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
-                        <span>Find owners1</span>
-                    </li>
-                    <li th:replace="::menuItem ('/tabela','tabela','tabela','','tabela')">
-                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                        <span>Veterinarians</span>
-                    </li>
-                    <li
-
-                            th:replace="::menuItem ('/terminarz','terminarz','terminarz','','terminarz') " >
-                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                        <span>Veterinarians</span>
-                    </li>
-                    <li th:replace="::menuItem ('/wyniki','wyniki','wyniki','','Wyniki')">
-                        <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                        <span>Veterinarians</span>
-                    </li>
-                    <li th:replace="::menuItem ('/oups','error','search','search','UPSG1')">
-                        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
-                        <span>Error</span>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-    </nav>
-</div>
 
 <button id="bob"  onclick="myFunction()">Skopiuj</button>
 
@@ -74,9 +23,10 @@
         <th style="width: 200px" class="text-center">Drużyna </th>
         <th style="width: 150px" class="text-center">user</th>
         <th style="width: 15px"  class="text-center">Punkty</th>
+        <th style="width: 10px"  class="text-center"> Różnica </th>
         <th style="width: 5px"  class="text-center"> Strzelone </th>
         <th style="width: 15px"  class="text-center"> Stracone </th>
-        <th style="width: 10px"  class="text-center"> Różnica </th>
+
 
     <tr>
     </thead>
@@ -88,14 +38,17 @@
         <td th:text="${item. getGracz().getTeamlist().get(0).getTeamName()}" >Drużyna</td>
         <td th:text="${item. getGracz().getUsername()}" >user</td>
         <td th:text="${item.getSumaPunktow()} ">Punkty</td>
+        <td th:text="${item. getRoznica()}" >Różnica</td>
         <td th:text="${item. getGoleStrzelone()}" >Strzelone</td>
         <td th:text="${item. getGoleStracone()}" >Stracone</td>
-        <td th:text="${item. getRoznica()}" >Różnica</td>
+
 
     </tr>
     </tbody>
 
 </table>
+
+
 <script>
 /*
 https://jsfiddle.net/
@@ -136,7 +89,7 @@ var naglowekDruzyna="";
 
 }}}*/
 
-tempstring+="Miejsce Punkty Różnica Drużyna \r\n"
+tempstring+="Miejsce Punkty Różnica Strzelone Stracone Drużyna \r\n"
 
 
  //console.log(data+ data.textContent);
@@ -157,18 +110,19 @@ tempstring+="Miejsce Punkty Różnica Drużyna \r\n"
        for (let j in row.cells) {
          let col = row.cells[j];
 
-   //   console.log(j + "_" + row.cells[j].textContent);
+      console.log(j + "_" + row.cells[j].textContent);
 
 
 
 
-// console.log(j );
+//console.log(j );
+
          switch (j) {
            //miejsce
            case "0": {
            i=parseInt(i)+1;
-    if(i<10)  tempstring += i+"             ";
-    else   tempstring += i+"           ";
+    if(i<10)  tempstring += i+"         ";
+    else   tempstring += i+"        ";
 
              break;
            }
@@ -196,13 +150,75 @@ tempstring+="Miejsce Punkty Różnica Drużyna \r\n"
 
            else
            {
-             tempstring+= row.cells[j].textContent + "        ";
+             tempstring+= row.cells[j].textContent + "       ";
            }
 
              //tempstring += row.cells[j].textContent + "   ";
              break;
            }
            //roznica
+           case "4": {
+              if(row.cells[j].textContent>99)
+           {
+            tempstring+= row.cells[j].textContent + "     ";
+           }
+           else if(row.cells[j].textContent>9)
+           {
+            tempstring+= row.cells[j].textContent + "      ";
+           }
+            else if(row.cells[j].textContent<-99)
+           {
+           tempstring+=row.cells[j].textContent +"     ";
+           }
+           else if(row.cells[j].textContent<-9)
+           {
+            tempstring+= row.cells[j].textContent + "     ";
+           }
+            else if(row.cells[j].textContent<0)
+           {
+            tempstring+= row.cells[j].textContent + "      ";
+           }
+
+           else
+           {
+             tempstring+= row.cells[j].textContent + "       ";
+           }
+
+             //tempstring += row.cells[j].textContent + "   ";
+             break;
+           }
+           //strzlone
+           case "5": {
+              if(row.cells[j].textContent>99)
+           {
+            tempstring+= row.cells[j].textContent + "     ";
+           }
+           else if(row.cells[j].textContent>9)
+           {
+            tempstring+= row.cells[j].textContent + "      ";
+           }
+            else if(row.cells[j].textContent<-99)
+           {
+           tempstring+=row.cells[j].textContent +"     ";
+           }
+           else if(row.cells[j].textContent<-9)
+           {
+            tempstring+= row.cells[j].textContent + "     ";
+           }
+            else if(row.cells[j].textContent<0)
+           {
+            tempstring+= row.cells[j].textContent + "      ";
+           }
+
+           else
+           {
+             tempstring+= row.cells[j].textContent + "       ";
+           }
+
+             //tempstring += row.cells[j].textContent + "   ";
+             break;
+           }
+           //stracone
            case "6": {
 
             if(row.cells[j].textContent>99)
@@ -227,7 +243,7 @@ tempstring+="Miejsce Punkty Różnica Drużyna \r\n"
            }
            else
            {
-               tempstring+=row.cells[j].textContent +"          ";
+               tempstring+=row.cells[j].textContent +"         ";
            }
 
              //tempstring += row.cells[j].textContent + ":";

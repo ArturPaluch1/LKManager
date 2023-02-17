@@ -12,7 +12,7 @@ import java.io.IOException;
 
 @Controller
 public class MatchesPlayedController {
-    private MatchService matchService;
+    private final MatchService matchService;
     public MatchesPlayedController(MatchService matchService) {
         this.matchService = matchService;
     }

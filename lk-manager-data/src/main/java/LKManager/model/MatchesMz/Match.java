@@ -27,7 +27,7 @@ private String userMatchResult1="";
 private UserData opponentUser;
     private UserData user;
 
-    private List<MatchTeam> teamlist= new ArrayList();
+    private final List<MatchTeam> teamlist= new ArrayList();
 
     public Match(int id, String date, String status, String type, String typeName, int typeId, UserData user) {
         this.id = id;

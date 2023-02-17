@@ -57,21 +57,23 @@ private final TerminarzService terminarzService;
 
 
 
-        Terminarz terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+      //  Terminarz terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+        Terminarz terminarz=terminarzService.wczytajTerminarz("Data/terminarz.xml");
 
 
 
 if(terminarz!= null)
 {
-    terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+   // terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+    terminarzService.wczytajTerminarz("Data/terminarz.xml");
 }
 else
 {
     ///////// data poczatku rozgrywek  /////////////////////////
     XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
-    data.setYear(2022);
-    data.setMonth(11);
-    data.setDay(8);
+    data.setYear(2023);
+    data.setMonth(2);
+    data.setDay(21);
 
     ////////////     Ladowanie grajkow////////////////////////
     List<UserData> grajki;// = new ArrayList<>();
@@ -86,8 +88,9 @@ else
     }
 
     terminarzService.utworzTerminarz(data, grajki);
-    terminarz= terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
 
+    //terminarz= terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
+    terminarz= terminarzService.wczytajTerminarz("Data/terminarz.xml");
 
 
 
@@ -124,7 +127,7 @@ if(numerRundy== null)
 }
 
 
-tempfunkcja();
+
 
         model.addAttribute("runda", terminarz.getTerminarz().get(numerRundy-1));
         model.addAttribute("mecze", terminarz.getTerminarz().get(numerRundy-1).getMecze()
@@ -136,16 +139,16 @@ tempfunkcja();
 model.addAttribute("numerRundy", numerRundy);
 
 
-        return "LK/terminarz";
+        return "LK/terminarz/terminarz";
     }
 
-    private void tempfunkcja() {
 
 
-
-
-
-
+@RequestMapping("/dodajTerminarz")
+public String dodajTerminarz(Model model)
+    {
+       // model.addAttribute(userService.findAll())
+        return "LK/terminarz/dodajTerminarz";
     }
 
 

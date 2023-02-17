@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 
 @Controller
 public class MatchesPlannedController {
-    private MatchService matchService;
-    private UserService userService;
+    private final MatchService matchService;
+    private final UserService userService;
 
     public MatchesPlannedController(MatchService matchService, UserService userService ) {
         this.matchService = matchService;
@@ -40,7 +40,7 @@ public class MatchesPlannedController {
 
         boolean licznikNieOpponent=true;
         for (var item: new TeamTM(userService).wczytajUPSGZXML().getSkladUPSG()){
-            if(licznikNieOpponent==true)
+            if(licznikNieOpponent)
             {
             try {
 

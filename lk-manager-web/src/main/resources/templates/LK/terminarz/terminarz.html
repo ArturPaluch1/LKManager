@@ -1,0 +1,237 @@
+<!DOCTYPE html  >
+<html lang="en"
+
+      th:replace="~{fragments/layout :: layout (~{::body},'home')}" xmlns:th="http://www.w3.org/1999/xhtml"
+
+      xmlns:width="http://www.w3.org/1999/xhtml">
+<head  >
+    <meta charset="UTF-8">
+    <title >Title</title>
+
+
+</head>
+<body   >
+<label style="float: left;" onmouseenter="showTerminarzOptions()"  > opcje terminarza</label>
+<div id="terminarzOptions" class="notDisplay"  >
+    <br><br>
+    <div> wybierz terminarz</div>
+    <div >
+        <a class="btn" th:href=@{'/dodajTerminarz'}>   dodaj terminarz</a>
+      </div>
+    <div> usuń terminarz</div>
+    <div> lista terminarzy</div>
+</div>
+
+
+    <div  >
+        <table class="table table-striped" >
+            <thead>
+            <tr>
+
+                <th style="width: 150px">runda </th>
+                <th style="width: 150px">data </th>
+
+                <!--
+                <form  th:action ="@{/pokazRunde}" >
+                  <input type="text" th:object="${numerRundy}">
+
+
+
+
+
+                        <input type="submit" >
+
+                </form>
+
+                -->
+
+
+
+
+
+
+            </tr>
+
+
+
+            <tr>
+            </thead>
+            <tbody>
+            <tr th:each="mecz : ${runda}">
+                <td  id="runda" th:text="${mecz.getNr()}" style="width: 150px">Joe</td>
+                <td  id="data" th:text="${mecz.getData()}"style="width: 150px">1</td>
+                <td>
+                    <form th:action="@{/pokazRunde}" method="post">
+                        <!--  <input type="text" th:name="participant"/>
+                          <input type="submit"/>
+                --><select    class="form-control" id="dropDownList"  th:name="participant" onchange="this.form.submit()" >
+                        <option selected>zmień rundę</option>
+                        <option  th:each="nr : ${nrRundy}" th:value="${nr.getNr()}" th:text="runda+' '+${nr.getNr()}+' '+data+': '+${nr.getData()}  " ></option>
+
+                    </select>
+
+
+                    </form>
+                </td>
+                <td>
+                    <button id="bob"  onclick="myFunction()">Skopiuj</button>
+                </td>
+
+            </tr>
+
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+    <div ><!--style="float: right;">-->
+        <table class="table table-striped" id="tabela" border="1" >
+            <thead align = "center">
+            <tr id="naglowek">
+
+
+                <th width ="15px" class="text-center">Drużyna 1 </th>
+                <th style="width: 15px" class="text-center">user 1</th>
+                <th style="width: 50px"  class="text-center"> - </th>
+                <th style="width: 150px" class="text-center">Drużyna 2 </th>
+                <th style="width: 150px" class="text-center">user 2</th>
+            <tr>
+            </thead>
+            <tbody id="tabela-zawartosc" align="center">
+
+
+            <tr th:each="mecz : ${mecze}">
+                <td th:text="${mecz .getUser().getTeamlist().get(0).getTeamName()}" style="width: 150px">userTeam</td>
+                <td th:text="${mecz .getUser().getUsername()}" style="width: 150px">user</td>
+                <td style="width: 50px" > - </td>
+                <td th:text="${mecz.getopponentUser().getUsername()}"style="width: 150px">1</td>
+                <td th:text="${mecz .getopponentUser().getTeamlist().get(0).getTeamName()}" style="width: 150px" >opponentUserTeam</td>
+
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+
+
+
+
+
+
+<!--<label  onmouseenter="showTerminarzOptions()"  style="display: block;">ii</label>-->
+
+
+
+
+<script type="text/javascript">
+
+         function showTerminarzOptions() {
+
+
+
+var terminarzOpcje= document.getElementById("terminarzOptions");
+
+
+
+if(terminarzOpcje.classList =='notDisplay')
+{
+console.log("a " + terminarzOpcje.innerHTML);
+terminarzOpcje.classList.replace('notDisplay','display')
+}
+else
+{
+//terminarzOpcje.classList.remove('notDisplay')
+terminarzOpcje.classList.replace('display','notDisplay')
+
+console.log("b " + document.getElementById("terminarzOptions").classList+ '|'+ terminarzOptions.classList);
+}
+}
+    </script>
+
+
+
+
+<script>
+
+
+
+
+
+    var btn= document.getElementById("bob");
+bob.onclick = function(){
+btn.textContent="sam";
+
+ navigator.clipboard.writeText(tempstring);
+ alert("Copied the text: " + tempstring);
+console.log("oo");
+
+</script>
+<script>
+  function myFunction() {
+var tabela = document.getElementById("tabela-zawartosc");
+var data = document.getElementById("data");
+var runda =  document.getElementById("runda");
+var result = "";
+var tempstring = "";
+var tempwyniki = "";
+
+console.log(runda);
+console.log(data);
+tempstring+=" Runda: "+runda.textContent +"   "+data.textContent+"\r\n";
+
+let pierwszy=true;
+for (let i in tabela.rows) {
+  let row = tabela.rows[i];
+
+
+
+  for (let j in row.cells) {
+  let col = row.cells[j];
+
+console.log( j+ col.textContent);
+
+ switch (j) {
+           //druzyna
+           case "0": {
+          wyniki="";
+user2="";
+             tempstring += row.cells[j].textContent;
+             break;
+           }
+                        //user
+           case "1": {
+             tempstring += " (" + row.cells[j].textContent + ") - ";
+             break;
+           }
+
+           case "3": {
+            user2+=  row.cells[j].textContent ;
+             //tempstring += row.cells[j].textContent + "   ";
+             break;
+           }
+           case "4": {
+           tempstring+=row.cells[j].textContent +" ("+user2+ ")";
+             //tempstring += row.cells[j].textContent + ":";
+             break;
+           }
+
+         }
+
+
+  }
+  tempstring+="\r\n";
+}
+console.log(  tempstring);
+ navigator.clipboard.writeText(tempstring);
+ alert("Copied the text: " + tempstring);
+
+}
+</script>
+
+</body>
+
+
+</html>
