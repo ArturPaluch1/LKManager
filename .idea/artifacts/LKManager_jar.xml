@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="LKManager:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/LKManager_jar</output-path>
+  <artifact type="jar" name="lk_manager-web-0.0.1-SNAPSHOT:jar">
+    <output-path>$PROJECT_DIR$/lk-manager-web/target/lk_manager-web-0.0.1-SNAPSHOT_jar</output-path>
     <root id="archive" name="LKManager.jar">
       <element id="module-output" name="LKManager" />
       <element id="module-output" name="lk-manager-data" />
