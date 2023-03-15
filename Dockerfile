@@ -11,13 +11,13 @@ FROM openjdk:15
   #####################################
 
 
-    	ADD lk-manager-data/target/lk-manager-data-0.0.1-SNAPSHOT.jar .
-       ADD  	lk-manager-web/target/lk_manager-web-0.0.1-SNAPSHOT.jar .
+  #  	ADD lk-manager-data/target/lk-manager-data-0.0.1-SNAPSHOT.jar .
+   #    ADD  	lk-manager-web/target/lk_manager-web-0.0.1-SNAPSHOT.jar .
 
-        CMD java -jar lk_manager-web-0.0.1-SNAPSHOT.jar
+   #     CMD java -jar lk_manager-web-0.0.1-SNAPSHOT.jar
 
-
-
+ADD  	lk-manager-web/target/lk_manager-web-0.0.1-SNAPSHOT.jar .
+ CMD java -jar lk_manager-web-0.0.1-SNAPSHOT.jar
 
 
 
