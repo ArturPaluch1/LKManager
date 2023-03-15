@@ -31,9 +31,9 @@ generateCalendar = (month, year) => {
 
     // get first day of month
 
-    let first_day = new Date(year, month, 1)
+    let first_day = new Date(year, month, 0)
 
-    for (let i = 0; i <= days_of_month[month] + first_day.getDay() - 1; i++) {
+    for (let i = 0; i <= days_of_month[month] + first_day.getDay()-1 ; i++) {
         let day = document.createElement('div')
 
 
@@ -46,10 +46,16 @@ generateCalendar = (month, year) => {
 day.onclick = function()
                   {
               /*     alert(i - first_day.getDay() + 1);*/
-                  console.log(document.getElementById("bob").innerText);
+       //           console.log(document.getElementById("labelData").innerText);
 
-let Mojlabel= document.getElementById("bob");
-Mojlabel.innerText=i - first_day.getDay() + 1;
+let labelData= document.getElementById("labelData");
+let inputData= document.getElementById("inputData");
+labelData.innerHTML="  "+year+"-"+month+"-"+ (i - first_day.getDay() + 1);
+inputData.value="  "+year+"-"+month+"-"+ (i - first_day.getDay() + 1);
+  console.log(document.getElementById("labelData").innerText);
+
+    console.log(labelData.value);
+      console.log(inputData.value);
 
 let calendar_days1 = document.getElementById("sam");
 

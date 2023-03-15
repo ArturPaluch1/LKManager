@@ -10,9 +10,27 @@
 <body>
 
 
+<div style="float:left">
+    <button id="bob"  onclick="myFunction()">Skopiuj</button>
+</div>
 
 
-<button id="bob"  onclick="myFunction()">Skopiuj</button>
+
+
+<div style="float: right;">
+    <form th:action="@{/tabela}" method="get" >
+        <select  th:name="wybranyTerminarz"  onchange="this.form.submit()" >
+            <option value="" selected>--Wybierz terminarz--</option>
+            <option th:each="terminarz : ${terminarze}" th:value="${terminarz.getName()}" th:text="${terminarz.getName()}" />
+
+        </select>
+    </form>
+    <div>
+        <label>Wybrany terminarz: </label>
+        <label th:text="${wybranyTerminarz}"></label>
+    </div>
+
+</div>
 
 
 <table class="table table-striped" id="tabela" border="1" >
@@ -34,7 +52,7 @@
 
 
     <tr th:each="item : ${tabela}" >
-        <td  class="counterCell"></td>
+        <td  class="counterCell" th:text="${tabela.indexOf(item)+1}"></td>
         <td th:text="${item. getGracz().getTeamlist().get(0).getTeamName()}" >Drużyna</td>
         <td th:text="${item. getGracz().getUsername()}" >user</td>
         <td th:text="${item.getSumaPunktow()} ">Punkty</td>

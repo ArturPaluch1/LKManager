@@ -16,11 +16,11 @@ import java.net.URL;
 @Service
 public  class URLs {
 
-    private final UserService userService;
+    private final MZUserService MZUserService;
 
     public URLs() {
 
-        this.userService = new UserServiceImpl() {
+        this.MZUserService = new MZUserServiceImpl() {
         };
     }
 
@@ -39,7 +39,7 @@ public  class URLs {
 
     }
     public  URL MakePlayedMatchesURL(String username) throws IOException, ParserConfigurationException, JAXBException, SAXException {
-URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+userService.findByUsername(username).getTeamlist().get(0).getTeamId().toString()+"&match_status=1&limit=100");
+URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ MZUserService.findByUsername(username).getTeamlist().get(0).getTeamId().toString()+"&match_status=1&limit=100");
         return przed;
 
     }
@@ -50,7 +50,7 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
     }
     public  URL MakeOngoingMatchesURL(String username) throws IOException, ParserConfigurationException, JAXBException, SAXException {
 
-        return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+userService.findByUsername(username).getTeamlist().get(0).getTeamId().toString()+"&match_status=2&limit=100");
+        return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ MZUserService.findByUsername(username).getTeamlist().get(0).getTeamId().toString()+"&match_status=2&limit=100");
 
     }
 

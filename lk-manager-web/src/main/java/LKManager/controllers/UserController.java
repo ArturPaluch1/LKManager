@@ -1,7 +1,6 @@
 package LKManager.controllers;
 
-import LKManager.services.MatchService;
-import LKManager.services.UserService;
+import LKManager.services.MZUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,9 +13,9 @@ import java.io.IOException;
 @Controller
 public class UserController {
 
-    private final UserService userService;
-    public UserController(UserService userService) {
-        this.userService = userService;
+    private final MZUserService MZUserService;
+    public UserController(MZUserService MZUserService) {
+        this.MZUserService = MZUserService;
     }
 
     // @RequestMapping({"","/","index.html"})
@@ -24,7 +23,7 @@ public class UserController {
     public String index(Model model) throws IOException, SAXException, ParserConfigurationException {
 
         try {
-            model.addAttribute("user", userService. findByUsername("kingsajz"));
+            model.addAttribute("user", MZUserService. findByUsername("kingsajz"));
 
         } catch (JAXBException e) {
             e.printStackTrace();

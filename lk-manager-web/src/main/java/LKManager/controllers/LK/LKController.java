@@ -1,24 +1,18 @@
 package LKManager.controllers.LK;
 
-import LKManager.LK.Terminarz;
 import LKManager.services.TeamTM;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.MatchService;
 import LKManager.services.TerminarzService;
-import LKManager.services.UserService;
+import LKManager.services.MZUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.xml.sax.SAXException;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.time.DayOfWeek;
@@ -26,19 +20,18 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 @Controller
 public class LKController {
-    private final UserService userService;
+    private final MZUserService MZUserService;
     private final MatchService matchService;
     private  final TerminarzService terminarzService;
     private  final TeamTM teamTM;
   //  private List<UserData> skladTM = new ArrayList<>();
 
-    public LKController(UserService userService, MatchService matchService, TerminarzService terminarzService, TeamTM teamTM) {
-        this.userService = userService;
+    public LKController(MZUserService MZUserService, MatchService matchService, TerminarzService terminarzService, TeamTM teamTM) {
+        this.MZUserService = MZUserService;
         this.matchService = matchService;
         this.terminarzService = terminarzService;
 
@@ -156,7 +149,7 @@ public String wyswietlRozegrane(Model model)throws IOException, SAXException, Pa
 
         UserData opponent = new UserData();
 
-        TeamTM rzeszow= new TeamTM(userService);
+        TeamTM rzeszow= new TeamTM(MZUserService);
 
 
 
@@ -172,13 +165,13 @@ public String wyswietlRozegrane(Model model)throws IOException, SAXException, Pa
                 if (ld.getDayOfWeek().equals(DayOfWeek.FRIDAY) && match.getType().equals("friendly")) {
 
                     if (match.getTeamlist().get(0).getTeamName().equals(user.getTeamlist().get(0).getTeamName())) {
-                        opponent = userService.findById(match.getTeamlist().get(1).getTeamId());
+                        opponent = MZUserService.findById(match.getTeamlist().get(1).getTeamId());
                         match.setopponentUser(opponent);
                         match.setUser(user);
                         tempMatches.add(match);
 
                     } else {
-                        opponent = userService.findById(match.getTeamlist().get(0).getTeamId());
+                        opponent = MZUserService.findById(match.getTeamlist().get(0).getTeamId());
                         match.setopponentUser(opponent);
                         String opponentTeamName = match.getTeamlist().get(0).getTeamName();
                         match.setUser(user);
@@ -211,7 +204,7 @@ return "LKManager/LK/index";
 
         UserData opponent =new UserData();
 
-        TeamTM rzeszow= new TeamTM(userService);
+        TeamTM rzeszow= new TeamTM(MZUserService);
 
 
 
@@ -227,13 +220,13 @@ return "LKManager/LK/index";
                 if (ld.getDayOfWeek().equals(DayOfWeek.FRIDAY) && match.getType().equals("friendly")) {
 
                     if (match.getTeamlist().get(0).getTeamName().equals(user.getTeamlist().get(0).getTeamName())) {
-                        opponent = userService.findById(match.getTeamlist().get(1).getTeamId());
+                        opponent = MZUserService.findById(match.getTeamlist().get(1).getTeamId());
                         match.setopponentUser(opponent);
                         match.setUser(user);
                         tempMatches.add(match);
 
                     } else {
-                        opponent = userService.findById(match.getTeamlist().get(0).getTeamId());
+                        opponent = MZUserService.findById(match.getTeamlist().get(0).getTeamId());
                         match.setopponentUser(opponent);
                         String opponentTeamName = match.getTeamlist().get(0).getTeamName();
                         match.setUser(user);

@@ -3,7 +3,7 @@ package LKManager.controllers;
 import LKManager.services.TeamTM;
 import LKManager.model.MatchesMz.Match;
 import LKManager.services.MatchService;
-import LKManager.services.UserService;
+import LKManager.services.MZUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +22,11 @@ import java.util.stream.Collectors;
 @Controller
 public class MatchesPlannedController {
     private final MatchService matchService;
-    private final UserService userService;
+    private final MZUserService MZUserService;
 
-    public MatchesPlannedController(MatchService matchService, UserService userService ) {
+    public MatchesPlannedController(MatchService matchService, MZUserService MZUserService) {
         this.matchService = matchService;
-        this.userService=userService;
+        this.MZUserService = MZUserService;
     }
 
     // @RequestMapping({"","/","index.html"})
@@ -39,7 +39,7 @@ public class MatchesPlannedController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         boolean licznikNieOpponent=true;
-        for (var item: new TeamTM(userService).wczytajUPSGZXML().getSkladUPSG()){
+        for (var item: new TeamTM(MZUserService).wczytajUPSGZXML().getSkladUPSG()){
             if(licznikNieOpponent)
             {
             try {

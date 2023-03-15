@@ -11,16 +11,43 @@
 
 </head>
 <body   >
-<label style="float: left;" onmouseenter="showTerminarzOptions()"  > opcje terminarza</label>
-<div id="terminarzOptions" class="notDisplay"  >
-    <br><br>
-    <div> wybierz terminarz</div>
-    <div >
-        <a class="btn" th:href=@{'/dodajTerminarz'}>   dodaj terminarz</a>
-      </div>
-    <div> usuń terminarz</div>
-    <div> lista terminarzy</div>
+<!--<label style="float: left;" onmouseenter="showTerminarzOptions()"  > opcje terminarza</label>-->
+<div style="float: left;">
+    <label  > opcje terminarza</label>
+    <div id="terminarzOptions" class="display" > <!--class="notDisplay"  >-->
+
+
+        <div >
+            <a class="btn" th:href=@{'/dodajTerminarz'}>   Dodaj terminarz</a>
+        </div>
+        <div>
+            <div >
+                <a class="btn" th:href=@{'/usunTerminarz'} >   Usuń terminarz</a>
+            </div>
+           </div>
+
+    </div>
 </div>
+
+
+
+<div style="float: right;">
+    <form th:action="@{/terminarz}" method="get" >
+        <select  th:name="wybranyTerminarz"  onchange="this.form.submit()" >
+            <option value="" selected>--Wybierz terminarz--</option>
+            <option th:each="terminarz : ${terminarze}" th:value="${terminarz.getName()}" th:text="${terminarz.getName()}" />
+            <!--   th:selected="${terminarz==75}"></option>-->
+        </select>
+    </form>
+    <div>
+        <label>Wybrany terminarz: </label>
+        <label th:text="${wybranyTerminarz}"></label>
+    </div>
+
+</div>
+
+
+
 
 
     <div  >

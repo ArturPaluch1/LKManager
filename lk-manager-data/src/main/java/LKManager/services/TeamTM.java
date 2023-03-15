@@ -20,13 +20,13 @@ import java.util.List;
 @Service
 public class TeamTM {
 
-    private final UserService userService;
+    private final MZUserService MZUserService;
     private final List<UserData> skladTM;
 private List<UserData> calyUPSG;
 
 
-    public TeamTM(UserService userService) {
-        this.userService = userService;
+    public TeamTM(MZUserService MZUserService) {
+        this.MZUserService = MZUserService;
         skladTM = new ArrayList<>();
 
     }
@@ -39,7 +39,7 @@ private List<UserData> calyUPSG;
         List<UserData> skladUPSG= new ArrayList<>();
         for (var nick: nicki
              ) {
-            var grajek= userService.findByUsername(nick);
+            var grajek= MZUserService.findByUsername(nick);
 
             UserData user = new UserData();
             user.setUsername(nick);
@@ -64,7 +64,7 @@ return skladUPSG;
         List<UserData> skladUPSG= new ArrayList<>();
         for (var nick: nicki
         ) {
-            var grajek= userService.findByUsername(nick);
+            var grajek= MZUserService.findByUsername(nick);
 
             UserData user = new UserData();
             user.setUsername(nick);

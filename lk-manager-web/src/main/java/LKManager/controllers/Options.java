@@ -6,7 +6,7 @@ import LKManager.controllers.LKsystemSzwajcarski.Mecz;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.MatchService;
-import LKManager.services.UserService;
+import LKManager.services.MZUserService;
 
 import org.json.simple.parser.ParseException;
 
@@ -27,13 +27,13 @@ import static java.lang.Math.abs;
 
 @Controller
 public class Options implements Serializable {
-    private final UserService userService;
+    private final MZUserService MZUserService;
     private final MatchService matchService;
 
     //  private List<UserData> skladTM = new ArrayList<>();
 
-    public Options(UserService userService, MatchService matchService) {
-        this.userService = userService;
+    public Options(MZUserService MZUserService, MatchService matchService) {
+        this.MZUserService = MZUserService;
         this.matchService = matchService;
     }
 
@@ -81,7 +81,7 @@ public class Options implements Serializable {
 
 
         } catch (Exception e) {
-            var team = new TeamTM(userService).LoadTMRzeszow();
+            var team = new TeamTM(MZUserService).LoadTMRzeszow();
             //  team.addAll(new TeamTM(userService).LoadCalyUPSG())
             for (var i : team
             ) {

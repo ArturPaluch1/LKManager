@@ -6,58 +6,134 @@ import LKManager.LK.Comparators.GraczPodsumowanieComparatorGoalScored;
 import LKManager.LK.Comparators.GraczPodsumowanieComparatorPoints;
 import LKManager.LK.GraczPodsumowanie;
 import LKManager.LK.Tabela;
-import LKManager.LKManagerApplication;
+import LKManager.LK.Terminarz;
 import LKManager.services.*;
 
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.xml.bind.JAXBException;
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
 //@RequestMapping({"tabela.html", "tabela", "tabela"} )
 public class tabelaController {
-    private final UserService userService;
+    private final MZUserService MZUserService;
     private final MatchService matchService;
   //  private List<UserData> skladTM = new ArrayList<>();
 private final TerminarzService terminarzService;
     private final TeamTM teamTM;
-
-    public tabelaController(UserService userService, MatchService matchService, TerminarzService terminarzService, TeamTM teamTM) {
-        this.userService = userService;
+    private String wybranyTerminarz;
+    private  Terminarz terminarz;
+    private final  PlikiService plikiService;
+private final LKUserService lkUserService;
+    public tabelaController(MZUserService MZUserService, MatchService matchService, TerminarzService terminarzService, TeamTM teamTM, PlikiService plikiService, LKUserService lkUserService) {
+        this.MZUserService = MZUserService;
         this.matchService = matchService;
         this.terminarzService = terminarzService;
 
         this.teamTM = teamTM;
+        this.plikiService = plikiService;
+        this.lkUserService = lkUserService;
     }
 
 
    @GetMapping({"tabela.html", "tabela", "tabela"} )
-    public String index(Model model) throws URISyntaxException, IOException, JAXBException {
+    public String index(Model model,  @RequestParam(value="wybranyTerminarz", required = false)String wybranyTerminarz) throws URISyntaxException, IOException, JAXBException {
 
 
-//var terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/terminarz.xml");
+/*//var terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/terminarz.xml");
      //  var terminarz=terminarzService  .wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
        var terminarz=terminarzService
-               .wczytajTerminarz("Data/terminarz.xml");
+               .wczytajTerminarz("Data/terminarze/terminarz.xml");
        Tabela tabela = new Tabela();
 
 
 
     //   if() todo jak tabeli pliku nie ma
            //   TeamTM
-           for (var item :teamTM.wczytajUPSGZXML().getSkladUPSG()
-           ) {
-               var tempGracz= new GraczPodsumowanie();tempGracz.setGracz(item);
+   //        for (var item :teamTM.wczytajUPSGZXML().getSkladUPSG()
 
-               tabela.getGraczePodsumowanie().add(tempGracz);
+
+
+       */
+
+       if(wybranyTerminarz!=null)
+       {
+           //nastapila zmiana terminarza ->nr rundy=1
+           if(wybranyTerminarz!=this.wybranyTerminarz)
+           {
+               this.wybranyTerminarz=wybranyTerminarz;
+
+           }
+
+
+
+       }
+
+    //   Terminarz terminarz = new Terminarz();
+
+
+       var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
+
+
+       Tabela tabela = new Tabela();
+
+
+       //nie przekazano terminarza
+       if(this.wybranyTerminarz== null)
+       {
+           // nie ma terminarzy -> przekierowanie do tworzenia
+           if(terminarze.length==0)
+           {
+               return "redirect:/dodajTerminarz";
+           }
+           else {
+               //wybieranie najnowszego moyfikowanego
+               var najbardziejNiedawnoZmodyfikowanyTerminarz=       Arrays.stream(terminarze).toList().stream().max(Comparator.comparing(File::lastModified));
+               terminarz= terminarzService.wczytajTerminarz(najbardziejNiedawnoZmodyfikowanyTerminarz.get().getName());
+               model.addAttribute("wybranyTerminarz", najbardziejNiedawnoZmodyfikowanyTerminarz.get().getName());
+           }
+       }
+       //wskazano terminarz
+       else
+       {
+           //wybrany terminarz
+           terminarz= terminarzService.wczytajTerminarz(this.wybranyTerminarz);
+           model.addAttribute("wybranyTerminarz", this.wybranyTerminarz);
+       }
+
+
+
+//terminarz.getTerminarz().get(0).getMecze().get(0).getUser().getUsername();
+
+
+       for (var item :lkUserService.wczytajGraczyZXML()
+           ) {
+
+           for (var gracz:terminarz.getTerminarz().get(0).getMecze()
+           ) {
+               if(  gracz.getUser().getUsername().equals(item.getUsername())
+               ||  gracz.getopponentUser().getUsername().equals(item.getUsername()))
+               {
+                   var tempGracz= new GraczPodsumowanie();
+                   tempGracz.setGracz(item);
+
+                   tabela.getGraczePodsumowanie().add(tempGracz);
+               }
+
+           }
+
+
            }
 
 ////////////////////////////////////////////////////////////////////
@@ -299,7 +375,7 @@ boolean nowaRownosc= false;
        ///////////////////////////////
 
 
-
+       model.addAttribute("terminarze", terminarze);
 
 model.addAttribute("tabela",tabela.getGraczePodsumowanie());
 

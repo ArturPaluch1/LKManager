@@ -1,5 +1,7 @@
+
 <!DOCTYPE html>
-<html lang="en" th:replace="~{fragments/layout :: layout (~{::body},'home')}" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" th:replace="~{fragments/layout :: layout (~{::body},'home')}" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:form="http://www.springframework.org/tags/form">
 <head>
     <meta charset="UTF-8">
     <title>dodawanie terminarza</title>
@@ -37,24 +39,60 @@
     <div class="month-list"></div>
 </div>
 
+
+
+
+
 <div style="float:left">
-  <form>
-      <label >Data rozpoczęcia:</label><label id="bob"></label><br>
-      <label for="fname">Nazwa:</label><br>
-      <input type="text" id="fname" name="fname"><br>
-      <label >Gracze:</label><br>
-      <div class="table-responsive" th:if="${not #lists.isEmpty{gracze}}">
-          <table class="table table-hover">
-              <thead class="thead-inverse">
+  <form th:object="${terminarz}" th:action="@{/terminarz/}" method="post">
+<div style="float:left">
+    <br>
+    <button type="submit" class="btn btn-primary">Utwórz terminarz</button>
+    <br>
+    <br/>
+    <label >Data rozpoczęcia:</label>
+    <label id="labelData"  ></label><br>
+    <input type ="text" id="inputData" class="notDisplay" th:field="*{data}" />
+    <br>
+    <label for="fname">Nazwa:</label><br>
+    <input type="text" id="fname" name="fname" th:field="*{nazwa}"><br>
 
-              </thead>
-              <tr th:each="gracz: ${gracze}">
-<td th:text="$gracz."></td>
-              </tr>
-          </table>
+</div>
+<div style="float:right">
+    <label >Gracze:</label><br>
+    <div class="table-responsive" th:if="${not #lists.isEmpty(terminarz)}">
+        <table class="table table-hover">
+            <thead class="thead-inverse">
+
+            </thead>
+            <tr th:each="item: ${gracze}"  >
+
+                <!--     <td>
+                        <input
+                                type="checkbox"
+                                name="myBooleanVariable"
+                                th:value="${item.zaznaczony}"   />
+
+                    </td>
+
+                    <td
+                           th:value="${item.getGracz()}"   >ii</td>-->
 
 
-      </div>
+            </tr>
+
+            <th:block th:each="item : ${gracze}">
+                <input type="checkbox" name="wybraniGracze" th:value="${item.getUsername()}"/>
+                <label th:text="${item.getUsername()}"></label>
+                <br>
+            </th:block>
+        </table>
+
+
+    </div>
+
+</div>
+
 
   </form>
 
@@ -66,8 +104,6 @@
 
 
 <script type="text/javascript" th:src="@{/resources/kalendarz.js}" />
-<script>
 
-</script>
 </body>
 </html>

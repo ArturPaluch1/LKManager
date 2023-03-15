@@ -4,7 +4,7 @@ import LKManager.services.TeamTM;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.MatchService;
-import LKManager.services.UserService;
+import LKManager.services.MZUserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,17 +22,17 @@ import java.util.stream.Collectors;
 
 @Controller
 public class TMController {
-    private final UserService userService;
+    private final MZUserService MZUserService;
     private final MatchService matchService;
   //  private List<UserData> skladTM = new ArrayList<>();
 
-    public TMController(UserService userService, MatchService matchService) {
-        this.userService = userService;
+    public TMController(MZUserService MZUserService, MatchService matchService) {
+        this.MZUserService = MZUserService;
         this.matchService = matchService;
     }
 
 
-    @RequestMapping({"TM.html", "TM", "tm", "tm", "html"} )
+    @RequestMapping({"TM.html", "TM", "tm", "tm.html", "html"} )
     public String index(Model model) throws IOException, SAXException, ParserConfigurationException, JAXBException {
 
 
@@ -41,7 +41,7 @@ public class TMController {
 
         UserData opponent = new UserData();
 
-        TeamTM rzeszow= new TeamTM(userService);
+        TeamTM rzeszow= new TeamTM(MZUserService);
 
 
         for (UserData user : rzeszow.LoadTMRzeszow()
@@ -56,13 +56,13 @@ public class TMController {
                 if (ld.getDayOfWeek().equals(DayOfWeek.TUESDAY) && match.getType().equals("friendly")) {
 
                     if (match.getTeamlist().get(0).getTeamName().equals(user.getTeamlist().get(0).getTeamName())) {
-                        opponent = userService.findById(match.getTeamlist().get(1).getTeamId());
+                        opponent = MZUserService.findById(match.getTeamlist().get(1).getTeamId());
                         match.setopponentUser(opponent);
                         match.setUser(user);
                         tempMatches.add(match);
 
                     } else {
-                        opponent = userService.findById(match.getTeamlist().get(0).getTeamId());
+                        opponent = MZUserService.findById(match.getTeamlist().get(0).getTeamId());
                         match.setopponentUser(opponent);
                         String opponentTeamName = match.getTeamlist().get(0).getTeamName();
                         match.setUser(user);

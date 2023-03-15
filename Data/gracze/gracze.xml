@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Gracze>
+    <UserData userId="8589347" username="marc0888">
+        <Team teamId="394189" teamName="SMOCZANKA MIELEC"/>
+    </UserData>
+    <UserData userId="4451013" username="ciosek_999">
+        <Team teamId="419313" teamName="Fragleses"/>
+    </UserData>
+    <UserData userId="8160724" username="mnowak">
+        <Team teamId="391090" teamName="Lekko Spoceni"/>
+    </UserData>
+    <UserData userId="5680419" username="speedylfc">
+        <Team teamId="378610" teamName="Fala Szczecin"/>
+    </UserData>
+    <UserData userId="1154416" username="harry84">
+        <Team teamId="406799" teamName="Harry Noble House FC"/>
+    </UserData>
+    <UserData userId="7672431" username="jerzykw">
+        <Team teamId="106223" teamName="FC Harnaś Sanok"/>
+    </UserData>
+    <UserData userId="4925695" username="olborinho">
+        <Team teamId="393423" teamName="Spartans Lodz"/>
+    </UserData>
+    <UserData userId="8485733" username="piko66">
+        <Team teamId="408700" teamName="KS Olimpia Warszawa"/>
+    </UserData>
+    <UserData userId="7921099" username="domodelu">
+        <Team teamId="395077" teamName="Zdrapy"/>
+    </UserData>
+    <UserData userId="1774519" username="kingsajz">
+        <Team teamId="201436" teamName="Wisła Kraków Old Boys"/>
+    </UserData>
+    <UserData userId="8521390" username="szuram">
+        <Team teamId="408692" teamName="KS Bukowe"/>
+    </UserData>
+    <UserData userId="8249759" username="kamilosin">
+        <Team teamId="400994" teamName="FC Mazovia"/>
+    </UserData>
+    <UserData userId="282616" username="yarek">
+        <Team teamId="150648" teamName="Przemysl"/>
+    </UserData>
+    <UserData userId="1929702" username="k0niak">
+        <Team teamId="387608" teamName="Mafia Koniaka"/>
+    </UserData>
+    <UserData userId="854965" username="szczepinho">
+        <Team teamId="382280" teamName="Miastostumostów"/>
+    </UserData>
+    <UserData userId="6198114" username="hetman_zmc">
+        <Team teamId="408213" teamName="FC Lazio Zamość"/>
+    </UserData>
+    <UserData userId="5826237" username="wwojtek80">
+        <Team teamId="390844" teamName="Żuberia United"/>
+    </UserData>
+    <UserData userId="8646052" username="bajkovvy">
+        <Team teamId="1226443" teamName="Heerenveen DB"/>
+    </UserData>
+</Gracze>

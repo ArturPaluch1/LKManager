@@ -38,7 +38,7 @@ private final TerminarzService terminarzService;
     }*/
 
     @Override
-    public void aktualizujWyniki(Integer runda, Terminarz terminarz, MatchService matchService) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
+    public void aktualizujWyniki(Integer runda, Terminarz terminarz, MatchService matchService, String nazwaPliku) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -140,13 +140,13 @@ private final TerminarzService terminarzService;
 
             }
         }
-zapiszDoXml(terminarz);
+zapiszDoXml(terminarz, nazwaPliku);
 
      // jaxbObjectToXML(terminarz);
     }
 
     @Override
-    public void zapiszDoXml(Terminarz calyTerminarz) {
+    public void zapiszDoXml(Terminarz calyTerminarz, String nazwaPliku) {
         try {
             //Create JAXB Context
             JAXBContext jaxbContext = JAXBContext.newInstance(Terminarz.class);
@@ -160,7 +160,7 @@ zapiszDoXml(terminarz);
             //tutaj chyba ścieżka ma być ta zakomentowana
             //Store XML to File lk-manager-data/src/main/java/LKManager/skladUPSG.xml
 
-            File file = new File("Data/terminarz.xml");
+            File file = new File("Data/terminarze/"+nazwaPliku);
            // File file = new File("XMLData/terminarz.xml");
 
             //Writes XML file to file-system

@@ -16,10 +16,7 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +28,9 @@ public class TerminarzServiceImpl implements TerminarzService {
 
 
 
+
     @Override
-    public void utworzTerminarz(XMLGregorianCalendar data, List<UserData> grajki) throws DatatypeConfigurationException {
+    public void utworzTerminarz(XMLGregorianCalendar data, List<UserData> grajki, String nazwa) throws DatatypeConfigurationException {
 
         ////////////////////////////////////////////////////////
         dodajPauzeDlaParzystosci(grajki);
@@ -98,7 +96,7 @@ runda.setStatus(Runda.status.nierozegrana);
 
         /////////////// zapis termnarza do xml    //////////////////////
        Terminarz terminarz = new Terminarz(calyTerminarz);
-        jaxbObjectToXML(terminarz);
+        jaxbObjectToXML(terminarz,nazwa);
 
 /////////////////////////////////////////////
 
@@ -124,8 +122,20 @@ runda.setStatus(Runda.status.nierozegrana);
             grajki.add(tempuser);
         }
     }
+    @Override
+    public void aktualizujTerminarz(Terminarz terminarz, String nazwaPliku)
+    {
+        try {jaxbObjectToXML(terminarz,nazwaPliku);
 
-    protected void jaxbObjectToXML(Terminarz calyTerminarz) {
+        }
+        catch (Exception e){
+
+    }
+    }
+
+
+
+    protected void jaxbObjectToXML(Terminarz calyTerminarz, String nazwa) {
         try {
             //Create JAXB Context
             JAXBContext jaxbContext = JAXBContext.newInstance(Terminarz.class);
@@ -152,7 +162,19 @@ runda.setStatus(Runda.status.nierozegrana);
            // File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
      /////////////////////////////////////////////////////////////////
          //   File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-            File file = new File("Data/terminarz.xml");
+            new File("Data/terminarze").mkdir();
+
+            File file;
+            if(nazwa.endsWith(".xml"))
+            {
+                 file = new File("Data/terminarze/"+nazwa);
+            }
+            else
+            {
+                 file = new File("Data/terminarze/"+nazwa+".xml");
+            }
+
+
 
             //Writes XML file to file-system
             jaxbMarshaller.marshal(calyTerminarz, file);
@@ -168,7 +190,7 @@ runda.setStatus(Runda.status.nierozegrana);
             JAXBContext ctx = JAXBContext.newInstance(Terminarz.class);
             Unmarshaller unmarshaller = ctx.createUnmarshaller();
 
-        File file = new File(String.valueOf(terminarz));
+        File file = new File(String.valueOf("Data/terminarze/"+terminarz));
 
           if (file.exists()) {
 

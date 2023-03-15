@@ -10,6 +10,46 @@
 
 </head>
 <body class="light">
+<form th:object="${gracze}"  method="post">
+    <br>
+    <button type="submit" class="btn btn-primary" formaction="/usunGracza">Usuń</button>
+
+
+    <input type ="text" name="wybranyGracz" />
+
+
+
+    <button type="submit" class="btn btn-primary" formaction="/dodajGracza">Dodaj</button>
+    <br>
+    <br/>
+
+
+
+
+    <label >Gracze:</label><br>
+    <div class="table-responsive" th:if="${not #lists.isEmpty(gracze)}">
+        <table class="table table-hover">
+            <thead class="thead-inverse">
+
+            </thead>
+            <tr th:each="item: ${gracze}"  >
+
+
+            </tr>
+
+            <th:block th:each="item : ${gracze}">
+                <input type="checkbox" name="wybraniGracze" th:value="${item.getUsername()}"/>
+                <label th:text="${item.getUsername()}"></label>
+                <br>
+
+            </th:block>
+
+
+        </table>
+
+
+    </div>
+</form>
 
 
 
