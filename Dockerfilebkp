@@ -1,6 +1,6 @@
 	#FROM nginx:1.10.1-alpine
 #FROM openjdk:8u191-jdk-alpine3.8
-FROM openjdk:15
+FROM openjdk:18
 	#ADD out/artifacts/LKManager_jar/LKManager.jar .
 	EXPOSE 8080
 
