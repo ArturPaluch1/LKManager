@@ -40,69 +40,107 @@
 </div>
 
 
-
-
-
 <div style="float:left">
-  <form th:object="${terminarz}" th:action="@{/terminarz/}" method="post">
-<div style="float:left">
-    <br>
-    <button type="submit" class="btn btn-primary">Utwórz terminarz</button>
-    <br>
-    <br/>
-    <label >Data rozpoczęcia:</label>
-    <label id="labelData"  ></label><br>
-    <input type ="text" id="inputData" class="notDisplay" th:field="*{data}" />
-    <br>
-    <label for="fname">Nazwa:</label><br>
-    <input type="text" id="fname" name="fname" th:field="*{nazwa}"><br>
+    <form th:object="${terminarz}" th:action="@{/terminarz/}" method="post">
+        <div style="float:left">
+            <br>
+            <button type="submit" class="btn btn-primary">Utwórz terminarz</button>
+            <br>
+            <br/>
+            <label >Data rozpoczęcia:</label>
+            <label id="labelData"  ></label><br>
+            <input type ="text" id="inputData" class="notDisplay" th:field="*{data}" />
+            <br>
+            <label for="fname">Nazwa:</label><br>
+            <input type="text" id="fname" name="fname" th:field="*{nazwa}"><br>
+
+
+
+
+
+
+
+
+            <div style="float:left">
+                <label >Gracze:</label><br>
+                <div class="table-responsive" th:if="${not #lists.isEmpty(terminarz)}">
+                    <table class="table table-hover">
+                        <thead class="thead-inverse">
+
+                        </thead>
+                        <tr th:each="item: ${gracze}"  >
+
+                            <!--     <td>
+                                    <input
+                                            type="checkbox"
+                                            name="myBooleanVariable"
+                                            th:value="${item.zaznaczony}"   />
+
+                                </td>
+
+                                <td
+                                       th:value="${item.getGracz()}"   >ii</td>-->
+
+
+                        </tr>
+
+                        <th:block th:each="item : ${gracze}">
+                            <input type="checkbox" name="wybraniGracze" th:value="${item.getUsername()}"/>
+                            <label th:text="${item.getUsername()}"></label>
+                            <br>
+                        </th:block>
+                    </table>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+
+    </form>
+
+
+
 
 </div>
-<div style="float:right">
-    <label >Gracze:</label><br>
-    <div class="table-responsive" th:if="${not #lists.isEmpty(terminarz)}">
-        <table class="table table-hover">
-            <thead class="thead-inverse">
 
-            </thead>
-            <tr th:each="item: ${gracze}"  >
+<div id="tempDotestow" style="float:right" >
+    <button onclick="dodaj()"  >dodaj mecz</button>
+    <form th:action="@{/wyniki}" method="get" >
+       <!-- th:onchange="bob(value,[[${gracze}]])"-->
+        <select  th:name="wybranyTerminarz"  id="selection1" >
+            <option value="" selected>--Wybierz gracza--</option>
+            <option th:each="gracz : ${gracze}" th:value="${gracz.getUsername()}" th:text="${gracz.getUsername()}" />
 
-                <!--     <td>
-                        <input
-                                type="checkbox"
-                                name="myBooleanVariable"
-                                th:value="${item.zaznaczony}"   />
+        </select>
+      <!--  onchange="sam(value)"-->
+        <select  th:name="wybranyTerminarz"  id="selection2">
+            <option value="" selected>--Wybierz gracza--</option>
+            <option th:each="gracz : ${gracze}" th:value="${gracz.getUsername()}" th:text="${gracz.getUsername()}" />
 
-                    </td>
-
-                    <td
-                           th:value="${item.getGracz()}"   >ii</td>-->
+        </select>
+    </form>
 
 
-            </tr>
-
-            <th:block th:each="item : ${gracze}">
-                <input type="checkbox" name="wybraniGracze" th:value="${item.getUsername()}"/>
-                <label th:text="${item.getUsername()}"></label>
-                <br>
-            </th:block>
-        </table>
-
-
+    <div id="mecze">
+        bob
     </div>
+
+
+
 
 </div>
 
 
-  </form>
 
-
-
-
-    </div>
-
-
-
+<script type="text/javascript" th:src="@{/resources/temp.js}" ></script>
 <script type="text/javascript" th:src="@{/resources/kalendarz.js}" />
 
 </body>
