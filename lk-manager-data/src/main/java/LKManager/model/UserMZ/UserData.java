@@ -1,7 +1,6 @@
 package LKManager.model.UserMZ;
 
-import lombok.AllArgsConstructor;
-import lombok.Setter;
+
 
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
@@ -27,7 +26,7 @@ public class UserData  implements Serializable{
         this.opponentUser = opponentUser;
     }
 
-    //  private Team team;
+
     private UserData opponentUser;
 
 private List<Team> teamlist= new ArrayList();
@@ -52,19 +51,6 @@ private List<Team> teamlist= new ArrayList();
 
     }
 
-/* public Team getTeam() {
-            return Team;
-        }*/
-   /* @XmlElement(name = "Team")
-    public void setTeam(Team team) {
-     //   this.Team = team;
-        this.teamlist.add(team);
-    }
-*/
-//public Team getTeam()
-//{
- //   return team;
-//}
 
 
     @XmlAttribute

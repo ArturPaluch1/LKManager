@@ -28,8 +28,7 @@ import java.util.*;
 //@RequestMapping({"terminarz.html", "/terminarz", "terminarz"})
 public class terminarzController {
     private final MZUserService MZUserService;
-    private final MatchService matchService;
-    //  private List<UserData> skladTM = new ArrayList<>();
+
 
     private Integer numerRundy;
 private final LKUserService lkUserService;
@@ -45,9 +44,9 @@ private final TerminarzService terminarzService;
     private String wybranyTerminarz;
     private  Terminarz terminarz;
 
-    public terminarzController(MZUserService MZUserService, MatchService matchService, LKUserService lkUserService, TerminarzService terminarzService, PlikiService plikiService) {
+    public terminarzController(MZUserService MZUserService,  LKUserService lkUserService, TerminarzService terminarzService, PlikiService plikiService) {
         this.MZUserService = MZUserService;
-        this.matchService = matchService;
+
         this.lkUserService = lkUserService;
 
         this.terminarzService = terminarzService;
@@ -58,7 +57,7 @@ private final TerminarzService terminarzService;
     @GetMapping("/terminarz")
     public String index(Model model, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, ParseException, URISyntaxException {
 
-     //   Terminarz     terminarz = new Terminarz();
+
 
         var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
@@ -103,104 +102,7 @@ return "redirect:/dodajTerminarz";
 
 
 
-/*
 
-
-
-
-
-     Terminarz terminarz=terminarzService.wczytajTerminarz("Data/terminarze/terminarz.xml");
-
-
-
-
-
-
-
-if(terminarz!= null)
-{
-   // terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-
-
-    if(wybranyTerminarz!=null)
-    {
-        var path= "Data/terminarze/"+wybranyTerminarz;
-        terminarz= terminarzService.wczytajTerminarz(path);
-    }
-    else {
-        terminarzService.wczytajTerminarz("Data/terminarze/terminarz.xml");
-
-    }
-
-
-}
-else
-{
-    ///////// data poczatku rozgrywek  /////////////////////////
-    XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
-    data.setYear(2023);
-    data.setMonth(2);
-    data.setDay(21);
-
-    ////////////     Ladowanie grajkow////////////////////////
-    List<UserData> grajki;// = new ArrayList<>();
-  //  grajki = new TeamTM(userService).LoadCalyUPSG();
-
-   //grajki=new TeamTM(userService).LoadCalyUPSG();
-
-    new TeamTM(MZUserService).zapiszUPSGDoXML();
-    grajki=  new TeamTM(MZUserService).wczytajUPSGZXML().getSkladUPSG();
-    for (int i = 0; i < grajki.size() - 1; i++) {
-        System.out.println(grajki.get(i).getUsername());
-    }
-
-    terminarzService.utworzTerminarz(data, grajki,"terminarz");
-
-    //terminarz= terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-
-
-
-        terminarz= terminarzService.wczytajTerminarz("Data/terminarze/terminarz.xml");
-
-
-
-
-
-
-}
-
-
-
-    */
-/*    for (int i = 0; i <grajkiA.size()-1; i++) {
-            var para=grajkiA.get(i).getUsername()+" - "+grajkiB.get(i).getUsername();
-            System.out.println(para);
-
-        }*//*
-
-
-  */
-/*      var grajek1= grajkiA.get(0);
-        grajkiPrzesunieteA.add(grajek1);
-        grajkiPrzesunieteA.add(grajkiB.get(0));
-        grajkiB.remove(0);
-        grajkiPrzesunieteA.addAll(grajkiA);
-
-       grajkiPrzesunieteA.remove(grajkiPrzesunieteA.size()-1);
-
-        grajkiPrzesunieteB = grajkiB;
-        grajkiPrzesunieteB.remove(0);
-        grajkiPrzesunieteB.add(grajkiA.get(grajkiA.size()-1));
-*//*
-
-
-
-///wczytywanie listy terminarzy
-
-
-
-    //    model.addAttribute("terminarze",terminarze);
-*/
 
         model.addAttribute("nrRundy", terminarz.getTerminarz());
 if(numerRundy== null)
@@ -218,11 +120,7 @@ model.addAttribute("numerRundy", numerRundy);
 
 
 
-  //      File  folder = new File("Data/terminarze");
 
-
-
-      //  model.addAttribute("terminarze", Arrays.stream(folder.listFiles()).toList());
 
 
         model.addAttribute("terminarze", terminarze);
@@ -235,125 +133,6 @@ model.addAttribute("numerRundy", numerRundy);
 
 
 
-/*
-
-    @PostMapping("/wybranyTerminarz")
-    public String wyswietlTerminarz( Model model, @RequestParam (value="wybranyTerminarz", required = true)String wybranyTerminarz) throws JAXBException, DatatypeConfigurationException, ParserConfigurationException, IOException, SAXException {
-
-
-
-        //  Terminarz terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-        Terminarz terminarz=terminarzService.wczytajTerminarz("Data/terminarze/terminarz.xml");
-
-
-
-        if(terminarz!= null)
-        {
-            // terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-
-
-            if(wybranyTerminarz!="")
-            {
-                var path= "Data/terminarze/"+wybranyTerminarz;
-                terminarz= terminarzService.wczytajTerminarz(path);
-            }
-            else {
-                terminarzService.wczytajTerminarz("Data/terminarze/terminarz.xml");
-
-            }
-
-
-        }
-        else
-        {
-            ///////// data poczatku rozgrywek  /////////////////////////
-            XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
-            data.setYear(2023);
-            data.setMonth(2);
-            data.setDay(21);
-
-            ////////////     Ladowanie grajkow////////////////////////
-            List<UserData> grajki;// = new ArrayList<>();
-            //  grajki = new TeamTM(userService).LoadCalyUPSG();
-
-            //grajki=new TeamTM(userService).LoadCalyUPSG();
-
-            new TeamTM(MZUserService).zapiszUPSGDoXML();
-            grajki=  new TeamTM(MZUserService).wczytajUPSGZXML().getSkladUPSG();
-            for (int i = 0; i < grajki.size() - 1; i++) {
-                System.out.println(grajki.get(i).getUsername());
-            }
-
-            terminarzService.utworzTerminarz(data, grajki,"terminarz");
-
-            //terminarz= terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-
-
-
-            terminarz= terminarzService.wczytajTerminarz("Data/terminarze/terminarz.xml");
-
-
-
-
-
-
-        }
-
-
-
-    */
-/*    for (int i = 0; i <grajkiA.size()-1; i++) {
-            var para=grajkiA.get(i).getUsername()+" - "+grajkiB.get(i).getUsername();
-            System.out.println(para);
-
-        }*//*
-
-
-  */
-/*      var grajek1= grajkiA.get(0);
-        grajkiPrzesunieteA.add(grajek1);
-        grajkiPrzesunieteA.add(grajkiB.get(0));
-        grajkiB.remove(0);
-        grajkiPrzesunieteA.addAll(grajkiA);
-
-       grajkiPrzesunieteA.remove(grajkiPrzesunieteA.size()-1);
-
-        grajkiPrzesunieteB = grajkiB;
-        grajkiPrzesunieteB.remove(0);
-        grajkiPrzesunieteB.add(grajkiA.get(grajkiA.size()-1));
-*//*
-
-
-
-///wczytywanie listy terminarzy
-
-
-
-        //    model.addAttribute("terminarze",terminarze);
-
-        model.addAttribute("nrRundy", terminarz.getTerminarz());
-        if(numerRundy== null)
-        {
-            numerRundy=1;
-        }
-
-
-
-
-        model.addAttribute("runda", terminarz.getTerminarz().get(numerRundy-1));
-        model.addAttribute("mecze", terminarz.getTerminarz().get(numerRundy-1).getMecze()
-        );
-
-
-
-
-        model.addAttribute("numerRundy", numerRundy);
-
-
-        return "LK/terminarz/terminarz";
-    }
-
-*/
 
     @RequestMapping("/dodajTerminarz")
 public String dodajTerminarz(Model model) throws JAXBException, IOException, ParserConfigurationException, SAXException
@@ -368,29 +147,15 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
          ) {
         graczeOpakowani.add(new graczOpakowanie(false,gracz));
     }
-    ////////////////////////////////////////////////////////
-/*
-        var a = new LKUserServiceImpl(MZUserService);
 
-      var  grajki=  new TeamTM(MZUserService).wczytajUPSGZXML().getSkladUPSG();
-     grajki.get(0);
-List<String>templist= new ArrayList<String>();
-    for (var item:grajki
-         ) {
-       templist.add(item.getUsername()) ;
-    }
-       a.zapiszGraczyDoXML(templist.get(0),templist.get(1),templist.get(2),templist.get(3));
-    a.dodajGraczaDoXML(grajki.get(1));
-    a.usunGraczaZXML( grajki.get(0));*/
 
-    //    model.addAttribute("gracze",graczeOpakowani);
+
 
         var terminarzCommand = new TerminarzCommand();
-   // terminarzCommand.setListaGraczy(graczeOpakowani);
-   //terminarzCommand.getListaGraczy().get(0).getGracz().getUsername()
+
    model.addAttribute("gracze",gracze);
         model.addAttribute("terminarz",terminarzCommand);
-      //  return "LK/terminarz/dodajTerminarz";
+
         return "LK/terminarz/dodajTerminarz";
     }
 
@@ -468,7 +233,7 @@ return "redirect:/terminarz";
 int oo=9;
      this.numerRundy=numerRundy;
         return "redirect:/terminarz";
-//return "redirect:/LKManager.LK/terminarz";
+
     }
 
 
@@ -481,15 +246,13 @@ public class TerminarzCommand
 
  private String data;
  private String nazwa;
-//  private List<graczOpakowanie> listaGraczy;
+
 
     public void setListaGraczy(){
-            //(List<graczOpakowanie> listaGraczy) {
-     //   this.listaGraczy = listaGraczy;
+
     }
 
-   /* public List<graczOpakowanie> getListaGraczy() {
-        return listaGraczy;*/
+
     }
 
 

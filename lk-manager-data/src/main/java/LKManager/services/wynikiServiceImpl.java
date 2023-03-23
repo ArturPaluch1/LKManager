@@ -27,22 +27,14 @@ private final TerminarzService terminarzService;
         this.terminarzService = terminarzService;
     }
 
-  /*  @Override
-    public Terminarz wyswietlWyniki(Integer runda) {
 
-     return   jaxbXMLToObject("terminarz.xml");
-
-
-
-
-    }*/
 
     @Override
     public void aktualizujWyniki(Integer runda, Terminarz terminarz, MatchService matchService, String nazwaPliku) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-        XMLGregorianCalendar xmlGregorianCalendar;
+
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
         XMLGregorianCalendar now =
@@ -60,7 +52,7 @@ private final TerminarzService terminarzService;
 
 
             if(  item.getNr()==runda) {
-                // item.mecze == mecze danej rundy
+
 
 
                 for (var mecz : item.getMecze()
@@ -73,18 +65,13 @@ private final TerminarzService terminarzService;
 
 
 
-                         /*                 mecz.setUserMatchResult1(11);
-                    mecz.setOpponentMatchResult1(12);
-                    mecz.setUserMatchResult2(21);
-                    mecz.setOpponentMatchResult2(22);*/
                         var user = mecz.getUser();
                         var userTeamId = user.getTeamlist().get(0).getTeamId();
                         var oponent = mecz.getopponentUser();
                         var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
 
                         var rozegrane = matchService.findPlayedByUsername(user.getUsername());
-//rozegrane.getMatches().stream().
-                        //   filter(a->a.)
+
                         var meczeTurniejowe = rozegrane.getMatches().stream().
                                 filter(a -> a.getDate().contains(item.getData().toString())).
                                 filter(a -> a.getType().equals("friendly")).collect(Collectors.toList());
@@ -115,34 +102,21 @@ private final TerminarzService terminarzService;
                                 }
 
 
-                                //    mecz.setMatchResult1("2");
-                                //    mecz.setMatchResult1(rozegranyMecz.getTeamlist().get(1).getGoals()+" : "+rozegranyMecz.getTeamlist().get(0).getGoals());
-                            }
+                                      }
 
                         }
-                        //           filter(a->a..equals("friendly")).
-                        //                   filter(a->a.getTeamId()== mecz.getopponentUser().getTeamlist().get(0).getTeamId()).
-                        //.getTeamId()==mecz.getopponentUser().getTeamlist().get(0).getTeamId()).
-
-                        //  filter(a->a.getType().equals("friendly")).
-                        //      filter(a->a.getDate().contains(item.getData().toString())).
-
-                        int y = 0;
-
 
                     }
 
 
-                    //   item.getMecze().
 
                 }
-                //   List<Match> matches = matchService.findPlayedByUsername(user.getUsername()).getMatches().stream().filter(a -> LocalDate.parse(a.getDate(), formatter).isAfter(LocalDate.now().minusDays(7))).collect(Collectors.toList());
 
             }
         }
 zapiszDoXml(terminarz, nazwaPliku);
 
-     // jaxbObjectToXML(terminarz);
+
     }
 
     @Override
@@ -157,11 +131,9 @@ zapiszDoXml(terminarz, nazwaPliku);
             //Required formatting??
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            //tutaj chyba ścieżka ma być ta zakomentowana
-            //Store XML to File lk-manager-data/src/main/java/LKManager/skladUPSG.xml
+
 
             File file = new File("Data/terminarze/"+nazwaPliku);
-           // File file = new File("XMLData/terminarz.xml");
 
             //Writes XML file to file-system
             jaxbMarshaller.marshal(calyTerminarz, file);
@@ -169,15 +141,6 @@ zapiszDoXml(terminarz, nazwaPliku);
             e.printStackTrace();
         }
     }
-/*
-    @Override
-    public void zapiszDoXml() {
-zapiszDoXml();
-    }
 
-    @Override
-    public void WczytajZXml() {
-
-    }*/
 
 }

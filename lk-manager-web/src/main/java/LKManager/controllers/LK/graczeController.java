@@ -84,7 +84,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
                 }
             }
 
-          //  lkUserService.zapiszGraczyDoXML(wybraniGracze);
+
         }
 
 
@@ -120,7 +120,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
             {
                 //czy jest o takim id w mz
                 var graczMZ= mzUserService.findByUsername(wybranyGracz);
-         //       var gracze=lkUserService.wczytajGraczyZXML();
+
                 if(!gracze.stream()
                         .filter(a->a.getUserId().equals(graczMZ.getUserId())
                         ).findFirst().isEmpty()
@@ -161,7 +161,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
                     }
                 }
 
-                //  lkUserService.zapiszGraczyDoXML(wybraniGracze);
+
             }
 
 

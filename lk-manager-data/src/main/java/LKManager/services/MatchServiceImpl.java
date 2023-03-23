@@ -1,9 +1,7 @@
-package LKManager.services.map;
+package LKManager.services;
 
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.MatchesMz.Matches;
-import LKManager.services.CrudService;
-import LKManager.services.DocumentManager;
 import LKManager.services.MatchService;
 import LKManager.services.URLs;
 import org.springframework.stereotype.Service;
@@ -14,7 +12,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.List;
 import java.util.Set;
 
 import static LKManager.services.URLs.URLtoMatches;

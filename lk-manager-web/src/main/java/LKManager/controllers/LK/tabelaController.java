@@ -28,20 +28,19 @@ import java.util.List;
 //@RequestMapping({"tabela.html", "tabela", "tabela"} )
 public class tabelaController {
     private final MZUserService MZUserService;
-    private final MatchService matchService;
-  //  private List<UserData> skladTM = new ArrayList<>();
+
 private final TerminarzService terminarzService;
-    private final TeamTM teamTM;
+
     private String wybranyTerminarz;
     private  Terminarz terminarz;
     private final  PlikiService plikiService;
 private final LKUserService lkUserService;
-    public tabelaController(MZUserService MZUserService, MatchService matchService, TerminarzService terminarzService, TeamTM teamTM, PlikiService plikiService, LKUserService lkUserService) {
+    public tabelaController(MZUserService MZUserService,  TerminarzService terminarzService,  PlikiService plikiService, LKUserService lkUserService) {
         this.MZUserService = MZUserService;
-        this.matchService = matchService;
+
         this.terminarzService = terminarzService;
 
-        this.teamTM = teamTM;
+
         this.plikiService = plikiService;
         this.lkUserService = lkUserService;
     }
@@ -51,21 +50,9 @@ private final LKUserService lkUserService;
     public String index(Model model,  @RequestParam(value="wybranyTerminarz", required = false)String wybranyTerminarz) throws URISyntaxException, IOException, JAXBException {
 
 
-/*//var terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/terminarz.xml");
-     //  var terminarz=terminarzService  .wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-       var terminarz=terminarzService
-               .wczytajTerminarz("Data/terminarze/terminarz.xml");
-       Tabela tabela = new Tabela();
 
 
 
-    //   if() todo jak tabeli pliku nie ma
-           //   TeamTM
-   //        for (var item :teamTM.wczytajUPSGZXML().getSkladUPSG()
-
-
-
-       */
 
        if(wybranyTerminarz!=null)
        {
@@ -80,7 +67,7 @@ private final LKUserService lkUserService;
 
        }
 
-    //   Terminarz terminarz = new Terminarz();
+
 
 
        var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
@@ -114,7 +101,6 @@ private final LKUserService lkUserService;
 
 
 
-//terminarz.getTerminarz().get(0).getMecze().get(0).getUser().getUsername();
 
 
        for (var item :lkUserService.wczytajGraczyZXML()
@@ -147,10 +133,7 @@ private final LKUserService lkUserService;
           var meczUser = mecz.getUser();
           var meczOpponent = mecz.getopponentUser();
 
-/*var user =tabela.getGraczePodsumowanie().stream().
-        findFirst().filter(a->a.getGracz().getUserId().equals(mecz.getUser().getUserId()))
-        .orElse(null);
-*/
+
           var   user =tabela.getGraczePodsumowanie().stream().
                   filter(a->a.getGracz().getUserId().equals(mecz.getUser().getUserId())).findFirst().orElse(null);
           var   userOp =tabela.getGraczePodsumowanie().stream().
@@ -163,12 +146,7 @@ private final LKUserService lkUserService;
               var goleStrzelone2 =mecz.getUserMatchResult2();
               var goleStracone1= mecz.getOpponentMatchResult1();
               var goleStracone2=mecz.getOpponentMatchResult2();
-/*
-              if(goleStrzelone1=="")goleStrzelone1="0";
-              if(goleStrzelone2=="")goleStrzelone2="0";
-              if(goleStracone1=="")goleStracone1="0";
-              if(goleStracone2=="")goleStracone2="0";
-*/
+
               if(goleStrzelone1==""||goleStrzelone2==""||goleStracone1==""||goleStracone2=="")
               {
 // nic nie rob ( Skoro nie ma wyników, to znaczy, że team id z terminarza nie równa się team id z rozegranego meczu,
@@ -345,32 +323,7 @@ boolean nowaRownosc= false;
        tabela.setGraczePodsumowanie(tempstring);
 
        //// sprawdzanie czy roznica jest rowna i sortowanie po strzelonych
-    /*   gracze.clear();
-       gracze=tabela.getGraczePodsumowanie();
 
-       List<Integer> listaIndeksow2= new ArrayList<>();
-       listaIndeksow2.add(0);
-       for (int i = 0; i <gracze.size()-1 ; i++) {
-           if(!(gracze.get(i+1).getSumaPunktow().equals(gracze.get(i).getSumaPunktow())))
-           {
-               listaIndeksow2.add(i+1);
-           }
-
-       }
-
-       List<GraczPodsumowanie> tempstring2=new ArrayList<>();
-       for (int i = 0; i <listaIndeksow.size()-1 ; i++) {
-           var  posortowane=  gracze.subList(listaIndeksow.get(i),listaIndeksow.get(i+1));
-           posortowane.sort(new GraczPodsumowanieComparatorGoalDifference());
-           tempstring.addAll(posortowane);
-       }
-
-       var  posortowane=  gracze.subList(listaIndeksow.get(listaIndeksow.size()-1),gracze.size());
-       posortowane.sort(new GraczPodsumowanieComparatorGoalDifference());
-       tempstring.addAll(posortowane);
-
-
-       */
 
        ///////////////////////////////
 

@@ -80,7 +80,7 @@
 
                 <td>
                     <form  th:action="@{/aktualizuj}" method="post">
-                        <button id="sam"  onclick="myFunction1()">Aktualizuj wyniki</button>
+                        <button id="sam" >Aktualizuj wyniki</button>
                         <input  hidden  th:name="numerRundy" th:value="${numerRundy}"></input>
                         <input hidden   th:name="wybranyTerminarz" th:value="${wybranyTerminarz}"></input>
 
@@ -253,25 +253,7 @@
 
 
 
-<script>
 
-function  myFunction1()
-{
-
-//  var btn= document.getElementById("form1");
- // var act=btn.getAttribute="action";
-// btn.setAttribute("th:action","@{/aktualizuj}") // Try edit me
- // btn.setAttribute("method","post") // Try edit me
- // btn.setAttributeNode("action","action")
-//const message1 = btn.getAttribute('action') // Try edit me
-console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-// console.log(btn.getAttribute('th:action'))
-//var btn1= document.getElementById("sam");
-//btn.click();
-}
-
-
-</script>
 <script>
       function myFunction() {
         var result = "";
@@ -411,17 +393,6 @@ edytujTabelaForm.submit();
 </script>
 
 
-
-<script>
-//temp funkcja
-    function bob()
-    {
-
-document.getElementById("i").classList.replace('display','notDisplay')
-  alert("Copied the text: " );
-   //  form.submit();
-    }
-</script>
 
 
 

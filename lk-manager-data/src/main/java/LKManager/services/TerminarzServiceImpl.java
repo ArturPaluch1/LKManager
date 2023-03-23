@@ -71,8 +71,7 @@ public class TerminarzServiceImpl implements TerminarzService {
                 tempMatch.setopponentUser(listyGrajkow.getGrajkiB().get(i));
 
 
-               // tempMatch.setUserName(listyGrajkow.getGrajkiA().get(i).getUsername());
-             //   tempMatch.setopponentUser(listyGrajkow.getGrajkiB().get(i).getUsername());
+
                 runda.getMecze().add(tempMatch);
 
             }
@@ -80,18 +79,11 @@ runda.setStatus(Runda.status.nierozegrana);
             calyTerminarz.add(runda);
             System.out.println("=======" + runda.getNr() + " === " + runda.getData());
             listyGrajkow.przesunListy();
-            /////////////////////////////////////////////
+
         }
 
 
 
-///////////////////////////////////////////zwykly plik
- /*       FileOutputStream fos2 = new FileOutputStream("terminarz.tmp");
-        ObjectOutputStream oos2 = new ObjectOutputStream(fos2);
-        oos2.writeObject(calyTerminarz);
-        oos2.close();
-
-*/
 
 
         /////////////// zapis termnarza do xml    //////////////////////
@@ -146,22 +138,7 @@ runda.setStatus(Runda.status.nierozegrana);
             //Required formatting??
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-            //Store XML to File
-            ///////////////////////////////////////////////
-           // File targetFile = new File("/Data/skladUPSG.xml");
-         /*   InputStream in = this.getClass().getPackageName()
-                    getResourceAsStream("/Data/terminarz.xml");
-             File file1 = new File(in.toString());
-            OutputStream file = new FileOutputStream(file1);
-*/
- //  Path source = Paths.get(this.getClass().getResource("/").getPath());
-    //        Path newFolder = Paths.get(source.toAbsolutePath() + "/newFolder/");
 
-        //    testText = new String(this.getClass().getResourceAsStream("/test.txt").readAllBytes());
-         //   Files.createDirectories(newFolder);
-           // File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-     /////////////////////////////////////////////////////////////////
-         //   File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
             new File("Data/terminarze").mkdir();
 
             File file;
@@ -213,8 +190,8 @@ runda.setStatus(Runda.status.nierozegrana);
     }
 
     class ListyGrajkow {
-        private List<UserData> grajkiPrzesunieteA;//= new ArrayList<>();
-        private List<UserData> grajkiPrzesunieteB;//= new ArrayList<>();
+        private List<UserData> grajkiPrzesunieteA;
+        private List<UserData> grajkiPrzesunieteB;
         private List<UserData> grajkiA;
         private List<UserData> grajkiB;
 
@@ -276,22 +253,10 @@ runda.setStatus(Runda.status.nierozegrana);
             }
             grajkiPrzesunieteB.add(grajkiA.get(grajkiA.size() - 1));
 
-            //////////////
-
-            // grajkiA.clear();
-            //   grajkiB.clear();
-//            for (int i = 0; i < grajkiPrzesunieteA.size(); i++) {
-//                grajkiA.set(i,grajkiPrzesunieteA.get(i));
-//                grajkiB.set(i,grajkiPrzesunieteB.get(i));
-//            }
 
             grajkiA = grajkiPrzesunieteA;
             grajkiB = grajkiPrzesunieteB;
-            //    grajkiPrzesunieteA.clear();
-            //    grajkiPrzesunieteB.clear();
 
-
-            //    return new listyGrajkow();
         }
     }
 }

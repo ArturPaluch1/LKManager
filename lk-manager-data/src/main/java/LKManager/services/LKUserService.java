@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface LKUserService   {
 
-   // List<UserData> wczytajWszystkichGraczy();
+   
     UserData dodajGraczaDoXML(UserData gracz) throws JAXBException, IOException, ParserConfigurationException, SAXException;
     boolean usunGraczaZXML(UserData gracz) throws JAXBException, ParserConfigurationException, IOException, SAXException;
     List<UserData> zapiszGraczyDoXML(List<String>gracze) throws JAXBException, IOException, ParserConfigurationException, SAXException;

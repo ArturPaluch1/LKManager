@@ -64,13 +64,11 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
 
-        //  URL url2 = y;
+
 
 
         ManagerZone_UserData user = (ManagerZone_UserData) jaxbUnmarshaller.unmarshal( url);
-        //  user1 = (ManagerZone_UserData) jaxbUnmarshaller.unmarshal(doc);
 
-    //    System.out.println(user);
         return user.getUserData();
 
 
@@ -78,21 +76,20 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
 
     public static Matches URLtoMatches(URL url) throws JAXBException, ParserConfigurationException, SAXException, IOException {
 
-        //    Document doc = URLtoDocument(url);
+
         JAXBContext jaxbContext;
-     /* try
-      {*/
+
         jaxbContext = JAXBContext.newInstance (Matches.class);
 
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 
 
-        //  URL url2 = y;
+
 
 
         Matches matches = (Matches) jaxbUnmarshaller.unmarshal( url);
 
-     //   System.out.println(matches.getMatches().get(0).getTeamlist().get(0).getTeamName());
+
         return matches;
 
 

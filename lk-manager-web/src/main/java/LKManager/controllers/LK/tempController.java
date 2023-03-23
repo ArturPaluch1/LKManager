@@ -26,17 +26,17 @@ import java.util.List;
 @Controller
 public class tempController {
     private final LKManager.services.MZUserService MZUserService;
-    private final MatchService matchService;
+
     private final TerminarzService terminarzService;
-   // private Integer numerRundy;
-    private Terminarz terminarz;
+
+
     private final PlikiService plikiService;
-    private String poprzednioWybranyTerminarz;
+
     private  final WynikiService wynikiService;
-   private File[] terminarze;
-    public tempController(LKManager.services.MZUserService mzUserService, MatchService matchService, TerminarzService terminarzService, PlikiService plikiService, WynikiService wynikiService) {
+
+    public tempController(LKManager.services.MZUserService mzUserService, TerminarzService terminarzService, PlikiService plikiService, WynikiService wynikiService) {
         MZUserService = mzUserService;
-        this.matchService = matchService;
+
         this.terminarzService = terminarzService;
         this.plikiService = plikiService;
         this.wynikiService = wynikiService;

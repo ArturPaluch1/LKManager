@@ -81,7 +81,7 @@ private final MZUserService mzUserService;
       var grajek=  gracze.stream().filter(a->a.getUserId().equals(gracz.getUserId())).collect(Collectors.toList());
         gracze.remove(grajek.get(0));
         zapiszDoXML(gracze);
-       // gracze.stream().
+
         return true;
     }
     public boolean usunGraczaZXML(String gracz) throws JAXBException, ParserConfigurationException, IOException, SAXException {
@@ -163,7 +163,7 @@ else
 
 
 
-                //  System.out.println(terminarz1.getTerminarz());
+
                 return gracze.getGracze();
             }
             else
@@ -194,7 +194,6 @@ else
             new File("Data/gracze").mkdir();
             File file = new File("Data/gracze/gracze.xml");
 
-            //   File file = new File("lk-manager-web/src/main/java/LKManager/XMLData/skladUPSG.xml");
 
             //Writes XML file to file-system
             Gracze klasaGracze= new Gracze();

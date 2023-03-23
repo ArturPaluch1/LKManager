@@ -30,9 +30,8 @@ public class MZUserServiceImpl implements MZUserService, Serializable {
     public UserData findById(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {
 
 URL url = URLs.MakeUserURL(Teamid);
-   //     URL url=  MakeUserURL(id);
-    //    Document doc = MakeDocumentFromUrl(url);
-        return URLs.URLtoUserData(url); //ParseXMLtoUserData(doc);
+
+        return URLs.URLtoUserData(url);
 
     }
 

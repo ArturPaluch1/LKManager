@@ -1,7 +1,5 @@
 package LKManager.model.MatchesMz;
 
-import LKManager.model.UserMZ.Team;
-import LKManager.model.UserMZ.UserData;
 
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
