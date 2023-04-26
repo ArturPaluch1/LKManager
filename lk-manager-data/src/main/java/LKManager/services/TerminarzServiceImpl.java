@@ -30,7 +30,7 @@ public class TerminarzServiceImpl implements TerminarzService {
 
 
     @Override
-    public void utworzTerminarz(XMLGregorianCalendar data, List<UserData> grajki, String nazwa) throws DatatypeConfigurationException {
+    public void utworzTerminarzWielodniowy(XMLGregorianCalendar data, List<UserData> grajki, String nazwa) throws DatatypeConfigurationException {
 
         ////////////////////////////////////////////////////////
         dodajPauzeDlaParzystosci(grajki);
@@ -91,6 +91,92 @@ runda.setStatus(Runda.status.nierozegrana);
         jaxbObjectToXML(terminarz,nazwa);
 
 /////////////////////////////////////////////
+
+
+
+    }
+
+    @Override
+    public void utworzTerminarzJednodniowy(XMLGregorianCalendar data, List<UserData> mecze, String nazwa) {
+
+
+        ////////////////////////////////////////////////////////
+   //     dodajPauzeDlaParzystosci(grajki);
+/////////////////podzial grajkow na pol  /////////////////
+  /*      var grajkiA = grajki.subList(0, (grajki.size()) / 2);
+        var grajkiB = grajki.subList(grajki.size() / 2, grajki.size());
+
+
+        Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
+        ListyGrajkow listyGrajkow = new ListyGrajkow(grajkiA, grajkiB);
+*/
+        List<Runda> calyTerminarz = new ArrayList<>();
+
+/////////tworzenie terminarza/////////////////
+
+            /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
+            Runda runda;
+
+                runda = new Runda(1, data);
+
+        for (int i = 0; i < mecze.size(); i++) {
+            if(i%2!=0)
+            {
+int yy=0;
+            }
+            else
+            {
+                var tempMatch = new Match();
+                tempMatch.setUser(mecze.get(i));
+                tempMatch.setopponentUser(mecze.get(i+1));
+                runda.getMecze().add(tempMatch);
+            }
+
+
+        }
+        runda.setStatus(Runda.status.nierozegrana);
+        calyTerminarz.add(runda);
+        System.out.println("=======" + runda.getNr() + " === " + runda.getData());
+
+
+
+
+
+
+        //////////ustalanie par /////////////////////////////
+  /*          for (int i = 0; i < grajkiA.size(); i++) {
+
+                var para = listyGrajkow.getGrajkiA().get(i).getUsername() + " - " + listyGrajkow.getGrajkiB().get(i).getUsername();
+                System.out.println(para);
+
+                var tempMatch = new Match();
+                tempMatch.setUser(listyGrajkow.getGrajkiA().get(i));
+                tempMatch.setopponentUser(listyGrajkow.getGrajkiB().get(i));
+
+
+
+                runda.getMecze().add(tempMatch);
+
+            }
+            runda.setStatus(Runda.status.nierozegrana);
+            calyTerminarz.add(runda);
+            System.out.println("=======" + runda.getNr() + " === " + runda.getData());
+            listyGrajkow.przesunListy();
+
+
+
+*/
+
+
+
+        /////////////// zapis termnarza do xml    //////////////////////
+        Terminarz terminarz = new Terminarz(calyTerminarz);
+        jaxbObjectToXML(terminarz,nazwa);
+
+/////////////////////////////////////////////
+
+
+
 
 
 

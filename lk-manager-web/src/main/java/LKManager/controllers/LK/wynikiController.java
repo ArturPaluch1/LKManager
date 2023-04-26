@@ -4,12 +4,14 @@ import LKManager.LK.Runda;
 import LKManager.LK.Terminarz;
 import LKManager.model.MatchesMz.Match;
 import LKManager.services.*;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.webjars.NotFoundException;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -92,6 +94,17 @@ public class wynikiController {
 
         if(wybranyTerminarz!=null)
         {
+            //sprawdzanie czy jest taki terminarz
+
+            terminarz = terminarzService.wczytajTerminarz(wybranyTerminarz);
+            if(terminarz==null)
+            {
+//todo przekierowanie że nie ma takiego terminarza
+                return "redirect:/temp";
+            }
+
+
+
             //nastapila zmiana terminarza ->nr rundy=1
             if(wybranyTerminarz.equals(this.poprzednioWybranyTerminarz)||this.poprzednioWybranyTerminarz==null)
             {
@@ -140,7 +153,7 @@ public class wynikiController {
                 model.addAttribute("runda", terminarz.getTerminarz().get(0));
 
 
-                model.addAttribute("mecze",terminarz.getTerminarz().get(0).getMecze() );
+                model.addAttribute("mecze",terminarz.getTerminarz().get(0).getMecze());
             }
 
         }
@@ -189,10 +202,11 @@ public class wynikiController {
                                @RequestParam(value = "OpponentMatchResult2", required=false ) List<String> OpponentMatchResult2,
                                @RequestParam(value = "bob", required=false ) List<String> bob) throws JAXBException {
 
+
         numerRundy--;
         if(numerRundy==-1)
         {
-            numerRundy=1;
+            numerRundy=0;
         }
         //folder z terminarzami
         terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
@@ -250,8 +264,10 @@ public class wynikiController {
             Model model,
             RedirectAttributes redirectAttributes,
             @RequestParam(value = "numerRundy",required = true)Integer numerRundy,
-            @RequestParam(value = "wybranyTerminarz", required = true)String wybranyTerminarz) throws JAXBException, DatatypeConfigurationException, ParserConfigurationException, IOException, SAXException {
-        if(numerRundy== null)
+            @RequestParam(value = "wybranyTerminarz", required = true)String wybranyTerminarz
+
+    ) throws JAXBException, DatatypeConfigurationException, ParserConfigurationException, IOException, SAXException {
+        if(numerRundy== null||numerRundy==0)
         {
             numerRundy=1;
         }
@@ -353,4 +369,28 @@ int y=9;
     }
 
 
+/*
+@ResponseStatus(HttpStatus.NOT_FOUND)
+@ExceptionHandler(NotFoundException.class)
+    public ModelAndView handleNotFound()
+    {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("temp");
+        return  mav;
+    }
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class NotFoundException extends  RuntimeException{
+    public NotFoundException() {
+        super();
+    }
+
+    public NotFoundException(String message) {
+        super(message);
+    }
+
+    public NotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}
+*/
 }

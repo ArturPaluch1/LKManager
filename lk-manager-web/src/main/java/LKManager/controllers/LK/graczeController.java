@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 public class graczeController {
@@ -23,6 +24,10 @@ private final MZUserService mzUserService;
 public String wyswietlGraczy(Model model)
 {
    var gracze= lkUserService.wczytajGraczyZXML();
+
+    gracze= gracze.stream().sorted(
+            (o1,o2)->o1.getUsername().compareToIgnoreCase(o2.getUsername())
+    ).collect(Collectors.toList());
 
    model.addAttribute("gracze", gracze);
     return "LK/gracze";
@@ -40,6 +45,10 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
             //czy jest o takim id w mz
             var graczMZ= mzUserService.findByUsername(wybranyGracz);
           var gracze=lkUserService.wczytajGraczyZXML();
+            gracze= gracze.stream().sorted(
+                    (o1,o2)->o1.getUsername().compareToIgnoreCase(o2.getUsername())
+            ).collect(Collectors.toList());
+
           if(gracze!=null)
           {
               if(!gracze.stream()
@@ -94,7 +103,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
 
             return "redirect:/gracze";
 
-//todo w razie pustego i  inputa i checkboxa
+//todo w razie pustego/zlego nicku i  inputa i checkboxa
     }
     catch (Exception e)
     {

@@ -48,10 +48,24 @@ day.onclick = function()
               /*     alert(i - first_day.getDay() + 1);*/
        //           console.log(document.getElementById("labelData").innerText);
 
+
+  let pickedDate = new Date()
+pickedDate.setDate(i-1 );
+pickedDate.setMonth(month);
+pickedDate.setYear(year);
+//if(currDate)
+//alert(pickedDate+"   "+currDate)
+if(pickedDate<currDate)
+{alert("Data rozpoczęcia nie może być wcześniejsza od dzisiaj")
+}
+else
+{
+
+
 let labelData= document.getElementById("labelData");
 let inputData= document.getElementById("inputData");
-labelData.innerHTML="  "+year+"-"+month+"-"+ (i - first_day.getDay() + 1);
-inputData.value="  "+year+"-"+month+"-"+ (i - first_day.getDay() + 1);
+labelData.innerHTML="  "+year+"-"+(month+1)+"-"+ (i - first_day.getDay() + 1);
+inputData.value="  "+year+"-"+(month+1)+"-"+ (i - first_day.getDay() + 1);
   console.log(document.getElementById("labelData").innerText);
 
     console.log(labelData.value);
@@ -61,10 +75,35 @@ let calendar_days1 = document.getElementById("sam");
 
  /* calendar_days1.children.forEach(element => element.classList.add('select'));*/
 let month_list = calendar.querySelector('.calendar-day-hover')
-console.log( calendar_days1.children.length)
+
 /*month_list.children.forEach(element => element.classList.remove('select'));
 month_list.classList.remove('select')*/
+//day.classList.add('select')
+
+
+var t= document.getElementsByClassName('select');
+/*
+t.forEach(
+a=>{a.classList.remove('select')
+console.log( "kk"+a)
+}
+)
+*/
+  console.log("a"+t)
+for (var ii = 0; ii < t.length; ii++) {
+t[ii].classList.remove('select')
+
+   //   console.log("b"+t[ii].innerHTML);
+  }
+
 day.classList.add('select')
+
+
+
+
+}
+
+
                   }
 
 

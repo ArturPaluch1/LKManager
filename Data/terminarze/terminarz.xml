@@ -131,7 +131,7 @@
                 <Team teamId="390844" teamName="Żuberia United"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="0" typeId="0" userMatchResult1="3" userMatchResult2="11">
             <user userId="4925695" username="olborinho">
                 <Team teamId="393423" teamName="Spartans Lodz"/>
             </user>
@@ -370,8 +370,8 @@
             </opponentUser>
         </Match>
     </Runda>
-    <Runda data="2023-03-28" nr="6" status="nierozegrana">
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+    <Runda data="2023-03-28" nr="6" status="rozegrana">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="3" typeId="0" userMatchResult1="1" userMatchResult2="1">
             <user userId="8589347" username="marc0888">
                 <Team teamId="394189" teamName="SMOCZANKA MIELEC"/>
             </user>
@@ -379,7 +379,7 @@
                 <Team teamId="382280" teamName="Miastostumostów"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="2" typeId="0" userMatchResult1="2" userMatchResult2="4">
             <user userId="1929702" username="k0niak">
                 <Team teamId="387608" teamName="Mafia Koniaka"/>
             </user>
@@ -387,7 +387,7 @@
                 <Team teamId="408213" teamName="FC Lazio Zamość"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="4" opponentMatchResult2="2" typeId="0" userMatchResult1="1" userMatchResult2="1">
             <user userId="282616" username="yarek">
                 <Team teamId="150648" teamName="Przemysl"/>
             </user>
@@ -403,7 +403,7 @@
                 <Team teamId="1226443" teamName="Heerenveen DB"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="0" typeId="0" userMatchResult1="4" userMatchResult2="4">
             <user userId="8521390" username="szuram">
                 <Team teamId="408692" teamName="KS Bukowe"/>
             </user>
@@ -411,7 +411,7 @@
                 <Team teamId="395077" teamName="Zdrapy"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="5" opponentMatchResult2="1" typeId="0" userMatchResult1="2" userMatchResult2="1">
             <user userId="1774519" username="kingsajz">
                 <Team teamId="201436" teamName="Wisła Kraków Old Boys"/>
             </user>
@@ -419,7 +419,7 @@
                 <Team teamId="408700" teamName="KS Olimpia Warszawa"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="4" opponentMatchResult2="0" typeId="0" userMatchResult1="1" userMatchResult2="2">
             <user userId="4451013" username="ciosek_999">
                 <Team teamId="419313" teamName="Fragleses"/>
             </user>
@@ -427,7 +427,7 @@
                 <Team teamId="393423" teamName="Spartans Lodz"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="1" typeId="0" userMatchResult1="5" userMatchResult2="4">
             <user userId="8160724" username="mnowak">
                 <Team teamId="391090" teamName="Lekko Spoceni"/>
             </user>
@@ -435,7 +435,7 @@
                 <Team teamId="106223" teamName="FC Harnaś Sanok"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="6" typeId="0" userMatchResult1="9" userMatchResult2="0">
             <user userId="5680419" username="speedylfc">
                 <Team teamId="378610" teamName="Fala Szczecin"/>
             </user>
@@ -444,8 +444,8 @@
             </opponentUser>
         </Match>
     </Runda>
-    <Runda data="2023-04-04" nr="7" status="nierozegrana">
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+    <Runda data="2023-04-04" nr="7" status="rozegrana">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="1" typeId="0" userMatchResult1="0" userMatchResult2="3">
             <user userId="8589347" username="marc0888">
                 <Team teamId="394189" teamName="SMOCZANKA MIELEC"/>
             </user>
@@ -453,7 +453,7 @@
                 <Team teamId="408213" teamName="FC Lazio Zamość"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="3" typeId="0" userMatchResult1="5" userMatchResult2="2">
             <user userId="854965" username="szczepinho">
                 <Team teamId="382280" teamName="Miastostumostów"/>
             </user>
@@ -461,7 +461,7 @@
                 <Team teamId="390844" teamName="Żuberia United"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="2" typeId="0" userMatchResult1="7" userMatchResult2="10">
             <user userId="1929702" username="k0niak">
                 <Team teamId="387608" teamName="Mafia Koniaka"/>
             </user>
@@ -469,7 +469,7 @@
                 <Team teamId="1226443" teamName="Heerenveen DB"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="0" typeId="0" userMatchResult1="4" userMatchResult2="8">
             <user userId="282616" username="yarek">
                 <Team teamId="150648" teamName="Przemysl"/>
             </user>
@@ -477,7 +477,7 @@
                 <Team teamId="395077" teamName="Zdrapy"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="1" typeId="0" userMatchResult1="6" userMatchResult2="2">
             <user userId="8249759" username="kamilosin">
                 <Team teamId="400994" teamName="FC Mazovia"/>
             </user>
@@ -485,7 +485,7 @@
                 <Team teamId="408700" teamName="KS Olimpia Warszawa"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="0" typeId="0" userMatchResult1="3" userMatchResult2="6">
             <user userId="8521390" username="szuram">
                 <Team teamId="408692" teamName="KS Bukowe"/>
             </user>
@@ -493,7 +493,7 @@
                 <Team teamId="393423" teamName="Spartans Lodz"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="2" typeId="0" userMatchResult1="3" userMatchResult2="1">
             <user userId="1774519" username="kingsajz">
                 <Team teamId="201436" teamName="Wisła Kraków Old Boys"/>
             </user>
@@ -501,7 +501,7 @@
                 <Team teamId="106223" teamName="FC Harnaś Sanok"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="4" opponentMatchResult2="0" typeId="0" userMatchResult1="0" userMatchResult2="2">
             <user userId="4451013" username="ciosek_999">
                 <Team teamId="419313" teamName="Fragleses"/>
             </user>
@@ -509,7 +509,7 @@
                 <Team teamId="406799" teamName="Harry Noble House FC"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="0" typeId="0" userMatchResult1="16" userMatchResult2="16">
             <user userId="8160724" username="mnowak">
                 <Team teamId="391090" teamName="Lekko Spoceni"/>
             </user>
@@ -518,8 +518,8 @@
             </opponentUser>
         </Match>
     </Runda>
-    <Runda data="2023-04-11" nr="8" status="nierozegrana">
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+    <Runda data="2023-04-11" nr="8" status="rozegrana">
+        <Match id="0" opponentMatchResult1="1" opponentMatchResult2="0" typeId="0" userMatchResult1="3" userMatchResult2="2">
             <user userId="8589347" username="marc0888">
                 <Team teamId="394189" teamName="SMOCZANKA MIELEC"/>
             </user>
@@ -527,7 +527,7 @@
                 <Team teamId="390844" teamName="Żuberia United"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="1" typeId="0" userMatchResult1="3" userMatchResult2="7">
             <user userId="6198114" username="hetman_zmc">
                 <Team teamId="408213" teamName="FC Lazio Zamość"/>
             </user>
@@ -535,7 +535,7 @@
                 <Team teamId="1226443" teamName="Heerenveen DB"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="0" typeId="0" userMatchResult1="7" userMatchResult2="7">
             <user userId="854965" username="szczepinho">
                 <Team teamId="382280" teamName="Miastostumostów"/>
             </user>
@@ -551,7 +551,7 @@
                 <Team teamId="408700" teamName="KS Olimpia Warszawa"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="1" opponentMatchResult2="2" typeId="0" userMatchResult1="0" userMatchResult2="2">
             <user userId="282616" username="yarek">
                 <Team teamId="150648" teamName="Przemysl"/>
             </user>
@@ -559,7 +559,7 @@
                 <Team teamId="393423" teamName="Spartans Lodz"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="1" opponentMatchResult2="1" typeId="0" userMatchResult1="4" userMatchResult2="6">
             <user userId="8249759" username="kamilosin">
                 <Team teamId="400994" teamName="FC Mazovia"/>
             </user>
@@ -567,7 +567,7 @@
                 <Team teamId="106223" teamName="FC Harnaś Sanok"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="5" typeId="0" userMatchResult1="0" userMatchResult2="2">
             <user userId="8521390" username="szuram">
                 <Team teamId="408692" teamName="KS Bukowe"/>
             </user>
@@ -575,7 +575,7 @@
                 <Team teamId="406799" teamName="Harry Noble House FC"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="1" opponentMatchResult2="1" typeId="0" userMatchResult1="3" userMatchResult2="4">
             <user userId="1774519" username="kingsajz">
                 <Team teamId="201436" teamName="Wisła Kraków Old Boys"/>
             </user>
@@ -583,7 +583,7 @@
                 <Team teamId="378610" teamName="Fala Szczecin"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="5" opponentMatchResult2="5" typeId="0" userMatchResult1="4" userMatchResult2="2">
             <user userId="4451013" username="ciosek_999">
                 <Team teamId="419313" teamName="Fragleses"/>
             </user>
@@ -592,7 +592,7 @@
             </opponentUser>
         </Match>
     </Runda>
-    <Runda data="2023-04-18" nr="9" status="nierozegrana">
+    <Runda data="2023-04-18" nr="9" status="rozegrana">
         <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
             <user userId="8589347" username="marc0888">
                 <Team teamId="394189" teamName="SMOCZANKA MIELEC"/>
@@ -609,7 +609,7 @@
                 <Team teamId="395077" teamName="Zdrapy"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="2" typeId="0" userMatchResult1="1" userMatchResult2="1">
             <user userId="6198114" username="hetman_zmc">
                 <Team teamId="408213" teamName="FC Lazio Zamość"/>
             </user>
@@ -617,7 +617,7 @@
                 <Team teamId="408700" teamName="KS Olimpia Warszawa"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="0" typeId="0" userMatchResult1="4" userMatchResult2="4">
             <user userId="854965" username="szczepinho">
                 <Team teamId="382280" teamName="Miastostumostów"/>
             </user>
@@ -625,7 +625,7 @@
                 <Team teamId="393423" teamName="Spartans Lodz"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="0" typeId="0" userMatchResult1="7" userMatchResult2="7">
             <user userId="1929702" username="k0niak">
                 <Team teamId="387608" teamName="Mafia Koniaka"/>
             </user>
@@ -633,7 +633,7 @@
                 <Team teamId="106223" teamName="FC Harnaś Sanok"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="4" opponentMatchResult2="2" typeId="0" userMatchResult1="0" userMatchResult2="1">
             <user userId="282616" username="yarek">
                 <Team teamId="150648" teamName="Przemysl"/>
             </user>
@@ -641,7 +641,7 @@
                 <Team teamId="406799" teamName="Harry Noble House FC"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="0" typeId="0" userMatchResult1="1" userMatchResult2="2">
             <user userId="8249759" username="kamilosin">
                 <Team teamId="400994" teamName="FC Mazovia"/>
             </user>
@@ -649,7 +649,7 @@
                 <Team teamId="378610" teamName="Fala Szczecin"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="1" typeId="0" userMatchResult1="1" userMatchResult2="1">
             <user userId="8521390" username="szuram">
                 <Team teamId="408692" teamName="KS Bukowe"/>
             </user>
@@ -657,7 +657,7 @@
                 <Team teamId="391090" teamName="Lekko Spoceni"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="2" typeId="0" userMatchResult1="0" userMatchResult2="1">
             <user userId="1774519" username="kingsajz">
                 <Team teamId="201436" teamName="Wisła Kraków Old Boys"/>
             </user>
@@ -666,7 +666,7 @@
             </opponentUser>
         </Match>
     </Runda>
-    <Runda data="2023-04-25" nr="10" status="nierozegrana">
+    <Runda data="2023-04-25" nr="10" status="rozegrana">
         <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
             <user userId="8589347" username="marc0888">
                 <Team teamId="394189" teamName="SMOCZANKA MIELEC"/>
@@ -675,7 +675,7 @@
                 <Team teamId="395077" teamName="Zdrapy"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="3" opponentMatchResult2="12" typeId="0" userMatchResult1="0" userMatchResult2="0">
             <user userId="8646052" username="bajkovvy">
                 <Team teamId="1226443" teamName="Heerenveen DB"/>
             </user>
@@ -683,7 +683,7 @@
                 <Team teamId="408700" teamName="KS Olimpia Warszawa"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="2" typeId="0" userMatchResult1="3" userMatchResult2="1">
             <user userId="5826237" username="wwojtek80">
                 <Team teamId="390844" teamName="Żuberia United"/>
             </user>
@@ -691,7 +691,7 @@
                 <Team teamId="393423" teamName="Spartans Lodz"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="3" opponentMatchResult2="1" typeId="0" userMatchResult1="1" userMatchResult2="2">
             <user userId="6198114" username="hetman_zmc">
                 <Team teamId="408213" teamName="FC Lazio Zamość"/>
             </user>
@@ -699,7 +699,7 @@
                 <Team teamId="106223" teamName="FC Harnaś Sanok"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="1" opponentMatchResult2="2" typeId="0" userMatchResult1="4" userMatchResult2="2">
             <user userId="854965" username="szczepinho">
                 <Team teamId="382280" teamName="Miastostumostów"/>
             </user>
@@ -707,7 +707,7 @@
                 <Team teamId="406799" teamName="Harry Noble House FC"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="1" typeId="0" userMatchResult1="3" userMatchResult2="2">
             <user userId="1929702" username="k0niak">
                 <Team teamId="387608" teamName="Mafia Koniaka"/>
             </user>
@@ -715,7 +715,7 @@
                 <Team teamId="378610" teamName="Fala Szczecin"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="3" opponentMatchResult2="4" typeId="0" userMatchResult1="1" userMatchResult2="5">
             <user userId="282616" username="yarek">
                 <Team teamId="150648" teamName="Przemysl"/>
             </user>
@@ -723,7 +723,7 @@
                 <Team teamId="391090" teamName="Lekko Spoceni"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="0" opponentMatchResult2="0" typeId="0" userMatchResult1="7" userMatchResult2="10">
             <user userId="8249759" username="kamilosin">
                 <Team teamId="400994" teamName="FC Mazovia"/>
             </user>
@@ -731,7 +731,7 @@
                 <Team teamId="419313" teamName="Fragleses"/>
             </opponentUser>
         </Match>
-        <Match id="0" opponentMatchResult1="" opponentMatchResult2="" typeId="0" userMatchResult1="" userMatchResult2="">
+        <Match id="0" opponentMatchResult1="2" opponentMatchResult2="1" typeId="0" userMatchResult1="1" userMatchResult2="4">
             <user userId="8521390" username="szuram">
                 <Team teamId="408692" teamName="KS Bukowe"/>
             </user>

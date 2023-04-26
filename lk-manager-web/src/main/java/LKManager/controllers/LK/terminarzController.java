@@ -4,15 +4,22 @@ import LKManager.LK.Terminarz;
 import LKManager.services.*;
 import LKManager.model.UserMZ.UserData;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.xml.sax.SAXException;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -23,8 +30,10 @@ import java.io.*;
 
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
+//@Validated
 //@RequestMapping({"terminarz.html", "/terminarz", "terminarz"})
 public class terminarzController {
     private final MZUserService MZUserService;
@@ -63,6 +72,15 @@ private final TerminarzService terminarzService;
 
         if(wybranyTerminarz!=null)
         {
+            //sprawdzanie czy jest taki terminarz
+
+              terminarz = terminarzService.wczytajTerminarz(wybranyTerminarz);
+         if(terminarz==null)
+         {
+//todo przekierowanie że nie ma takiego terminarza
+              return "redirect:/temp";
+          }
+
             //nastapila zmiana terminarza ->nr rundy=1
             if(wybranyTerminarz!=this.wybranyTerminarz)
             {
@@ -82,6 +100,7 @@ private final TerminarzService terminarzService;
              // nie ma terminarzy -> przekierowanie do tworzenia
              if(terminarze.length==0)
              {
+
 return "redirect:/dodajTerminarz";
              }
              else {
@@ -139,6 +158,11 @@ public String dodajTerminarz(Model model) throws JAXBException, IOException, Par
 {
 
   var gracze  =lkUserService.wczytajGraczyZXML();
+ gracze= gracze.stream().sorted(
+          (o1,o2)->o1.getUsername().compareToIgnoreCase(o2.getUsername())
+  ).collect(Collectors.toList());
+
+ /*
 List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
 
 //to jest niepotrzebne//////////////////////// todo
@@ -148,14 +172,29 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
         graczeOpakowani.add(new graczOpakowanie(false,gracz));
     }
 
-
+*/
 
 
         var terminarzCommand = new TerminarzCommand();
 
    model.addAttribute("gracze",gracze);
-        model.addAttribute("terminarz",terminarzCommand);
 
+    //  Bob b= new Bob();
+
+
+
+
+    /*Map<String,String>wybraniGracze1 = new HashMap<>();
+    wybraniGracze1.put("bob","sam");
+    wybraniGracze1.put("bob1","sam1");
+
+    terminarzCommand.mapa=wybraniGracze1;*/
+terminarzCommand.lista= new ArrayList<String>();
+
+    //terminarzCommand.bob=b;
+    model.addAttribute("userListWrapper",terminarzCommand);
+
+    model.addAttribute("terminarz",terminarzCommand);
         return "LK/terminarz/dodajTerminarz";
     }
 
@@ -175,7 +214,7 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
     {
 
         var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
-
+//this.wybranyTerminarz=null;
         model.addAttribute("terminarze", terminarze);
            return "LK/terminarz/usunTerminarz";
 
@@ -183,7 +222,7 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
     }
 
     @PostMapping("/usunTerminarz")
-    public String usunTerminarz(@RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
+    public String usunTerminarz( @RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
     {
         try
         {
@@ -199,32 +238,87 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
     }
 
     @PostMapping("/terminarz")
-    public String stworzTerminarz( @ModelAttribute TerminarzCommand command, @RequestParam(value = "wybraniGracze" , required = false) List<String> wybraniGracze) throws DatatypeConfigurationException {
+    public String stworzTerminarz(Model model, @ModelAttribute @Valid TerminarzCommand command, @RequestParam(value = "wybraniGracze" , required = false) List<String> wybraniGracze) throws DatatypeConfigurationException, JsonProcessingException {
+//todo walidacja  te same nazwy
+/*var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
+if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNazwa().trim()+".xml")))
+{
 
+   int y=0;
+}*/
         XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
 
 data.setYear(Integer.parseInt(command.data.trim().split("-")[0]));
 data.setMonth(Integer.parseInt(command.data.split("-")[1]));
 data.setDay(Integer.parseInt(command.data.split("-")[2]));
+
+////////////////////////////////////////
+
+
 var gracze=lkUserService.wczytajGraczyZXML();
-List<UserData> templist = new ArrayList<>();
-        for (var gracz:gracze
-             ) {
-            for ( int i=0;i<wybraniGracze.size();i++
-                 ) {
-                if(gracz.getUsername().equals(wybraniGracze.get(i)))
+
+
+        //nie wybrano graczy do wielodniowego terminarza
+        if(wybraniGracze==null)
+        {
+            if(command.getLista().size()==0)
+            {
+                //todo nie wybrano tez pojedynczych meczy
+                int tt=0;
+            }
+            else
+            {
+                if(command.getLista().size()%2!=0)
                 {
-                    templist.add(gracz);
-                    i=0;
-                    break;
+                    //todo brakuje pary dla grajka  ewentuanie w js wybierzgrajka-> pauza
+                }
+                else
+                {
+                    List<UserData> templist = new ArrayList<>();
+                    for ( int i=0;i<command.lista.size();i++
+                    ) {
+
+
+                        for (int j = 0; j <gracze.size() ; j++) {
+
+
+                            if(gracze.get(j).getUsername().equals(command.lista.get(i)))
+                            {
+                                templist.add(gracze.get(j));
+                                j=0;
+                                break;
+                            }
+                        }
+                    }
+//////////////////////////////
+                    terminarzService.utworzTerminarzJednodniowy(data, templist, command.nazwa);
+                }
+
+            }
+        }
+        else
+        {
+            List<UserData> templist = new ArrayList<>();
+            for (var gracz:gracze
+            ) {
+                for ( int i=0;i<wybraniGracze.size();i++
+                ) {
+                    if(gracz.getUsername().equals(wybraniGracze.get(i)))
+                    {
+                        templist.add(gracz);
+                        i=0;
+                        break;
+                    }
                 }
             }
+//////////////////////////////
+            terminarzService.utworzTerminarzWielodniowy(data, templist, command.nazwa);
         }
 
 
-        terminarzService.utworzTerminarz(data, templist, command.nazwa);
 
-return "redirect:/terminarz";
+
+        return "redirect:/terminarz";
     }
 
     @PostMapping("/pokazRunde")
@@ -243,9 +337,16 @@ int oo=9;
     @NoArgsConstructor
 public class TerminarzCommand
 {
+/*todo walidacja
+https://blog.mloza.pl/java-bean-validation-spring-boot-sprawdzanie-poprawnosci-danych-w-spring-boocie/
 
+*/
+
+    @NotNull
  private String data;
+    @NotBlank
  private String nazwa;
+ private List<String> lista;
 
 
     public void setListaGraczy(){
@@ -256,29 +357,29 @@ public class TerminarzCommand
     }
 
 
+/*
 
-
-
-
-@Getter
-@Setter
-@NoArgsConstructor
-  public  class graczOpakowanie
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NotFoundException.class)
+    public ModelAndView handleNotFound()
     {
-        //todo to jest niepotrzebne
-       private boolean zaznaczony;
-        private String gracz;
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("temp");
+        return  mav;
+    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public class NotFoundException extends  RuntimeException{
+        public NotFoundException() {
+            super();
+        }
 
+        public NotFoundException(String message) {
+            super(message);
+        }
 
-        public graczOpakowanie(boolean zaznaczony, UserData gracz) {
-            this.zaznaczony = zaznaczony;
-            this.gracz = gracz.getUsername();
-
+        public NotFoundException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
-
-
-
-
-
+*/
 }

@@ -79,8 +79,8 @@
                 </td>
 
                 <td>
-                    <form  th:action="@{/aktualizuj}" method="post">
-                        <button id="sam" >Aktualizuj wyniki</button>
+                    <form  th:action="@{/aktualizuj}" method="post" id="formAktualizuj">
+                        <button type="button" id="buttonAktualizuj" onclick="aktualizujClick()">Aktualizuj wyniki</button>
                         <input  hidden  th:name="numerRundy" th:value="${numerRundy}"></input>
                         <input hidden   th:name="wybranyTerminarz" th:value="${wybranyTerminarz}"></input>
 
@@ -254,7 +254,45 @@
 
 
 
-<script>
+<script th:inline="javascript">
+
+const runda = [[${runda}]];
+
+function aktualizujClick(){
+var form = document.getElementById("formAktualizuj");
+
+if(runda.status=="rozegrana")
+{
+if (confirm('Ta runda była już aktualizowana. Na pewno chcesz ją nadpisać?')) {
+  // Save it!
+  form.submit()
+  alert('aktualizuje');
+} else {
+  // Do nothing!
+ alert('anulowano.');
+}
+
+
+}
+
+else
+{
+  form.submit()
+}
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
       function myFunction() {
         var result = "";
      var tempstring = "";
@@ -349,48 +387,7 @@ tempstring+=" Runda: "+runda.textContent +"   "+data.textContent+"\r\n";
 }
 </script>
 
-<script>
-function pokazEdytujTabele()
-{
-var edytujTabele=document.getElementById("edytujTabela");
-var tabela=document.getElementById("tabela");
-
-tabela.hidden=true;
-
-edytujTabele.hidden=false;
-}
-
-function anuluj(){
-
-var edytujTabele=document.getElementById("edytujTabela");
-var tabela=document.getElementById("tabela");
-
-
-
-edytujTabele.hidden=true;
-tabela.hidden=false;
-
-
-
-}
-
-
-
-function zapiszZmiany()
-{
-var edytujTabele=document.getElementById("edytujTabela");
-var tabela=document.getElementById("tabela");
-
-//tabela.hidden=false;
-
-//edytujTabele.hidden=true;
-var edytujTabelaForm=document.getElementById("edytujTabelaForm");
-edytujTabelaForm.submit();
-
-}
-
-
-</script>
+<script type="text/javascript" th:src="@{/resources/wyniki.js}" ></script>
 
 
 
