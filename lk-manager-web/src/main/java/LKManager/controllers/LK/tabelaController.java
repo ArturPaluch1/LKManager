@@ -70,6 +70,7 @@ private final LKUserService lkUserService;
 
 
 
+
        var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
 

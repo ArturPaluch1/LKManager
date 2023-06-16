@@ -1,28 +1,28 @@
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalLost.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\Tabela.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\WynikiService.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\model\MatchesMz\Match.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\model\UserMZ\ManagerZone_UserData.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\model\MatchesMz\Matches.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\TerminarzService.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\TerminarzServiceImpl.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorPoints.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\Terminarz.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\model\MatchesMz\MatchTeam.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\wynikiServiceImpl.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\MZUserServiceImpl.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\Gracze.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\MatchService.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\PlikiService.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalDifference.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\Runda.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\CrudService.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalScored.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\MZUserService.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\URLs.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\model\UserMZ\UserData.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\MatchServiceImpl.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\LK\GraczPodsumowanie.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\LKUserServiceImpl.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\services\LKUserService.java
-D:\programy arta\Spring\Z new project\LKManager\lk-manager-data\src\main\java\LKManager\model\UserMZ\Team.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\MatchServiceImpl.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\MZUserServiceImpl.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\URLs.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorPoints.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Tabela.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\CrudService.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\wynikiServiceImpl.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\model\UserMZ\ManagerZone_UserData.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\PlikiService.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Terminarz.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\model\UserMZ\Team.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\LKUserService.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalDifference.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\MZUserService.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\model\UserMZ\UserData.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\model\MatchesMz\Match.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\GraczPodsumowanie.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\MatchService.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\LKUserServiceImpl.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\TerminarzServiceImpl.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Runda.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\model\MatchesMz\Matches.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Gracze.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\WynikiService.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\model\MatchesMz\MatchTeam.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalLost.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalScored.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\TerminarzService.java

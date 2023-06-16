@@ -1,7 +1,10 @@
 package LKManager;
 
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +22,14 @@ public class LKManagerApplication {
 
 		SpringApplication.run(LKManagerApplication.class, args);
 
+	}
+
+	@Bean
+	ApplicationRunner applicationRunner (Environment environment)
+	{
+		return  args -> {
+			System.out.println(environment.getProperty("msg"));
+		};
 	}
 	@PostConstruct
 	public void init() {
