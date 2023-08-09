@@ -12,10 +12,6 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.7.1</version>
         <relativePath/> <!-- lookup parent from repository -->
-
-
-
-
     </parent>
     <groupId>LKManager</groupId>
     <artifactId>LKManager</artifactId>
@@ -28,14 +24,14 @@
 
 
             <!-- The main class to start by executing "java -jar" -->
-            <start-class>LKManagerApplication</start-class>
+         <!--   <start-class>LKManagerApplication</start-class>-->
 
     </properties>
     <dependencies>
-        <dependency>
+     <!--   <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+        </dependency>-->
 
 
         <dependency>
