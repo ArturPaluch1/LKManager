@@ -1,10 +1,13 @@
 package LKManager.services;
 
+import LKManager.DAO.TerminarzDAO;
+import LKManager.DAO.TerminarzDAOImpl;
 import LKManager.LK.Runda;
 import LKManager.LK.Terminarz;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBContext;
@@ -24,9 +27,11 @@ import java.util.List;
 public class TerminarzServiceImpl implements TerminarzService {
 
 
+private TerminarzDAOImpl terminarzDAOimpl;
 
-
-
+    public TerminarzServiceImpl(TerminarzDAOImpl terminarzDAOimpl) {
+        this.terminarzDAOimpl = terminarzDAOimpl;
+    }
 
 
     @Override
@@ -69,7 +74,7 @@ public class TerminarzServiceImpl implements TerminarzService {
                 var tempMatch = new Match();
                tempMatch.setUser(listyGrajkow.getGrajkiA().get(i));
                 tempMatch.setopponentUser(listyGrajkow.getGrajkiB().get(i));
-
+tempMatch.setDate(runda.getData().toString());
 
 
                 runda.getMecze().add(tempMatch);
@@ -88,12 +93,18 @@ runda.setStatus(Runda.status.nierozegrana);
 
         /////////////// zapis termnarza do xml    //////////////////////
        Terminarz terminarz = new Terminarz(calyTerminarz);
+
+
+
         jaxbObjectToXML(terminarz,nazwa);
 
 /////////////////////////////////////////////
+// zapis  sql
+terminarz.setNazwa(nazwa);
+//terminarz.getRundy().get(0).getTerminarz()
+        terminarzDAOimpl.save(terminarz);
 
-
-
+//////////////
     }
 
     @Override
@@ -196,7 +207,8 @@ int yy=0;
             Team tempTeam= new Team();
             tempTeam.setTeamName(" ");
             tempTeam.setTeamId(0);
-            tempuser.setTeamlist(tempTeam);
+            List<Team> tempTeams= new ArrayList<>();
+            tempuser.setTeamlist(tempTeams);
             grajki.add(tempuser);
         }
     }
@@ -262,7 +274,7 @@ int yy=0;
 
 
 
-                System.out.println(terminarz1.getTerminarz());
+                System.out.println(terminarz1.getRundy());
                 return terminarz1;
             }
             else

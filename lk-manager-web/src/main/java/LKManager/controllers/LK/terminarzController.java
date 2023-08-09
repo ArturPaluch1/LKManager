@@ -9,12 +9,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.json.simple.parser.ParseException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.xml.sax.SAXException;
 
 import javax.validation.Valid;
@@ -29,6 +26,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 
 import java.net.URISyntaxException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -123,7 +121,7 @@ return "redirect:/dodajTerminarz";
 
 
 
-        model.addAttribute("nrRundy", terminarz.getTerminarz());
+        model.addAttribute("nrRundy", terminarz.getRundy());
 if(numerRundy== null)
 {
     numerRundy=1;
@@ -132,8 +130,8 @@ if(numerRundy== null)
 
 
 
-        model.addAttribute("runda", terminarz.getTerminarz().get(numerRundy-1));
-        model.addAttribute("mecze", terminarz.getTerminarz().get(numerRundy-1).getMecze()
+        model.addAttribute("runda", terminarz.getRundy().get(numerRundy-1));
+        model.addAttribute("mecze", terminarz.getRundy().get(numerRundy-1).getMecze()
         );
 model.addAttribute("numerRundy", numerRundy);
 
@@ -246,12 +244,14 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 
    int y=0;
 }*/
-        XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
+      XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
 
 data.setYear(Integer.parseInt(command.data.trim().split("-")[0]));
 data.setMonth(Integer.parseInt(command.data.split("-")[1]));
 data.setDay(Integer.parseInt(command.data.split("-")[2]));
 
+    //    LocalDateTime data = LocalDateTime.of(command.data.trim().split("-")[0],
+     //           command.data.split("-")[1]))
 ////////////////////////////////////////
 
 

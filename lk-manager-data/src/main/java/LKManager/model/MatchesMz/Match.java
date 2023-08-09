@@ -1,35 +1,83 @@
 package LKManager.model.MatchesMz;
 
+import LKManager.LK.Runda;
 import LKManager.model.UserMZ.UserData;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+@Entity
+@Table(name = "mecze")
+@Getter
+@Setter
 @XmlRootElement(name = "Match")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({MatchTeam.class})
 public class Match   implements Serializable {
 
-    private int id;
-    private String date;
-    private String status;
-    private String type;
-    private String typeName;
-    private int typeId;
-    private MatchTeam team;
-private String userMatchResult1="";
-    private String userMatchResult2="";
-    private String opponentMatchResult1="";
-    private String opponentMatchResult2="";
+@ManyToOne( cascade = CascadeType.ALL)
+@JoinColumn(name = "runda")
+    private Runda runda;
 
-private UserData opponentUser;
+
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    @Column(name = "mecz_id")
+    private Long id;
+
+    @XmlAttribute(name = "date")
+    public String getDate() {
+        return date;
+    }
+
+    @Transient
+    private String date;
+
+
+    @Transient
+    private String status;
+    @Transient
+    private String type;
+    @Transient
+    private String typeName;
+    @Transient
+    private int typeId;
+    @Transient
+    private MatchTeam team;
+
+    @Column(name = "user_wynik1")
+private String userMatchResult1;
+    @Column(name = "user_wynik2")
+    private String userMatchResult2;
+    @Column(name = "przeciwnik_wynik1")
+    private String opponentMatchResult1;
+    @Column(name = "przeciwnik_wynik2")
+    private String opponentMatchResult2;
+
+  //  @Column(name = "user")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "przeciwnik")//, updatable = false, insertable = false)
+    private UserData opponentUser;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user")//, updatable = false, insertable = false)
     private UserData user;
 
+
+    @Transient
     private final List<MatchTeam> teamlist= new ArrayList();
 
-    public Match(int id, String date, String status, String type, String typeName, int typeId, UserData user) {
+    public Match(Runda runda, Long id, String date, String status, String type, String typeName, int typeId, UserData user) {
+        this.runda = runda;
         this.id = id;
         this.date = date;
         this.status = status;
@@ -77,20 +125,61 @@ private UserData opponentUser;
     public Match() {
     }
     @XmlAttribute
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
-    @XmlAttribute
-    public String getDate() {
-        return date;
+
+
+    public void setDateDB(String date) {
+      if(date!=null)
+      {
+
+
+
+
+
+          this.dateDB= stringToDate(date);
+
+          int y=0;
+      }
+
     }
+
+protected Date stringToDate(String date)
+    {
+        Date tempDate= new Date();
+        tempDate.setYear(Integer.parseInt(date.trim().split("-")[0]));
+        tempDate.setMonth(Integer.parseInt(date.split("-")[1]));
+        tempDate.setDate(Integer.parseInt(date.trim().split("-")[2].split(" ")[0]));
+        return tempDate;
+    }
+
+    /* public XMLGregorianCalendar getDate() {
+                return date;
+            }*/
+   //@Transient
+    @Column(name = "data")
+    @Temporal(TemporalType.DATE)
+   private Date dateDB;
+
+
+
+    public Date getDateDB() {
+
+        int i=0;
+
+        return  stringToDate(this.date);
+        //new Date(this.date.getYear(), this.date.getMonth(), this.date.getDay());
+    }
+
 
     public void setDate(String date) {
         this.date = date;
+       this. setDateDB(date);
     }
     @XmlAttribute
     public String getStatus() {

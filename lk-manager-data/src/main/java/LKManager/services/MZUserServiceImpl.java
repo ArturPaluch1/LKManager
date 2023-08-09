@@ -27,7 +27,7 @@ public class MZUserServiceImpl implements MZUserService, Serializable {
       return URLs.URLtoUserData(url) ;
     }
     @Override
-    public UserData findById(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+    public UserData findByTeamId(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {
 
 URL url = URLs.MakeUserURL(Teamid);
 

@@ -4,14 +4,10 @@ import LKManager.LK.Runda;
 import LKManager.LK.Terminarz;
 import LKManager.model.MatchesMz.Match;
 import LKManager.services.*;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.webjars.NotFoundException;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -112,11 +108,11 @@ public class wynikiController {
                 model.addAttribute("wybranyTerminarz", wybranyTerminarz);
                 model.addAttribute("numerRundy", nrRundy);
 
-                model.addAttribute("runda", terminarz.getTerminarz().get(Integer.parseInt(nrRundy)-1));
+                model.addAttribute("runda", terminarz.getRundy().get(Integer.parseInt(nrRundy)-1));
 
 
 
-                model.addAttribute("mecze", terminarz.getTerminarz().get(Integer.parseInt(nrRundy)-1).getMecze());
+                model.addAttribute("mecze", terminarz.getRundy().get(Integer.parseInt(nrRundy)-1).getMecze());
             }
             else
             {
@@ -125,9 +121,9 @@ public class wynikiController {
                 this.poprzednioWybranyTerminarz =wybranyTerminarz;
                 terminarz= terminarzService.wczytajTerminarz(wybranyTerminarz);
                 model.addAttribute("wybranyTerminarz", wybranyTerminarz);
-                model.addAttribute("runda", terminarz.getTerminarz().get(0));
+                model.addAttribute("runda", terminarz.getRundy().get(0));
 
-                model.addAttribute("mecze",terminarz.getTerminarz().get(0).getMecze() );
+                model.addAttribute("mecze",terminarz.getRundy().get(0).getMecze() );
             }
 
 
@@ -150,10 +146,10 @@ public class wynikiController {
                 this.poprzednioWybranyTerminarz =najbardziejNiedawnoZmodyfikowanyTerminarz.orElseThrow(NullPointerException::new).getName();
                 model.addAttribute("wybranyTerminarz", najbardziejNiedawnoZmodyfikowanyTerminarz.get().getName());
                 model.addAttribute("numerRundy", 0);
-                model.addAttribute("runda", terminarz.getTerminarz().get(0));
+                model.addAttribute("runda", terminarz.getRundy().get(0));
 
 
-                model.addAttribute("mecze",terminarz.getTerminarz().get(0).getMecze());
+                model.addAttribute("mecze",terminarz.getRundy().get(0).getMecze());
             }
 
         }
@@ -178,7 +174,7 @@ public class wynikiController {
         model.addAttribute("terminarz", terminarz);
         model.addAttribute("terminarze", terminarze);
 
-        model.addAttribute("nrRundy", terminarz.getTerminarz());
+        model.addAttribute("nrRundy", terminarz.getRundy());
 
 
 
@@ -217,15 +213,15 @@ public class wynikiController {
 
 
 
-        for (int i = 0; i < terminarz.getTerminarz().get(numerRundy).getMecze().size(); i++) {
+        for (int i = 0; i < terminarz.getRundy().get(numerRundy).getMecze().size(); i++) {
 
-            terminarz.getTerminarz().get(numerRundy).getMecze().get(i).setUserMatchResult1(
+            terminarz.getRundy().get(numerRundy).getMecze().get(i).setUserMatchResult1(
                     UserMatchResult1.get(i) );
-            terminarz.getTerminarz().get(numerRundy).getMecze().get(i).setOpponentMatchResult1(
+            terminarz.getRundy().get(numerRundy).getMecze().get(i).setOpponentMatchResult1(
                     OpponentMatchResult1.get(i) );
-            terminarz.getTerminarz().get(numerRundy).getMecze().get(i).setUserMatchResult2(
+            terminarz.getRundy().get(numerRundy).getMecze().get(i).setUserMatchResult2(
                     UserMatchResult2.get(i) );
-            terminarz.getTerminarz().get(numerRundy).getMecze().get(i).setOpponentMatchResult2(
+            terminarz.getRundy().get(numerRundy).getMecze().get(i).setOpponentMatchResult2(
                     OpponentMatchResult2.get(i) );
 
 
@@ -292,10 +288,10 @@ public class wynikiController {
         }
 
 // runda -1 bo rundy od 1 a indeksy w liscie od 0
-        if(terminarz.getTerminarz().get(numerRundy-1).getStatus()== Runda.status.rozegrana)
+        if(terminarz.getRundy().get(numerRundy-1).getStatus()== Runda.status.rozegrana)
         {
             // TODO: 2022-11-23   zamienic na zapytanie, że czy na pewno chcesz zmienić rozegrana runde
-            terminarz.getTerminarz().get(numerRundy-1).setStatus(Runda.status.rozegrana);
+            terminarz.getRundy().get(numerRundy-1).setStatus(Runda.status.rozegrana);
             wynikiService.aktualizujWyniki(numerRundy,terminarz,matchService, wybranyTerminarz);
             redirectAttributes.addAttribute("numerRundy", numerRundy);
             redirectAttributes.addAttribute("wybranyTerminarz",wybranyTerminarz );
@@ -305,7 +301,7 @@ public class wynikiController {
         }
         else
         {
-            terminarz.getTerminarz().get(numerRundy-1).setStatus(Runda.status.rozegrana);
+            terminarz.getRundy().get(numerRundy-1).setStatus(Runda.status.rozegrana);
             wynikiService.aktualizujWyniki(numerRundy,terminarz,matchService, wybranyTerminarz);
             redirectAttributes.addAttribute("numerRundy", numerRundy);
             redirectAttributes.addAttribute("wybranyTerminarz",wybranyTerminarz );

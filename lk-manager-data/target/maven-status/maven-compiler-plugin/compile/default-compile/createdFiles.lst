@@ -28,5 +28,7 @@ LKManager\LK\Runda.class
 LKManager\services\LKUserServiceImpl.class
 LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalScored.class
 LKManager\services\URLs.class
+LKManager\DAO\UserDAO.class
 LKManager\LK\Terminarz.class
+LKManager\DAO\UserDAOImpl.class
 LKManager\LK\Comparators\GraczPodsumowanieComparatorPoints.class

@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.List;
 
 @Controller
-//@RequestMapping({"tabela.html", "tabela", "tabela"} )
 public class tabelaController {
     private final MZUserService MZUserService;
 
@@ -107,7 +106,7 @@ private final LKUserService lkUserService;
        for (var item :lkUserService.wczytajGraczyZXML()
            ) {
 
-           for (var gracz:terminarz.getTerminarz().get(0).getMecze()
+           for (var gracz:terminarz.getRundy().get(0).getMecze()
            ) {
                if(  gracz.getUser().getUsername().equals(item.getUsername())
                ||  gracz.getopponentUser().getUsername().equals(item.getUsername()))
@@ -124,7 +123,7 @@ private final LKUserService lkUserService;
            }
 
 ////////////////////////////////////////////////////////////////////
-       for (var runda:terminarz.getTerminarz()
+       for (var runda:terminarz.getRundy()
             ) {
            for (var mecz: runda.getMecze()
                 ) {

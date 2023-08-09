@@ -56,11 +56,14 @@ day.onclick = function()
  //if(currDate)
  //alert(pickedDate+"   "+currDate)
 
+
+/*
  if(pickedDate<currDate)
  {alert("Data rozpoczęcia nie może być wcześniejsza od dzisiaj")
  }
 else
 {
+*/
 
 
 let labelData= document.getElementById("labelData");
@@ -102,7 +105,7 @@ day.classList.add('select')
 
 
 
-}
+//tutaj  }
 
 
                   }

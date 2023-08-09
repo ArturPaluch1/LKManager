@@ -2,7 +2,11 @@ package LKManager.LK;
 
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
@@ -10,14 +14,48 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+@Entity
+@Table(name = "rundy")
+@Getter
+@Setter
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({Match.class, UserData.class})
 public class Runda implements Serializable {
+
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    @Column(name = "runda_id")
+    private long id;
+@ManyToOne( cascade = CascadeType.ALL)
+@JoinColumn(name = "terminarz_id")
+    private Terminarz terminarz;
+
+
+    @Column(name = "nr_rundy")
 private int nr;
+
+    @OneToMany(mappedBy = "runda",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+    fetch = FetchType.EAGER)
 private List<Match> mecze;
+
+    @Column(name = "data")
+    @Transient
     private XMLGregorianCalendar data;
+
+    @Transient
 private status status;
 
     public Runda(int nr, XMLGregorianCalendar data) {

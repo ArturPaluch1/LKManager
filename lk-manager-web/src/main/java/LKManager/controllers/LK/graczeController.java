@@ -1,5 +1,6 @@
 package LKManager.controllers.LK;
 
+import LKManager.DAO.UserDAOImpl;
 import LKManager.services.LKUserService;
 import LKManager.services.MZUserService;
 import org.springframework.stereotype.Controller;
@@ -15,19 +16,38 @@ import java.util.stream.Collectors;
 public class graczeController {
 private final LKUserService lkUserService;
 private final MZUserService mzUserService;
-    public graczeController(LKUserService lkUserService, MZUserService mzUserService) {
+
+  private   UserDAOImpl userDAOImpl;
+
+    public graczeController(LKUserService lkUserService, MZUserService mzUserService, LKManager.DAO.UserDAOImpl userDAOImpl) {
         this.lkUserService = lkUserService;
         this.mzUserService = mzUserService;
+        this.userDAOImpl = userDAOImpl;
     }
 
     @RequestMapping(value="/gracze")
 public String wyswietlGraczy(Model model)
 {
+
+    /*---------------z xmla---------------
    var gracze= lkUserService.wczytajGraczyZXML();
+***************************************************/
+var gracze= userDAOImpl.findAll().stream().toList();
+
 
     gracze= gracze.stream().sorted(
             (o1,o2)->o1.getUsername().compareToIgnoreCase(o2.getUsername())
     ).collect(Collectors.toList());
+
+  //  System.out.println("gracze(0)"+gracze.get(0));
+
+
+
+   // this.userDAOImpl.save(gracze.get(1));
+
+
+
+
 
    model.addAttribute("gracze", gracze);
     return "LK/gracze";
@@ -62,11 +82,13 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
               else
               {
                   lkUserService.dodajGraczaDoXML(graczMZ);
+                  this.userDAOImpl.save(graczMZ);
               }
           }
           else
           {
               lkUserService.dodajGraczaDoXML(graczMZ);
+              this.userDAOImpl.save(graczMZ);
           }
 
 
@@ -90,6 +112,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
                 else
                 {
                     lkUserService.dodajGraczaDoXML(gracz);
+                    this.userDAOImpl.save(gracz);
                 }
             }
 
@@ -135,6 +158,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
                         ).findFirst().isEmpty()
                 )
                 {
+                    this.userDAOImpl.delete(graczMZ);
                     lkUserService.usunGraczaZXML(graczMZ);
                 }
                 else
@@ -158,7 +182,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
                     )
                     {
                         lkUserService.usunGraczaZXML(gracz);
-
+                        this.userDAOImpl.delete(gracz);
 
                     }
                     else

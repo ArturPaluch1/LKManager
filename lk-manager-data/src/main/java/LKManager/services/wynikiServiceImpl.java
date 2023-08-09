@@ -1,9 +1,11 @@
 package LKManager.services;
 
+import LKManager.DAO.TerminarzDAOImpl;
 import LKManager.LK.Terminarz;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
+import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -21,17 +23,36 @@ import java.util.stream.Collectors;
 @Service
 public class wynikiServiceImpl implements WynikiService {
 
-private final TerminarzService terminarzService;
 
-    public wynikiServiceImpl(TerminarzService terminarzService) {
+private MZUserService mzUserService;
+    private TerminarzDAOImpl terminarzDAOimpl;
+
+private final TerminarzService terminarzService;
+  private   EntityManager entityManager;
+    public wynikiServiceImpl(MZUserService mzUserService, TerminarzDAOImpl terminarzDAOimpl, TerminarzService terminarzService, EntityManager entityManager, TerminarzDAOImpl terminarzDAO) {
+        this.mzUserService = mzUserService;
+        this.terminarzDAOimpl = terminarzDAOimpl;
+
         this.terminarzService = terminarzService;
+        this.entityManager = entityManager;
+        this.terminarzDAO = terminarzDAO;
     }
 
-
+private TerminarzDAOImpl terminarzDAO;
 
     @Override
     public void aktualizujWyniki(Integer runda, Terminarz terminarz, MatchService matchService, String nazwaPliku) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
 
+        extracted2(runda, terminarz, matchService );
+
+
+     //   terminarzDAO.saveRound(terminarz, runda);
+//zapiszDoXml(terminarz, nazwaPliku);
+terminarzDAO.saveResults(runda, terminarz,matchService, mzUserService);
+
+    }
+
+    private static void extracted(Integer runda, Terminarz terminarz, MatchService matchService) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 
@@ -45,13 +66,11 @@ private final TerminarzService terminarzService;
         now.add(d);
 
 
-
-
-        for (var item:terminarz.getTerminarz()
+        for (var item: terminarz.getRundy()
         ) {
 
 
-            if(  item.getNr()==runda) {
+            if(  item.getNr()== runda) {
 
 
 
@@ -73,7 +92,7 @@ private final TerminarzService terminarzService;
                         var rozegrane = matchService.findPlayedByUsername(user.getUsername());
 
                         var meczeTurniejowe = rozegrane.getMatches().stream().
-                                filter(a -> a.getDate().contains(item.getData().toString())).
+                                filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
                                 filter(a -> a.getType().equals("friendly")).collect(Collectors.toList());
 
                         //todo sprawzic czy id oponenta to id z terminarza
@@ -114,8 +133,9 @@ private final TerminarzService terminarzService;
 
             }
         }
-zapiszDoXml(terminarz, nazwaPliku);
+    }
 
+    private void extracted2(Integer runda, Terminarz terminarz, MatchService matchService) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
 
     }
 

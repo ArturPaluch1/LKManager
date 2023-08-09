@@ -1,32 +1,70 @@
 package LKManager.model.UserMZ;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.Date;
 
+
+@Entity
+@Table(name = "teams")
 @AllArgsConstructor
 @Setter
+@Getter
 @XmlRootElement(name = "Team")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class Team implements Serializable {
 
+
+
+    @Transient
     private String sport;
+
+    @Column(name = "team_name")
     private String teamName;
+    @Transient
     private String nameShort;
+
+
+/*
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;*/
+
+   // @JoinColumn(name="u_id")
+    @ManyToOne( cascade = CascadeType.ALL)//(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id")
+    private UserData user;
+
+    public UserData getUser() {
+        return user;
+    }
+
+    public void setUser(UserData user) {
+        this.user = user;
+    }
+
+    @Id
+    @Column(name = "team_id")
     private Integer teamId;
+    @Transient
     private String seriesName;
+    @Transient
     private Integer seriesId;
+    @Transient
     private XMLGregorianCalendar startDate;
+    @Transient
     private String sponsor;
+    @Transient
     private Integer rankPos;
+    @Transient
     private Integer rankPoints;
 
     @XmlAttribute
@@ -47,6 +85,10 @@ public class Team implements Serializable {
     @XmlAttribute
     public Integer getTeamId() {
         return teamId;
+    }
+
+    public void setTeamId(Integer teamId) {
+        this.teamId = teamId;
     }
 
     @XmlAttribute

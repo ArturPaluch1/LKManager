@@ -15,4 +15,8 @@ public interface LKUserService   {
     boolean usunGraczaZXML(UserData gracz) throws JAXBException, ParserConfigurationException, IOException, SAXException;
     List<UserData> zapiszGraczyDoXML(List<String>gracze) throws JAXBException, IOException, ParserConfigurationException, SAXException;
     List<UserData>  wczytajGraczyZXML();
+
+    List<UserData>  wczytajGraczy();
+
+
 }

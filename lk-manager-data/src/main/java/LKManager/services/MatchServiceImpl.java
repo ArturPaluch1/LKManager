@@ -26,7 +26,7 @@ public class MatchServiceImpl implements MatchService, Serializable {
     }
 
     @Override
-    public Match findById(int id) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+    public Match findByTeamId(int id) throws IOException, ParserConfigurationException, SAXException, JAXBException {
         return null;
     }
 
