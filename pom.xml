@@ -28,7 +28,7 @@
 
 
             <!-- The main class to start by executing "java -jar" -->
-            <start-class>LKManagerApplication</start-class>
+     <!--       <start-class>LKManagerApplication</start-class>-->
 
     </properties>
     <dependencies>
