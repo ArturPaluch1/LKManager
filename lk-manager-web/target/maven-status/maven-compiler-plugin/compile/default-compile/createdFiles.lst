@@ -1,0 +1,7 @@
+LKManager\controllers\LK\tempController.class
+LKManager\controllers\LK\tabelaController.class
+LKManager\controllers\LK\wynikiController.class
+LKManager\controllers\LK\terminarzController.class
+LKManager\controllers\LK\terminarzController$TerminarzCommand.class
+LKManager\LKManagerApplication.class
+LKManager\controllers\LK\graczeController.class
