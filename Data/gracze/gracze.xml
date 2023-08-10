@@ -62,4 +62,8 @@
         <Team nameShort="TRM" rankPoints="1740" rankPos="2330" seriesId="13188" seriesName="div2.4" sponsor="Goal.com" sport="soccer" teamId="420434" teamName="TEATRomaniacy"/>
         <Team nameShort="" rankPoints="0" rankPos="0" seriesId="0" seriesName="" sponsor="" sport="hockey" teamId="0" teamName=""/>
     </UserData>
+    <UserData userId="8428117" username="bob">
+        <Team nameShort="Cay" rankPoints="470" rankPos="260549" seriesId="124553" seriesName="div5.48" sponsor="" sport="soccer" teamId="1257791" teamName="Calverley"/>
+        <Team nameShort="" rankPoints="0" rankPos="0" seriesId="0" seriesName="" sponsor="" sport="hockey" teamId="0" teamName=""/>
+    </UserData>
 </Gracze>
