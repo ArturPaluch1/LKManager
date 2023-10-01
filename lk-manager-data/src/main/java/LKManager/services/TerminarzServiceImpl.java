@@ -84,7 +84,7 @@ private MZCache mzCache;
                 var tempMatch = new Match();
                tempMatch.setUser(listyGrajkow.getGrajkiA().get(i));
                 tempMatch.setopponentUser(listyGrajkow.getGrajkiB().get(i));
-                tempMatch.setDateDB(data);
+                tempMatch.setDateDB(data.plusDays(7l*(j-1)));
 /*tempMatch.setDate(runda.getDateTimeItem());
 tempMatch.setDateDB(runda.getDateTimeItem());
 */
