@@ -77,7 +77,7 @@ private Match meczUser;
    private boolean deleted = false;
 
     // getters and setters
-public Boolean getDeleted()
+public boolean getDeleted()
 {
     return  this.deleted;
 }
