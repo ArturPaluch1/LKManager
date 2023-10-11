@@ -73,7 +73,7 @@ private Match meczUser;
         this.id = id;
     }
 */
-   @Column(name = "DELETED",columnDefinition = "TINYINT")
+   @Column(name = "DELETED",columnDefinition = "BIT")
    private boolean deleted = false;
 
     // getters and setters
