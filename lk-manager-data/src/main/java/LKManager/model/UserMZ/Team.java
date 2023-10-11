@@ -3,8 +3,11 @@ package LKManager.model.UserMZ;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.*;
 
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -15,6 +18,14 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "teams")
+/*@FilterDef(name = "deletedTeamFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+@Filter(name = "deletedTeamFilter", condition = "deleted = :isDeleted")*/
+//@Where(clause = "DELETED = 0")
+
+
+/*@FilterDef(name = "deletedProductFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+@Filter(name = "deletedProductFilter", condition = "deleted = :isDeleted")*/
+@SQLDelete(sql = "UPDATE teams SET deleted = true WHERE team_id=?")
 @AllArgsConstructor
 @Setter
 @Getter
@@ -39,7 +50,7 @@ public class Team implements Serializable {
     private long id;*/
 
    // @JoinColumn(name="u_id")
-    @ManyToOne( cascade = CascadeType.ALL)//(fetch = FetchType.LAZY)
+    @ManyToOne//( cascade = CascadeType.ALL)//(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private UserData user;
 
@@ -66,6 +77,19 @@ public class Team implements Serializable {
     private Integer rankPos;
     @Transient
     private Integer rankPoints;
+
+
+    @Column(name = "DELETED",columnDefinition = "TINYINT")
+    private boolean deleted = false;
+
+    // getters and setters
+    public Boolean getDeleted()
+    {
+        return  this.deleted;
+    }
+    public void setDeleted() {
+        this.deleted = true;
+    }
 
     @XmlAttribute
     public String getSport() {

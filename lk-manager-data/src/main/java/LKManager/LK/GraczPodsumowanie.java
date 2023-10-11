@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.*;
 @XmlSeeAlso({UserData.class})
 public class GraczPodsumowanie  {
     private UserData gracz;
-    private String sumaPunktow="";
-    private String goleStrzelone="";
-    private String goleStracone="";
+    private Integer sumaPunktow=0;
+    private Integer goleStrzelone=0;
+    private Integer goleStracone=0;
     private Integer roznica=0;
 
     public GraczPodsumowanie() {
@@ -25,35 +25,39 @@ public class GraczPodsumowanie  {
         this.gracz = gracz;
     }
     @XmlAttribute
-    public String getSumaPunktow() {
+    public Integer getSumaPunktow() {
         return sumaPunktow;
     }
 
-    public void setSumaPunktow(String sumaPunktow) {
-        this.sumaPunktow = sumaPunktow;
+    public void zwiekszSumePunktow(Integer dodaj) {
+        this.sumaPunktow +=dodaj;
     }
     @XmlAttribute
-    public String getGoleStrzelone() {
+    public Integer getGoleStrzelone() {
         return goleStrzelone;
     }
 
-    public void setGoleStrzelone(String goleStrzelone) {
+    public void addGoleStrzelone(Integer goleStrzelone) {
         this.goleStrzelone = goleStrzelone;
     }
     @XmlAttribute
-    public String getGoleStracone() {
+    public Integer getGoleStracone() {
         return goleStracone;
     }
 
-    public void setGoleStracone(String goleStracone) {
+    public void addGoleStracone(Integer goleStracone) {
         this.goleStracone = goleStracone;
     }
     @XmlAttribute
     public Integer getRoznica() {
-        return roznica;
+        return countDifference();
     }
 
-    public void setRoznica(Integer roznica) {
-        this.roznica = roznica;
+    private Integer countDifference() {
+        return this.goleStrzelone-this.goleStracone;
     }
+
+  /*  public void setRoznica(Integer roznica) {
+        this.roznica = roznica;
+    }*/
 }

@@ -1,6 +1,11 @@
 package LKManager.controllers.LK;
 
+import LKManager.DAO.MeczDAOImpl;
+import LKManager.DAO.RundaDAOImpl;
+import LKManager.DAO.TerminarzDAOImpl;
+import LKManager.DAO.UserDAOImpl;
 import LKManager.LK.Terminarz;
+import LKManager.model.MatchesMz.Match;
 import LKManager.services.*;
 import LKManager.model.UserMZ.UserData;
 
@@ -12,8 +17,12 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.xml.sax.SAXException;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -26,7 +35,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,103 +47,162 @@ public class terminarzController {
     private final MZUserService MZUserService;
 
 
-    private Integer numerRundy;
+   // private Integer numerRundy;
 private final LKUserService lkUserService;
-    public Integer getNumerRundy() {
+  /*  public Integer getNumerRundy() {
         return numerRundy;
     }
 
     public void setNumerRundy(Integer numerRundy) {
         this.numerRundy = numerRundy;
-    }
+    }*/
 private final TerminarzService terminarzService;
     private final PlikiService plikiService;
-    private String wybranyTerminarz;
+ //   private String wybranyTerminarz;
     private  Terminarz terminarz;
-
-    public terminarzController(MZUserService MZUserService,  LKUserService lkUserService, TerminarzService terminarzService, PlikiService plikiService) {
+    private final TerminarzDAOImpl terminarzDAO;
+    private final UserDAOImpl userDAO;
+    private  final RundaDAOImpl rundaDAO;
+    private  final MeczDAOImpl meczDAO;
+   private final CookieManager cookieManager;
+    public terminarzController(MZUserService MZUserService, LKUserService lkUserService, TerminarzService terminarzService, PlikiService plikiService, TerminarzDAOImpl terminarzDAO, UserDAOImpl userDAO, RundaDAOImpl rundaDAO, MeczDAOImpl meczDAO, CookieManager cookieManager) {
         this.MZUserService = MZUserService;
 
         this.lkUserService = lkUserService;
 
         this.terminarzService = terminarzService;
         this.plikiService = plikiService;
+        this.terminarzDAO = terminarzDAO;
+        this.userDAO = userDAO;
+        this.rundaDAO = rundaDAO;
+        this.meczDAO = meczDAO;
+        this.cookieManager = cookieManager;
     }
 
 
     @GetMapping("/terminarz")
-    public String index(Model model, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, ParseException, URISyntaxException {
+    public String index(HttpServletResponse response,HttpServletRequest request, Model model, @RequestParam (value="numerRundy", required = false)String nrRundy,@RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, ParseException, URISyntaxException {
+ //, @CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
+
+    //   Arrays.stream(request.getCookies()).forEach(a-> System.out.println(a.getValue()));
+//wybranyTerminarz="ja i kyo";
+  //      wybranyTerminarzCookie= null;
+//wybranyTerminarz= "ja i kyo";
+       // var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
+    //    Cookie numerRundyCookie = null;
+    //    Cookie wybranyTerminarzCookie=null;
+
+       // Optional<Cookie> numerRundyCookieOptional = Optional.ofNullable(Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("numerRundy")).findFirst().orElse(null));
+ //       Optional<Cookie> wybranyTerminarzCookieOptional = Optional.ofNullable(Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("wybranyTerminarz")).findFirst().orElse(null));
+
+    //    if(numerRundyCookieOptional.isPresent())
+   //     {
+
+
+        ///////////////////////////
+    //        nrRundy=    cookieManager.saveOrUpdateNumerRundyCookie(response,request,nrRundy, wybranyTerminarz);
+  //////////////////////
+     //  nrRundy="1";
+
+ nrRundy= CookieManager.saveOrUpdateNumerRundyCookie(nrRundy,wybranyTerminarz,response,request,terminarzDAO);
+wybranyTerminarz= CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminarz,response,request,terminarzDAO);
+    //    }
+    //    else
+    //    {
+
+     //   }
+        //  if(wybranyTerminarzCookieOptional.isPresent())
+     //   {
+
+   //         wybranyTerminarz=  cookieManager.saveOrUpdateChosenScheduleCookie(response,wybranyTerminarz,request);
+
+       // }
+    //    else
+     //   {
+
+     //   }
 
 
 
-        var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
+
+
+
+
+
+
+
+
+        /*wybranyTerminarzCookie.setMaxAge(0);
+        response.addCookie(wybranyTerminarzCookie);*/
+       //=  Arrays.stream(request.getCookies()).anyMatch(a->a.getName().equals("wybranyTerminarz"));
+
+//wybranyTerminarz="ja i kyo";
+
+
+
+
+
+        var terminarze =terminarzDAO.findAll();
+
+        //   terminarz= terminarzDAO.findByTerminarzId(106);
+     //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
+
+        //podano nazwe terminarza
         if(wybranyTerminarz!=null)
         {
+
+
+
+
             //sprawdzanie czy jest taki terminarz
 
-              terminarz = terminarzService.wczytajTerminarz(wybranyTerminarz);
+           //   terminarz = terminarzService.wczytajTerminarz(wybranyTerminarz);
+             terminarz=     terminarzDAO.findByTerminarzName(wybranyTerminarz);
+
+             //nie znaleziono przekierowanie do tworzenia
          if(terminarz==null)
          {
 //todo przekierowanie że nie ma takiego terminarza
               return "redirect:/temp";
           }
 
-            //nastapila zmiana terminarza ->nr rundy=1
-            if(wybranyTerminarz!=this.wybranyTerminarz)
-            {
-                this.wybranyTerminarz=wybranyTerminarz;
-                numerRundy=1;
-            }
+
 
 
 
         }
+        //nie podano nazwy terminarza
+        else
+        {
+//ostatni wg id
+            terminarz=     terminarzDAO.findLastById();
+            //nie ma żadnych terminarzy
+            if(terminarz==null)
+            {
+                return "redirect:/dodajTerminarz";
+            }
+            else  //był taki terminarz
+            {
+
+            }
+        }
+
+      var  runda=rundaDAO.findByTerminarzIdAndRundaId(terminarz.getId(),Integer.parseInt(nrRundy)-1);
+        var rundy = rundaDAO.findAllByTerminarzId(terminarz.getId());
+        List<Match> mecze=meczDAO.findAllByTerminarzIdAndRundaId(terminarz.getId(),Integer.parseInt(nrRundy)-1);
+       // model.addAttribute("wybranyTerminarz", terminarze.get(0));
 
 
+        model.addAttribute("wybranyTerminarz", wybranyTerminarz);
+        model.addAttribute("rundy",rundy);
+     //   model.addAttribute("nrRundy",terminarz.getRundy());
+     //   model.addAttribute("runda", terminarz.getRundy().get(Integer.parseInt(nrRundy)-1));
+        model.addAttribute("runda", runda);
+     //   model.addAttribute("mecze", terminarz.getRundy().get(Integer.parseInt(nrRundy)-1).getMecze()  );
+        model.addAttribute("mecze", mecze  );
 
-         //nie przekazano terminarza
-         if(this.wybranyTerminarz== null)
-         {
-             // nie ma terminarzy -> przekierowanie do tworzenia
-             if(terminarze.length==0)
-             {
-
-return "redirect:/dodajTerminarz";
-             }
-             else {
-           //wybieranie najnowszego moyfikowanego
-          var najbardziejNiedawnoZmodyfikowanyTerminarz=       Arrays.stream(terminarze).toList().stream().max(Comparator.comparing(File::lastModified));
-                      terminarz= terminarzService.wczytajTerminarz(najbardziejNiedawnoZmodyfikowanyTerminarz.get().getName());
-                 model.addAttribute("wybranyTerminarz", najbardziejNiedawnoZmodyfikowanyTerminarz.get().getName());
-             }
-         }
-         //wskazano terminarz
-         else
-         {
-             //wybrany terminarz
-                  terminarz= terminarzService.wczytajTerminarz(this.wybranyTerminarz);
-             model.addAttribute("wybranyTerminarz", this.wybranyTerminarz);
-         }
-
-
-
-
-
-
-        model.addAttribute("nrRundy", terminarz.getRundy());
-if(numerRundy== null)
-{
-    numerRundy=1;
-}
-
-
-
-
-        model.addAttribute("runda", terminarz.getRundy().get(numerRundy-1));
-        model.addAttribute("mecze", terminarz.getRundy().get(numerRundy-1).getMecze()
-        );
-model.addAttribute("numerRundy", numerRundy);
+        model.addAttribute("numerRundy", nrRundy);
 
 
 
@@ -151,11 +220,13 @@ model.addAttribute("numerRundy", numerRundy);
 
 
 
-    @RequestMapping("/dodajTerminarz")
+    @GetMapping(value = "/dodajTerminarz" )
 public String dodajTerminarz(Model model) throws JAXBException, IOException, ParserConfigurationException, SAXException
 {
 
-  var gracze  =lkUserService.wczytajGraczyZXML();
+  var gracze  =//lkUserService.wczytajGraczyZXML();
+  userDAO.findAll(false);
+
  gracze= gracze.stream().sorted(
           (o1,o2)->o1.getUsername().compareToIgnoreCase(o2.getUsername())
   ).collect(Collectors.toList());
@@ -211,7 +282,8 @@ terminarzCommand.lista= new ArrayList<String>();
     public String usuwanieTerminarza(Model model)//@RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
     {
 
-        var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
+        var terminarze= //plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
+        terminarzDAO.findAll();
 //this.wybranyTerminarz=null;
         model.addAttribute("terminarze", terminarze);
            return "LK/terminarz/usunTerminarz";
@@ -220,117 +292,211 @@ terminarzCommand.lista= new ArrayList<String>();
     }
 
     @PostMapping("/usunTerminarz")
-    public String usunTerminarz( @RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
+    public String usunTerminarz(RedirectAttributes attributes, HttpServletResponse response, HttpServletRequest request, @RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)//, @CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie)
     {
-        try
-        {
+
+
+
+           try
+        {/*
             File plikDoUsuniecia= new File("Data/terminarze/"+terminarzDoUsuniecia);
             plikDoUsuniecia.delete();
+            */
+
+       /*     if(wybranyTerminarzCookie.equals("null")||wybranyTerminarzCookie.equals(terminarzDoUsuniecia))
+            { Cookie cookieNumerRundy=null;
+                cookieNumerRundy = new Cookie("numerRundy", "1");
+                cookieNumerRundy.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+                cookieNumerRundy.setSecure(true);
+                cookieNumerRundy.setHttpOnly(true);
+                response.addCookie(cookieNumerRundy);
+
+                Terminarz terminarz1= terminarzDAO.findLastById();
+
+                Cookie cookieTerminarz=null;
+                cookieTerminarz = new Cookie("wybranyTerminarz", URLEncoder.encode(terminarz1.getName(),"utf-8") );
+                cookieTerminarz.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+                cookieTerminarz.setSecure(true);
+                cookieTerminarz.setHttpOnly(true);
+
+            }*/
+            terminarzDAO.deleteByName(terminarzDoUsuniecia);
+
+            Terminarz terminarz1 =terminarzDAO.findLastById();
+            try{
+
+         //       Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
+        //        Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter( a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
+/*
+                cookieManager.saveOrUpdateChosenScheduleCookie(response,terminarz1.getName(),request, terminarzDAO);
+                cookieManager.saveOrUpdateNumerRundyCookie(response,"1",request);
+       */
+                //todo wyzej bkp
+
+
+               // CookieManager.checkCookies(response,request,"1",terminarz1.getName(),terminarzDAO);
+
+            }
+            catch (Exception e)
+            {
+
+            }
+            CookieManager.saveOrUpdateNumerRundyCookie("",terminarz1.getName(),response,request,terminarzDAO);
+CookieManager.saveOrUpdateChosenScheduleCookie(terminarz1.getName(),response,request,terminarzDAO);
+            attributes.addAttribute("wybranyTerminarz", terminarz1.getName());
+            attributes.addAttribute("numerRundy", "1");
             return "redirect:/terminarz";
         }
         catch(Exception e)
         {
+         //   model.addAttribute("error", "błąd w usuwaniu");
             return "LK/temp";
         }
 
     }
 
     @PostMapping("/terminarz")
-    public String stworzTerminarz(Model model, @ModelAttribute @Valid TerminarzCommand command, @RequestParam(value = "wybraniGracze" , required = false) List<String> wybraniGracze) throws DatatypeConfigurationException, JsonProcessingException {
-//todo walidacja  te same nazwy
+    public String stworzTerminarz(HttpServletResponse response,HttpServletRequest request,RedirectAttributes attributes, @ModelAttribute @Valid TerminarzCommand command, @RequestParam(value = "wybraniGracze" , required = false) List<String> wybraniGracze) throws DatatypeConfigurationException, JsonProcessingException {
+//,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
+
+
+        //todo walidacja  te same nazwy
 /*var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNazwa().trim()+".xml")))
 {
 
    int y=0;
 }*/
-      XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
 
-data.setYear(Integer.parseInt(command.data.trim().split("-")[0]));
-data.setMonth(Integer.parseInt(command.data.split("-")[1]));
-data.setDay(Integer.parseInt(command.data.split("-")[2]));
+        Terminarz terminarz = null;
 
-    //    LocalDateTime data = LocalDateTime.of(command.data.trim().split("-")[0],
-     //           command.data.split("-")[1]))
+
+   /*     XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
+
+        data.setYear(Integer.parseInt(command.data.trim().split("-")[0]));
+        data.setMonth(Integer.parseInt(command.data.split("-")[1]));
+        data.setDay(Integer.parseInt(command.data.split("-")[2]));
+*/
+        LocalDate data=LocalDate.parse(command.getData().trim(), DateTimeFormatter.ofPattern("yyyy-MM-d"));
+        //    LocalDateTime data = LocalDateTime.of(command.data.trim().split("-")[0],
+        //           command.data.split("-")[1]))
 ////////////////////////////////////////
 
 
-var gracze=lkUserService.wczytajGraczyZXML();
-
+        var gracze =//lkUserService.wczytajGraczyZXML();
+                userDAO.findAll(false);
 
         //nie wybrano graczy do wielodniowego terminarza
-        if(wybraniGracze==null)
-        {
-            if(command.getLista().size()==0)
-            {
+        if (wybraniGracze == null) {
+            if (command.getLista().size() == 0) {
                 //todo nie wybrano tez pojedynczych meczy
-                int tt=0;
-            }
-            else
-            {
-                if(command.getLista().size()%2!=0)
-                {
+                int tt = 0;
+            } else {
+                if (command.getLista().size() % 2 != 0) {
                     //todo brakuje pary dla grajka  ewentuanie w js wybierzgrajka-> pauza
-                }
-                else
-                {
+                } else {
                     List<UserData> templist = new ArrayList<>();
-                    for ( int i=0;i<command.lista.size();i++
+                    for (int i = 0; i < command.lista.size(); i++
                     ) {
 
 
-                        for (int j = 0; j <gracze.size() ; j++) {
+                        for (int j = 0; j < gracze.size(); j++) {
 
 
-                            if(gracze.get(j).getUsername().equals(command.lista.get(i)))
-                            {
+                            if (gracze.get(j).getUsername().equals(command.lista.get(i))) {
                                 templist.add(gracze.get(j));
-                                j=0;
+                                j = 0;
                                 break;
                             }
                         }
                     }
 //////////////////////////////
-                    terminarzService.utworzTerminarzJednodniowy(data, templist, command.nazwa);
+                    terminarz = terminarzService.utworzTerminarzJednodniowy(data, templist, command.nazwa);
                 }
 
             }
-        }
-        else
-        {
+        } else {
             List<UserData> templist = new ArrayList<>();
-            for (var gracz:gracze
+            for (var gracz : gracze
             ) {
-                for ( int i=0;i<wybraniGracze.size();i++
+                for (int i = 0; i < wybraniGracze.size(); i++
                 ) {
-                    if(gracz.getUsername().equals(wybraniGracze.get(i)))
-                    {
+                    if (gracz.getUsername().equals(wybraniGracze.get(i))) {
                         templist.add(gracz);
-                        i=0;
+                        i = 0;
                         break;
                     }
                 }
             }
 //////////////////////////////
-            terminarzService.utworzTerminarzWielodniowy(data, templist, command.nazwa);
+            terminarz = terminarzService.utworzTerminarzWielodniowy(data, templist, command.nazwa);
         }
 
+        try {
+        //    Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
 
-
-
-        return "redirect:/terminarz";
+/*
+ Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter( a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
+            cookieManager.saveOrUpdateChosenScheduleCookie(response, terminarz.getName(), request, terminarzDAO);
+       */
+       //todo wyzej bkp
+         //   CookieManager.checkCookies(response,request,"1",terminarz.getName(),terminarzDAO);
+CookieManager.saveOrUpdateNumerRundyCookie("1",terminarz.getName(),response,request,terminarzDAO);
+CookieManager.saveOrUpdateChosenScheduleCookie(terminarz.getName(),response,request,terminarzDAO);
+            attributes.addAttribute("wybranyTerminarz", terminarz.getName());
+            attributes.addAttribute("numerRundy", "1");
+            return "redirect:/terminarz";
+        } catch (Exception e) {
+            return "redirect:/temp";
+        }
     }
-
     @PostMapping("/pokazRunde")
-    public String pokazRunde(@RequestParam(value = "participant", required = true)Integer numerRundy)
+    public String pokazRunde(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "participant", required = true)Integer numerRundy)
     {
-int oo=9;
-     this.numerRundy=numerRundy;
+//cookieManager.saveOrUpdateNumerRundyCookie(response, numerRundy.toString(),request);
+        //todo wyzej bpk
+        try{
+       //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
+            CookieManager.saveOrUpdateNumerRundyCookie(numerRundy.toString(),terminarz.getName(),response,request,terminarzDAO);
+        }
+           catch (Exception e)
+           {
+               e.printStackTrace();
+           }
+
+        response.addCookie(new Cookie("numerRundy",numerRundy.toString()));
+    //    response.addCookie(new Cookie("wybranyTerminarz","wielo"));
+  //   this.numerRundy=numerRundy;
+        attributes.addAttribute("wybranyTerminarz", Arrays.stream(request.getCookies()).filter(a->a.getName().equals("wybranyTerminarz")).findAny().orElse(null).getValue());
+        attributes.addAttribute("numerRundy", numerRundy.toString());
+
         return "redirect:/terminarz";
 
     }
 
+    @GetMapping(value = "/zmienTerminarz")
+    public String zmienTerminarz(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response,@RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz)
 
+    {
+
+        try{
+            //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
+            CookieManager.saveOrUpdateNumerRundyCookie("1",terminarz.getName(),response,request,terminarzDAO);
+            CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminarz,response,request,terminarzDAO);       }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+       // response.addCookie(new Cookie("numerRundy","1"));
+       // response.addCookie(new Cookie("wybranyTerminarz",wybranyTerminarz));
+        //    response.addCookie(new Cookie("wybranyTerminarz","wielo"));
+        //   this.numerRundy=numerRundy;
+        attributes.addAttribute("wybranyTerminarz", wybranyTerminarz);
+        attributes.addAttribute("numerRundy", "1");
+
+        return "redirect:/terminarz";
+    }
 
     @Getter
     @Setter

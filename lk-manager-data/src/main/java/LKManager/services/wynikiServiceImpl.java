@@ -1,8 +1,13 @@
 package LKManager.services;
 
+import LKManager.DAO.RundaDAO;
+import LKManager.DAO.RundaDAOImpl;
 import LKManager.DAO.TerminarzDAOImpl;
+import LKManager.LK.Runda;
 import LKManager.LK.Terminarz;
+import LKManager.model.UserMZ.UserData;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
 import javax.persistence.EntityManager;
@@ -26,12 +31,15 @@ public class wynikiServiceImpl implements WynikiService {
 
 private MZUserService mzUserService;
     private TerminarzDAOImpl terminarzDAOimpl;
+private final RundaDAOImpl rundaDAO;
 
 private final TerminarzService terminarzService;
   private   EntityManager entityManager;
-    public wynikiServiceImpl(MZUserService mzUserService, TerminarzDAOImpl terminarzDAOimpl, TerminarzService terminarzService, EntityManager entityManager, TerminarzDAOImpl terminarzDAO) {
+    public wynikiServiceImpl(MZUserService mzUserService, TerminarzDAOImpl terminarzDAOimpl, RundaDAOImpl rundaDAO,  TerminarzService terminarzService, EntityManager entityManager, TerminarzDAOImpl terminarzDAO) {
         this.mzUserService = mzUserService;
         this.terminarzDAOimpl = terminarzDAOimpl;
+        this.rundaDAO = rundaDAO;
+
 
         this.terminarzService = terminarzService;
         this.entityManager = entityManager;
@@ -40,19 +48,28 @@ private final TerminarzService terminarzService;
 
 private TerminarzDAOImpl terminarzDAO;
 
-    @Override
-    public void aktualizujWyniki(Integer runda, Terminarz terminarz, MatchService matchService, String nazwaPliku) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
 
-        extracted2(runda, terminarz, matchService );
+
+    @Override
+    public void aktualizujWyniki(Integer roundNumber, Runda round, MatchService matchService, String scheduleName) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
+
+
+        extracted(roundNumber, scheduleName, matchService );
 
 
      //   terminarzDAO.saveRound(terminarz, runda);
 //zapiszDoXml(terminarz, nazwaPliku);
-terminarzDAO.saveResults(runda, terminarz,matchService, mzUserService);
+
+
+      //  rundaDAO.saveRoundResults(round,);
+
+
+
+//terminarzDAO.saveResults(roundNumber, terminarz,matchService, mzUserService);
 
     }
-
-    private static void extracted(Integer runda, Terminarz terminarz, MatchService matchService) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
+@Transactional
+    private  void extracted(Integer roundNumber, String scheduleName, MatchService matchService) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 
@@ -65,16 +82,17 @@ terminarzDAO.saveResults(runda, terminarz,matchService, mzUserService);
         Duration d = DatatypeFactory.newInstance().newDuration(false, 0, 0, 7, 0, 0, 0);
         now.add(d);
 
+      //  Runda round= rundaDAO.findRound(scheduleName,roundNumber);
 
-        for (var item: terminarz.getRundy()
-        ) {
-
-
-            if(  item.getNr()== runda) {
+        //todo jak wyzej nie dzała to nizej sprobowac
+      Runda round= rundaDAO.findRoundWitchMatches(scheduleName,roundNumber);
 
 
 
-                for (var mecz : item.getMecze()
+
+
+
+                for (var mecz : round.getMecze()
                 ) {
 
                     //sprawdzanie czy  gospodarzem jest apuza
@@ -84,12 +102,12 @@ terminarzDAO.saveResults(runda, terminarz,matchService, mzUserService);
 
 
 
-                        var user = mecz.getUser();
+                        UserData user = mecz.getUser();
                         var userTeamId = user.getTeamlist().get(0).getTeamId();
                         var oponent = mecz.getopponentUser();
                         var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
 
-                        var rozegrane = matchService.findPlayedByUsername(user.getUsername());
+                        var rozegrane = matchService.findPlayedByUser(user);
 
                         var meczeTurniejowe = rozegrane.getMatches().stream().
                                 filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
@@ -131,11 +149,16 @@ terminarzDAO.saveResults(runda, terminarz,matchService, mzUserService);
 
                 }
 
-            }
-        }
+               rundaDAO.saveRound(round);
+
+
+
     }
 
-    private void extracted2(Integer runda, Terminarz terminarz, MatchService matchService) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
+    private void extracted2(Integer runda, Runda round, MatchService matchService) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
+
+
+
 
     }
 

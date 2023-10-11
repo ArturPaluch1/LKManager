@@ -6,10 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+
+
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import java.util.List;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({Match.class, UserData.class})
+
 public class Runda implements Serializable {
 
 
@@ -37,7 +40,9 @@ public class Runda implements Serializable {
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "runda_id")
     private long id;
-@ManyToOne( cascade = CascadeType.ALL)
+
+  //  @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+@ManyToOne( cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE})
 @JoinColumn(name = "terminarz_id")
     private Terminarz terminarz;
 
@@ -45,20 +50,46 @@ public class Runda implements Serializable {
     @Column(name = "nr_rundy")
 private int nr;
 
+
     @OneToMany(mappedBy = "runda",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true,
-    fetch = FetchType.EAGER)
+            cascade = {CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},
+        //    orphanRemoval = true,)
+
+    fetch = FetchType.LAZY)
+
 private List<Match> mecze;
 
+
+
+
+/*
     @Column(name = "data")
-    @Transient
-    private XMLGregorianCalendar data;
+    @Temporal(TemporalType.DATE)
+    public Date getDateTimeItem() {
+        return XmlAdapter.unmarshall( this.getData());
+    }
 
-    @Transient
-private status status;
+    public void setDateTimeItem(Date target) throws DatatypeConfigurationException {
+        setData(XmlAdapter.marshall( target));
+    }
 
-    public Runda(int nr, XMLGregorianCalendar data) {
+    */
+
+@Column(name = "data")
+    protected LocalDate data;
+
+    @XmlAttribute
+    public boolean isPlayed() {
+        return played;
+    }
+    public void setPlayed(boolean played) {
+        this.played = played;
+    }
+    @Transient
+    @Column(name = "played")
+private boolean played;
+
+    public Runda(int nr, LocalDate data) {
         this.nr = nr;
         this.data = data;
         mecze= new ArrayList<>();
@@ -66,14 +97,10 @@ private status status;
 
     public Runda() {
     }
-    @XmlAttribute
-    public Runda.status getStatus() {
-        return status;
-    }
 
-    public void setStatus(Runda.status status) {
-        this.status = status;
-    }
+
+
+
 
     @XmlAttribute
     public int getNr() {
@@ -85,6 +112,7 @@ private status status;
     }
 
     @XmlElement(name = "Match")
+
     public List<Match> getMecze() {
         return mecze;
     }
@@ -93,12 +121,13 @@ private status status;
         this.mecze = mecze;
     }
 
-    @XmlAttribute
-    public XMLGregorianCalendar getData() {
+ // @XmlAttribute
+ // @Transient
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(XMLGregorianCalendar data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 

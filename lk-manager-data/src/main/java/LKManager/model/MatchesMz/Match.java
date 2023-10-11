@@ -8,7 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,28 +22,28 @@ import java.util.List;
 @XmlRootElement(name = "Match")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({MatchTeam.class})
-public class Match   implements Serializable {
+public class Match implements Serializable {
 
-@ManyToOne( cascade = CascadeType.ALL)
-@JoinColumn(name = "runda")
+    @Transient
+    private final List<MatchTeam> teamlist = new ArrayList();
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "runda")
     private Runda runda;
-
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "mecz_id")
     private Long id;
 
-    @XmlAttribute(name = "date")
-    public String getDate() {
-        return date;
-    }
+      @Transient
+/*    @Column(name = "data", updatable = false, insertable = false)*/
 
-    @Transient
     private String date;
 
+    //@Transient
+    @Column(name = "data")
+    // @Temporal(TemporalType.DATE)
+    private LocalDate dateDB;
 
     @Transient
     private String status;
@@ -55,7 +57,7 @@ public class Match   implements Serializable {
     private MatchTeam team;
 
     @Column(name = "user_wynik1")
-private String userMatchResult1;
+    private String userMatchResult1;
     @Column(name = "user_wynik2")
     private String userMatchResult2;
     @Column(name = "przeciwnik_wynik1")
@@ -63,18 +65,19 @@ private String userMatchResult1;
     @Column(name = "przeciwnik_wynik2")
     private String opponentMatchResult2;
 
-  //  @Column(name = "user")
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    //  @Column(name = "user")
+    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "przeciwnik")//, updatable = false, insertable = false)
     private UserData opponentUser;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user")//, updatable = false, insertable = false)
     private UserData user;
+    /* public XMLGregorianCalendar getDate() {
+                return date;
+            }*/
 
-
-    @Transient
-    private final List<MatchTeam> teamlist= new ArrayList();
 
     public Match(Runda runda, Long id, String date, String status, String type, String typeName, int typeId, UserData user) {
         this.runda = runda;
@@ -87,6 +90,12 @@ private String userMatchResult1;
         this.user = user;
 
     }
+
+    public Match() {
+    }
+
+
+
     @XmlAttribute
     public String getUserMatchResult1() {
         return userMatchResult1;
@@ -95,6 +104,7 @@ private String userMatchResult1;
     public void setUserMatchResult1(String userMatchResult1) {
         this.userMatchResult1 = userMatchResult1;
     }
+
     @XmlAttribute
     public String getOpponentMatchResult1() {
         return opponentMatchResult1;
@@ -122,8 +132,6 @@ private String userMatchResult1;
         this.opponentMatchResult2 = opponentMatchResult2;
     }
 
-    public Match() {
-    }
     @XmlAttribute
     public Long getId() {
         return id;
@@ -133,54 +141,55 @@ private String userMatchResult1;
         this.id = id;
     }
 
+    protected LocalDate stringToLocalDate(String date) {
 
-    public void setDateDB(String date) {
-      if(date!=null)
-      {
-
-
-
-
-
-          this.dateDB= stringToDate(date);
-
-          int y=0;
-      }
-
-    }
-
-protected Date stringToDate(String date)
-    {
-        Date tempDate= new Date();
-        tempDate.setYear(Integer.parseInt(date.trim().split("-")[0]));
-        tempDate.setMonth(Integer.parseInt(date.split("-")[1]));
-        tempDate.setDate(Integer.parseInt(date.trim().split("-")[2].split(" ")[0]));
+  int year= Integer.parseInt(date.trim().split("-")[0]);
+        int month= Integer.parseInt(date.split("-")[1]);
+        int day= Integer.parseInt(date.trim().split("-")[2].split(" ")[0]);
+        LocalDate tempDate = LocalDate.of(year,month,day);
         return tempDate;
+
+
     }
+    //////////////////////////////////////////////
+    @XmlAttribute(name = "date")
+    public String getDate() {
 
-    /* public XMLGregorianCalendar getDate() {
-                return date;
-            }*/
-   //@Transient
-    @Column(name = "data")
-    @Temporal(TemporalType.DATE)
-   private Date dateDB;
-
-
-
-    public Date getDateDB() {
-
-        int i=0;
-
-        return  stringToDate(this.date);
-        //new Date(this.date.getYear(), this.date.getMonth(), this.date.getDay());
+   /*     if(this.date==null)
+            return this.dateDB;
+        else*/
+        return date;
     }
-
 
     public void setDate(String date) {
         this.date = date;
-       this. setDateDB(date);
+
+      //    this. setDateDB(stringToLocalDate(date));
     }
+
+    //////////////////////////////////////////////
+    public LocalDate getDateDB() {
+
+        int i = 0;
+
+        return dateDB;
+        //stringToDate(this.date);
+        //new Date(this.date.getYear(), this.date.getMonth(), this.date.getDay());
+    }
+
+    public void setDateDB(LocalDate date) {
+      /*  if (date != null) {
+
+
+            //    this.dateDB= stringToDate(date);
+
+            int y = 0;
+        }*/
+        this.setDate(date.toString());
+
+dateDB=date;
+    }
+    //////////////////////////////////////////////
     @XmlAttribute
     public String getStatus() {
         return status;
@@ -189,6 +198,7 @@ protected Date stringToDate(String date)
     public void setStatus(String status) {
         this.status = status;
     }
+
     @XmlAttribute
     public String getType() {
         return type;
@@ -197,6 +207,7 @@ protected Date stringToDate(String date)
     public void setType(String type) {
         this.type = type;
     }
+
     @XmlAttribute
     public String getTypeName() {
         return typeName;
@@ -205,6 +216,7 @@ protected Date stringToDate(String date)
     public void setTypeName(String typeName) {
         this.typeName = typeName;
     }
+
     @XmlAttribute
     public int getTypeId() {
         return typeId;
@@ -214,15 +226,14 @@ protected Date stringToDate(String date)
         this.typeId = typeId;
     }
 
-
+    @XmlElement(name = "Team")
+    public MatchTeam getTeam() {
+        return team;
+    }
 
     public void setTeam(MatchTeam team) {
         this.team = team;
         teamlist.add(team);
-    }
-    @XmlElement(name = "Team")
-    public MatchTeam getTeam() {
-        return team;
     }
 
     public List<MatchTeam> getTeamlist() {

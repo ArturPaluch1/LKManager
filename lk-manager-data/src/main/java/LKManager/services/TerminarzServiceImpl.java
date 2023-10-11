@@ -1,14 +1,13 @@
 package LKManager.services;
 
-import LKManager.DAO.TerminarzDAO;
 import LKManager.DAO.TerminarzDAOImpl;
 import LKManager.LK.Runda;
 import LKManager.LK.Terminarz;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
-import org.hibernate.Session;
 import org.springframework.stereotype.Service;
+import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -17,13 +16,15 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+
 public class TerminarzServiceImpl implements TerminarzService {
 
 
@@ -35,7 +36,7 @@ private TerminarzDAOImpl terminarzDAOimpl;
 
 
     @Override
-    public void utworzTerminarzWielodniowy(XMLGregorianCalendar data, List<UserData> grajki, String nazwa) throws DatatypeConfigurationException {
+    public Terminarz utworzTerminarzWielodniowy(LocalDate data, List<UserData> grajki, String nazwa) throws DatatypeConfigurationException {
 
         ////////////////////////////////////////////////////////
         dodajPauzeDlaParzystosci(grajki);
@@ -54,13 +55,16 @@ private TerminarzDAOImpl terminarzDAOimpl;
             /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
             Runda runda;
             if (j != 1) {
-                XMLGregorianCalendar tempData = DatatypeFactory.newInstance().newXMLGregorianCalendar();
+             /*   LocalDate tempDate= LocalDate.of(calyTerminarz.get(calyTerminarz.size() - 1).getData().getYear(),
+                        calyTerminarz.get(calyTerminarz.size() - 1).getData().getMonth(),
+                        calyTerminarz.get(calyTerminarz.size() - 1).getData().getDay());*/
+         /*       XMLGregorianCalendar tempData = DatatypeFactory.newInstance().newXMLGregorianCalendar();
                 tempData.setYear(calyTerminarz.get(calyTerminarz.size() - 1).getData().getYear());
                 tempData.setMonth(calyTerminarz.get(calyTerminarz.size() - 1).getData().getMonth());
                 tempData.setDay(calyTerminarz.get(calyTerminarz.size() - 1).getData().getDay());
                 tempData.add(d);
-
-                runda = new Runda(j, tempData);
+*/
+                runda = new Runda(j, calyTerminarz.get((calyTerminarz.size()-1)).getData().plusDays(7l));
             } else {
                 runda = new Runda(j, data);
             }
@@ -74,13 +78,17 @@ private TerminarzDAOImpl terminarzDAOimpl;
                 var tempMatch = new Match();
                tempMatch.setUser(listyGrajkow.getGrajkiA().get(i));
                 tempMatch.setopponentUser(listyGrajkow.getGrajkiB().get(i));
-tempMatch.setDate(runda.getData().toString());
-
-
+                tempMatch.setDateDB(data);
+/*tempMatch.setDate(runda.getDateTimeItem());
+tempMatch.setDateDB(runda.getDateTimeItem());
+*/
                 runda.getMecze().add(tempMatch);
 
             }
-runda.setStatus(Runda.status.nierozegrana);
+
+  //runda.setData(data);
+  //runda.setDateTimeItem();
+runda.setPlayed(false);
             calyTerminarz.add(runda);
             System.out.println("=======" + runda.getNr() + " === " + runda.getData());
             listyGrajkow.przesunListy();
@@ -96,19 +104,19 @@ runda.setStatus(Runda.status.nierozegrana);
 
 
 
-        jaxbObjectToXML(terminarz,nazwa);
+ //       jaxbObjectToXML(terminarz,nazwa);
 
 /////////////////////////////////////////////
 // zapis  sql
-terminarz.setNazwa(nazwa);
+terminarz.setName(nazwa);
 //terminarz.getRundy().get(0).getTerminarz()
         terminarzDAOimpl.save(terminarz);
-
+return terminarz;
 //////////////
     }
 
     @Override
-    public void utworzTerminarzJednodniowy(XMLGregorianCalendar data, List<UserData> mecze, String nazwa) {
+    public Terminarz utworzTerminarzJednodniowy(LocalDate data, List<UserData> mecze, String nazwa) {
 
 
         ////////////////////////////////////////////////////////
@@ -138,6 +146,7 @@ int yy=0;
             else
             {
                 var tempMatch = new Match();
+               tempMatch.setDateDB(data);
                 tempMatch.setUser(mecze.get(i));
                 tempMatch.setopponentUser(mecze.get(i+1));
                 runda.getMecze().add(tempMatch);
@@ -145,7 +154,7 @@ int yy=0;
 
 
         }
-        runda.setStatus(Runda.status.nierozegrana);
+        runda.setPlayed(false);
         calyTerminarz.add(runda);
         System.out.println("=======" + runda.getNr() + " === " + runda.getData());
 
@@ -179,15 +188,17 @@ int yy=0;
 */
 
 
-
+//todo do usuniecia po przejsciu na sql
         /////////////// zapis termnarza do xml    //////////////////////
-        Terminarz terminarz = new Terminarz(calyTerminarz);
+ /*       Terminarz terminarz = new Terminarz(calyTerminarz);
         jaxbObjectToXML(terminarz,nazwa);
-
+*/
 /////////////////////////////////////////////
+        Terminarz terminarz = new Terminarz(calyTerminarz);
+        terminarz.setName(nazwa);
+terminarzDAOimpl.save(terminarz);
 
-
-
+return terminarz;
 
 
 
@@ -286,6 +297,9 @@ int yy=0;
 
 
     }
+
+
+
 
     class ListyGrajkow {
         private List<UserData> grajkiPrzesunieteA;

@@ -15,9 +15,6 @@
     <UserData userId="1154416" username="harry84">
         <Team teamId="406799" teamName="Harry Noble House FC"/>
     </UserData>
-    <UserData userId="7672431" username="jerzykw">
-        <Team teamId="106223" teamName="FC Harnaś Sanok"/>
-    </UserData>
     <UserData userId="4925695" username="olborinho">
         <Team teamId="393423" teamName="Spartans Lodz"/>
     </UserData>
@@ -64,6 +61,10 @@
     </UserData>
     <UserData userId="8428117" username="bob">
         <Team nameShort="Cay" rankPoints="470" rankPos="260549" seriesId="124553" seriesName="div5.48" sponsor="" sport="soccer" teamId="1257791" teamName="Calverley"/>
+        <Team nameShort="" rankPoints="0" rankPos="0" seriesId="0" seriesName="" sponsor="" sport="hockey" teamId="0" teamName=""/>
+    </UserData>
+    <UserData userId="8428117" username="bob">
+        <Team nameShort="Cay" rankPoints="470" rankPos="264516" seriesId="124553" seriesName="div5.48" sponsor="" sport="soccer" teamId="1257791" teamName="Calverley"/>
         <Team nameShort="" rankPoints="0" rankPos="0" seriesId="0" seriesName="" sponsor="" sport="hockey" teamId="0" teamName=""/>
     </UserData>
 </Gracze>

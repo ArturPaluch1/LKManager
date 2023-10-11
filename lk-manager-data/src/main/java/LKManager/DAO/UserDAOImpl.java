@@ -1,25 +1,24 @@
 package LKManager.DAO;
 
+import LKManager.LK.Runda;
+import LKManager.LK.Terminarz;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
+import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Repository
 
@@ -32,11 +31,15 @@ private EntityManager entityManager;
         this.entityManager = entityManager;
     }
 
-    @Override
-    @Transactional
-    public Set<UserData> findAll() {
+  //  @Override
 
-        Session s= sessionFactory.openSession();
+
+
+
+@Transactional
+    public List<UserData> findAll(boolean isDeleted) {
+
+
      //   Team team = new Team();
    /*     UserData user= new UserData();
         try{
@@ -56,14 +59,49 @@ private EntityManager entityManager;
             return user ;
         }
 */
-        CriteriaBuilder cb = s.getCriteriaBuilder();
-        CriteriaQuery<UserData> cq = cb.createQuery(UserData.class);
-        Root<UserData> rootEntry = cq.from(UserData.class);
-        CriteriaQuery<UserData> all = cq.select(rootEntry);
+        List<UserData> allQuery= null;
+        Session s= sessionFactory.openSession();
+        try{
 
-        TypedQuery<UserData> allQuery = s.createQuery(all);
-        return allQuery.getResultStream().collect(Collectors.toSet());
+            Filter filter = s.enableFilter("deletedUserFilter");
+            filter.setParameter("isDeleted", isDeleted);
+       //     Filter filter2 = s.enableFilter("deletedTeamFilter");
+        //    filter2.setParameter("isDeleted", isDeleted);
 
+            s.beginTransaction();
+
+
+
+            Query query = s.createQuery(" from UserData ");
+            allQuery=   query.getResultList();
+
+            s.disableFilter("deletedUserFilter");
+          //  s.disableFilter("deletedTeamFilter");
+
+            s.getTransaction().commit();
+
+
+
+
+            System.out.println("findall done");
+
+        }
+        catch (Exception e)
+        {
+int y=0;
+        }
+        finally {
+            s.close();
+        }
+        return allQuery;
+        }
+
+
+    @Override
+    public List<UserData> findAll() {
+       //todo cos zrobic z tym
+
+        return null;
     }
 
     @Override
@@ -73,10 +111,11 @@ private EntityManager entityManager;
         Team team = new Team();
         UserData user= new UserData();
        try{
-           s.beginTransaction();
+     /*      s.beginTransaction();
             team= s.get(Team.class,id);
 
            s.getTransaction().commit();
+        */
         user=   s.get(UserData.class, team.getUser().getUserId());
            s.getTransaction().commit();
        }
@@ -103,6 +142,9 @@ private EntityManager entityManager;
 
 user.getTeamlist().get(0).setUser(user);
 //user.getTeamlist().get(1).setUser(user);
+        //usuwanie hokeja
+if(user.getTeamlist().size()>1)
+    user.getTeamlist().remove(1);
 
         System.out.println("+++"+user);
 
@@ -116,12 +158,14 @@ user.getTeamlist().get(0).setUser(user);
          tx=   s.beginTransaction();
           s.saveOrUpdate(user);
            tx.commit();
+
         }
         catch (Exception e)
         {
             if (tx!=null) tx.rollback();
                e.printStackTrace();
             int i=0;
+
         }
 
 
@@ -136,32 +180,67 @@ user.getTeamlist().get(0).setUser(user);
     public void delete(UserData object) throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
 
-var t=findByTeamId(object.getTeamlist().get(0).getTeamId());
+//var t=findByTeamId(object.getTeamlist().get(0).getTeamId());
 
 
-        Session s = sessionFactory.openSession();
-        try {
-            var gracz= s.get(UserData.class, object.getUserId());
-            s.beginTransaction();
-            s.delete(gracz);
-            s.getTransaction().commit();
-        }
-        catch (Exception e){
 
-        }
-        finally {
-            s.close();
-        }
+    deleteUser(object.getUserId().longValue());
 
     }
 
     @Override
     public void deleteById(Long id) {
+  //      Integer id1=1;
+        deleteUser(id);
+    }
+
+    private void deleteUser(Long id) {
         Session s = sessionFactory.openSession();
         try {
 
+/********************************
+ *    To jeśli by się usuwało encję.
+ *    Trzeba by zanullować userów i opponentUserów w parentach (Match)
+ *******************************/
             s.beginTransaction();
-            s.delete(id);
+/*
+             List<Match> matchesWithUserToDelete= null;
+
+            System.out.println("here2");
+            Query query = s.createQuery(" select m from Match m where (m.opponentUser.userId=:userId or m.user.userId=:userId) ");
+query.setParameter("userId",id.intValue());
+            System.out.println("here1");
+            matchesWithUserToDelete=query.getResultList();
+
+
+          for (Match match : matchesWithUserToDelete){
+                if(match.getUser().getUserId().equals(id.intValue()))
+                    match.setUser(null);
+               else
+                    match.setopponentUser(null);
+                System.out.println("here2");
+                s.update(match);
+s.getTransaction().commit();
+            }
+
+
+            s.flush();
+
+            matchesWithUserToDelete=   query.getResultList();
+
+*/
+ /**********************************/
+            UserData userToDelete= s.get(UserData.class, id.intValue());
+ //userToDelete.setDeleted();
+
+/********************************
+*       i potem usunąć Usera
+ *******************************/
+          s.delete(userToDelete);
+/**********************************/
+
+//s.update(userToDelete);
+
             s.getTransaction().commit();
         }
         catch (Exception e){

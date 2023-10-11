@@ -4,10 +4,13 @@ package LKManager.model.UserMZ;
 
 import LKManager.model.MatchesMz.Match;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.*;
 
 
 import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +18,10 @@ import java.util.List;
 
 @Entity
 @Table(name="users")
+//@Where(clause = "DELETED = 0")
+@FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+@Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id=?")
 @XmlRootElement(name = "UserData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @AllArgsConstructor
@@ -53,7 +60,7 @@ public class UserData  implements Serializable{
     @Column(name = "user_id", unique = true)
     private Integer userId;
 */
-    @OneToOne(mappedBy = "opponentUser")
+    @OneToOne(mappedBy = "opponentUser" )
     private Match meczOpponent;
 
     @OneToOne(mappedBy = "user")
@@ -66,6 +73,21 @@ private Match meczUser;
         this.id = id;
     }
 */
+   @Column(name = "DELETED",columnDefinition = "TINYINT")
+   private boolean deleted = false;
+
+    // getters and setters
+public Boolean getDeleted()
+{
+    return  this.deleted;
+}
+    public void setDeleted() {
+        this.deleted = true;
+    }
+
+
+
+
     @Column(name = "username")
     private String username;
 
@@ -93,9 +115,13 @@ private Match meczUser;
    // @JoinColumn(name = "team_id")
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
+         //   orphanRemoval = true,
             fetch = FetchType.EAGER
     )
+  //@Where(clause = "DELETED = 0")
+  //  @FilterDef(name = "deletedProductFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
+  //  @Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
+  //  @SQLDelete(sql = "UPDATE teams SET deleted = true WHERE team_id=?")
          //   , orphanRemoval = true)
 private List<Team> teamlist= new ArrayList();
 

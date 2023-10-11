@@ -1,10 +1,14 @@
+LKManager\DAO\MeczDAO.class
 LKManager\services\PlikiService.class
+LKManager\DAO\MeczDAOImpl.class
 LKManager\services\MatchService.class
 LKManager\LK\Runda$status.class
 LKManager\model\MatchesMz\MatchTeam.class
 LKManager\services\LKUserService.class
 LKManager\services\MatchServiceImpl.class
+LKManager\LK\XmlAdapter.class
 LKManager\services\CrudService.class
+LKManager\services\CookieManager.class
 LKManager\services\PlikiService$folder.class
 LKManager\model\UserMZ\ManagerZone_UserData.class
 LKManager\DAO\TerminarzDAOImpl.class
@@ -16,6 +20,7 @@ LKManager\services\MZUserService.class
 LKManager\services\wynikiServiceImpl.class
 LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalLost.class
 LKManager\model\UserMZ\Team.class
+LKManager\DAO\RundaDAOImpl.class
 LKManager\model\MatchesMz\Match.class
 LKManager\LK\Tabela.class
 LKManager\services\MZUserServiceImpl.class
@@ -27,6 +32,7 @@ LKManager\LK\GraczPodsumowanie.class
 LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalDifference.class
 LKManager\LK\Runda.class
 LKManager\services\LKUserServiceImpl.class
+LKManager\DAO\RundaDAO.class
 LKManager\DAO\TerminarzDAO.class
 LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalScored.class
 LKManager\services\URLs.class

@@ -2,8 +2,7 @@ package LKManager.services;
 
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.MatchesMz.Matches;
-import LKManager.services.MatchService;
-import LKManager.services.URLs;
+import LKManager.model.UserMZ.UserData;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -12,7 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.Set;
+import java.util.List;
 
 import static LKManager.services.URLs.URLtoMatches;
 
@@ -20,7 +19,7 @@ import static LKManager.services.URLs.URLtoMatches;
 public class MatchServiceImpl implements MatchService, Serializable {
 
     @Override
-    public Set<Match> findAll() {
+    public List<UserData> findAll() {
 
         return null;
     }
@@ -46,8 +45,8 @@ public class MatchServiceImpl implements MatchService, Serializable {
     }
 
 
-    public Matches findPlayedByUsername(String username) throws IOException, ParserConfigurationException, SAXException, JAXBException {
-        URL url=  new URLs( ). MakePlayedMatchesURL(username);
+    public Matches findPlayedByUser(UserData user) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+        URL url=  URLs. MakePlayedMatchesURL(user);
     Matches matches=   URLtoMatches(url);
         return matches;
     }

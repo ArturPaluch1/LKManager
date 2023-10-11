@@ -7,7 +7,7 @@ import LKManager.services.MZUserService;
 import LKManager.services.MatchService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,9 +21,10 @@ import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
-import java.sql.Date;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
@@ -38,9 +39,64 @@ public class TerminarzDAOImpl implements TerminarzDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
+
+
+    @Transactional
+    public List<Terminarz> findAll() {
+    /*    Session s= sessionFactory.openSession();
+
+        CriteriaBuilder cb = s.getCriteriaBuilder();
+        CriteriaQuery<Terminarz> cq = cb.createQuery(Terminarz.class);
+        Root<Terminarz> rootEntry = cq.from(Terminarz.class);
+        CriteriaQuery<Terminarz> all = cq.select(rootEntry);
+
+        TypedQuery<Terminarz> allQuery = s.createQuery(all);
+        //todo zamknac sesje
+        return allQuery.getResultStream().collect(Collectors.toList());*/
+    /*    Session s= sessionFactory.openSession();
+        List<Terminarz> allQuery= null;
+try{
+    CriteriaBuilder cb = s.getCriteriaBuilder();
+    CriteriaQuery<Terminarz> cq = cb.createQuery(Terminarz.class);
+    Root<Terminarz> rootEntry = cq.from(Terminarz.class);
+    CriteriaQuery<Terminarz> all = cq.select(rootEntry);
+
+     allQuery = s.createQuery(all).getResultStream().collect(Collectors.toList());
+     s.getTransaction().commit();
+
+}
+catch (Exception e)
+{
+
+}
+finally {
+    s.getSession().close();
+}*/
+        List<Terminarz> allQuery= null;
+        Session s= sessionFactory.openSession();
+        try{
+            s.beginTransaction();
+            Query query = s.createQuery(" from Terminarz ");
+        allQuery=   query.getResultList();
+        s.getTransaction().commit();
+        }
+        catch (Exception e)
+        {
+
+        }
+        finally {
+            s.close();
+        }
+return allQuery;
+        //todo zamknac sesje
+     //   return allQuery;
+    }
+
+
+
     @Override
     @Transactional
-    public void save(Terminarz terminarz) {
+    public Terminarz save(Terminarz terminarz) {
 
 
 
@@ -57,36 +113,40 @@ terminarz.getRundy().forEach(a->
 
     });
 });
+
+
+
+
 //save? sprobowac todo
        // entityManager.merge(terminarz);
       //  entityManager.persist(terminarz);
 
-        Session s =sessionFactory.openSession();
+
 
  //     Transaction tx = null;
 
-        try {
+
+        Session s =sessionFactory.openSession();
+     try {
+
 s.beginTransaction();
-
-
-
 
      //      tx = s.beginTransaction();
             s.saveOrUpdate(terminarz);
+    //        s.persist(terminarz);
 s.getTransaction().commit();
        //   tx.commit();
-
-
 
 
         }
 
         catch (Exception e) {
-          if (s.getTransaction()!=null)
+        if (s.getTransaction()!=null)
           {s.getTransaction().rollback();
           e.printStackTrace();}
+            int y=0;
         } finally {
-            s.close();
+        s.close();
         }
   /*
 try {  s = sessionFactory.getCurrentSession();
@@ -102,13 +162,44 @@ finally {
     s.close();
 }
 */
+        return terminarz;
     }
 
 
-    @Override
+    public void delete(Terminarz object) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+//todo ?
+    }
+    public void deleteByName(String objectName) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+       var terminarzDoUsunieciaObj= findByTerminarzName(objectName);
+
+// todo jesli nie znajduje po nazwie albo >1
+        Session s = sessionFactory.openSession();
+        try {
+            var terminarz= s.get(Terminarz.class, terminarzDoUsunieciaObj.getId());
+            s.beginTransaction();
+            s.delete(terminarz);
+            s.getTransaction().commit();
+
+
+
+
+        }
+        catch (Exception e){
+
+        }
+        finally {
+            s.close();
+        }
+
+    }
+    public void deleteById(Long id) {
+//todo ?
+    }
+
+
+   /* @Override
     public void saveRound(Terminarz terminarz, int runda) {
 
-/*
        terminarz.getRundy().forEach(a->
         {
             a.setTerminarz(terminarz);
@@ -118,13 +209,12 @@ finally {
 
             });
         });
-*/
 
- /*       terminarz.getRundy().get(runda-1).getMecze().
+ *//*       terminarz.getRundy().get(runda-1).getMecze().
                 forEach(a->a.setRunda(
                         terminarz.getRundy().get(runda-1)
                 ));
-*/
+*//*
         Session s =sessionFactory.openSession();
 
         Transaction tx = null;
@@ -137,6 +227,7 @@ finally {
 
             tx = s.beginTransaction();
  //      var a=     s.load(Terminarz.class, 104L);
+
        s.update(terminarz.getRundy().get(runda-1));
           //  s.update( terminarz.getRundy().get(runda-1));
             tx.commit();
@@ -153,7 +244,7 @@ finally {
             s.close();
         }
 
-    }
+    }*/
 
     public void saveResults(Integer runda, Terminarz terminarz1, MatchService matchService, MZUserService mzUserService) throws DatatypeConfigurationException, JAXBException, IOException, ParserConfigurationException, SAXException {
 
@@ -231,7 +322,7 @@ finally {
                         var oponent = mecz.getopponentUser();
                         var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
 
-                        var rozegrane = matchService.findPlayedByUsername(user.getUsername());
+                        var rozegrane = matchService.findPlayedByUser(user);
 
                         var meczeTurniejowe = rozegrane.getMatches().stream().
                                 filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
@@ -309,4 +400,152 @@ int o=0;
 
 
     }
+
+    @Override
+    public Terminarz findByTerminarzId(long id) {
+        Session s = sessionFactory.openSession();
+        Terminarz terminarz = new Terminarz();
+        try {
+            s.beginTransaction();
+            terminarz=s.get(Terminarz.class,id);
+            s.getTransaction().commit();
+        }
+        catch (Exception e)
+        {
+
+        }
+        finally {
+            s.close();
+            return terminarz;
+        }
+    }
+
+
+  public List<UserData>  findAllParticipantsOfSchedule(String ScheduleName)
+    {
+        Session session = sessionFactory.openSession();
+        List<UserData>users= null;
+        try
+        {
+
+            session.beginTransaction();
+
+            Query querryUser= session.createQuery(
+                    "select u from  UserData u " +
+
+                            "  inner join Match m on u.userId=m.user"+
+                            " inner join Runda r on m.runda=r.id "+
+                            " inner join Terminarz t on r.terminarz=t.id " +
+                            "   where (t.Name=:ScheduleName and r.nr=1)");
+            querryUser.setParameter("ScheduleName",ScheduleName );
+             users= (ArrayList<UserData>) querryUser.getResultList();
+
+           Query querryOpponent= session.createQuery(
+                    "select u from  UserData u " +
+
+                            "  inner join Match m on u.userId=m.opponentUser"+
+                            " inner join Runda r on m.runda=r.id "+
+                            " inner join Terminarz t on r.terminarz=t.id " +
+                            "   where (t.Name=:ScheduleName and r.nr=1)");
+            querryOpponent.setParameter("ScheduleName",ScheduleName );
+            ArrayList<UserData> resultOpponent= (ArrayList<UserData>) querryOpponent.getResultList();
+          //  users.add(result.getUser());
+           users.addAll(resultOpponent);
+         //  users.addAll(resultUser);
+        //   users.stream().unordered().toList();
+            session.getTransaction().commit();
+        }
+        catch (Exception e)
+        {
+
+        }
+        finally {
+            session.close();
+
+            return users;
+        }
+    }
+
+    public List<Match> findAllMatchesByTerminarzName(String terminarzName)
+    {
+        Session session = sessionFactory.openSession();
+        List<Match>mecze= new ArrayList<>();
+        try
+        {
+
+            session.beginTransaction();
+
+            Query querry= session.createQuery(
+                    "select m from Match m "+
+                            " inner join Runda r on m.runda=r.id "+
+                            " inner join Terminarz t on r.terminarz=t.id " +
+                            "   where t.Name=:terminarzName");
+            querry.setParameter("terminarzName",terminarzName );
+           mecze= querry.getResultList();
+            session.getTransaction().commit();
+        }
+        catch (Exception e)
+        {
+
+        }
+        finally {
+            session.close();
+
+            return mecze;
+        }
+
+
+    }
+    @Transactional
+    @Override
+    public Terminarz findByTerminarzName(String name) {
+       Session s = sessionFactory.openSession();
+       Terminarz terminarz = new Terminarz();
+       try {
+           s.beginTransaction();
+
+           String hql = "  FROM Terminarz t where t.Name=:name";
+
+           Query query = s.createQuery(hql);
+           query.setParameter("name",name);
+         terminarz  = (Terminarz)query.getSingleResult();
+           s.getTransaction().commit();
+       }
+       catch (Exception e)
+       {
+
+       }
+       finally {
+           s.close();
+           return terminarz;
+       }
+
+
+    }
+
+    public Terminarz findLastById() {
+        Session s = sessionFactory.openSession();
+        Terminarz terminarz2=null;
+        try {
+
+            s.beginTransaction();
+
+
+            String hql = " from Terminarz t where t.id=" +
+                    "(select max(t.id) from Terminarz t)";
+
+            Query query = s.createQuery(hql);
+             terminarz2 = (Terminarz) query.getSingleResult();
+            s.getTransaction().commit();
+
+
+        } catch (Exception e) {
+e.printStackTrace();
+        } finally {
+            s.close();
+            return terminarz2;
+        }
+
+    }
+
 }

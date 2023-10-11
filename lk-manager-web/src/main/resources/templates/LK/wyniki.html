@@ -14,7 +14,7 @@
 
 
     <div style="float: right;">
-        <form th:action="@{/wyniki}" method="get" >
+        <form th:action="@{/changeSchedule}" method="get" >
             <select  th:name="wybranyTerminarz"  onchange="this.form.submit()" >
                 <option value="" selected>--Wybierz terminarz--</option>
                 <option th:each="terminarz : ${terminarze}" th:value="${terminarz.getName()}" th:text="${terminarz.getName()}" />
@@ -57,15 +57,15 @@
             <tr>
             </thead>
             <tbody align="center">
-            <tr th:each="mecz : ${runda}">
-                <td  id="runda" th:text="${mecz.getNr()}" style="width: 150px">Joe</td>
-                <td  id="data" th:text="${mecz.getData()}"style="width: 150px">1</td>
+         <tr th:each="mecz : ${runda}">
+                <td  id="runda" th:text="${mecz.getNr()}" style="width: 150px"></td>
+             <td  id="data" th:text="${mecz.getData()}"style="width: 150px"></td>
                 <td>
                     <form th:action="@{/pokazRundeWyniki}" method="post">
                         <select    class="form-control" id="dropDownList"  th:name="runda" onchange="this.form.submit()" onsubmit="myFunction1()">
                             <option selected>zmien rundę</option>
-                            <option  th:each="nr : ${nrRundy}" th:value="${nr.getNr()}" th:text="runda+' '+${nr.getNr()}+' '+data+': '+${nr.getData()}  " ></option>
-
+<!--                            <option  th:each="nr : ${nrRundy}" th:value="${nr.getNr()}" th:text="runda+' '+${nr.getNr()}  " ></option>-->
+                          <option  th:each="nr : ${nrRundy}" th:value="${nr.getNr()}" th:text="runda+' '+${nr.getNr()}+' '+data+': '+${nr.getData()}  " ></option>
                         </select>
                         <input hidden   th:name="wybranyTerminarz" th:value="${wybranyTerminarz}"></input>
 
@@ -80,7 +80,7 @@
 
                 <td>
                     <form  th:action="@{/aktualizuj}" method="post" id="formAktualizuj">
-                        <button type="button" id="buttonAktualizuj" onclick="aktualizujClick()">Aktualizuj wyniki</button>
+                        <button type="button" onclick="aktualizujClick()">Aktualizuj wyniki</button>
                         <input  hidden  th:name="numerRundy" th:value="${numerRundy}"></input>
                         <input hidden   th:name="wybranyTerminarz" th:value="${wybranyTerminarz}"></input>
 
@@ -134,14 +134,16 @@
 
 
                 <tr th:each="mecz : ${mecze}"   th:name="mecze">
-                    <td th:text="${mecz .getUser().getTeamlist().get(0).getTeamName()}">userTeam</td>
+<!--                    <td th:text="${mecz .getUser().getTeamlist().get(0).getTeamName()}">userTeam</td>-->
+                    <td th:text="${mecz.getUser()!=null}? ${mecz.getUser().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
 
 
 
 
-                    <td th:text="${mecz .getUser().getUsername()}"
-                    >Gracz 1</td>
-                    <input   hidden  th:name="user" th:value="${mecz .getUser().getUsername()}">
+                  <!--  <td th:text="${mecz .getUser().getUsername()}"  >Gracz 1</td>-->
+                    <td th:text="${mecz.getUser()!=null}? ${mecz .getUser().getUsername()}:'NA'" style="width: 150px">user</td>
+
+                    <input   hidden  th:name="user" th:value="${mecz.getUser().getUsername()}">
                     <td  align="center">
                         <input style="width: 25px"
                                th:name="UserMatchResult1"
@@ -184,6 +186,8 @@
 
     <div id="tabela" align="center">
         <button onClick="pokazEdytujTabele()" align="center">  Edytuj wyniki</button>
+        <button type="button" id="buttonAktualizuj" onclick="aktualizujClick()">Aktualizuj wyniki</button>
+
         <table  class="table table-striped"  border="1">
             <thead align="justify" >
             <tr id="naglowek" >
@@ -254,9 +258,10 @@
 
 
 
+
 <script th:inline="javascript">
 
-const runda = [[${runda}]];
+const runda = [[${wybranyTerminarz}]];
 
 function aktualizujClick(){
 var form = document.getElementById("formAktualizuj");
@@ -388,7 +393,6 @@ tempstring+=" Runda: "+runda.textContent +"   "+data.textContent+"\r\n";
 </script>
 
 <script type="text/javascript" th:src="@{/resources/wyniki.js}" ></script>
-
 
 
 

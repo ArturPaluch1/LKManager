@@ -32,7 +32,7 @@
 
 
 <div style="float: right;">
-    <form th:action="@{/terminarz}" method="get" >
+    <form th:action="@{/zmienTerminarz}" method="get" >
         <select  th:name="wybranyTerminarz"  onchange="this.form.submit()" >
             <option value="" selected>--Wybierz terminarz--</option>
             <option th:each="terminarz : ${terminarze}" th:value="${terminarz.getName()}" th:text="${terminarz.getName()}" />
@@ -80,7 +80,7 @@
 
                <select    class="form-control" id="dropDownList"  th:name="participant" onchange="this.form.submit()" >
                         <option selected>zmień rundę</option>
-                        <option  th:each="nr : ${nrRundy}" th:value="${nr.getNr()}" th:text="runda+' '+${nr.getNr()}+' '+data+': '+${nr.getData()}  " ></option>
+                        <option  th:each="nr : ${rundy}" th:value="${nr.getNr()}" th:text="runda+' '+${nr.getNr()}+' '+data+': '+${nr.getData()}  " ></option>
 
                     </select>
 
@@ -117,11 +117,15 @@
 
 
             <tr th:each="mecz : ${mecze}">
-                <td th:text="${mecz .getUser().getTeamlist().get(0).getTeamName()}" style="width: 150px">userTeam</td>
-                <td th:text="${mecz .getUser().getUsername()}" style="width: 150px">user</td>
+          <!--      <td th:text="${mecz .getUser().getTeamlist().get(0).getTeamName()}" style="width: 150px">userTeam</td>-->
+                <td th:text="${mecz.getUser()!=null}? ${mecz.getUser().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+        <!--        <td th:text="${mecz .getUser().getUsername()}" style="width: 150px">user</td>-->
+                <td th:text="${mecz.getUser()!=null}? ${mecz .getUser().getUsername()}:'NA'" style="width: 150px">user</td>
                 <td style="width: 50px" > - </td>
-                <td th:text="${mecz.getopponentUser().getUsername()}"style="width: 150px">1</td>
-                <td th:text="${mecz .getopponentUser().getTeamlist().get(0).getTeamName()}" style="width: 150px" >opponentUserTeam</td>
+             <!--   <td th:text="${mecz.getopponentUser().getUsername()}"style="width: 150px">1</td>-->
+                <td th:text="${mecz.getopponentUser()!=null}? ${mecz.getopponentUser().getUsername()}:'NA'" style="width: 150px">user</td>
+            <!--    <td th:text="${mecz .getopponentUser().getTeamlist().get(0).getTeamName()}" style="width: 150px" >opponentUserTeam</td>-->
+                <td th:text="${mecz.getopponentUser()!=null}? ${mecz .getopponentUser().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
 
             </tr>
             </tbody>

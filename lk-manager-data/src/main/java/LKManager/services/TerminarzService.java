@@ -5,13 +5,13 @@ import LKManager.model.UserMZ.UserData;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.XMLGregorianCalendar;
+import java.time.LocalDate;
 import java.util.List;
 
-public interface TerminarzService {
+public interface TerminarzService  {
 
-   void utworzTerminarzWielodniowy(XMLGregorianCalendar data, List<UserData> grajki, String nazwa  ) throws DatatypeConfigurationException;
-    void utworzTerminarzJednodniowy(XMLGregorianCalendar data, List<UserData> mecze, String nazwa );
+   Terminarz utworzTerminarzWielodniowy(LocalDate data, List<UserData> grajki, String nazwa  ) throws DatatypeConfigurationException;
+    Terminarz utworzTerminarzJednodniowy(LocalDate data, List<UserData> mecze, String nazwa );
 
    Terminarz wczytajTerminarz(String sciezka) throws JAXBException;
 

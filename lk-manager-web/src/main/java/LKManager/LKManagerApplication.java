@@ -53,13 +53,14 @@ public class LKManagerApplication {
 
 				URL url = null;
 				try {
-					url = new URL("https://lkm-fgim.onrender.com/");
-			//		url = new URL("https://www.developer.com/java/java-event-listeners/");
+	//				url = new URL("https://lkm-fgim.onrender.com/");
+					url = new URL("https://www.developer.com/java/java-event-listeners/");
 				} catch (MalformedURLException e) {
 					throw new RuntimeException(e);
 				}
 				URLConnection urlConnection = null;
 				try {
+
 					urlConnection = url.openConnection();
 				} catch (IOException e) {
 					throw new RuntimeException(e);
@@ -84,11 +85,6 @@ public class LKManagerApplication {
 
 
 
-				Set<Thread> threads = Thread.getAllStackTraces().keySet();
-				System.out.printf("%-15s \t %-15s \t %-15s \t %s\n", "Name", "State", "Priority", "isDaemon");
-				for (Thread t : threads) {
-					System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
-				}
 
 
 

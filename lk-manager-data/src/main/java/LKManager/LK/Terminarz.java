@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -32,12 +33,14 @@ public class Terminarz implements Serializable {
     private long id;
 
 @Column(name = "nazwa")
-    private String nazwa;
+    private String Name;
 
+  //  @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @OneToMany(mappedBy = "terminarz",
-            cascade = CascadeType.ALL,
-    fetch = FetchType.EAGER)
+            cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE},
+    fetch = FetchType.LAZY)
    private List<Runda> rundy = new ArrayList<>();
+
 
 
 
@@ -57,8 +60,8 @@ public class Terminarz implements Serializable {
 
 
     @XmlAttribute(name = "nazwa")
-    public String getNazwa() {
-        return nazwa;
+    public String getName() {
+        return Name;
     }
     public void setRundy(List<Runda> rundy) {
         this.rundy = rundy;
