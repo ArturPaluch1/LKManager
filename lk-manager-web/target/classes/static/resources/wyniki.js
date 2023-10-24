@@ -4,12 +4,13 @@
 function aktualizujClick()
 {
  alert("tabela");
-var form = document.getElementById("formAktualizuj");
+var form  = document.getElementById('formAktualizuj');
+//document.getElementByClassName("formAktualizuj")[0];
 //var runda = [[${mecze}]];
- alert("uu");
 
+ alert("form");
 form.submit()
-
+ alert("form end");
 
 }
 

@@ -79,6 +79,7 @@ public class Team implements Serializable {
     private Integer rankPoints;
 
  //   @Column(name = "DELETED",columnDefinition = "TINYINT")
+    //prod \/
     @Column(name = "DELETED",columnDefinition = "BIT")
     private boolean deleted = false;
 
