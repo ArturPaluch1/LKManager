@@ -2,8 +2,10 @@ package LKManager.controllers.LK;
 
 import LKManager.DAO.UserDAOImpl;
 import LKManager.model.UserMZ.UserData;
+import LKManager.services.Cache.MZCache;
 import LKManager.services.LKUserService;
 import LKManager.services.MZUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +21,8 @@ import java.util.stream.Collectors;
 public class graczeController {
 private final LKUserService lkUserService;
 private final MZUserService mzUserService;
+@Autowired
+private MZCache mzCache;
 
   private   UserDAOImpl userDAOImpl;
 
@@ -34,7 +39,11 @@ public String wyswietlGraczy(Model model)
     /*---------------z xmla---------------
    var gracze= lkUserService.wczytajGraczyZXML();
 ***************************************************/
-var gracze= userDAOImpl.findAll(false);
+
+    //próbowanie pobrania graczy z cache
+    List<UserData>gracze= userDAOImpl.findAllFromCache();
+            if(gracze==null)gracze=userDAOImpl.findAll(false);
+//var gracze= userDAOImpl.findAll(false);
 
 
     gracze= gracze.stream().sorted(
@@ -68,7 +77,8 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
             //czy jest o takim id w mz
             var graczMZ= mzUserService.findByUsername(wybranyGracz);
       //    var gracze=lkUserService.wczytajGraczyZXML();
-     var gracze= userDAOImpl.findAll(false);
+            List<UserData>gracze= userDAOImpl.findAllFromCache();
+            if(gracze==null)gracze=userDAOImpl.findAll(false);
 
             gracze= gracze.stream().sorted(
                     (o1,o2)->o1.getUsername().compareToIgnoreCase(o2.getUsername())
@@ -88,17 +98,22 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
               {
              //     lkUserService.dodajGraczaDoXML(graczMZ);
                   this.userDAOImpl.save(graczMZ);
+
+                mzCache.addUser(graczMZ);
+
               }
           }
           else
           {
       //        lkUserService.dodajGraczaDoXML(graczMZ);
               this.userDAOImpl.save(graczMZ);
+              mzCache.addUser(graczMZ);
           }
 
 
         }
 //z checkboxow
+        //to chyba nigdy sie nie dzieje...
         if(wybraniGracze!= null)
         {
             //czy jest o takim id w mz
@@ -154,7 +169,8 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
         try
         {
      //       var gracze=lkUserService.wczytajGraczyZXML();
-         List<UserData> gracze=userDAOImpl.findAll(false);
+            List<UserData>gracze= userDAOImpl.findAllFromCache();
+            if(gracze==null)gracze=userDAOImpl.findAll(false);
             //wpisany z input
             if(wybranyGracz!="")
             {
@@ -167,6 +183,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
                 )
                 {
                     this.userDAOImpl.delete(graczMZ);
+                //    mzCache.setUsers( userDAOImpl.findAll(false) );
             //        lkUserService.usunGraczaZXML(graczMZ);
                 }
                 else
@@ -177,7 +194,7 @@ int i=0;
 
             }
 //z checkboxow
-            if(wybraniGracze!= null)
+         else   if(wybraniGracze!= null)
             {
                 //czy jest o takim id w mz
 
@@ -208,7 +225,7 @@ int i=0;
 
 
 
-
+            mzCache.setUsers( userDAOImpl.findAll(false) );
 
 
             return "redirect:/gracze";

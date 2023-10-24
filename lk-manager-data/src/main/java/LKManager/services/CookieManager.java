@@ -317,6 +317,8 @@ Cookie tempCookie= utworzNowyCookie("wybranyTerminarz",cookie);
             tempCookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
             tempCookie.setSecure(true);
             tempCookie.setHttpOnly(true);
+            tempCookie.setPath("/");
+        //    tempCookie.setDomain("http://localhost:8080/terminarz");
 
 
             return tempCookie;

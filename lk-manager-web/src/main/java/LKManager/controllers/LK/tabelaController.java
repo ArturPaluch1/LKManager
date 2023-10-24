@@ -11,6 +11,7 @@ import LKManager.LK.Terminarz;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.*;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,6 +53,7 @@ private final LKUserService lkUserService;
     }
 
 
+
    @GetMapping({"tabela.html", "tabela", "tabela"} )
     public String index(HttpServletResponse response, HttpServletRequest request,Model model, @RequestParam(value="wybranyTerminarz", required = false)String wybranyTerminarz) throws URISyntaxException, IOException, JAXBException {
 
@@ -75,6 +77,8 @@ private final LKUserService lkUserService;
        }
 
 */
+
+
 
        Tabela tabela = new Tabela();
 List<Match>mecze= terminarzDAO.findAllMatchesByTerminarzName(wybranyTerminarz);
@@ -253,12 +257,7 @@ users.forEach(a->{
 */
 
 
-
      //  var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
-
-
-
-
 
 
 /*
@@ -287,10 +286,6 @@ users.forEach(a->{
 
 
 */
-
-
-
-
 
 
 /*
@@ -436,8 +431,6 @@ users.forEach(a->{
        }
 
 */
-
-
 
 ////////////////////////////////////////////////////////////////////
 /*
@@ -642,6 +635,7 @@ boolean nowaRownosc= false;
 
 
        ///////////////////////////////
+
 
 
        model.addAttribute("terminarze", terminarzDAO.findAll());

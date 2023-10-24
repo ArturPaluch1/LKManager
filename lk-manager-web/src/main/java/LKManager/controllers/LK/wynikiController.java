@@ -437,13 +437,14 @@ s.close();
                                @RequestParam(value = "wybranyTerminarz", required=true)String wybranyTerminarz,
                                //NUMER RUNDY NIE INDEX RUNDY czyli -1
                                @RequestParam(value = "numerRundy", required=true)Integer numerRundy,
+                               @RequestParam(value = "matchId", required=true)List<Long> matchesId,
                                @RequestParam(value = "mecze", required=false ) List<Match> mecze,
                                @RequestParam(value = "user", required=true ) List<String> user,
                                @RequestParam(value = "opponentUser", required=true ) List<String> opponentUser,
-                               @RequestParam(value = "UserMatchResult1", required=false ) List<String> UserMatchResult1,
-                               @RequestParam(value = "OpponentMatchResult1", required=false ) List<String> OpponentMatchResult1,
-                               @RequestParam(value = "UserMatchResult2", required=false ) List<String> UserMatchResult2,
-                               @RequestParam(value = "OpponentMatchResult2", required=false ) List<String> OpponentMatchResult2,
+                               @RequestParam(value = "UserMatchResult1", required=false ) List<String> userMatchResults1,
+                               @RequestParam(value = "OpponentMatchResult1", required=false ) List<String> opponentMatchResults1,
+                               @RequestParam(value = "UserMatchResult2", required=false ) List<String> userMatchResults2,
+                               @RequestParam(value = "OpponentMatchResult2", required=false ) List<String> opponentMatchResults2,
                                @RequestParam(value = "bob", required=false ) List<String> bob) throws JAXBException {
 
 
@@ -452,6 +453,8 @@ s.close();
         {
             numerRundy=0;
         }
+        meczDAO.updateMatchesResults(matchesId,userMatchResults1,userMatchResults2,opponentMatchResults1,opponentMatchResults2);
+
         //folder z terminarzami
        // terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
@@ -460,7 +463,7 @@ s.close();
         // zmiana nazwy numeru rundy na indeks
 
 
-        var        terminarz= //terminarzService.wczytajTerminarz(wybranyTerminarz);
+    /*    var        terminarz= //terminarzService.wczytajTerminarz(wybranyTerminarz);
 terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
 
@@ -482,7 +485,7 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
 
         terminarzService.aktualizujTerminarz(terminarz,wybranyTerminarz);
-
+*/
         redirectAttributes.addAttribute("numerRundy", numerRundy+1);
         redirectAttributes.addAttribute("wybranyTerminarz", wybranyTerminarz);
 
@@ -513,7 +516,7 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
     public String aktualizujWyniki(
             Model model,
             RedirectAttributes redirectAttributes,
-            @RequestParam(value = "numerRundy",required = true)Integer numerRundy,
+            @RequestParam(value = "numerRundy",required = false)Integer numerRundy,
             @RequestParam(value = "wybranyTerminarz", required = true)String wybranyTerminarz
 
     ) throws JAXBException, DatatypeConfigurationException, ParserConfigurationException, IOException, SAXException {

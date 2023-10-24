@@ -42,7 +42,9 @@ public class MeczDAOImpl implements MeczDAO {
 
 
     @Transactional
-    public List<Terminarz> findAll() {
+    public List<Match> findAll() {
+        //todo to jest zle naprawic
+
     /*    Session s= sessionFactory.openSession();
 
         CriteriaBuilder cb = s.getCriteriaBuilder();
@@ -72,11 +74,11 @@ catch (Exception e)
 finally {
     s.getSession().close();
 }*/
-        List<Terminarz> allQuery= null;
+        List<Match> allQuery= null;
         Session s= sessionFactory.openSession();
         try{
             s.beginTransaction();
-            Query query = s.createQuery(" from Terminarz ");
+            Query query = s.createQuery(" from Match ");
         allQuery=   query.getResultList();
         s.getTransaction().commit();
         }
@@ -96,7 +98,7 @@ return allQuery;
 
     @Override
     @Transactional
-    public Terminarz save(Terminarz terminarz) {
+    public Match save(Match match) {
 
 
 
@@ -130,7 +132,7 @@ terminarz.getRundy().forEach(a->
 s.beginTransaction();
 
      //      tx = s.beginTransaction();
-            s.save(terminarz);
+            s.save(match);
     //        s.persist(terminarz);
 s.getTransaction().commit();
        //   tx.commit();
@@ -160,14 +162,14 @@ finally {
     s.close();
 }
 */
-        return terminarz;
+        return match;
     }
 
 
     public void delete(Terminarz object) throws JAXBException, IOException, ParserConfigurationException, SAXException {
 //todo ?
     }
-    public void deleteByName(String objectName) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+   /* public void deleteByName(String objectName) throws JAXBException, IOException, ParserConfigurationException, SAXException {
        var terminarzDoUsunieciaObj= findByTerminarzName(objectName);
 
 // todo jesli nie znajduje po nazwie albo >1
@@ -190,11 +192,105 @@ finally {
         }
 
     }
-    public void deleteById(Long id) {
+  */
+   public void deleteById(Long id) {
 //todo ?
+    }
+@Transactional
+public void updateMatchesResults(List<Long> matchIds, List<String> userMatchResults1,List<String> userMatchResults2,List<String> opponentMatchResults1,List<String> opponentMatchResults2 ) {
+
+
+
+
+
+    for (int i = 0; i < matchIds.size(); i++) {
+
+        //   var b = session.load(Match.class, matchIds.get(i));
+        Session session = sessionFactory.openSession();
+        try {
+
+
+            session.beginTransaction();
+            //      var a=     s.load(Terminarz.class, 104L);
+
+            Query query = session.createQuery(" update Match set " +
+                    "userMatchResult1=:userMatchResult1, " +
+                    "userMatchResult2=:userMatchResult2," +
+                    "opponentMatchResult1=:opponentMatchResult1," +
+                    "opponentMatchResult2=:opponentMatchResult2" +
+                    " where id=:matchId");
+
+            query.setParameter("userMatchResult1", userMatchResults1.get(i));
+            query.setParameter("userMatchResult2", userMatchResults2.get(i));
+            query.setParameter("opponentMatchResult1", opponentMatchResults1.get(i));
+            query.setParameter("opponentMatchResult2", opponentMatchResults2.get(i));
+            query.setParameter("matchId", matchIds.get(i));
+
+query.executeUpdate();
+            session.getTransaction().commit();
+            //  s.update( terminarz.getRundy().get(runda-1));
+         //   System.out.println("po ppppppppp");
+
+
+        } catch (Exception e) {
+
+        } finally {
+            session.close();
+        }
+
     }
 
 
+}
+@Transactional
+public void updateMatchResult(Long matchId,String userMatchResult1,String userMatchResult2,String opponentMatchResult1,String opponentMatchResult2  )
+{
+/*    Session session =sessionFactory.openSession();
+
+    Transaction tx = null;
+
+    var b=      session.load(Match.class,matchId)   ;
+
+    try {
+
+
+
+        tx = session.beginTransaction();
+        //      var a=     s.load(Terminarz.class, 104L);
+
+        Query query= session.createQuery(" update Match m set " +
+                "e=m.userMatchResult1=:userMatchResult1," +
+                "e=m.userMatchResult2=:userMatchResult2," +
+                "e=m.opponentMatchResult1=:opponentMatchResult1," +
+                "e=m.opponentMatchResult2=:opponentMatchResult2," +
+                " where m.id=:matchId");
+
+query.setParameter("userMatchResult1",userMatchResult1);
+        query.setParameter("userMatchResult2",userMatchResult2);
+        query.setParameter("opponentMatchResult1",opponentMatchResult1);
+        query.setParameter("opponentMatchResult2",opponentMatchResult2);
+        query.setParameter("matchId",matchId);
+
+
+
+
+
+        session.getTransaction().commit();
+        //  s.update( terminarz.getRundy().get(runda-1));
+
+
+
+
+
+    }
+
+    catch (Exception e) {
+        if (tx!=null) tx.rollback();
+        e.printStackTrace();
+    } finally {
+        session.close();
+    }*/
+}
     @Override
     public void saveRound(Terminarz terminarz, int runda) {
 
@@ -402,12 +498,12 @@ int o=0;
     }
 
     @Override
-    public Terminarz findByTerminarzId(long id) {
+    public Match findByMatchId(long id) {
         Session s = sessionFactory.openSession();
-        Terminarz terminarz = new Terminarz();
+        Match match = new Match();
         try {
             s.beginTransaction();
-            terminarz=s.get(Terminarz.class,id);
+            match=s.get(Match.class,id);
             s.getTransaction().commit();
         }
         catch (Exception e)
@@ -416,19 +512,19 @@ int o=0;
         }
         finally {
             s.close();
-            return terminarz;
+            return match;
         }
     }
 
-    @Transactional
+ /*   @Transactional
     @Override
-    public Terminarz findByTerminarzName(String name) {
+    public Match findByTerminarzName(String name) {
        Session s = sessionFactory.openSession();
-       Terminarz terminarz = new Terminarz();
+        Match match = new Match();
        try {
            s.beginTransaction();
 
-           String hql = "  FROM Terminarz t where t.Name=:name";
+           String hql = "  FROM Match m where m.Name=:name";
 
            Query query = s.createQuery(hql);
            query.setParameter("name",name);
@@ -445,9 +541,9 @@ int o=0;
        }
 
 
-    }
+    }*/
 
-    public Terminarz findLastById() {
+/*    public Terminarz findLastById() {
         Session s = sessionFactory.openSession();
         Terminarz terminarz2=null;
         try {
@@ -470,7 +566,7 @@ e.printStackTrace();
             return terminarz2;
         }
 
-    }
+    }*/
 
     @Override
     public List<Match> findAllByTerminarzIdAndRundaId(long terminarzId, int rundaId) {

@@ -45,6 +45,8 @@ public class LKManagerApplication {
 
 		// long delay = 1000L;
 
+
+
 		TimerTask task = new TimerTask()
 		{
 			public void run() {
@@ -53,25 +55,28 @@ public class LKManagerApplication {
 
 				URL url = null;
 				try {
-					url = new URL("https://lkm-fgim.onrender.com/");
-				//	url = new URL("https://www.developer.com/java/java-event-listeners/");
+				//	url = new URL("https://lkm-fgim.onrender.com/");
+					url = new URL("https://www.developer.com/java/java-event-listeners/");
 				} catch (MalformedURLException e) {
-					throw new RuntimeException(e);
+				//	throw new RuntimeException(e);
 				}
 				URLConnection urlConnection = null;
 				try {
 
 					urlConnection = url.openConnection();
+					System.out.println("refreshed site ");
 				} catch (IOException e) {
-					throw new RuntimeException(e);
+				//	throw new RuntimeException(e);
+					System.out.println("refresh site failed ");
 				}
-				Object c= null;
+
+			/*	Object c= null;
 				try {
 					c = urlConnection.getContent();
 				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-				System.out.println(c.getClass());
+				//	throw new RuntimeException(e);
+				}*/
+
 
 
 

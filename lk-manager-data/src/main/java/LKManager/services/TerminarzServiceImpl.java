@@ -1,11 +1,14 @@
 package LKManager.services;
 
 import LKManager.DAO.TerminarzDAOImpl;
+import LKManager.DAO.UserDAOImpl;
 import LKManager.LK.Runda;
 import LKManager.LK.Terminarz;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
+import LKManager.services.Cache.MZCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -34,7 +37,10 @@ private TerminarzDAOImpl terminarzDAOimpl;
         this.terminarzDAOimpl = terminarzDAOimpl;
     }
 
-
+    @Autowired
+    private UserDAOImpl userDAO;
+    @Autowired
+private MZCache mzCache;
     @Override
     public Terminarz utworzTerminarzWielodniowy(LocalDate data, List<UserData> grajki, String nazwa) throws DatatypeConfigurationException {
 
@@ -110,7 +116,7 @@ runda.setPlayed(false);
 // zapis  sql
 terminarz.setName(nazwa);
 //terminarz.getRundy().get(0).getTerminarz()
-        terminarzDAOimpl.save(terminarz);
+
 return terminarz;
 //////////////
     }
@@ -214,13 +220,20 @@ return terminarz;
     protected void dodajPauzeDlaParzystosci(List<UserData> grajki) {
         if (grajki.size() % 2 != 0) {
             UserData tempuser = new UserData();
+            tempuser.setUserId(0);
             tempuser.setUsername("pauza");
             Team tempTeam= new Team();
             tempTeam.setTeamName(" ");
             tempTeam.setTeamId(0);
             List<Team> tempTeams= new ArrayList<>();
+            tempTeams.add(tempTeam);
             tempuser.setTeamlist(tempTeams);
             grajki.add(tempuser);
+
+          userDAO.save(tempuser);
+          if(mzCache.getUsers().size()!=0)
+          mzCache.addUser(tempuser);
+
         }
     }
     @Override

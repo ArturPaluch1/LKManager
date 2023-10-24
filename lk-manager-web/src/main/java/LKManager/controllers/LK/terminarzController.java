@@ -9,11 +9,13 @@ import LKManager.model.MatchesMz.Match;
 import LKManager.services.*;
 import LKManager.model.UserMZ.UserData;
 
+import LKManager.services.Cache.MZCache;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -56,6 +58,8 @@ private final LKUserService lkUserService;
     public void setNumerRundy(Integer numerRundy) {
         this.numerRundy = numerRundy;
     }*/
+    @Autowired
+    private MZCache mzCache;
 private final TerminarzService terminarzService;
     private final PlikiService plikiService;
  //   private String wybranyTerminarz;
@@ -143,7 +147,7 @@ wybranyTerminarz= CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminar
 
 
 
-        var terminarze =terminarzDAO.findAll();
+        var terminarze =mzCache.getSchedulesFromCacheOrDatabase();
 
         //   terminarz= terminarzDAO.findByTerminarzId(106);
      //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
@@ -158,7 +162,15 @@ wybranyTerminarz= CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminar
             //sprawdzanie czy jest taki terminarz
 
            //   terminarz = terminarzService.wczytajTerminarz(wybranyTerminarz);
-             terminarz=     terminarzDAO.findByTerminarzName(wybranyTerminarz);
+
+
+
+
+
+ //            terminarz=     terminarzDAO.findByTerminarzName(wybranyTerminarz);
+terminarz=mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(wybranyTerminarz);
+
+
 
              //nie znaleziono przekierowanie do tworzenia
          if(terminarz==null)
@@ -176,7 +188,8 @@ wybranyTerminarz= CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminar
         else
         {
 //ostatni wg id
-            terminarz=     terminarzDAO.findLastById();
+          //  terminarz=     terminarzDAO.findLastById();
+            mzCache.findLastScheduleByIdFromCacheOrDatabase();
             //nie ma żadnych terminarzy
             if(terminarz==null)
             {
@@ -224,10 +237,10 @@ wybranyTerminarz= CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminar
 public String dodajTerminarz(Model model) throws JAXBException, IOException, ParserConfigurationException, SAXException
 {
 
-  var gracze  =//lkUserService.wczytajGraczyZXML();
-  userDAO.findAll(false);
+ //lkUserService.wczytajGraczyZXML();
+    List<UserData> gracze = userDAO.findAll(false);
 
- gracze= gracze.stream().sorted(
+    gracze= gracze.stream().sorted(
           (o1,o2)->o1.getUsername().compareToIgnoreCase(o2.getUsername())
   ).collect(Collectors.toList());
 
@@ -281,9 +294,9 @@ terminarzCommand.lista= new ArrayList<String>();
     @GetMapping("/usunTerminarz")
     public String usuwanieTerminarza(Model model)//@RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
     {
+        List<Terminarz> terminarze=mzCache.getSchedulesFromCacheOrDatabase();
+      //plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
-        var terminarze= //plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
-        terminarzDAO.findAll();
 //this.wybranyTerminarz=null;
         model.addAttribute("terminarze", terminarze);
            return "LK/terminarz/usunTerminarz";
@@ -321,6 +334,11 @@ terminarzCommand.lista= new ArrayList<String>();
 
             }*/
             terminarzDAO.deleteByName(terminarzDoUsuniecia);
+
+            mzCache.setTerminarze(terminarzDAO.findAll());
+
+
+
 
             Terminarz terminarz1 =terminarzDAO.findLastById();
             try{
@@ -383,8 +401,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 ////////////////////////////////////////
 
 
-        var gracze =//lkUserService.wczytajGraczyZXML();
-                userDAO.findAll(false);
+        List<UserData> gracze = userDAO.findAll(false);
 
         //nie wybrano graczy do wielodniowego terminarza
         if (wybraniGracze == null) {
@@ -412,6 +429,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
                     }
 //////////////////////////////
                     terminarz = terminarzService.utworzTerminarzJednodniowy(data, templist, command.nazwa);
+
                 }
 
             }
@@ -434,7 +452,9 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 
         try {
         //    Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
-
+        terminarzDAO.save(terminarz);
+        if(mzCache.getTerminarze().size()!=0)
+            mzCache.getTerminarze().add(terminarz);
 /*
  Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter( a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
             cookieManager.saveOrUpdateChosenScheduleCookie(response, terminarz.getName(), request, terminarzDAO);
@@ -450,6 +470,9 @@ CookieManager.saveOrUpdateChosenScheduleCookie(terminarz.getName(),response,requ
             return "redirect:/temp";
         }
     }
+
+
+
     @PostMapping("/pokazRunde")
     public String pokazRunde(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "participant", required = true)Integer numerRundy)
     {

@@ -145,6 +145,7 @@
 
                     <input   hidden  th:name="user" th:value="${mecz.getUser().getUsername()}">
                     <td  align="center">
+                        <input   hidden  th:name="matchId" th:value="${mecz.getId()}">
                         <input style="width: 25px"
                                th:name="UserMatchResult1"
                                th:value="${mecz.getUserMatchResult1()}">

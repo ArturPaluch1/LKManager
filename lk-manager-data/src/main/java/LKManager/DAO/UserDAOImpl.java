@@ -4,6 +4,7 @@ import LKManager.LK.Runda;
 import LKManager.LK.Terminarz;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
+import LKManager.services.Cache.MZCache;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -18,6 +19,7 @@ import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -25,6 +27,8 @@ import java.util.List;
 public class UserDAOImpl implements UserDAO {
     @Autowired
     SessionFactory sessionFactory;
+    @Autowired
+    MZCache mzCache;
     @Autowired
 private EntityManager entityManager;
     public UserDAOImpl(EntityManager entityManager) {
@@ -35,12 +39,22 @@ private EntityManager entityManager;
 
 
 
+    public List<UserData> findAllFromCache()
+    {
+        List<UserData> gracze=new ArrayList<>();
+        if (mzCache.getUsers().size() != 0) {
+            System.out.println("from user cache");
+            gracze = mzCache.getUsers();
 
+        }
+        else gracze=null;
+        return    gracze;
+    }
 @Transactional
     public List<UserData> findAll(boolean isDeleted) {
 
 
-     //   Team team = new Team();
+    //   Team team = new Team();
    /*     UserData user= new UserData();
         try{
             s.beginTransaction();
@@ -59,43 +73,43 @@ private EntityManager entityManager;
             return user ;
         }
 */
-        List<UserData> allQuery= null;
-        Session s= sessionFactory.openSession();
-        try{
+
+   // List<UserData> gracze= new ArrayList<>();
+
+        System.out.println("from user db");
+
+        List<UserData> allQuery =null;
+        Session s = sessionFactory.openSession();
+        try {
 
             Filter filter = s.enableFilter("deletedUserFilter");
             filter.setParameter("isDeleted", isDeleted);
-       //     Filter filter2 = s.enableFilter("deletedTeamFilter");
-        //    filter2.setParameter("isDeleted", isDeleted);
+            //     Filter filter2 = s.enableFilter("deletedTeamFilter");
+            //    filter2.setParameter("isDeleted", isDeleted);
 
             s.beginTransaction();
 
 
-
             Query query = s.createQuery(" from UserData ");
-            allQuery=   query.getResultList();
+            allQuery = query.getResultList();
 
             s.disableFilter("deletedUserFilter");
-          //  s.disableFilter("deletedTeamFilter");
+            //  s.disableFilter("deletedTeamFilter");
 
             s.getTransaction().commit();
 
 
-
-
             System.out.println("findall done");
 
-        }
-        catch (Exception e)
-        {
-int y=0;
-        }
-        finally {
+        } catch (Exception e) {
+            int y = 0;
+        } finally {
             s.close();
-        }
-        return allQuery;
+            return allQuery;
         }
 
+
+}
 
     @Override
     public List<UserData> findAll() {

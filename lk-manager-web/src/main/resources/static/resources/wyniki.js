@@ -4,7 +4,7 @@
 function aktualizujClick()
 {
  alert("tabela");
-//var form = document.getElementById("formAktualizuj");
+var form = document.getElementById("formAktualizuj");
 //var runda = [[${mecze}]];
  alert("uu");
 

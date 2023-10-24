@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class TerminarzDAOImpl implements TerminarzDAO {
 
     private final EntityManager entityManager;
+
     @Autowired
     public TerminarzDAOImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
@@ -524,6 +525,8 @@ int o=0;
     }
 
     public Terminarz findLastById() {
+
+
         Session s = sessionFactory.openSession();
         Terminarz terminarz2=null;
         try {

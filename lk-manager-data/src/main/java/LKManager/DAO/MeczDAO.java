@@ -4,7 +4,6 @@ import LKManager.LK.Terminarz;
 import LKManager.model.MatchesMz.Match;
 import LKManager.services.MZUserService;
 import LKManager.services.MatchService;
-import org.springframework.data.repository.CrudRepository;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -15,15 +14,15 @@ import java.util.List;
 
 public interface MeczDAO  {
 
-    Terminarz save(Terminarz terminarz);
+    Match save(Match match);
 
     void saveRound(Terminarz terminarz, int runda);
-     List<Terminarz> findAll();
+     List<Match> findAll();
     void saveResults(Integer runda, Terminarz terminarz1, MatchService matchService, MZUserService mzUserService) throws DatatypeConfigurationException, JAXBException, IOException, ParserConfigurationException, SAXException;
-     Terminarz findByTerminarzId(long id);
-    Terminarz findByTerminarzName(String name);
+    Match findByMatchId(long id);
+/*    Match findByTerminarzName(String name);*/
 
-    Terminarz findLastById();
+/*    Match findLastById();*/
 
     List<Match> findAllByTerminarzIdAndRundaId(long id, int i);
 }
