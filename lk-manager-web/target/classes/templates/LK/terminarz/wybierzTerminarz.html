@@ -1,0 +1,276 @@
+<!DOCTYPE html  >
+<html lang="en"
+
+      th:replace="~{fragments/layout :: layout (~{::body},'home')}" xmlns:th="http://www.w3.org/1999/xhtml"
+
+   >
+<head  >
+    <meta charset="UTF-8">
+    <title >Wybierz terminarz</title>
+
+
+</head>
+<body   >
+<label style="float: left;"   > opcje terminarza</label>
+<div id="terminarzOptions" class="notDisplay"  >
+    <br><br>
+    <div> wybierz terminarz</div>
+    <div >
+        <a class="btn" th:href=@{'/dodajTerminarz'}>   dodaj terminarz</a>
+      </div>
+    <div> usuń terminarz</div>
+    <div> lista terminarzy</div>
+</div>
+
+
+    <div  >
+        <table class="table table-striped" >
+            <thead>
+            <tr>
+
+                <th style="width: 150px">runda </th>
+                <th style="width: 150px">data </th>
+
+
+
+
+
+
+
+
+            </tr>
+
+
+
+            <tr>
+            </thead>
+            <tbody>
+            <tr th:each="mecz : ${runda}">
+                <td  id="runda" th:text="${mecz.getNr()}" style="width: 150px"></td>
+                <td  id="data" th:text="${mecz.getData()}"style="width: 150px">1</td>
+                <td>
+                    <form th:action="@{/pokazRunde}" method="post">
+                    <select    class="form-control" id="dropDownList"  th:name="participant" onchange="this.form.submit()" >
+                        <option selected>zmień rundę</option>
+                        <option  th:each="nr : ${nrRundy}" th:value="${nr.getNr()}" th:text="runda+' '+${nr.getNr()}+' '+data+': '+${nr.getData()}  " ></option>
+
+                    </select>
+
+
+                    </form>
+                </td>
+                <td>
+                    <button id="bob"  onclick="myFunction()">Skopiuj</button>
+                </td>
+
+            </tr>
+
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+    <div >
+        <table class="table table-striped" id="tabela" border="1" >
+            <thead align = "center">
+            <tr id="naglowek">
+
+
+                <th width ="15px" class="text-center">Drużyna 1 </th>
+                <th style="width: 15px" class="text-center">user 1</th>
+                <th style="width: 50px"  class="text-center"> - </th>
+                <th style="width: 150px" class="text-center">Drużyna 2 </th>
+                <th style="width: 150px" class="text-center">user 2</th>
+            <tr>
+            </thead>
+            <tbody id="tabela-zawartosc" align="center">
+
+
+            <tr th:each="mecz : ${mecze}">
+                <td th:text="${mecz .getUser().getTeamlist().get(0).getTeamName()}" style="width: 150px">userTeam</td>
+                <td th:text="${mecz .getUser().getUsername()}" style="width: 150px">user</td>
+                <td style="width: 50px" > - </td>
+                <td th:text="${mecz.getopponentUser().getUsername()}"style="width: 150px">1</td>
+                <td th:text="${mecz .getopponentUser().getTeamlist().get(0).getTeamName()}" style="width: 150px" >opponentUserTeam</td>
+
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function myFunction() {
+var tabela = document.getElementById("tabela-zawartosc");
+var data = document.getElementById("data");
+var runda =  document.getElementById("runda");
+var result = "";
+var tempstring = "";
+var tempwyniki = "";
+
+console.log(runda);
+console.log(data);
+tempstring+=" Runda: "+runda.textContent +"   "+data.textContent+"\r\n";
+
+let pierwszy=true;
+for (let i in tabela.rows) {
+  let row = tabela.rows[i];
+
+
+
+  for (let j in row.cells) {
+  let col = row.cells[j];
+
+console.log( j+ col.textContent);
+
+ switch (j) {
+           //druzyna
+           case "0": {
+          wyniki="";
+user2="";
+             tempstring += row.cells[j].textContent;
+             break;
+           }
+                        //user
+           case "1": {
+             tempstring += " (" + row.cells[j].textContent + ") - ";
+             break;
+           }
+
+           case "3": {
+            user2+=  row.cells[j].textContent ;
+             //tempstring += row.cells[j].textContent + "   ";
+             break;
+           }
+           case "4": {
+           tempstring+=row.cells[j].textContent +" ("+user2+ ")";
+             //tempstring += row.cells[j].textContent + ":";
+             break;
+           }
+
+         }
+
+
+  }
+  tempstring+="\r\n";
+}
+console.log(  tempstring);
+ navigator.clipboard.writeText(tempstring);
+ alert("Copied the text: " + tempstring);
+
+}
+</script>
+
+</body><body class="light">
+
+
+
+<div style="float:left" class="calendar">
+    <div class="calendar-header">
+        <span class="month-picker" id="month-picker">April</span>
+        <div class="year-picker">
+                <span class="year-change" id="prev-year">
+                    <pre><</pre>
+                </span>
+            <span id="year">2022</span>
+            <span class="year-change" id="next-year">
+                    <pre>></pre>
+                </span>
+        </div>
+    </div>
+    <div class="calendar-body">
+        <div class="calendar-week-day">
+            <div>Pon</div>
+            <div>Wt</div>
+            <div>Śr</div>
+            <div>Czw</div>
+            <div>Pt</div>
+            <div>Sb</div>
+            <div>Nd</div>
+        </div>
+        <div class="calendar-days" id="sam"></div>
+    </div>
+
+    <div class="month-list"></div>
+</div>
+
+
+
+
+
+<div style="float:left">
+    <form th:object="${terminarz}" th:action="@{/terminarz/}" method="post">
+        <div style="float:left">
+            <br>
+            <button type="submit" class="btn btn-primary">Stwórz</button>
+            <br>
+            <br/>
+            <label >Data rozpoczęcia:</label>
+            <label id="labelData"  ></label><br>
+            <input type ="text" id="inputData" class="notDisplay" th:field="*{data}" />
+            <br>
+            <label for="fname">Nazwa:</label><br>
+            <input type="text" id="fname" name="fname" th:field="*{nazwa}"><br>
+
+        </div>
+        <div style="float:right">
+            <label >Gracze:</label><br>
+            <div class="table-responsive" th:if="${not #lists.isEmpty(terminarz)}">
+                <table class="table table-hover">
+                    <thead class="thead-inverse">
+
+                    </thead>
+                    <tr th:each="item: ${gracze}"  >
+
+
+
+
+                    </tr>
+
+                    <th:block th:each="item : ${gracze}">
+                        <input type="checkbox" name="wybraniGracze" th:value="${item.getUsername()}"/>
+                        <label th:text="${item.getUsername()}"></label>
+                        <br>
+                    </th:block>
+                </table>
+
+
+            </div>
+
+        </div>
+
+
+    </form>
+
+
+
+
+</div>
+
+
+
+<script type="text/javascript" th:src="@{/resources/kalendarz.js}" />
+<script>
+
+</script>
+</body>
+
+
+</html>

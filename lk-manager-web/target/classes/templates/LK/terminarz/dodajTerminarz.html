@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+<html lang="en" th:replace="~{fragments/layout :: layout (~{::body},'home')}" xmlns:th="http://www.w3.org/1999/xhtml"
+     >
+<head>
+    <meta charset="UTF-8">
+    <title>dodawanie terminarza</title>
+
+
+
+
+</head>
+<body class="light">
+
+
+
+<div style="float:left" class="calendar">
+    <div class="calendar-header">
+        <span class="month-picker" id="month-picker">April</span>
+        <div class="year-picker">
+                <span class="year-change" id="prev-year">
+                    <pre><</pre>
+                </span>
+            <span id="year">2022</span>
+            <span class="year-change" id="next-year">
+                    <pre>></pre>
+                </span>
+        </div>
+    </div>
+    <div class="calendar-body">
+        <div class="calendar-week-day">
+            <div>Pon</div>
+            <div>Wt</div>
+            <div>Śr</div>
+            <div>Czw</div>
+            <div>Pt</div>
+            <div>Sb</div>
+            <div>Nd</div>
+        </div>
+        <div class="calendar-days" id="sam"></div>
+    </div>
+
+    <div class="month-list"></div>
+</div>
+
+
+<div>
+    <form th:object="${terminarz}" th:action="@{/terminarz/}" method="post" modelAttribute="userListWrapper">
+        <div style="float:left; margin-right: 5px;"   >
+            <br>
+            <button type="submit" class="btn btn-primary" >Utwórz terminarz</button>
+            <br>
+            <br/>
+            <label >Data rozpoczęcia:</label>
+            <label id="labelData"  ></label><br>
+            <input type ="text" id="inputData" class="notDisplay" th:field="*{data}" />
+            <br>
+            <label for="fname">Nazwa:</label><br>
+            <input type="text" id="fname" name="fname" th:field="*{nazwa}" ><br>
+
+            <!--<input id="bob1"  name="userListWrapper" th:value="${terminarz.lista}">-->
+            <input id="bob11" hidden  th:field="*{lista}">
+
+            </div>
+
+        <div style="float:left; margin-left: 5px;">
+            <input type="radio" id="single" value="single" name="rodzajTerminarza" checked onchange="scheduleChange(value)">
+            <label for="single">Jednodniowy terminarz</label>
+            <br>
+            <input type="radio" id="multi" value="multi" name="rodzajTerminarza" onchange="scheduleChange(value)">
+            <label for="multi">Wielodniowy terminarz</label>
+            <br>
+
+
+
+
+
+            <div  id="multiSchedule" hidden>
+                <label >Gracze:</label><br>
+                <div class="table-responsive" th:if="${not #lists.isEmpty(terminarz)}">
+                    <table class="table table-hover">
+                        <thead class="thead-inverse">
+
+                        </thead>
+                        <tr th:each="item: ${gracze}"  >
+
+
+
+
+                        </tr>
+
+                        <th:block th:each="item : ${gracze}">
+                            <input type="checkbox" name="wybraniGracze" th:value="${item.getUsername()}"/>
+                            <label th:text="${item.getUsername()}"></label>
+                            <br>
+                        </th:block>
+                    </table>
+
+
+                </div>
+
+            </div>
+
+            <div   id="singleSchedule">
+                <br>        <br>
+                <label onclick="dodaj()" style="background-color: lightgray;border: 1px solid black; padding-top: 2px;padding-right: 2px; padding-bottom: 2px; padding-left: 2px;" >dodaj mecz</label>
+                <label onclick="cofnij()" style="background-color: lightgray;border: 1px solid black;padding-top: 2px; padding-right: 2px; padding-bottom: 2px;padding-left: 2px;" >cofnij</label>
+                <label onclick="wyczysc()" style="background-color: lightgray;border: 1px solid black;padding-top: 2px; padding-right: 2px; padding-bottom: 2px;padding-left: 2px;" >wyczyść</label>
+                <br>        <br>
+                <form th:action="@{/wyniki}" method="get" >
+                    <!-- th:onchange="bob(value,[[${gracze}]])"-->
+                    <select  th:name="wybranyTerminarz"  id="selection1" >
+                        <option value="" selected>--Wybierz gracza--</option>
+                        <option th:each="gracz : ${gracze}" th:value="${gracz.getUsername()}" th:text="${gracz.getUsername()}" />
+
+                    </select>
+                    <!--  onchange="sam(value)"-->
+                    <select  th:name="wybranyTerminarz"  id="selection2">
+                        <option value="" selected>--Wybierz gracza--</option>
+                        <option th:each="gracz : ${gracze}" th:value="${gracz.getUsername()}" th:text="${gracz.getUsername()}" />
+
+                    </select>
+
+
+                </form>
+
+
+                <div id="mecze"  >
+                   <!-- th:field="*{bob}"-->
+<!--<input id="bob" name="wg"  th:field="*{bob}">-->
+                 <!--   <input id="bob" name="wg"  field="*{bob}">-->
+
+             <!--       <th:block th:each="item : ${terminarz.getBob().getBobby()}">
+                        <label  name="wybraniGracz" th:text="${item.get('bob')}"/>
+
+                     &lt;!&ndash;   <label th:text="${item.getUsername()}"></label>&ndash;&gt;
+                        <br>
+                    </th:block>
+-->
+
+
+
+
+
+                </div>
+
+
+
+
+            </div>
+
+
+        </div>
+
+
+
+
+
+
+    </form>
+
+
+
+
+</div>
+
+
+<script th:inline="javascript">
+/*
+function dodajTerminarzPojedynczy(){
+
+alert("a.getAttribute("th:field")");
+var a=document.getElementById('mecze')
+a.setAttribute("th:field",matchMap )
+alert(a.getAttribute("th:field"));
+
+
+
+}
+
+*/
+
+ let  selection1=  document.getElementById('selection1')
+  let  selection2=  document.getElementById('selection2')
+
+var cc = [[${terminarz.lista}]];
+
+var tablica=Array.from(cc)
+
+
+
+let matchMap= new Map();
+let  selectionBackup=null;
+
+
+function cofnij()
+{
+tablica.pop()
+tablica.pop()
+
+
+
+alert("3");
+let tablicaWartosci=document.getElementById('bob11');
+tablicaWartosci.setAttribute("value", tablica )
+
+let mecze=document.getElementById('mecze');
+mecze.lastChild.remove();
+}
+
+
+
+
+
+
+function wyczysc()
+{
+let tablicaWartosci1=document.getElementById('bob11');
+
+
+
+alert(tablicaWartosci1.length);
+tablica=[]
+tablicaWartosci1.setAttribute("value", tablica )
+alert(tablicaWartosci1.length);
+  cc=[]
+
+  //  const selectionBackup=document.getElementById('selection1') ;
+
+    let  selection1=  document.getElementById('selection1')
+    let  selection2=  document.getElementById('selection2')
+
+    selectionBackup2= selectionBackup.cloneNode( true );
+  //  document.getElementById('selection1').
+  //  document.getElementById('selection1').childNodes.appendChild(selectionBackup.childNodes)
+  selection1.  replaceChildren(...selectionBackup.children)
+  selection1[0].selected=true;
+  selection2.  replaceChildren(...selectionBackup2.children)
+  selection2[0].selected=true;
+  selectionBackup=null;
+
+  document.getElementById('mecze').innerHTML=""
+
+}
+
+
+
+function scheduleChange(value)
+{
+
+    if(value=='single')
+    {
+      var terminarz1=  document.getElementById("singleSchedule")
+terminarz1.hidden=false;
+var terminarz2=  document.getElementById("multiSchedule")
+terminarz2.hidden=true;
+ document.getElementById('mecze').innerHTML=""
+    }
+    else
+    {
+        var terminarz1=  document.getElementById("singleSchedule")
+terminarz1.hidden=true;
+var terminarz2=  document.getElementById("multiSchedule")
+terminarz2.hidden=false;
+ document.getElementById('mecze').innerHTML=""
+    }
+
+}
+
+
+
+
+
+
+function dodaj()
+   {
+
+
+
+
+///////////////////////////
+/*    //bkp
+var bb = [[${terminarz}]];
+
+var  listFragenText= new Map(Object.entries(bb));
+//.bob.bobby
+
+//bb.setNazwa("jjjjjjj")
+//listFragenText.set('kot','pat')
+listFragenText.nazwa="nazwa"
+var t=listFragenText.get("nazwa")
+
+bb.bob.bobby=listFragenText;
+
+var f = JSON.stringify(bb.bob)
+alert(  bb.bob.bobby);
+alert(  t);
+*/
+/*  //bkp
+
+
+var bb = [[${terminarz}]];
+
+var  listFragenText= new Map(Object.entries(bb.mapa))
+//.bob.bobby
+
+//bb.setNazwa("jjjjjjj")
+
+listFragenText.set('kot','pat')
+//listFragenText.nazwa="nazwa"
+//var t=listFragenText.get("nazwa")
+alert( "bb.mapa="+ bb.mapa);
+alert( "listFragenText="+ listFragenText);
+bb.mapa=listFragenText;
+alert( "bb.kot="+ bb.mapa.get("bob"));
+var f = JSON.stringify(listFragenText)
+alert( "y" +f);
+
+*/
+
+
+
+/*
+   tempstring="";
+    for (const [key, value] of Array.from(listFragenText)) {
+        tempstring+= key+"-"
+        tempstring+= value
+
+    };
+   Array.from (listFragenText).forEach(element => {
+   tempstring+=element;
+});
+
+*/
+
+//alert(  listFragenText.get('bob'));
+
+
+
+
+  if(selectionBackup==null)
+  {
+   // selectionBackup= structuredClone(selection1)
+    selectionBackup = document.getElementById('selection1').cloneNode( true );
+  //  selectionBackup = JSON.parse(JSON.stringify(selection1));
+    // selectionBackup = document.getElementById('selection1')
+  }
+/*
+if(gracze1==null)
+{
+    gracze1=document.getElementById('selection1')
+}
+*/
+
+  let user1,user2, index1,index2;
+
+  Array.from(selection1).forEach(element => {
+    if(
+        (element.selected==true)
+    &&(element.text!='--Wybierz terminarz--' )
+    )
+    {
+        user1=element;
+        index1=element.index;
+    }
+
+});
+Array.from(selection2).forEach(element => {
+    if(element.selected==true&&element.text!='--Wybierz terminarz--'&&element.index!=index1)
+    {
+        user2=element;
+        index2=element.index;
+    }
+
+});
+
+if(user1!=null&&user2!=null)
+{
+    matchMap.set(user1.text,user2.text)
+//alert("1");
+
+//alert("2");
+tablica.push(user1.text)
+tablica.push(user2.text)
+
+
+
+//alert("3");
+let tablicaWartosci=document.getElementById('bob11');
+tablicaWartosci.setAttribute("value", tablica )
+//alert("4");
+
+let mecze=document.getElementById('mecze');
+
+var para = document.createElement("div")
+
+var node = document.createTextNode(user1.text +" - "+user2.text );
+
+para.appendChild(node)
+mecze.appendChild(para)
+//mecze.children.appendChild=para;
+
+ //   gracze1.remove(user1)
+ //   gracze1.remove(user2)
+
+ Array.from(selection1).forEach(element => {
+    if(element.text==user2.text)
+    {
+       element.remove();
+
+    }
+
+});
+Array.from(selection2).forEach(element => {
+    if(element.text==user1.text)
+    {
+       element.remove();
+
+    }
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+var a=document.getElementById('bob')
+//alert(bobby.bobby.get('piko66'));
+//a.setAttribute("th:field", listFragenText )
+a.setAttribute("value", listFragenText )
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//cc.put("kot","pat")
+/*
+var bob1=document.getElementById('bob1')
+
+var  kk= new Map(Object.entries(cc))
+kk.set("kot","pat")
+var fff = JSON.stringify(kk)
+alert(fff);
+//bb.mapa.get("kot"));
+//kk.set(user1.text,user2.text)
+//alert(listFragenText);
+kk.set(user1.text,user2.text)
+
+
+
+//bb.mapa=listFragenText
+var ff = JSON.stringify(cc.mapa)
+bob1.setAttribute("value", ff )
+alert('f'+ff);
+
+
+alert("bob1="+ bob1.getAttribute('value'));
+
+*/
+
+
+
+
+
+/////////////////////////////////////////////
+
+user1.remove();
+user2.remove();
+
+
+    tempstring="";
+    for (const [key, value] of matchMap) {
+        tempstring+= key+"-"
+        tempstring+= value
+
+
+
+
+
+    };
+
+
+//    alert(tempstring);
+
+}
+else
+{
+    alert("null");
+}
+
+   }
+
+
+</script>
+
+
+<script type="text/javascript" th:src="@{/resources/temp.js}" ></script>
+<script type="text/javascript" th:src="@{/resources/kalendarz.js}" />
+
+</body>
+</html>
