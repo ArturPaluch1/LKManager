@@ -78,8 +78,8 @@ public class Team implements Serializable {
     @Transient
     private Integer rankPoints;
 
-    @Column(name = "DELETED",columnDefinition = "TINYINT")
-  //  @Column(name = "DELETED",columnDefinition = "BIT")
+ //   @Column(name = "DELETED",columnDefinition = "TINYINT")
+    @Column(name = "DELETED",columnDefinition = "BIT")
     private boolean deleted = false;
 
     // getters and setters
