@@ -102,7 +102,8 @@ private EntityManager entityManager;
             System.out.println("findall done");
 
         } catch (Exception e) {
-            int y = 0;
+            System.out.println("db error");
+        //   return  "redirect:/dodajTerminarz";
         } finally {
             s.close();
             return allQuery;
@@ -123,7 +124,7 @@ private EntityManager entityManager;
     public UserData findByTeamId(int id) throws IOException, ParserConfigurationException, SAXException, JAXBException {
        Session s= sessionFactory.openSession();
         Team team = new Team();
-        UserData user= new UserData();
+        UserData user= null;
        try{
      /*      s.beginTransaction();
             team= s.get(Team.class,id);
@@ -135,7 +136,7 @@ private EntityManager entityManager;
        }
        catch (Exception e)
        {
-
+           System.out.println("db error");
        }
        finally {
            s.close();
@@ -179,7 +180,7 @@ if(user.getTeamlist().size()>1)
             if (tx!=null) tx.rollback();
                e.printStackTrace();
             int i=0;
-
+            System.out.println("db error");
         }
 
 
@@ -258,7 +259,7 @@ s.getTransaction().commit();
             s.getTransaction().commit();
         }
         catch (Exception e){
-
+            System.out.println("db error");
         }
         finally {
 s.close();

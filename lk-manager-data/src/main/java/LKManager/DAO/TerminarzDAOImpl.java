@@ -83,7 +83,7 @@ finally {
         }
         catch (Exception e)
         {
-
+            System.out.println("db error");
         }
         finally {
             s.close();
@@ -146,6 +146,7 @@ s.getTransaction().commit();
           {s.getTransaction().rollback();
           e.printStackTrace();}
             int y=0;
+            System.out.println("db error");
         } finally {
         s.close();
         }
@@ -186,7 +187,7 @@ finally {
 
         }
         catch (Exception e){
-
+            System.out.println("db error");
         }
         finally {
             s.close();
@@ -296,57 +297,57 @@ finally {
 */
 
         Session s =sessionFactory.openSession();
-        var terminarz=      s.load(Terminarz.class,106L)   ;
+        Terminarz terminarz= null;
+      try{
+           terminarz=      s.load(Terminarz.class,106L)   ;
+          for (var item: terminarz.getRundy()
+          ) {
 
 
-        for (var item: terminarz.getRundy()
-        ) {
-
-
-            if(  item.getNr()== runda) {
-
-
-
-                for (var mecz : item.getMecze()
-                ) {
-
-
-                    //sprawdzanie czy  gospodarzem jest apuza
-                    if (!(mecz.getUser().getUsername().equals("pauza") || mecz.getUser().getUsername().equals("pauza"))) {
+              if(  item.getNr()== runda) {
 
 
 
+                  for (var mecz : item.getMecze()
+                  ) {
 
 
-                        var user = mecz.getUser();
-                        var userTeamId = user.getTeamlist().get(0).getTeamId();
-                        var oponent = mecz.getopponentUser();
-                        var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
-
-                        var rozegrane = matchService.findPlayedByUser(user);
-
-                        var meczeTurniejowe = rozegrane.getMatches().stream().
-                                filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
-                                        filter(a ->
-
-                                            a.getType().equals("friendly")
+                      //sprawdzanie czy  gospodarzem jest apuza
+                      if (!(mecz.getUser().getUsername().equals("pauza") || mecz.getUser().getUsername().equals("pauza"))) {
 
 
 
-                                        ).collect(Collectors.toList());
+
+
+                          var user = mecz.getUser();
+                          var userTeamId = user.getTeamlist().get(0).getTeamId();
+                          var oponent = mecz.getopponentUser();
+                          var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
+
+                          var rozegrane = matchService.findPlayedByUser(user);
+
+                          var meczeTurniejowe = rozegrane.getMatches().stream().
+                                  filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
+                                          filter(a ->
+
+                                          a.getType().equals("friendly")
+
+
+
+                                  ).collect(Collectors.toList());
 
        /*           &&
                         ( a.getTeam().getTeamId()== mecz.getopponentUser().getTeamlist().get(0).getTeamId()
                                 || a.getTeam().getTeamId()==  mecz.getopponentUser().getTeamlist().get(1).getTeamId()
                         )
 */
-                        //todo sprawzic czy id oponenta to id z terminarza
-                        for (var rozegranyMecz : meczeTurniejowe
-                        ) {
+                          //todo sprawzic czy id oponenta to id z terminarza
+                          for (var rozegranyMecz : meczeTurniejowe
+                          ) {
 
 
-                          var user1=  mzUserService.findByTeamId(rozegranyMecz.getTeamlist().get(0).getTeamId());
-                            var user2=   mzUserService.findByTeamId(rozegranyMecz.getTeamlist().get(1).getTeamId());
+                              var user1=  mzUserService.findByTeamId(rozegranyMecz.getTeamlist().get(0).getTeamId());
+                              var user2=   mzUserService.findByTeamId(rozegranyMecz.getTeamlist().get(1).getTeamId());
  /*if(user1.getUsername()==user.getUsername() &&user2.getUsername()==oponent.getUsername()
  ||
  )*/
@@ -354,49 +355,71 @@ finally {
 
 
 
-                                                     //tutaj user ma id =0 oponent 1
-                            if (user1.getUserId().equals(user.getUserId()))
-                            {
-                                //sprawdzanie czy prawidlowy przeciwnik
-                                if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
-                                    //aktualizacja
-                                    //  mecz.setMatchResult1("1");
-                                    mecz.setUserMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
-                                    mecz.setOpponentMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
-                                }
+                              //tutaj user ma id =0 oponent 1
+                              if (user1.getUserId().equals(user.getUserId()))
+                              {
+                                  //sprawdzanie czy prawidlowy przeciwnik
+                                  if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
+                                      //aktualizacja
+                                      //  mecz.setMatchResult1("1");
+                                      mecz.setUserMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
+                                      mecz.setOpponentMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
+                                  }
 
 
-                            }
-                            //tutaj user ma id 1  oponent =0
-                            else if (user2.getUserId().equals(user.getUserId())) {
-                                //sprawdzanie czy prawidlowy przeciwnik
-                                if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
-                                    //aktualizacja
-                                    //  mecz.setMatchResult1("1");
-                                    mecz.setUserMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
-                                    mecz.setOpponentMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
-                                }
+                              }
+                              //tutaj user ma id 1  oponent =0
+                              else if (user2.getUserId().equals(user.getUserId())) {
+                                  //sprawdzanie czy prawidlowy przeciwnik
+                                  if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
+                                      //aktualizacja
+                                      //  mecz.setMatchResult1("1");
+                                      mecz.setUserMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
+                                      mecz.setOpponentMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
+                                  }
 
 
-                            }
+                              }
 
-                        }
+                          }
 
-                    }
-
-
-
-                }
-
-            }
-        }
+                      }
 
 
-        s.beginTransaction();
-        s.update( terminarz.getRundy().get(runda-1));
-        s.getTransaction().commit();
-        s.close();
-int o=0;
+
+                  }
+
+              }
+          }
+
+      }
+      catch (Exception e)
+      {
+
+      }
+      finally {
+
+          try{
+              s.beginTransaction();
+              s.update( terminarz.getRundy().get(runda-1));
+              s.getTransaction().commit();
+
+          }
+          catch (Exception e)
+          {
+
+          }
+          finally {
+              s.close();
+          }
+      }
+
+
+
+
+
+
+
 
 
 
