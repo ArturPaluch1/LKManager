@@ -492,10 +492,12 @@ finally {
 
     public List<Match> findAllMatchesByTerminarzName(String terminarzName)
     {
-        Session session = sessionFactory.openSession();
+        Session session= null;
         List<Match>mecze= new ArrayList<>();
-        try
-        {
+        try{
+             session = sessionFactory.openSession();
+
+
 
             session.beginTransaction();
 
@@ -505,14 +507,17 @@ finally {
                             " inner join Terminarz t on r.terminarz=t.id " +
                             "   where t.Name=:terminarzName");
             querry.setParameter("terminarzName",terminarzName );
-           mecze= querry.getResultList();
+            mecze= querry.getResultList();
             session.getTransaction().commit();
         }
         catch (Exception e)
         {
-
+            System.out.println("błąd połączenia db  w tabela");
         }
+
+
         finally {
+            if(session.isOpen())
             session.close();
 
             return mecze;

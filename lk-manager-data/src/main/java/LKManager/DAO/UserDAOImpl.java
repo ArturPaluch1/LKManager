@@ -1,7 +1,5 @@
 package LKManager.DAO;
 
-import LKManager.LK.Runda;
-import LKManager.LK.Terminarz;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.Cache.MZCache;
@@ -39,7 +37,7 @@ private EntityManager entityManager;
 
 
 
-    public List<UserData> findAllFromCache()
+    public List<UserData> findAllUsersFromCache()
     {
         List<UserData> gracze=new ArrayList<>();
         if (mzCache.getUsers().size() != 0) {

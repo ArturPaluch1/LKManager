@@ -8,12 +8,10 @@ import LKManager.services.MZUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,7 +39,7 @@ public String wyswietlGraczy(Model model)
 ***************************************************/
 
     //próbowanie pobrania graczy z cache
-    List<UserData>gracze= userDAOImpl.findAllFromCache();
+    List<UserData>gracze= userDAOImpl.findAllUsersFromCache();
             if(gracze==null)gracze=userDAOImpl.findAll(false);
 //var gracze= userDAOImpl.findAll(false);
 
@@ -77,7 +75,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
             //czy jest o takim id w mz
             var graczMZ= mzUserService.findByUsername(wybranyGracz);
       //    var gracze=lkUserService.wczytajGraczyZXML();
-            List<UserData>gracze= userDAOImpl.findAllFromCache();
+            List<UserData>gracze= userDAOImpl.findAllUsersFromCache();
             if(gracze==null)gracze=userDAOImpl.findAll(false);
 
             gracze= gracze.stream().sorted(
@@ -169,7 +167,7 @@ public String dodajGracza(@RequestParam(value = "wybranyGracz" , required = fals
         try
         {
      //       var gracze=lkUserService.wczytajGraczyZXML();
-            List<UserData>gracze= userDAOImpl.findAllFromCache();
+            List<UserData>gracze= userDAOImpl.findAllUsersFromCache();
             if(gracze==null)gracze=userDAOImpl.findAll(false);
             //wpisany z input
             if(wybranyGracz!="")
