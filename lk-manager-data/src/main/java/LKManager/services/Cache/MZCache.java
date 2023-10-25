@@ -52,6 +52,10 @@ public class MZCache {
         }
         else {
             schedules = terminarzDAO.findAll();
+            if(schedules.size()!=0)
+            {
+                terminarze=schedules;
+            }
         }
         return schedules;
     }
@@ -66,6 +70,7 @@ public Terminarz findChosenScheduleByScheduleNameFromCacheOrDatabase(String chos
     else {
         System.out.println("in from db");
         schedule = terminarzDAO.findByTerminarzName(chosenSchedule);
+
     }
     return schedule;
 }
