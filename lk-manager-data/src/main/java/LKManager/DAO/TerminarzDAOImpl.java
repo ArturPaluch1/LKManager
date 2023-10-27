@@ -75,6 +75,7 @@ finally {
 }*/
         List<Terminarz> allQuery= null;
         Session s= sessionFactory.openSession();
+
         try{
             s.beginTransaction();
             Query query = s.createQuery(" from Terminarz ");
