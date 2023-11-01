@@ -13,6 +13,7 @@ D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\D
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\PlikiService.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Terminarz.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\model\UserMZ\Team.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\Cache\MZCache.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\LKUserService.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalDifference.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\MZUserService.java
@@ -34,5 +35,6 @@ D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\s
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\model\MatchesMz\MatchTeam.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalLost.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalScored.java
+D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\LK\Comparators\scheduleIdComparator.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\services\TerminarzService.java
 D:\Programy\IntellijProjekty\LKManager\lk-manager-data\src\main\java\LKManager\DAO\RundaDAO.java
