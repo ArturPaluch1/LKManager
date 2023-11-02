@@ -116,31 +116,37 @@ private TerminarzDAOImpl terminarzDAO;
                         //todo sprawzic czy id oponenta to id z terminarza
                         for (var rozegranyMecz : meczeTurniejowe
                         ) {
-                            //tutaj user ma id =0 oponent 1
-                            if (rozegranyMecz.getTeamlist().get(0).getTeamId() == userTeamId) {
-                                //sprawdzanie czy prawidlowy przeciwnik
-                                if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
-                                    //aktualizacja
-                                    //  mecz.setMatchResult1("1");
-                                    mecz.setUserMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
-                                    mecz.setOpponentMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
-                                }
+                            //sprawdzanie daty  contains a nie equals bo rozegranyMecz.getDate() zawiera godziny a w round jest bez godzin
+                            if(rozegranyMecz.getDate().contains(round.getData().toString()))
+                            {
+                                //tutaj user ma id =0 oponent 1
+                                if (rozegranyMecz.getTeamlist().get(0).getTeamId() == userTeamId) {
+                                    //sprawdzanie czy prawidlowy przeciwnik
+                                    if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
+                                        //aktualizacja
+                                        //  mecz.setMatchResult1("1");
 
+
+                                        mecz.setUserMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
+                                        mecz.setOpponentMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
+                                    }
+
+
+                                }
+                                //tutaj user ma id 1  oponent =0
+                                else if (rozegranyMecz.getTeamlist().get(1).getTeamId() == userTeamId) {
+                                    //sprawdzanie czy prawidlowy przeciwnik
+                                    if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
+                                        //aktualizacja
+                                        //  mecz.setMatchResult1("1");
+                                        mecz.setUserMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
+                                        mecz.setOpponentMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
+                                    }
+
+
+                                }
 
                             }
-                            //tutaj user ma id 1  oponent =0
-                            else if (rozegranyMecz.getTeamlist().get(1).getTeamId() == userTeamId) {
-                                //sprawdzanie czy prawidlowy przeciwnik
-                                if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
-                                    //aktualizacja
-                                    //  mecz.setMatchResult1("1");
-                                    mecz.setUserMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
-                                    mecz.setOpponentMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
-                                }
-
-
-                                      }
-
                         }
 
                     }
