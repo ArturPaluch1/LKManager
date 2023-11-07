@@ -660,7 +660,7 @@ user.zwiekszSumePunktow(3);
         else // remis nierozegrane ma byc sprawdzone wczesniej !
         {
             opponent.zwiekszSumePunktow(1);
-            user.zwiekszSumePunktow(3);
+            user.zwiekszSumePunktow(1);
         }
 
 

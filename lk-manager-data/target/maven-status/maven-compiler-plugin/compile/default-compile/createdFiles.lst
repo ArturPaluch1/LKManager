@@ -18,6 +18,7 @@ LKManager\services\TerminarzService.class
 LKManager\LK\Gracze.class
 LKManager\services\MZUserService.class
 LKManager\services\wynikiServiceImpl.class
+LKManager\services\Cache\MZCache.class
 LKManager\LK\Comparators\GraczPodsumowanieComparatorGoalLost.class
 LKManager\model\UserMZ\Team.class
 LKManager\DAO\RundaDAOImpl.class
@@ -26,6 +27,7 @@ LKManager\LK\Tabela.class
 LKManager\services\MZUserServiceImpl.class
 LKManager\services\TerminarzServiceImpl.class
 LKManager\services\WynikiService.class
+LKManager\LK\Comparators\scheduleIdComparator.class
 LKManager\services\TerminarzServiceImpl$ListyGrajkow.class
 LKManager\services\URLs$1.class
 LKManager\LK\GraczPodsumowanie.class
