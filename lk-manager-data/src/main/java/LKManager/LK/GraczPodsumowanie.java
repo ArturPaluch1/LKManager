@@ -38,7 +38,7 @@ public class GraczPodsumowanie  {
     }
 
     public void addGoleStrzelone(Integer goleStrzelone) {
-        this.goleStrzelone = goleStrzelone;
+        this.goleStrzelone += goleStrzelone;
     }
     @XmlAttribute
     public Integer getGoleStracone() {
@@ -46,7 +46,7 @@ public class GraczPodsumowanie  {
     }
 
     public void addGoleStracone(Integer goleStracone) {
-        this.goleStracone = goleStracone;
+        this.goleStracone +=goleStracone;
     }
     @XmlAttribute
     public Integer getRoznica() {
