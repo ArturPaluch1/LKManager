@@ -672,13 +672,17 @@ user.zwiekszSumePunktow(3);
         Integer goalsOpponent1=null;
         Integer goalsOpponent2=null;
 
-        if(match.getUserMatchResult1()!=null&& !match.getUserMatchResult1().equals(""))
+        if(match.getUserMatchResult1()!=null)
+                if (!match.getUserMatchResult1().equals(""))
             goalsUser1 = Integer.parseInt(match.getUserMatchResult1());
-if (match.getUserMatchResult2()!=null && !match.getUserMatchResult1().equals(""))
+if (match.getUserMatchResult2()!=null)
+    if ( !match.getUserMatchResult1().equals(""))
      goalsUser2 = Integer.parseInt(match.getUserMatchResult2());
-if(match.getOpponentMatchResult1()!=null &&  !match.getUserMatchResult1().equals(""))
+if(match.getOpponentMatchResult1()!=null)
+        if (  !match.getUserMatchResult1().equals(""))
      goalsOpponent1 = Integer.parseInt(match.getOpponentMatchResult1());
-if(match.getOpponentMatchResult2()!=null &&  !match.getUserMatchResult1().equals(""))
+if(match.getOpponentMatchResult2()!=null)
+        if (!match.getUserMatchResult1().equals(""))
      goalsOpponent2 = Integer.parseInt(match.getOpponentMatchResult2());
 
 

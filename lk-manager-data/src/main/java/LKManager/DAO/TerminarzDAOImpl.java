@@ -513,6 +513,7 @@ finally {
         }
         catch (Exception e)
         {
+            //todo redirect za duzo polaczen
             System.out.println("błąd połączenia db  w tabela");
         }
 
