@@ -482,7 +482,7 @@ finally {
         }
         catch (Exception e)
         {
-
+            System.out.println("błąd połączenia db  w users");
         }
         finally {
             session.close();

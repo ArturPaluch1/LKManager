@@ -84,34 +84,45 @@ private final LKUserService lkUserService;
 List<Match>mecze= terminarzDAO.findAllMatchesByTerminarzName(wybranyTerminarz);
 
       List<UserData> users=terminarzDAO.findAllParticipantsOfSchedule(wybranyTerminarz);
-users.forEach(a->{
-    var tempGracz= new GraczPodsumowanie();
-    tempGracz.setGracz(a);
 
-    tabela.getGraczePodsumowanie().add(tempGracz);
-});
+      if(users.size()!=0 && mecze.size()!=0)
+      {
+          users.forEach(a->{
+              var tempGracz= new GraczPodsumowanie();
+              tempGracz.setGracz(a);
 
-
-       for (Match match:mecze
-            ){
-
+              tabela.getGraczePodsumowanie().add(tempGracz);
+          });
 
 
-           var   user =tabela.getGraczePodsumowanie().stream().
-                   filter(a->a.getGracz().getUserId().equals(match.getUser().getUserId())).findFirst().orElse(null);
-           var   userOp =tabela.getGraczePodsumowanie().stream().
-                   filter(a->a.getGracz().getUserId().equals(match.getopponentUser().getUserId())).findFirst().orElse(null);
-
-      checkResult(match,user,userOp);
+          for (Match match:mecze
+          ){
 
 
 
+              var   user =tabela.getGraczePodsumowanie().stream().
+                      filter(a->a.getGracz().getUserId().equals(match.getUser().getUserId())).findFirst().orElse(null);
+              var   userOp =tabela.getGraczePodsumowanie().stream().
+                      filter(a->a.getGracz().getUserId().equals(match.getopponentUser().getUserId())).findFirst().orElse(null);
+
+              checkResult(match,user,userOp);
 
 
 
 
 
-       }
+
+
+
+          }
+      }
+
+      else
+      {
+          //todo ze brak danych z db
+      }
+
+
 
 
 

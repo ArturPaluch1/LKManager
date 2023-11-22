@@ -56,10 +56,15 @@ public class LKManagerApplication {
 				URL url = null;
 				try {
 					url = new URL("https://lkm-fgim.onrender.com/");
+					url.openConnection().connect();
+
 				//	url = new URL("https://www.developer.com/java/java-event-listeners/");
 				} catch (MalformedURLException e) {
 				//	throw new RuntimeException(e);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
 				}
+
 				URLConnection urlConnection = null;
 				try {
 
