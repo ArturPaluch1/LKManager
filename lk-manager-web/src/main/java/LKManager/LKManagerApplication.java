@@ -114,7 +114,7 @@ i++;
 
 
 		//	timer.schedule(task,0,750000);
-		timer.schedule(task,0,1000);
+		timer.schedule(task,0,750000);
 		//timer.schedule(task, Date.from(now.plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant()) );
 
 
