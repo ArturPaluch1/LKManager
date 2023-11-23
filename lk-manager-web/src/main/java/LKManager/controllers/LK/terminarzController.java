@@ -63,7 +63,7 @@ private final LKUserService lkUserService;
 private final TerminarzService terminarzService;
     private final PlikiService plikiService;
  //   private String wybranyTerminarz;
-    private  Terminarz terminarz;
+
     private final TerminarzDAOImpl terminarzDAO;
     private final UserDAOImpl userDAO;
     private  final RundaDAOImpl rundaDAO;
@@ -153,6 +153,9 @@ wybranyTerminarz= CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminar
      //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
 
         //podano nazwe terminarza
+
+
+        Terminarz terminarz= null;
         if(wybranyTerminarz!=null)
         {
 
@@ -168,6 +171,8 @@ wybranyTerminarz= CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminar
 
 
  //            terminarz=     terminarzDAO.findByTerminarzName(wybranyTerminarz);
+
+
 terminarz=mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(wybranyTerminarz);
 
 
@@ -474,13 +479,13 @@ CookieManager.saveOrUpdateChosenScheduleCookie(terminarz.getName(),response,requ
 
 
     @PostMapping("/pokazRunde")
-    public String pokazRunde(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "participant", required = true)Integer numerRundy)
+    public String pokazRunde(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "participant", required = true)Integer numerRundy,@RequestParam (value="wybranyTerminarz", required = true)String wybranyTerminarz)
     {
 //cookieManager.saveOrUpdateNumerRundyCookie(response, numerRundy.toString(),request);
         //todo wyzej bpk
         try{
        //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
-            CookieManager.saveOrUpdateNumerRundyCookie(numerRundy.toString(),terminarz.getName(),response,request,terminarzDAO);
+            CookieManager.saveOrUpdateNumerRundyCookie(numerRundy.toString(),wybranyTerminarz,response,request,terminarzDAO);
         }
            catch (Exception e)
            {
@@ -504,7 +509,7 @@ CookieManager.saveOrUpdateChosenScheduleCookie(terminarz.getName(),response,requ
 
         try{
             //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
-            CookieManager.saveOrUpdateNumerRundyCookie("1",terminarz.getName(),response,request,terminarzDAO);
+            CookieManager.saveOrUpdateNumerRundyCookie("1",wybranyTerminarz,response,request,terminarzDAO);
             CookieManager.saveOrUpdateChosenScheduleCookie(wybranyTerminarz,response,request,terminarzDAO);       }
         catch (Exception e)
         {

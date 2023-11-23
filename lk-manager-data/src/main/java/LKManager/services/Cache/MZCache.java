@@ -62,7 +62,7 @@ public class MZCache {
 public Terminarz findChosenScheduleByScheduleNameFromCacheOrDatabase(String chosenSchedule)
 {
     Terminarz schedule=null;
-    if(this.terminarze.size()!=0)
+    if(this.terminarze.stream().filter(a->a.getName().equals(chosenSchedule)).toList().size()!=0)
     {
         System.out.println("in cache");
         schedule=this.terminarze.stream().filter(a->a.getName().equals(chosenSchedule)).collect(Collectors.toList()).get(0);
