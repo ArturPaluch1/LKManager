@@ -10,14 +10,12 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -38,6 +36,7 @@ public class LKManagerApplication {
 	{
 
 
+
  LocalDateTime now;
 		now= LocalDateTime.now();
 
@@ -49,14 +48,15 @@ public class LKManagerApplication {
 
 		TimerTask task = new TimerTask()
 		{
+			int i =0;
 			public void run() {
 				System.out.println("Task performed on: " + new Date() + "n" +
 						"Thread's name: " + Thread.currentThread().getName());
-
+i++;
 				URL url = null;
 				try {
 					url = new URL("https://lkm-fgim.onrender.com/");
-					url.openConnection().connect();
+
 
 				//	url = new URL("https://www.developer.com/java/java-event-listeners/");
 				} catch (MalformedURLException e) {
@@ -69,7 +69,17 @@ public class LKManagerApplication {
 				try {
 
 					urlConnection = url.openConnection();
-					System.out.println("refreshed site ");
+					urlConnection.connect();
+
+
+						//	System.out.println("content= "+	urlConnection.getContent()+"\n");
+
+					BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(),
+							Charset.forName("UTF-8")));
+
+
+
+					System.out.println("i="+ i +"refreshed site ");
 				} catch (IOException e) {
 				//	throw new RuntimeException(e);
 					System.out.println("refresh site failed ");
@@ -104,7 +114,7 @@ public class LKManagerApplication {
 
 
 		//	timer.schedule(task,0,750000);
-		timer.schedule(task,0,75000);
+		timer.schedule(task,0,1000);
 		//timer.schedule(task, Date.from(now.plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant()) );
 
 
