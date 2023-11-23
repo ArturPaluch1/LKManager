@@ -48,10 +48,12 @@ public class LKManagerApplication {
 
 		TimerTask task = new TimerTask()
 		{
-			int i =0;
+			int i =-2147483000;
 			public void run() {
 				System.out.println("Task performed on: " + new Date() + "n" +
 						"Thread's name: " + Thread.currentThread().getName());
+				if(i==2147483000)
+					i=-2147483000;
 i++;
 				URL url = null;
 				try {
