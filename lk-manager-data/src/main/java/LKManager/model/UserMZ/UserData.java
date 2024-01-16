@@ -60,11 +60,11 @@ public class UserData  implements Serializable{
     @Column(name = "user_id", unique = true)
     private Integer userId;
 */
-    @OneToOne(mappedBy = "opponentUser" )
+/*    @OneToOne(mappedBy = "opponentUser" )
     private Match meczOpponent;
 
     @OneToOne(mappedBy = "user")
-private Match meczUser;
+private Match meczUser;*/
    /* public long getId() {
         return id;
     }
@@ -73,9 +73,9 @@ private Match meczUser;
         this.id = id;
     }
 */
- // @Column(name = "DELETED",columnDefinition = "TINYINT")
+  @Column(name = "DELETED",columnDefinition = "TINYINT")
     //prod \/
-   @Column(name = "DELETED",columnDefinition = "BIT")
+  // @Column(name = "DELETED",columnDefinition = "BIT")
    private boolean deleted = false;
 
     // getters and setters
@@ -118,8 +118,10 @@ public boolean getDeleted()
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL,
          //   orphanRemoval = true,
+
             fetch = FetchType.EAGER
     )
+   // @Fetch(FetchMode.SUBSELECT)
   //@Where(clause = "DELETED = 0")
   //  @FilterDef(name = "deletedProductFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
   //  @Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")

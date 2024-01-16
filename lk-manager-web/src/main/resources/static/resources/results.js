@@ -1,0 +1,212 @@
+
+
+
+function updateClick()
+{
+ //alert("tabela");
+var form  = document.getElementById('formUpdate');
+//document.getElementByClassName("formAktualizuj")[0];
+//var runda = [[${mecze}]];
+
+ //alert("form");
+form.submit()
+ //alert("form end");
+
+}
+
+
+
+
+
+
+
+
+
+function showEditTable()
+{
+var editTable=document.getElementById("editTable");
+var table=document.getElementById("table");
+
+table.hidden=true;
+
+editTable.hidden=false;
+}
+
+function cancel(){
+
+var editTable=document.getElementById("editTable");
+var table=document.getElementById("table");
+
+
+
+editTable.hidden=true;
+table.hidden=false;
+
+
+
+}
+
+
+
+function saveChanges()
+{
+var editTable=document.getElementById("editTable");
+var table=document.getElementById("table");
+
+//tabela.hidden=false;
+
+//edytujTabele.hidden=true;
+
+ //alert(tabela);
+
+ var editTableContent =document.getElementById("editTableContent");
+//alert(editTableContent.children)
+
+//0 team1 1 u1 9 u2 10t2
+ //console.log(editTableContent.children[0].children)
+ //alert(editTableContent);
+
+
+var editTableForm=document.getElementById("editTableForm");
+editTableForm.submit();
+
+}
+
+
+/*
+
+
+const round = [[${chosenSchedule}]];
+function aktualizujClick(){
+var form = document.getElementById("formAktualizuj");
+
+alert("round");
+if(round.status=="rozegrana")
+{
+if (confirm('Ta round była już aktualizowana. Na pewno chcesz ją nadpisać?')) {
+  // Save it!
+  form.submit()
+  alert('aktualizuje');
+} else {
+  // Do nothing!
+ alert('anulowano.');
+}
+
+
+}
+
+else
+{
+  form.submit()
+}
+
+
+
+
+
+}
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+      function copy() {
+        var result = "";
+     var tempString = "";
+     var tempResults = "";
+
+     var table = document.getElementById("table-content");
+var date = document.getElementById("matchDate");
+var round =  document.getElementById("round");
+tempString+=" Runda: "+round.textContent +"   "+date.textContent+"\r\n";
+
+
+ //console.log(date+ date.textContent);
+
+
+
+
+    // let pierwszy = true;
+     for (let i in table.rows) {
+       let row = table.rows[i];
+
+
+
+       for (let j in row.cells) {
+         let col = row.cells[j];
+
+  //    console.log(j + "->" + row.cells[j].textContent);
+
+ var results;
+ var user2;
+// console.log(j );
+         switch (j) {
+           //druzyna
+           case "0": {
+          results="";
+ user2="";
+             tempString += row.cells[j].textContent;
+             break;
+           }
+                        //user
+           case "1": {
+             tempString += " (" + row.cells[j].textContent + ") - ";
+             break;
+           }
+           case "2": {
+           results+=row.cells[j].textContent + ":"
+           //  tempString += row.cells[j].textContent + ":";
+             break;
+           }
+           case "4": {
+            results+= row.cells[j].textContent + "   ";
+             //tempString += row.cells[j].textContent + "   ";
+             break;
+           }
+           case "6": {
+           results+=row.cells[j].textContent + ":"
+             //tempString += row.cells[j].textContent + ":";
+             break;
+           }
+           case "8": {
+           results+=row.cells[j].textContent + " " + "\r\n";
+           //  tempString += row.cells[j].textContent + " " + "\r\n";
+             break;
+           }
+             //user
+           case "9": {
+           user2+=" (" + row.cells[j].textContent  + ") ";
+        //     tempString +=" (" + row.cells[j].textContent  + ") ";
+             break;
+           }
+             //druzyna
+           case "10": {
+
+             tempString +=  row.cells[j].textContent+user2+results;
+                        results="";
+ user2="";
+             break;
+           }
+         }
+
+
+       }
+
+
+     }
+     tempString += "\r\n";
+
+  // console.log(tempString);
+   navigator.clipboard.writeText(tempString);
+   alert("Copied the text: " + tempString);
+
+
+}

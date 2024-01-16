@@ -1,8 +1,8 @@
 LKManager\LKManagerApplication$1.class
 LKManager\controllers\LK\tempController.class
-LKManager\controllers\LK\tabelaController.class
-LKManager\controllers\LK\wynikiController.class
-LKManager\controllers\LK\terminarzController.class
-LKManager\controllers\LK\terminarzController$TerminarzCommand.class
+LKManager\controllers\LK\scheduleController$TerminarzCommand.class
+LKManager\controllers\LK\usersController.class
+LKManager\controllers\LK\scheduleController.class
+LKManager\controllers\LK\tableController.class
+LKManager\controllers\LK\resultsController.class
 LKManager\LKManagerApplication.class
-LKManager\controllers\LK\graczeController.class

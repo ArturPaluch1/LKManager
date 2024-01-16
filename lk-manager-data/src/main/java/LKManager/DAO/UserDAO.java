@@ -1,6 +1,5 @@
 package LKManager.DAO;
 
-import LKManager.LK.Terminarz;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.CrudService;
 

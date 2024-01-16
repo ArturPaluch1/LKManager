@@ -1,14 +1,13 @@
 package LKManager.LK.Comparators;
 
-import LKManager.LK.GraczPodsumowanie;
-import LKManager.LK.Terminarz;
+import LKManager.LK.Schedule;
 
 import java.util.Comparator;
 
-public class scheduleIdComparator implements Comparator<Terminarz> {
+public class scheduleIdComparator implements Comparator<Schedule> {
 
     @Override
-    public int compare(Terminarz o1, Terminarz o2) {
+    public int compare(Schedule o1, Schedule o2) {
 
         return Long.compare(o2.getId(),o1.getId());
     }

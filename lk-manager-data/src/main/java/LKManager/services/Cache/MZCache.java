@@ -1,102 +1,134 @@
 package LKManager.services.Cache;
 
-import LKManager.DAO.TerminarzDAOImpl;
-import LKManager.DAO.UserDAOImpl;
+import LKManager.DAO.ScheduleDAO;
 import LKManager.LK.Comparators.scheduleIdComparator;
-import LKManager.LK.Tabela;
-import LKManager.LK.Terminarz;
+import LKManager.LK.Table;
+import LKManager.LK.Schedule;
+import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-@Getter
 
+@Getter
+@Repository
+@Transactional
 public class MZCache {
 
-  private final TerminarzDAOImpl terminarzDAO;
-    private  Tabela tabela;
-    private  List<UserData> users= new ArrayList<>();
-    private Terminarz lastSchedule;
-    private List<Terminarz> terminarze= new ArrayList<>();
+  //  private final ScheduleDAO customScheduleDAOimpl;
+    private final ScheduleDAO scheduleDAO;
+    private Table table = null;
+    private List<UserData> users = new ArrayList<>();
+    private Schedule lastSchedule;
+    private List<Schedule> schedules;
+    private List<Match> matches;
 
-    public MZCache(TerminarzDAOImpl terminarzDAO) {
+   // ScheduleDAO customScheduleDAOImpl,
+    public MZCache( ScheduleDAO scheduleDAO) {
 
 
-        this.terminarzDAO = terminarzDAO;
+        //this.customScheduleDAOimpl = customScheduleDAOImpl;
+        this.scheduleDAO = scheduleDAO;
     }
 
+    public Table getTable() {
+        return table;
+    }
 
-/*    public List<UserData> getUsersFromCacheOrDatabase() {
-        List<UserData> gracze;
-        if(this.users.size()!=0)
-        {
-            gracze=this.users;
-        }
-        else {
-            gracze = userDAO.findAll(false);
-        }
-        return gracze;
-    }*/
-    public  List<Terminarz>getSchedulesFromCacheOrDatabase()
-    {
-        List<Terminarz> schedules;
-        if(this.terminarze.size()!=0)
-        {
-            schedules=this.terminarze;
-        }
-        else {
-            schedules = terminarzDAO.findAll();
-            if(schedules.size()!=0)
+    public void setTable(Table table) {
+        this.table = table;
+    }
+
+    /*    public List<UserData> getUsersFromCacheOrDatabase() {
+            List<UserData> gracze;
+            if(this.users.size()!=0)
             {
-                terminarze=schedules;
+                gracze=this.users;
+            }
+            else {
+                gracze = userDAO.findAll(false);
+            }
+            return gracze;
+        }*/
+    @Transactional
+
+    public List<Schedule> getSchedulesFromCacheOrDatabase() {
+        List<Schedule> s;
+        if (this.schedules != null) {
+            s = this.schedules;
+        } else {
+            System.out.println("getSchedulesFromCacheOrDatabase ->findall db");
+            //   s= terminarzDAO.findAll();
+       /*    Hibernate.initialize(s.get(0).getRundy());
+            for (var runda:s.get(0).getRundy()
+                 ) {
+             // Hibernate.initialize(runda.getMecze());
+                for (var mecz:runda.getMecze()
+                     ) {
+                    if(!Hibernate.isInitialized(mecz.getUser()))
+                    {
+
+                        Hibernate.initialize(mecz.getUser());
+                    }
+                    if(!Hibernate.isInitialized(mecz.getopponentUser()))
+                    {
+                        Hibernate.initialize(mecz.getopponentUser());
+                    }
+                 //   Hibernate.initialize(mecz.getUser().getTeamlist());
+
+                //    Hibernate.initialize(mecz.getopponentUser().getTeamlist());
+                }
+            }*/
+
+            //s=terminarzDAOimpl.findAll1();
+            s = scheduleDAO.findByIdAndFetchRolesEagerly();
+            if (s.size() != 0) {
+
+                this.setSchedules(s);
+
             }
         }
-        return schedules;
+        return s;
     }
-public Terminarz findChosenScheduleByScheduleNameFromCacheOrDatabase(String chosenSchedule)
-{
-    Terminarz schedule=null;
-    if(this.terminarze.stream().filter(a->a.getName().equals(chosenSchedule)).toList().size()!=0)
-    {
-        System.out.println("in cache");
-        schedule=this.terminarze.stream().filter(a->a.getName().equals(chosenSchedule)).collect(Collectors.toList()).get(0);
-    }
-    else {
-        System.out.println("in from db");
-        schedule = terminarzDAO.findByTerminarzName(chosenSchedule);
 
-    }
-    return schedule;
-}
+    public Schedule findChosenScheduleByScheduleNameFromCacheOrDatabase(String chosenSchedule) {
+        Schedule schedule = null;
+        if (this.schedules.stream().filter(a -> a.getName().equals(chosenSchedule)).toList().size() != 0) {
 
-public Terminarz findLastScheduleByIdFromCacheOrDatabase()
-{
-    Terminarz schedule=null;
-    if(this.terminarze.size()!=0)
-    {
-        System.out.println("in cache last");
-        schedule=this.terminarze.stream().sorted(new scheduleIdComparator()) .collect(Collectors.toList()).get(0);
+            System.out.println("in cache");
+            schedule = this.schedules.stream().filter(a -> a.getName().equals(chosenSchedule)).collect(Collectors.toList()).get(0);
+
+        } else {
+            System.out.println("in from db");
+            schedule = scheduleDAO.findByScheduleName(chosenSchedule);
+
+        }
+        return schedule;
     }
-    else {
-        System.out.println("in from db last");
-        schedule = terminarzDAO.findLastById();
+
+    public Schedule findLastScheduleByIdFromCacheOrDatabase() {
+        Schedule schedule = null;
+        if (this.schedules.size() != 0) {
+            System.out.println("in cache last");
+            schedule = this.schedules.stream().sorted(new scheduleIdComparator()).collect(Collectors.toList()).get(0);
+        } else {
+            System.out.println("in from db last");
+            schedule = scheduleDAO.findLastById();
+        }
+        return schedule;
     }
-    return schedule;
-}
 
 
-public void addSchedule(Terminarz schedule)
-{
-    this.terminarze.add(schedule);
-}
-    public void addUser(UserData user)
-    {
+    public void addSchedule(Schedule schedule) {
+        this.schedules.add(schedule);
+    }
+
+    public void addUser(UserData user) {
 
         this.users.add(user);
     }
@@ -107,7 +139,8 @@ public void addSchedule(Terminarz schedule)
         this.users = users;
     }
 
-    public void setTerminarze(List<Terminarz> terminarze) {
-        this.terminarze = terminarze;
+
+    public void setSchedules(List<Schedule> schedules) {
+        this.schedules = schedules;
     }
 }

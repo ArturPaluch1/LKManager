@@ -12,10 +12,6 @@
         <module name="lk_manager-web" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="lk-manager-data" target="18" />
-      <module name="lk_manager-web" target="18" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

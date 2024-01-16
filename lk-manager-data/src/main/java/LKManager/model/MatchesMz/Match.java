@@ -1,6 +1,6 @@
 package LKManager.model.MatchesMz;
 
-import LKManager.LK.Runda;
+import LKManager.LK.Round;
 import LKManager.model.UserMZ.UserData;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,11 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -22,13 +20,14 @@ import java.util.List;
 @XmlRootElement(name = "Match")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({MatchTeam.class})
+
 public class Match implements Serializable {
 
     @Transient
     private final List<MatchTeam> teamlist = new ArrayList();
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "runda")
-    private Runda runda;
+    private Round round;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -66,21 +65,23 @@ public class Match implements Serializable {
     private String opponentMatchResult2;
 
     //  @Column(name = "user")
+  //  @Fetch(FetchMode.JOIN)
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "przeciwnik")//, updatable = false, insertable = false)
+    @JoinColumn(name = "przeciwnik")//, referencedColumnName= "user_id")//, updatable = false, insertable = false)
     private UserData opponentUser;
 
     // @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+   // @Fetch(FetchMode.JOIN)
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user")//, updatable = false, insertable = false)
+    @JoinColumn(name = "user")//, referencedColumnName= "user_id")//, updatable = false, insertable = false)
     private UserData user;
     /* public XMLGregorianCalendar getDate() {
                 return date;
             }*/
 
 
-    public Match(Runda runda, Long id, String date, String status, String type, String typeName, int typeId, UserData user) {
-        this.runda = runda;
+    public Match(Round round, Long id, String date, String status, String type, String typeName, int typeId, UserData user) {
+        this.round = round;
         this.id = id;
         this.date = date;
         this.status = status;

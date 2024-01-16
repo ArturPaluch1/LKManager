@@ -28,7 +28,7 @@ public class UserDAOImpl implements UserDAO {
     @Autowired
     MZCache mzCache;
     @Autowired
-private EntityManager entityManager;
+private final EntityManager entityManager;
     public UserDAOImpl(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
@@ -100,7 +100,7 @@ private EntityManager entityManager;
             System.out.println("findall done");
 
         } catch (Exception e) {
-            System.out.println("db error");
+            System.out.println("db user error");
         //   return  "redirect:/dodajTerminarz";
         } finally {
             s.close();
@@ -134,7 +134,7 @@ private EntityManager entityManager;
        }
        catch (Exception e)
        {
-           System.out.println("db error");
+           System.out.println("db user error");
        }
        finally {
            s.close();
@@ -178,7 +178,7 @@ if(user.getTeamlist().size()>1)
             if (tx!=null) tx.rollback();
                e.printStackTrace();
             int i=0;
-            System.out.println("db error");
+            System.out.println("db user error");
         }
 
 
@@ -257,7 +257,7 @@ s.getTransaction().commit();
             s.getTransaction().commit();
         }
         catch (Exception e){
-            System.out.println("db error");
+            System.out.println("db user error");
         }
         finally {
 s.close();

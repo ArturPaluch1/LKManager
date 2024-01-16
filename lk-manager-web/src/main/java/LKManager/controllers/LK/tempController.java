@@ -1,45 +1,34 @@
 package LKManager.controllers.LK;
 
-import LKManager.LK.Runda;
-import LKManager.LK.Terminarz;
-import LKManager.model.MatchesMz.Match;
 import LKManager.services.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 
 @Controller
 public class tempController {
     private final LKManager.services.MZUserService MZUserService;
 
-    private final TerminarzService terminarzService;
+    private final ScheduleService scheduleService;
 
 
     private final PlikiService plikiService;
 
-    private  final WynikiService wynikiService;
+    private  final ResultsService resultsService;
 
-    public tempController(LKManager.services.MZUserService mzUserService, TerminarzService terminarzService, PlikiService plikiService, WynikiService wynikiService) {
+    public tempController(LKManager.services.MZUserService mzUserService, ScheduleService scheduleService, PlikiService plikiService, ResultsService resultsService) {
         MZUserService = mzUserService;
 
-        this.terminarzService = terminarzService;
+        this.scheduleService = scheduleService;
         this.plikiService = plikiService;
-        this.wynikiService = wynikiService;
+        this.resultsService = resultsService;
     }
 
 

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" th:replace="~{fragments/layout :: layout (~{::body},'home')}" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+
+
+
+</head>
+<body class="light">
+
+
+<div id="wyniki" >
+
+
+    <div style="float: right;">
+        <form th:action="@{/results/changeSchedule}" method="get" >
+            <select  th:name="chosenSchedule"  onchange="this.form.submit()" >
+                <option value="" selected>--Wybierz terminarz--</option>
+                <option th:each="schedule : ${schedules}" th:value="${schedule.getName()}" th:text="${schedule.getName()}" />
+
+            </select>
+        </form>
+        <div>
+            <label>Wybrany terminarz: </label>
+            <label th:text="${chosenSchedule}"></label>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<div style="float: center;">
+
+    <div>
+        <table class="table table-striped" align="center" >
+            <thead>
+            <tr>
+
+                <th style="width: 150px">Runda </th>
+                <th style="width: 150px">Data </th>
+
+
+            </tr>
+
+
+
+            <tr>
+            </thead>
+            <tbody align="center">
+         <tr th:each="match : ${round}">
+                <td  id="round" th:text="${match.getNr()}" style="width: 150px"></td>
+             <td  id="matchDate" th:text="${match.getDate()}"style="width: 150px"></td>
+                <td>
+                    <form th:action="@{/getRoundResults}" method="get">
+                        <select    class="form-control" id="dropDownList"  th:name="round" onchange="this.form.submit()" onsubmit="myFunction1()">
+                            <option selected>Zmień rundę</option>
+<!--                            <option  th:each="nr : ${roundNumbers}" th:value="${nr.getNr()}" th:text="round+' '+${nr.getNr()}  " ></option>-->
+                          <option  th:each="nr : ${roundNumbers}" th:value="${nr.getNr()}" th:text="Runda+' '+${nr.getNr()}+' '+data+': '+${nr.getDate()}  " ></option>
+                        </select>
+                        <input hidden   th:name="chosenSchedule" th:value="${chosenSchedule}"></input>
+
+                    </form>
+
+
+                </td>
+                <td>
+                    <button id="bob"  onclick="copy()">Skopiuj</button>
+
+                </td>
+
+
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div hidden id="editTable" >
+
+
+        <button onclick="saveChanges()" > Zapisz zmiany wyników</button>
+        <button onclick="cancel()" > Anuluj</button>
+
+        <form id="editTableForm" th:action="@{/editResults}" method="post"  >
+            <input  hidden  th:value="${chosenSchedule}" th:name="chosenSchedule" >
+            <input hidden  th:value="${roundNumber}" th:name="roundNumber">
+
+
+
+            <table class="table table-striped"  border="1">
+                <thead align="justify" >
+                <tr  >
+
+
+                    <th style="width: 200px" class="text-center">Drużyna 1 </th>
+                    <th style="width: 150px" class="text-center">Gracz 1</th>
+                    <th style="width: 25px" class="text-right">  </th>
+                    <th style="width: 5px"  class="text-center"> m1 </th>
+                    <th style="width: 25px" class="text-left">  </th>
+                    <th style="width: 10px"  class="text-center">  </th>
+                    <th style="width: 25px" class="text-right">  </th>
+                    <th style="width: 5px"  class="text-center"> m2 </th>
+                    <th style="width: 25px" class="text-left">  </th>
+                    <th style="width: 200px" class="text-center">Gracz 2</th>
+                    <th style="width: 150px" class="text-center">Drużyna 2</th>
+                <tr>
+                </thead>
+
+
+
+                <tbody id="editTableContent" align="center"   >
+
+
+
+
+                <tr th:each="match : ${matches}"   th:name="matches">
+<!--                    <td th:text="${match .getUser().getTeamlist().get(0).getTeamName()}">userTeam</td>-->
+                    <td th:text="${match.getUser()!=null}? ${match.getUser().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+
+
+
+
+                  <!--  <td th:text="${match .getUser().getUsername()}"  >Gracz 1</td>-->
+                    <td th:text="${match.getUser()!=null}? ${match .getUser().getUsername()}:'NA'" style="width: 150px">user</td>
+
+                    <input   hidden  th:name="user" th:value="${match.getUser().getUsername()}">
+                    <td  align="center">
+                        <input   hidden  th:name="matchId" th:value="${match.getId()}">
+                        <input style="width: 25px"
+                               th:name="UserMatchResult1"
+                               th:value="${match.getUserMatchResult1()}">
+                    </td>
+                    <td  align="center">:</td>
+
+                    <td  align="center">
+                        <input    style="width: 25px"    th:name="OpponentMatchResult1"
+                                  th:value="${match.getOpponentMatchResult1()}">
+                    </td>
+                    <td  > </td>
+
+                    <td align="center">
+                        <input   style="width: 25px"    th:name="UserMatchResult2"
+                                 th:value="${match .getUserMatchResult2()}">
+                    </td>
+                    <td  >:</td>
+
+                    <td  align="center" >
+                        <input    style="width: 25px"   th:name="OpponentMatchResult2"
+                                  th:value="${match .getOpponentMatchResult2()}">
+                    </td>
+
+                    <td th:text="${match.getopponentUser().getUsername()}"
+                    >1</td>
+                    <input   hidden  th:name="opponentUser" th:value="${match.getopponentUser().getUsername()}">
+
+
+                    <td th:text="${match .getopponentUser().getTeamlist().get(0).getTeamName()}"
+                    >opponentUserTeam</td>
+
+                </tr>
+                </tbody>
+
+            </table>
+        </form>
+
+    </div>
+
+    <div id="table" class="mycontainer"  align="center" >
+
+<div align="right" >
+        <button onClick="showEditTable()"  >  Edytuj wyniki</button>
+     <!--   <button type="button" id="buttonAktualizuj" onclick="aktualizujClick()">Aktualizuj wyniki</button>-->
+<!--        <button type="button" onclick="aktualizujClick()">Aktualizujwyniki</button>-->
+
+</div>
+
+        <div align="left" padding-left="20">
+            <form  th:action="@{/update}" method="post" id="formUpdate"  >
+                <button type="button" onclick="updateClick()" >Aktualizuj wyniki</button>
+                <input  hidden  th:name="roundNumber" th:value="${roundNumber}"></input>
+                <input hidden   th:name="chosenSchedule" th:value="${chosenSchedule}"></input>
+
+            </form>
+    </div>
+
+        <table  class="table table-striped"  border="1">
+            <thead align="justify" >
+            <tr id="naglowek" >
+
+
+                <th style="width: 200px" class="text-center">Drużyna 1 </th>
+                <th style="width: 150px" class="text-center">Gracz 1</th>
+                <th style="width: 25px"  class="text-right">  </th>
+                <th style="width: 5px"  class="text-center"> m1 </th>
+                <th style="width: 25px"  class="text-left">  </th>
+                <th style="width: 10px"  class="text-center">  </th>
+                <th style="width: 25px"  class="text-right">  </th>
+                <th style="width: 5px"  class="text-center"> m2 </th>
+                <th style="width: 25px"  class="text-left">  </th>
+                <th style="width: 200px" class="text-center">Gracz 2</th>
+                <th style="width: 150px" class="text-center">Drużyna 2</th>
+            <tr>
+            </thead>
+
+
+
+            <tbody  id="table-content" align="center" >
+
+
+            <tr th:each="match : ${matches}"   >
+                <td th:text="${match .getUser().getTeamlist().get(0).getTeamName()}" >userTeam</td>
+
+
+                <td th:text="${match .getUser().getUsername()}" >Gracz 1</td>
+
+                <td  style="width: 25px"  th:text="${match.getUserMatchResult1()}" align="right" >
+
+
+
+                </td>
+
+                <td  align="center">:</td>
+
+
+                <td style="width: 25px"   th:text="${match.getOpponentMatchResult1()} "align="left">wynik1</td>
+
+                <td  > </td>
+                <td style="width: 25px"  th:text="${match .getUserMatchResult2()}" align="right">wynik2</td>
+                <td  >:</td>
+                <td style="width: 25px"  th:text="${match .getOpponentMatchResult2()}" align="left">wynik2</td>
+
+                <td th:text="${match.getopponentUser().getUsername()}">1</td>
+                <td th:text="${match .getopponentUser().getTeamlist().get(0).getTeamName()}"  >opponentUserTeam</td>
+
+            </tr>
+            </tbody>
+
+
+        </table>
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!--
+
+
+<script th:inline="javascript">
+
+
+
+
+
+
+
+</script>
+-->
+
+<script type="text/javascript" th:src="@{/resources/results.js}" ></script>
+
+
+
+
+
+
+
+
+</body>
+</html>
+

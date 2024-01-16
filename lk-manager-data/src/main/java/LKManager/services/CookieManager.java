@@ -1,12 +1,10 @@
 package LKManager.services;
 
-import LKManager.DAO.TerminarzDAO;
-import LKManager.DAO.TerminarzDAOImpl;
-import LKManager.LK.Terminarz;
-import org.springframework.beans.factory.annotation.Autowired;
-
+import LKManager.DAO.CustomScheduleDAOImpl;
+import LKManager.DAO.ScheduleDAO;
+import LKManager.LK.Schedule;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -14,18 +12,21 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public  class CookieManager {
 
-    private TerminarzDAOImpl terminarzDAO;
-
+    private final CustomScheduleDAOImpl customScheduleDAO;
+/*
 @Autowired
-    public CookieManager(TerminarzDAOImpl terminarzDAO) {
-        this.terminarzDAO = terminarzDAO;
+    public CookieManager(CustomScheduleDAOImpl customScheduleDAO) {
+        this.customScheduleDAO = customScheduleDAO;
     }
-
+*/
   /*public  static String  checkCookies(HttpServletResponse response, HttpServletRequest request, String nrRundy, String wybranyTerminarz, TerminarzDAOImpl terminarzDAO) throws UnsupportedEncodingException {
 
 
@@ -39,14 +40,14 @@ public  class CookieManager {
 
         return nrRundy;
     }*/
-    public static String saveOrUpdateNumerRundyCookie(String nrRundy, String wybranyTerminarz, HttpServletResponse response, HttpServletRequest request, TerminarzDAO terminarzDAO) throws UnsupportedEncodingException {
+    public static String saveOrUpdateRoundNumberCookie(Optional<String> roundNumber, Optional<String> chosenSchedule, HttpServletResponse response, HttpServletRequest request, ScheduleDAO scheduleDAO) throws UnsupportedEncodingException {
        //zmieniono terminarz, runda =1
        // Cookie   numerRundyCookie= null;
       //  Cookie     wybranyTerminarzCookie=null;
-        Cookie   numerRundyCookie = getOrCreateRoundCookie(request);
+        Cookie   roundNumberCookie = getOrCreateRoundCookie(response, request);
 
 
-        Cookie   wybranyTerminarzCookie=getOrCreateScheduleCookie(request, response, terminarzDAO);
+        Cookie   chosenScheduleCookie= getChosenScheduleCookie(request, response, scheduleDAO);
 
 
   /*      if(request.getCookies()==null)
@@ -72,24 +73,28 @@ public  class CookieManager {
 
 
 
+/*
 
-
-       if(!decodeCookie(wybranyTerminarzCookie.getValue()).equals(wybranyTerminarz)
-      && decodeCookie(wybranyTerminarzCookie.getValue()).equals(null)
-       )
+       if( chosenScheduleCookie==null)
        {
           return "1";
        //    response.addCookie( utworzNowyCookie("numerRundy","1"));
        }
-       else
+       else */if(chosenSchedule.isPresent())
        {
-           if(nrRundy ==null) //nie podano nr rundy
+           if(  !decodeCookie(chosenScheduleCookie.getValue()).equals(decodeCookie(chosenSchedule.get())))
            {
-
-               if(numerRundyCookie==null)//nie ma pliku cookie
+               return "1";
+           }
+           else //cookie i wybrany terminarz są takie same
+           {
+               if(roundNumber.isEmpty()) //nie podano nr rundy
                {
-                 utworzNowyCookie("numerRundy","1");
-                return  "1";
+
+                   if(roundNumberCookie==null)//nie ma pliku cookie
+                   {
+                       createNewCookie("roundNumber","1");
+                       return  "1";
               /*     //tworzenie cookie
                    numerRundyCookie= new Cookie("numerRundy","1");
                    //   nrRundy="1";
@@ -98,62 +103,88 @@ public  class CookieManager {
                    numerRundyCookie.setSecure(true);
                    numerRundyCookie.setHttpOnly(true);
                    response.addCookie(numerRundyCookie);*/
+                   }
+                   else //jest plik cookie
+                   {//nic nie robione
+
+                       return roundNumberCookie.getValue();
+
+                   }
+
+
                }
-               else //jest plik cookie
-               {//nic nie robione
-
-                   return numerRundyCookie.getValue();
-
-               }
-
-
-           }
-           else //podano nr rundy
-           {
-               if(numerRundyCookie==null) //nie ma pliku cookie
+               else  //podano rundę
                {
-                  response.addCookie( utworzNowyCookie("numerRundy",nrRundy));
-                  return nrRundy;
-                //  return nrRundy;
+                   if(roundNumberCookie==null) //nie ma pliku cookie
+                   {
+                       response.addCookie( createNewCookie("roundNumber",roundNumber.get()));
+                       return roundNumber.get();
+                       //  return nrRundy;
                 /*   numerRundyCookie= new Cookie("numerRundy",nrRundy);
                    //   numerRundyCookie.setValue(nrRundy);
                    numerRundyCookie. setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
                    numerRundyCookie.setSecure(true);
                    numerRundyCookie.setHttpOnly(true);
                    response.addCookie(numerRundyCookie);*/
-               }
-               else //jest plik cookie
-               {
-                   //cookie i wybrany różnią się
-                   if(nrRundy!=numerRundyCookie.getValue())
+                   }
+                   else //jest plik cookie
                    {
-                      response.addCookie( utworzNowyCookie("numerRundy",nrRundy));
-                      return nrRundy;
-      //           nrRundy=numerRundyCookie.getValue();
-                  //     return nrRundy;
+                       //cookie i wybrany różnią się
+                       if(roundNumber.get()!=roundNumberCookie.getValue())
+                       {
+                           response.addCookie( createNewCookie("roundNumber",roundNumber.get()));
+                           return roundNumber.get();
+                           //           nrRundy=numerRundyCookie.getValue();
+                           //     return nrRundy;
                 /*       numerRundyCookie.setValue(nrRundy);
                        numerRundyCookie. setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
                        numerRundyCookie.setSecure(true);
                        numerRundyCookie.setHttpOnly(true);
                        response.addCookie(numerRundyCookie);*/
 
+                       }
+                       else return roundNumber.get();
+
+
                    }
-                   else return nrRundy;
-
-
                }
 
            }
-       }
+        }
+else
+        {
+            if( roundNumberCookie!=null)
+            {
+
+                //    response.addCookie( createNewCookie("roundNumber",roundNumberCookie.getValue()));
+                return roundNumberCookie.getValue();
+                //           nrRundy=numerRundyCookie.getValue();
+                //     return nrRundy;
+                /*       numerRundyCookie.setValue(nrRundy);
+                       numerRundyCookie. setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+                       numerRundyCookie.setSecure(true);
+                       numerRundyCookie.setHttpOnly(true);
+                       response.addCookie(numerRundyCookie);*/
+
+
+            }
+            else  return "1";
+
+        }
+
+
+
+
+
 
    //    return nrRundy;
    }
 
-    private static Cookie getOrCreateScheduleCookie(HttpServletRequest request,  HttpServletResponse response, TerminarzDAO terminarzDAO) {
-        Cookie wybranyTerminarzCookie= null;
+    private static Cookie getChosenScheduleCookie(HttpServletRequest request, HttpServletResponse response, ScheduleDAO scheduleDAO) {
+        Cookie chosenScheduleCookie= null;
         if (request.getCookies() == null) {
             try {
-                wybranyTerminarzCookie = stworzCookieZOstatniegoTerminarza(response, terminarzDAO);
+                chosenScheduleCookie = createCookieFromTheLastSchedule(response, scheduleDAO);
 
             } catch (Exception e) {
                 //todo nie ma terminarzy
@@ -161,31 +192,45 @@ public  class CookieManager {
             //       numerRundyCookie  = Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("numerRundy")).findAny().orElse(null);
 
         } else {
-            wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("wybranyTerminarz")).findAny().orElse(null);
+
+
+            chosenScheduleCookie = Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("chosenSchedule")).findAny().orElse(null);
 
         }
 
-        return wybranyTerminarzCookie;
+        return chosenScheduleCookie;
     }
 
-    private static Cookie getOrCreateRoundCookie(HttpServletRequest request) {
-        Cookie numerRundyCookie;
+    private static Cookie getOrCreateRoundCookie(HttpServletResponse response,HttpServletRequest request) throws UnsupportedEncodingException {
+        Cookie roundNumberCookie;
+
+
         if(request.getCookies()==null)
         {
-            numerRundyCookie= utworzNowyCookie("numerRundy","1");
 
+            roundNumberCookie= createNewCookie("roundNumber","1");
+            response.addCookie(roundNumberCookie);
         }
         else
         {
-            numerRundyCookie  = Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("numerRundy")).findAny().orElse(null);
+
+            roundNumberCookie  = Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("roundNumber")).findAny().orElse(null);
+       if(roundNumberCookie==null)
+       {
+
+           roundNumberCookie= createNewCookie("roundNumber","1");
+           response.addCookie(roundNumberCookie);
+        //   response.addCookie(roundNumberCookie);
+       }
+
         }
-        return numerRundyCookie;
+        return roundNumberCookie;
     }
 
-    public static  String saveOrUpdateChosenScheduleCookie( String wybranyTerminarz, HttpServletResponse response, HttpServletRequest request, TerminarzDAO terminarzDAO) throws UnsupportedEncodingException {
+    public static  String saveOrUpdateChosenScheduleCookie( Optional<String> chosenSchedule, HttpServletResponse response, HttpServletRequest request, ScheduleDAO scheduleDAO) throws UnsupportedEncodingException {
 
 
-        Cookie  wybranyTerminarzCookie = getOrCreateScheduleCookie(request, response, terminarzDAO);
+        Cookie  chosenScheduleCookie = getChosenScheduleCookie(request, response, scheduleDAO);
 
 
         //   Cookie cookieTerminarz=null;
@@ -193,14 +238,14 @@ public  class CookieManager {
     //    Optional<Cookie> wybranyTerminarzCookieOptional  = Optional.ofNullable(Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("wybranyTerminarz")).findAny().orElse(null));
 
 
-        if(wybranyTerminarz ==null) {
+        if(chosenSchedule.isEmpty()) {
             //jest cookie
-            if(wybranyTerminarzCookie!=null)
+            if(chosenScheduleCookie!=null)
             {
                //cookie nie ma podanego terminarza -> szukanie najnowszego
-                if(wybranyTerminarzCookie.getValue().equals("null"))
+                if(chosenScheduleCookie.getValue().equals("null"))
                 {
-                 return  decodeCookie(stworzCookieZOstatniegoTerminarza(response, terminarzDAO).getValue());
+                 return  decodeCookie(createCookieFromTheLastSchedule(response, scheduleDAO).getValue());
                     //   Terminarz terminarz= null;
 
              //   Cookie utworzoneCookie=    utworzNowyCookie(response, wybranyTerminarzCookieOptional);
@@ -223,7 +268,7 @@ public  class CookieManager {
                 else
                 {
 
-                    return  decodeCookie(wybranyTerminarzCookie.getValue());
+                    return  decodeCookie(chosenScheduleCookie.getValue());
         //    wybranyTerminarz="ja i kyo";
                    // wybranyTerminarz=      wybranyTerminarz;
                     /*  ///to chyba niepotrzebne (tworzenie cookie, bo już był i nim jest podmieniony wybrany terminarz)
@@ -242,7 +287,7 @@ public  class CookieManager {
             //nie ma cookie
             else
             {//tworzenie cookie
-                return  decodeCookie(stworzCookieZOstatniegoTerminarza(response,  terminarzDAO).getValue());
+                return  decodeCookie(createCookieFromTheLastSchedule(response, scheduleDAO).getValue());
 
 
             }
@@ -256,8 +301,8 @@ public  class CookieManager {
         else
         {
 
-String cookie=decodeCookie(wybranyTerminarz);
-Cookie tempCookie= utworzNowyCookie("wybranyTerminarz",cookie);
+String cookie=decodeCookie(chosenSchedule.get());
+Cookie tempCookie= createNewCookie("chosenSchedule",cookie);
     /*        wybranyTerminarzCookieOptional.get().setValue(cookie);// = new Cookie("wybranyTerminarz", cookie);
 
             wybranyTerminarzCookieOptional.get().setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
@@ -274,13 +319,13 @@ Cookie tempCookie= utworzNowyCookie("wybranyTerminarz",cookie);
 
     }
 
-    private static Cookie stworzCookieZOstatniegoTerminarza(HttpServletResponse response, TerminarzDAO terminarzDAO) throws UnsupportedEncodingException {
+    private static Cookie createCookieFromTheLastSchedule(HttpServletResponse response, ScheduleDAO scheduleDAO) throws UnsupportedEncodingException {
     //   String wybranyTerminarz=null;
-        Terminarz terminarz = terminarzDAO.findLastById();
+        Schedule schedule = scheduleDAO.findLastById();
 
         Cookie tempCookie = null;
-        if (terminarz != null) {
-            tempCookie = utworzNowyCookie("wybranyTerminarz", terminarz.getName());
+        if (schedule != null) {
+            tempCookie = createNewCookie("chosenSchedule", schedule.getName());
             response.addCookie(tempCookie);
             return    tempCookie;
 
@@ -290,7 +335,7 @@ Cookie tempCookie= utworzNowyCookie("wybranyTerminarz",cookie);
         }
     }
 
-    private static Cookie utworzNowyCookie(String nazwa, String wartosc){//HttpServletResponse response, Optional<Cookie> wybranyTerminarzCookieOptional) {
+    private static Cookie createNewCookie(String name, String value){//HttpServletResponse response, Optional<Cookie> wybranyTerminarzCookieOptional) {
    //     String wybranyTerminarz;
     /*    //bkpbkpbkpbkp
     Terminarz terminarz=      terminarzDAO.findLastById();
@@ -312,7 +357,7 @@ Cookie tempCookie= utworzNowyCookie("wybranyTerminarz",cookie);
         }
         */
 
-            Cookie tempCookie= new Cookie(nazwa,URLEncoder.encode(wartosc));
+            Cookie tempCookie= new Cookie(name,URLEncoder.encode(value));
          //   tempCookie.setValue(URLEncoder.encode(nazwa);// = new Cookie("wybranyTerminarz", URLEncoder.encode(terminarz.getName(),"utf-8") );
             tempCookie.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
             tempCookie.setSecure(true);
@@ -328,11 +373,11 @@ Cookie tempCookie= utworzNowyCookie("wybranyTerminarz",cookie);
 
 
     /**  */
-public static String decodeCookie(String wybranyTerminarzCookie) throws UnsupportedEncodingException {
-    return URLDecoder.decode(wybranyTerminarzCookie, "utf-8");
+public static String decodeCookie(String chosenScheduleCookie) throws UnsupportedEncodingException {
+    return URLDecoder.decode(chosenScheduleCookie, StandardCharsets.UTF_8);
 }
-    private String encodeCookie(String wybranyTerminarzCookie) throws UnsupportedEncodingException {
-     return    URLEncoder.encode(wybranyTerminarzCookie, "utf-8");
+    private String encodeCookie(String chosenScheduleCookie) throws UnsupportedEncodingException {
+     return    URLEncoder.encode(chosenScheduleCookie, StandardCharsets.UTF_8);
 
     }
 

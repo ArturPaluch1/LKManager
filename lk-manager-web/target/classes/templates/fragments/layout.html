@@ -27,8 +27,8 @@
     <![endif]-->
 
     <link rel="stylesheet" th:href="@{/resources/css/petclinic.css}"/>
-      <link rel="stylesheet" th:href="@{/resources/css/kalendarz.css}" />
-
+      <link rel="stylesheet" th:href="@{/resources/css/calendar.css}" />
+      <link rel="stylesheet" th:href="@{/resources/css/mystyle.css}" />
   </head>
 
 <body>
@@ -57,20 +57,20 @@
                                 </a>
                             </li>
 
-                            <li th:replace="::menuItem ('/tabela','tabela','tabela','','tabela')">
+                            <li th:replace="::menuItem ('/table','table','table','','Tabela')">
                                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                                <span>Veterinarians</span>
+                                <span></span>
                             </li>
 
                             <li
-                                    th:replace="::menuItem ('/terminarz','terminarz','terminarz','','terminarz') "
+                                    th:replace="::menuItem ('/schedule','schedule','schedule','','Terminarz') "
                             >
 
 
 
 
     <span  class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-    <span>Veterinarians</span>
+    <span></span>
 
 
 
@@ -82,9 +82,9 @@
 
 
                             </li>
-                            <li th:replace="::menuItem ('/wyniki','wyniki','wyniki','','Wyniki')">
+                            <li th:replace="::menuItem ('/results','results','results','','Wyniki')">
                                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                                <span>Veterinarians</span>
+                                <span></span>
                             </li>
                             <li th:replace="::menuItem ('/temp','temp','temp','','temp')">
                                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
@@ -92,7 +92,7 @@
                             </li>
 
                             <li
-                                    th:replace="::menuItem ('/gracze','gracze','gracze','','gracze') "
+                                    th:replace="::menuItem ('/users','users','users','','gracze') "
                             >
 
 

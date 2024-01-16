@@ -5,23 +5,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.time.Instant;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Date;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,7 +25,7 @@ import java.util.TimerTask;
 public class LKManagerApplication {
 
 
-	private static long delay=14l;
+	private static final long delay= 14L;
 
 	protected static void startTimer()
 	{
@@ -77,7 +72,7 @@ i++;
 						//	System.out.println("content= "+	urlConnection.getContent()+"\n");
 
 					BufferedReader r = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(),
-							Charset.forName("UTF-8")));
+                            StandardCharsets.UTF_8));
 
 
 
