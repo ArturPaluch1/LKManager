@@ -1,0 +1,14 @@
+.mycontainer {
+  width:100%;
+
+  overflow:auto;
+}
+.mycontainer div {
+  width:50%;
+
+  float:left;
+}
+div{
+/* padding:5px;*/
+
+}

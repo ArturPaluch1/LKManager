@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="en" th:replace="~{fragments/layout :: layout (~{::body},'home')}" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:form="http://www.springframework.org/tags/form">
+<head>
+  <meta charset="UTF-8">
+  <title>Usuwanie terminarza</title>
+</head>
+<body class="light">
+
+
+<div style="float: left;">
+  <label>Wybierz terminarz do usunięcia</label>
+
+  <form th:action="@{/deleteSchedule}" method="post" >
+    <div style="float: left;">
+      <button onclick="this.form.submit()">usun</button>
+    </div>
+
+   <div style="float: right;">
+     <select  th:name="chosenSchedule"  >
+       <option value="" selected>--Wybierz terminarz--</option>
+       <option th:each="schedule : ${schedules}" th:value="${schedule.getName()}" th:text="${schedule.getName()}"  />
+       <!--   th:selected="${schedule==75}"></option>-->
+     </select>
+   </div>
+
+
+  </form>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
