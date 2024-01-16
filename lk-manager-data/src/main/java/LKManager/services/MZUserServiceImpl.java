@@ -9,14 +9,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class MZUserServiceImpl implements MZUserService, Serializable {
 
 
     @Override
-    public Set<UserData> findAll() {
+    public List<UserData> findAll() {
         return null;
     }
 
@@ -27,7 +27,7 @@ public class MZUserServiceImpl implements MZUserService, Serializable {
       return URLs.URLtoUserData(url) ;
     }
     @Override
-    public UserData findById(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+    public UserData findByTeamId(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {
 
 URL url = URLs.MakeUserURL(Teamid);
 

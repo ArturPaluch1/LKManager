@@ -12,17 +12,22 @@
 
 <div id="wyniki">
 
+    <label th:value="${error}}"></label>
+
+
+
+
 <!--    <div style="float: right;">-->
     <div style="float: right;">
     <form th:action="@{/temp}" method="get" >
             <select  th:name="wybranyTerminarz"  onchange="this.form.submit()" >
-                <option value="" selected>--Wybierz terminarz--</option>
-                <option th:each="terminarz : ${terminarze}" th:value="${terminarz.getName()}" th:text="${terminarz.getName()}" />
-                <!--   th:selected="${terminarz==75}"></option>-->
+                <option value="" selected>--Wybierz schedule--</option>
+                <option th:each="schedule : ${terminarze}" th:value="${schedule.getName()}" th:text="${schedule.getName()}" />
+                <!--   th:selected="${schedule==75}"></option>-->
             </select>
     </form>
         <div>
-            <label>Wybrany terminarz: </label>
+            <label>Wybrany schedule: </label>
             <label th:text="${wybranyTerminarz}"></label>
         </div>
 
@@ -46,7 +51,7 @@
         <thead>
         <tr>
 
-            <th style="width: 150px">runda </th>
+            <th style="width: 150px">round </th>
             <th style="width: 150px">data </th>
 
 
@@ -57,14 +62,14 @@
         <tr>
         </thead>
         <tbody align="center">
-        <tr th:each="mecz : ${runda}">
-            <td  id="runda" th:text="${mecz.getNr()}" style="width: 150px">Joe</td>
+        <tr th:each="mecz : ${round}">
+            <td  id="round" th:text="${mecz.getNr()}" style="width: 150px">Joe</td>
             <td  id="data" th:text="${mecz.getData()}"style="width: 150px">1</td>
             <td>
                 <form th:action="@{/pokazRundee}" method="post">
-                    <select    class="form-control" id="dropDownList"  th:name="runda" onchange="this.form.submit()" onsubmit="myFunction1()">
+                    <select    class="form-control" id="dropDownList"  th:name="round" onchange="this.form.submit()" onsubmit="myFunction1()">
                         <option selected>zmien rundę</option>
-                        <option  th:each="nr : ${nrRundy}" th:value="${nr.getNr()}" th:text="runda+' '+${nr.getNr()}+' '+data+': '+${nr.getData()}  " ></option>
+                        <option  th:each="nr : ${nrRundy}" th:value="${nr.getNr()}" th:text="round+' '+${nr.getNr()}+' '+data+': '+${nr.getData()}  " ></option>
 
                     </select>
                     <input hidden   th:name="wybranyTerminarz" th:value="${wybranyTerminarz}"></input>
@@ -182,7 +187,7 @@
 
     </div>
 
-    <div hidden id="tabela" align="center">
+    <div hidden id="table" align="center">
         <button onClick="pokazEdytujTabele()" align="center">  Edytuj wyniki</button>
         <table  class="table table-striped"  border="1">
             <thead align="justify" >
@@ -205,7 +210,7 @@
 
 
 
-            <tbody  id="tabela-zawartosc" align="center" >
+            <tbody  id="table-zawartosc" align="center" >
 
 
             <tr th:each="mecz : ${mecze}"   >
@@ -262,11 +267,11 @@
 
     widocznie byl jakis blad
 
-    <form th:action="@{/terminarz}" method="get" >
+    <form th:action="@{/schedule}" method="get" >
         <select  th:name="wybranyTerminarz"  onchange="this.form.submit()" >
             <option value="" selected>--Please choose an option--</option>
-            <option th:each="terminarz : ${terminarze}" th:value="${terminarz.getName()}" th:text="${terminarz.getName()}" />
-            <!--   th:selected="${terminarz==75}"></option>-->
+            <option th:each="schedule : ${terminarze}" th:value="${schedule.getName()}" th:text="${schedule.getName()}" />
+            <!--   th:selected="${schedule==75}"></option>-->
         </select>
     </form>
 
@@ -349,10 +354,10 @@ console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhh");
      var tempstring = "";
      var tempwyniki = "";
 
-     var tabela = document.getElementById("tabela-zawartosc");
+     var table = document.getElementById("table-zawartosc");
 var data = document.getElementById("data");
-var runda =  document.getElementById("runda");
-tempstring+=" Runda: "+runda.textContent +"   "+data.textContent+"\r\n";
+var round =  document.getElementById("round");
+tempstring+=" Runda: "+round.textContent +"   "+data.textContent+"\r\n";
 
 
  //console.log(data+ data.textContent);
@@ -361,8 +366,8 @@ tempstring+=" Runda: "+runda.textContent +"   "+data.textContent+"\r\n";
 
 
     // let pierwszy = true;
-     for (let i in tabela.rows) {
-       let row = tabela.rows[i];
+     for (let i in table.rows) {
+       let row = table.rows[i];
 
 
 
@@ -442,9 +447,9 @@ tempstring+=" Runda: "+runda.textContent +"   "+data.textContent+"\r\n";
 function pokazEdytujTabele()
 {
 var edytujTabele=document.getElementById("edytujTabela");
-var tabela=document.getElementById("tabela");
+var table=document.getElementById("table");
 
-tabela.hidden=true;
+table.hidden=true;
 
 edytujTabele.hidden=false;
 }
@@ -452,12 +457,12 @@ edytujTabele.hidden=false;
 function anuluj(){
 
 var edytujTabele=document.getElementById("edytujTabela");
-var tabela=document.getElementById("tabela");
+var table=document.getElementById("table");
 
 
 
 edytujTabele.hidden=true;
-tabela.hidden=false;
+table.hidden=false;
 
 
 
@@ -468,9 +473,9 @@ tabela.hidden=false;
 function zapiszZmiany()
 {
 var edytujTabele=document.getElementById("edytujTabela");
-var tabela=document.getElementById("tabela");
+var table=document.getElementById("table");
 
-//tabela.hidden=false;
+//table.hidden=false;
 
 //edytujTabele.hidden=true;
 var edytujTabelaForm=document.getElementById("edytujTabelaForm");

@@ -38,8 +38,8 @@ public  class URLs {
         return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ userId +"&match_status=1&limit=100");
 
     }
-    public  URL MakePlayedMatchesURL(String username) throws IOException, ParserConfigurationException, JAXBException, SAXException {
-URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ MZUserService.findByUsername(username).getTeamlist().get(0).getTeamId().toString()+"&match_status=1&limit=100");
+    public static URL MakePlayedMatchesURL(UserData user) throws IOException, ParserConfigurationException, JAXBException, SAXException {
+URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ user.getTeamlist().get(0).getTeamId().toString()+"&match_status=1&limit=100");
         return przed;
 
     }
@@ -76,7 +76,7 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
 
     public static Matches URLtoMatches(URL url) throws JAXBException, ParserConfigurationException, SAXException, IOException {
 
-
+int i=0;
         JAXBContext jaxbContext;
 
         jaxbContext = JAXBContext.newInstance (Matches.class);

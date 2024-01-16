@@ -15,9 +15,6 @@
     <UserData userId="1154416" username="harry84">
         <Team teamId="406799" teamName="Harry Noble House FC"/>
     </UserData>
-    <UserData userId="7672431" username="jerzykw">
-        <Team teamId="106223" teamName="FC Harnaś Sanok"/>
-    </UserData>
     <UserData userId="4925695" username="olborinho">
         <Team teamId="393423" teamName="Spartans Lodz"/>
     </UserData>
@@ -28,7 +25,8 @@
         <Team teamId="395077" teamName="Zdrapy"/>
     </UserData>
     <UserData userId="1774519" username="kingsajz">
-        <Team teamId="201436" teamName="Wisła Kraków Old Boys"/>
+        <Team nameShort="KRAK" rankPoints="1795" rankPos="2054" seriesId="13193" seriesName="div2.9" sponsor="City Network" sport="soccer" teamId="201436" teamName="Wisła Kraków Old Boys"/>
+        <Team nameShort="Foi" rankPoints="690" rankPos="32992" seriesId="990" seriesName="div3.16" sponsor="Nike" sport="hockey" teamId="24261" teamName="Foluszczyki"/>
     </UserData>
     <UserData userId="8521390" username="szuram">
         <Team teamId="408692" teamName="KS Bukowe"/>
@@ -54,52 +52,19 @@
     <UserData userId="8646052" username="bajkovvy">
         <Team teamId="1226443" teamName="Heerenveen DB"/>
     </UserData>
-    <UserData userId="1967076" username="czajas">
-        <Team teamId="402426" teamName="Green Street Elite"/>
-    </UserData>
-    <UserData userId="1118846" username="hadriano">
-        <Team teamId="404995" teamName="Strzegów"/>
-    </UserData>
-    <UserData userId="5225848" username="tomaszewsky">
-        <Team teamId="419905" teamName="PatiCarRent"/>
-    </UserData>
-    <UserData userId="4931048" username="lapatrenera">
-        <Team teamId="399742" teamName="Sixdroi"/>
-    </UserData>
-    <UserData userId="2313177" username="kozi69">
-        <Team teamId="394242" teamName="Otmet FC"/>
-    </UserData>
-    <UserData userId="7462333" username="remos">
-        <Team teamId="410768" teamName="KP Bemowo"/>
-    </UserData>
-    <UserData userId="279068" username="wredny">
-        <Team teamId="150852" teamName="JABOLOWE OFIARY"/>
-    </UserData>
-    <UserData userId="8524906" username="genor">
-        <Team teamId="421035" teamName="Bitcoin Elbląg"/>
-    </UserData>
-    <UserData userId="8221500" username="mark_oh">
-        <Team teamId="392629" teamName="Pogoń Szczecin"/>
-    </UserData>
-    <UserData userId="3625656" username="mrcszef">
-        <Team teamId="400397" teamName="MZetowe Mastodonty"/>
-    </UserData>
-    <UserData userId="5067110" username="rejbonaldinho">
-        <Team teamId="381539" teamName="Bociany SA"/>
-    </UserData>
-    <UserData userId="8411024" username="kloc213">
-        <Team teamId="390697" teamName="Hodowla Juniorów na Rzeź"/>
-    </UserData>
-    <UserData userId="8374784" username="kyo555">
-        <Team teamId="420434" teamName="TEATRomaniacy"/>
-    </UserData>
-    <UserData userId="469888" username="yaretzky">
-        <Team teamId="199788" teamName="Srebrny Grom DK"/>
-    </UserData>
-    <UserData userId="7642279" username="paulikmaster">
-        <Team teamId="406785" teamName="Jadymy Durś"/>
-    </UserData>
     <UserData userId="3556199" username="jaro21">
         <Team teamId="415210" teamName="FC JaRo Team"/>
+    </UserData>
+    <UserData userId="8374784" username="kyo555">
+        <Team nameShort="TRM" rankPoints="1740" rankPos="2330" seriesId="13188" seriesName="div2.4" sponsor="Goal.com" sport="soccer" teamId="420434" teamName="TEATRomaniacy"/>
+        <Team nameShort="" rankPoints="0" rankPos="0" seriesId="0" seriesName="" sponsor="" sport="hockey" teamId="0" teamName=""/>
+    </UserData>
+    <UserData userId="8428117" username="bob">
+        <Team nameShort="Cay" rankPoints="470" rankPos="260549" seriesId="124553" seriesName="div5.48" sponsor="" sport="soccer" teamId="1257791" teamName="Calverley"/>
+        <Team nameShort="" rankPoints="0" rankPos="0" seriesId="0" seriesName="" sponsor="" sport="hockey" teamId="0" teamName=""/>
+    </UserData>
+    <UserData userId="8428117" username="bob">
+        <Team nameShort="Cay" rankPoints="470" rankPos="264516" seriesId="124553" seriesName="div5.48" sponsor="" sport="soccer" teamId="1257791" teamName="Calverley"/>
+        <Team nameShort="" rankPoints="0" rankPos="0" seriesId="0" seriesName="" sponsor="" sport="hockey" teamId="0" teamName=""/>
     </UserData>
 </Gracze>

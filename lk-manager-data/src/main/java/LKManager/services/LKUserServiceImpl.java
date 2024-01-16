@@ -38,7 +38,7 @@ private final MZUserService mzUserService;
 
         UserData user = new UserData();
         user.setUsername(gracz.getUsername());
-        user.setTeamlist(new Team());
+        user.setTeamlist(gracz.getTeamlist());
         user.setUserId(grajek.getUserId());
         user.getTeamlist().get(0).setTeamName(grajek.getTeamlist().get(0).getTeamName());
         user.getTeamlist().get(0).setTeamId(grajek.getTeamlist().get(0).getTeamId());
@@ -61,7 +61,7 @@ private final MZUserService mzUserService;
 
         UserData user = new UserData();
         user.setUsername(gracz);
-        user.setTeamlist(new Team());
+        //user.setTeamlist();
         user.setUserId(grajek.getUserId());
         user.getTeamlist().get(0).setTeamName(grajek.getTeamlist().get(0).getTeamName());
         user.getTeamlist().get(0).setTeamId(grajek.getTeamlist().get(0).getTeamId());
@@ -117,7 +117,7 @@ else
 {
     UserData user = new UserData();
     user.setUsername(nick);
-    user.setTeamlist(new Team());
+    user.setTeamlist(grajek.getTeamlist());
     user.setUserId(grajek.getUserId());
     user.getTeamlist().get(0).setTeamName(grajek.getTeamlist().get(0).getTeamName());
     user.getTeamlist().get(0).setTeamId(grajek.getTeamlist().get(0).getTeamId());
@@ -141,6 +141,14 @@ else
 
 
         return jaxbXMLToObject("gracze.xml");
+    }
+
+    @Override
+    public List<UserData> wczytajGraczy() {
+
+
+
+        return null;
     }
 
     public void zapiszDoXML(  List<UserData> gracze) throws ParserConfigurationException, IOException, SAXException, JAXBException {
