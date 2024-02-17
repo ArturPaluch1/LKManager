@@ -180,10 +180,11 @@ public class LKManagerApplication {
 	ApplicationRunner applicationRunner(Environment environment) {
 
 		return args -> {
-			System.out.println(environment.getProperty("msg"));
-			if (mzCache.getSchedules().size() == 0 || mzCache.getUsers().size() == 0)
 
-				initializeUsersAndTheNewestSchedule();
+			if (mzCache.getSchedules().size() == 0 || mzCache.getUsers().size() == 0)
+	initializeUsersAndTheNewestSchedule();
+
+			System.out.println(environment.getProperty("msg"));
 			startTimer();
 			startTimer2();
 

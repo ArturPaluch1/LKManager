@@ -199,23 +199,23 @@ public class scheduleController {
         // model.addAttribute("wybranyTerminarz", terminarze.get(0));
 //mecze=terminarze.get(0).getRundy().get(0).getMecze();
 
-        System.out.println("---cache:  ");
+      //  System.out.println("---cache:  ");
 
 
 
 
        model.addAttribute("chosenSchedule", chosenSchedule);
-       List<Round> rounds = rundaDAO.findAllByScheduleId(schedule.getId());
-      //  List<Round> rounds = new ArrayList<>(schedule.getRounds());
-     //   rounds.sort(Comparator.comparing(Round::getNr));
+     //  List<Round> rounds = rundaDAO.findAllByScheduleId(schedule.getId());
+        List<Round> rounds = new ArrayList<>(schedule.getRounds());
+        rounds.sort(Comparator.comparing(Round::getNr));
         model.addAttribute("rounds", rounds);
 
-        Round round = rundaDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
-      //  Round  round=rounds.get(Integer.parseInt(roundNumber) - 1);
+     //   Round round = rundaDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+        Round  round=rounds.get(Integer.parseInt(roundNumber) - 1);
         model.addAttribute("round", round);
 
-       List<Match> matches = matchDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
-       // List<Match> matches =round.getMatches();
+     //  List<Match> matches = matchDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+        List<Match> matches =round.getMatches();
         model.addAttribute("matches", matches);
 
         model.addAttribute("roundNumber", roundNumber);
