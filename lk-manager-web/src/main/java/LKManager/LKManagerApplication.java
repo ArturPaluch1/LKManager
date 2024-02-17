@@ -151,8 +151,10 @@ public class LKManagerApplication {
 		};
 		//\/ 62 minuty  3720000
 		//30000  30s
-		timer.schedule(task2, 30000, 3720000*2 );
-
+		//prod co 62 min
+		timer.schedule(task2, 3720000, 3720000  );
+		//dev co 30s
+	//	timer.schedule(task2, 30000 , 30000 );
 	}
 	public static void main(String[] args) {
 
@@ -246,17 +248,17 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 	public void initializeUsersAndTheNewestSchedule() {
 		MZCacheAction userCacheUpdate = new UpdateUsersCache(mzCache, userDAO);
 		userCacheUpdate.update();
-
+		System.out.println("users cache updated");
 
 //dodawanie schedules (bez info o rundach, meczach itd posortowane od najnowszego)
 		MZCacheAction schedulesCacheUpdate = new updateSchedulesCache(mzCache, scheduleDAO);
 		schedulesCacheUpdate.update();
-
+		System.out.println("schedules cache updated");
 
 //dodawanie kompletnych danych do najnowszego schedule
 		MZCacheAction theNewestScheduleUpdate = new updateTheNewestScheduleCache(mzCache, scheduleService, scheduleDAO);
 		theNewestScheduleUpdate.update();
-
+		System.out.println("the newest cache updated");
 
 	}
 
