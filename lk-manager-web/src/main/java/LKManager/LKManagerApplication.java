@@ -172,6 +172,9 @@ public class LKManagerApplication {
 
 		return args -> {
 			System.out.println(environment.getProperty("msg"));
+			if (mzCache.getSchedules().size() == 0 || mzCache.getUsers().size() == 0)
+
+				initializeUsersAndTheNewestSchedule();
 			startTimer();
 			startTimer2();
 
@@ -186,9 +189,7 @@ public class LKManagerApplication {
 mzCache.setSchedules(schedules);
 mzCache.getSchedules().get(0).getRounds().forEach(r->r.getMatches().forEach(m-> System.out.println(m.getUserData().getUsername()+" vs "+m.getOpponentUserData().getUsername()+"\br")));
 */
-			if (mzCache.getSchedules().size() == 0 || mzCache.getUsers().size() == 0)
 
-				initializeUsersAndTheNewestSchedule();
 
 
 
