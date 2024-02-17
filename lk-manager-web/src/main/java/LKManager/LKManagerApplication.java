@@ -151,7 +151,7 @@ public class LKManagerApplication {
 		};
 		//\/ 62 minuty  3720000
 		//30000  30s
-		timer.schedule(task2, 30000, 30000*2 );
+		timer.schedule(task2, 30000, 3720000*2 );
 
 	}
 	public static void main(String[] args) {
