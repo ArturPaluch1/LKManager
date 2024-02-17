@@ -361,15 +361,15 @@ finally {
 
 
                       //sprawdzanie czy  gospodarzem jest apuza
-                      if (!(match.getUser().getUsername().equals("pauza") || match.getUser().getUsername().equals("pauza"))) {
+                      if (!(match.getUserData().getUsername().equals("pauza") || match.getUserData().getUsername().equals("pauza"))) {
 
 
 
 
 
-                          var user = match.getUser();
+                          var user = match.getUserData();
                           var userTeamId = user.getTeamlist().get(0).getTeamId();
-                          var oponent = match.getopponentUser();
+                          var oponent = match.getOpponentUserData();
                           var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
 
                           var played = matchService.findPlayedByUser(user);
@@ -407,7 +407,7 @@ finally {
                               if (user1.getUserId().equals(user.getUserId()))
                               {
                                   //sprawdzanie czy prawidlowy przeciwnik
-                                  if (playedMzMatch.getTeamlist().get(1).getTeamId() == match.getopponentUser().getTeamlist().get(0).getTeamId()) {
+                                  if (playedMzMatch.getTeamlist().get(1).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                       //aktualizacja
                                       //  mecz.setMatchResult1("1");
                                       match.setUserMatchResult1(String.valueOf(playedMzMatch.getTeamlist().get(0).getGoals()));
@@ -419,7 +419,7 @@ finally {
                               //tutaj user ma id 1  oponent =0
                               else if (user2.getUserId().equals(user.getUserId())) {
                                   //sprawdzanie czy prawidlowy przeciwnik
-                                  if (playedMzMatch.getTeamlist().get(0).getTeamId() == match.getopponentUser().getTeamlist().get(0).getTeamId()) {
+                                  if (playedMzMatch.getTeamlist().get(0).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                       //aktualizacja
                                       //  mecz.setMatchResult1("1");
                                       match.setUserMatchResult2(String.valueOf(playedMzMatch.getTeamlist().get(1).getGoals()));
@@ -505,7 +505,7 @@ finally {
             Query querryUser= session.createQuery(
                     "select u from  UserData u " +
 
-                            "  inner join Match m on u.userId=m.user"+
+                            "  inner join Match m on u.userId=m.userData"+
                             " inner join Round r on m.round=r.id "+
                             " inner join Schedule s on r.schedule=s.id " +
                             "   where (s.name=:ScheduleName and r.nr=1)");
@@ -515,7 +515,7 @@ finally {
            Query querryOpponent= session.createQuery(
                     "select u from  UserData u " +
 
-                            "  inner join Match m on u.userId=m.opponentUser"+
+                            "  inner join Match m on u.userId=m.opponentUserData"+
                             " inner join Round r on m.round=r.id "+
                             " inner join Schedule s on r.schedule=s.id " +
                             "   where (s.name=:ScheduleName and r.nr=1)");

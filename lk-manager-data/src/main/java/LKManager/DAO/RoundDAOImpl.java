@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-public class RoundDAOImpl implements RoundDAO {
+@Transactional
+public class RoundDAOImpl implements CustomRoundDAO {
 
     private final EntityManager entityManager;
     @Autowired
@@ -76,6 +77,7 @@ public class RoundDAOImpl implements RoundDAO {
 
     }
    @Override
+   @Transactional
     public Round findByScheduleIdAndRoundId(long scheduleId, int roundId) {
         Session s = sessionFactory.openSession();
         Round round = new Round();
@@ -100,8 +102,9 @@ public class RoundDAOImpl implements RoundDAO {
         }
         finally {
             s.close();
-            return round;
+
         }
+       return round;
     }
 
     @Override

@@ -8,8 +8,6 @@ import LKManager.LK.Schedule;
 import LKManager.model.MatchesMz.Match;
 import LKManager.services.Cache.MZCache;
 import LKManager.services.*;
-import lombok.RequiredArgsConstructor;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,8 +30,6 @@ import java.util.Optional;
 
 @Controller
 
-@RequiredArgsConstructor
-
 public class resultsController {
     private final LKManager.services.MZUserService MZUserService;
     private final MatchService matchService;
@@ -47,8 +43,8 @@ public class resultsController {
     private final PlikiService plikiService;
     private String poprzednioWybranyTerminarz;
     private  final ResultsService resultsService;
-
-private final MZCache mzCache;
+    @Autowired
+private  MZCache mzCache;
     private final CookieManager cookieManager;
 
   //  private List<Terminarz> terminarze;
@@ -56,8 +52,7 @@ private final MZCache mzCache;
   private List<Schedule>schedules;
 
 
-    @Autowired
-    private SessionFactory sessionFactory;
+
     private final ScheduleDAO scheduleDAO;
    /* public resultsController(MZUserService MZUserService, LKManager.services.MZUserService mzUserService, MatchService matchService, URLs urLs, ScheduleService scheduleService, RoundDAOImpl rundaDAO, MatchDAOImpl meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
         this.MZUserService = mzUserService;
@@ -109,6 +104,19 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 */
     //, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy
 
+
+    public resultsController( ScheduleService scheduleService,MatchService matchService, LKManager.services.MZUserService MZUserService, RoundDAOImpl rundaDAO, MatchDAOImpl meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
+        this.MZUserService = MZUserService;
+        this.matchService = matchService;
+        this.scheduleService = scheduleService;
+        this.rundaDAO = rundaDAO;
+        this.meczDAO = meczDAO;
+        this.plikiService = plikiService;
+        this.resultsService = resultsService;
+        this.cookieManager = cookieManager;
+        this.scheduleDAO = scheduleDAO;
+    }
+
     @GetMapping({"/results"} )
    // public String index(HttpServletResponse response, Model model, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
         public String getResults(HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam (value="chosenSchedule", required = false)String chosenSchedule, @RequestParam (value="roundNumber", required = false)String roundNumber) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
@@ -149,9 +157,10 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 ***************************************/
 
 
-        schedules= mzCache.getSchedulesFromCacheOrDatabase();
-        schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
-
+      //  schedules= mzCache.getSchedulesFromCacheOrDatabase();
+        schedules=scheduleService.getSchedules();
+      //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
+        schedule =scheduleService.getSchedule_ByName(chosenSchedule);
 
 
 

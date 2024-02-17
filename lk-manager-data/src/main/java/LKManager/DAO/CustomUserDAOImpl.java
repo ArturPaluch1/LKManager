@@ -3,6 +3,7 @@ package LKManager.DAO;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.Cache.MZCache;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,45 +12,68 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.xml.sax.SAXException;
 
 import javax.persistence.EntityManager;
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
+@RequiredArgsConstructor
+@Transactional
+public class CustomUserDAOImpl implements CustomUserDAO {
 
-public class UserDAOImpl implements UserDAO {
+
     @Autowired
     SessionFactory sessionFactory;
     @Autowired
     MZCache mzCache;
     @Autowired
 private final EntityManager entityManager;
-    public UserDAOImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 
-  //  @Override
+    //  @Override
 
 
 
-    public List<UserData> findAllUsersFromCache()
+    public List<UserData> findUsersFromCache_All()
     {
-        List<UserData> gracze=new ArrayList<>();
-        if (mzCache.getUsers().size() != 0) {
-            System.out.println("from user cache");
-            gracze = mzCache.getUsers();
+        System.out.println("all users - cache");
+       return mzCache.getUsers();
 
-        }
-        else gracze=null;
-        return    gracze;
+
+
+
     }
-@Transactional
-    public List<UserData> findAll(boolean isDeleted) {
+
+    @Override
+    public List<UserData> findNotDeletedUsers() {
+        return this.findAll(false);
+    }
+    @Override
+    public List<UserData> findUsersFromCache_NotDeletedWithoutPause() {
+        System.out.println(" users !deleted !pauza - cache");
+        return mzCache.getUsers().stream().filter(u->u.getDeleted()==false&& !u.getUsername().equals("pauza")).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserData> findUsersFromCache_NotDeletedWithPause() {
+        System.out.println(" users !deleted && pauza - cache");
+        return mzCache.getUsers().stream().filter(u->u.getDeleted()==false).collect(Collectors.toList());
+    }
+
+  /*  @Override
+    public List<UserData> findUsers_NotDeletedWithoutPause() {
+
+
+        return null;
+    }
+
+    @Override
+    public List<UserData> findUsers_NotDeletedWithPause() {
+        return null;
+    }*/
+
+    @Transactional
+    private List<UserData> findAll(boolean isDeleted) {
 
 
     //   Team team = new Team();
@@ -74,7 +98,7 @@ private final EntityManager entityManager;
 
    // List<UserData> gracze= new ArrayList<>();
 
-        System.out.println("from user db");
+        System.out.println("all user from  db");
 
         List<UserData> allQuery =null;
         Session s = sessionFactory.openSession();
@@ -109,17 +133,18 @@ private final EntityManager entityManager;
 
 
 }
-
+/*
     @Override
     public List<UserData> findAll() {
        //todo cos zrobic z tym
 
         return null;
-    }
+    }*/
 
-    @Override
+  //  @Override
     @Transactional
-    public UserData findByTeamId(int id) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+    public UserData findByTeamId(int id)// throws IOException, ParserConfigurationException, SAXException, JAXBException
+    {
        Session s= sessionFactory.openSession();
         Team team = new Team();
         UserData user= null;
@@ -144,14 +169,17 @@ private final EntityManager entityManager;
 
     }
 
-    @Override
+
+
+
+    //@Override
     @Transactional
     public UserData save(UserData user) {
-     /*   for (var i:user
+ /*       for (var i:user
              ) {
             entityManager.persist(i);
-        }
-*/
+        }*/
+
 
 user.getTeamlist().get(0).setUser(user);
 //user.getTeamlist().get(1).setUser(user);
@@ -189,8 +217,10 @@ if(user.getTeamlist().size()>1)
         return user;
     }
 
+
+
     @Override
-    public void delete(UserData object) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+    public void delete(UserData object) {
 
 
 //var t=findByTeamId(object.getTeamlist().get(0).getTeamId());
@@ -201,6 +231,9 @@ if(user.getTeamlist().size()>1)
 
     }
 
+
+
+
     @Override
     public void deleteById(Long id) {
   //      Integer id1=1;
@@ -210,14 +243,14 @@ if(user.getTeamlist().size()>1)
     private void deleteUser(Long id) {
         Session s = sessionFactory.openSession();
         try {
-
-/********************************
+            s.beginTransaction();
+/*******************************
  *    To jeśli by się usuwało encję.
  *    Trzeba by zanullować userów i opponentUserów w parentach (Match)
- *******************************/
-            s.beginTransaction();
+ /*******************************/
 /*
-             List<Match> matchesWithUserToDelete= null;
+
+            List<Match> matchesWithUserToDelete= null;
 
             System.out.println("here2");
             Query query = s.createQuery(" select m from Match m where (m.opponentUser.userId=:userId or m.user.userId=:userId) ");
@@ -241,16 +274,20 @@ s.getTransaction().commit();
 
             matchesWithUserToDelete=   query.getResultList();
 
-*/
- /**********************************/
-            UserData userToDelete= s.get(UserData.class, id.intValue());
- //userToDelete.setDeleted();
 
-/********************************
-*       i potem usunąć Usera
- *******************************/
-          s.delete(userToDelete);
+*/
 /**********************************/
+
+            UserData userToDelete= s.get(UserData.class, id.intValue());
+ userToDelete.setDeleted();
+
+/*******************************
+*       i potem usunąć Usera
+ ********************************/
+
+      //    s.delete(userToDelete);
+/*********************************/
+
 
 //s.update(userToDelete);
 

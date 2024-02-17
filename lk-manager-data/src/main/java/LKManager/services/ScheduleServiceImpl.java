@@ -1,13 +1,17 @@
 package LKManager.services;
 
+import LKManager.DAO.RoundDAO;
 import LKManager.DAO.ScheduleDAO;
-import LKManager.DAO.UserDAOImpl;
+import LKManager.DAO.UserDAO;
+import LKManager.LK.Comparators.ScheduleByLocalDateComparator;
 import LKManager.LK.Round;
 import LKManager.LK.Schedule;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.Cache.MZCache;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.collection.internal.PersistentBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,20 +28,118 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+//@AllArgsConstructor
 
 public class ScheduleServiceImpl implements ScheduleService {
 
 
 private final ScheduleDAO scheduleDAO;
+    @Autowired
+    private final RoundDAO roundDAO;
 
-    public ScheduleServiceImpl(ScheduleDAO scheduleDAO) {
-        this.scheduleDAO = scheduleDAO;
+
+   // @Autowired
+private final UserDAO userDAO;
+    @Autowired
+private final MZCache mzCache;
+
+
+
+    public Schedule findByIdWithRoundsMatchesUsersAndTeams(long scheduleId)
+    {
+        Schedule schedule= scheduleDAO.findByIdAndFetchRoundsEagerly(scheduleId);
+schedule.getRounds().forEach(
+        r-> r.setMatches( roundDAO.findRoundWitchMatches(schedule.getName(),r.getNr()).getMatches()));
+
+    //    r->r.setMatches(r.getMatches()));
+return schedule;
+    }
+    @Override
+    public Schedule getSchedule_ByName(String scheduleName) {
+        //sprawdzanie terminarzy w cache
+        List<Schedule> schedules= mzCache.getSchedules();
+        if(schedules.size()==0)
+        {
+            //nie ma zapisanych w cache, pobieranie z bazy
+            schedules = scheduleDAO.findAllFetchRoundsEagerly();
+        }
+     Schedule foundSchedule= schedules.stream().filter(s->s.getName().equals(scheduleName)).findFirst().get();
+
+//sprawdzanie czy mecze są zainicjalizowane (lazy)
+        if(!((PersistentBag) foundSchedule.getRounds().get(0).getMatches()).wasInitialized())
+        {
+            //inicjalizacja
+            foundSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(foundSchedule.getId()).getRounds());
+
+        }
+
+
+
+        return foundSchedule;
+    }
+    @Override
+    public Schedule getSchedule_ById(long id) {
+        //sprawdzanie terminarzy w cache
+        List<Schedule> schedules= mzCache.getSchedules();
+        if(schedules.size()==0)
+        {
+            //nie ma zapisanych w cache, pobieranie z bazy
+            schedules = scheduleDAO.findAllFetchRoundsEagerly();
+        }
+        Schedule foundSchedule= schedules.stream().filter(s->s.getId()==id).findFirst().get();
+
+//sprawdzanie czy mecze są zainicjalizowane (lazy)
+        if(!((PersistentBag) foundSchedule.getRounds().get(0).getMatches()).wasInitialized())
+        {
+            //inicjalizacja
+            foundSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(foundSchedule.getId()).getRounds());
+
+        }
+
+
+
+        return foundSchedule;
     }
 
-    @Autowired
-    private UserDAOImpl userDAO;
-    @Autowired
-private MZCache mzCache;
+    @Override
+    public Schedule getSchedule_TheNewest() {
+        //sprawdzanie terminarzy w cache
+        List<Schedule> schedules= mzCache.getSchedules();
+        if(schedules.size()==0)
+        {
+            //nie ma zapisanych w cache, pobieranie z bazy
+            schedules = scheduleDAO.findAllFetchRoundsEagerly();
+        }
+        //szukanie najnowszego wg daty pierwszej rundy terminarza
+        schedules.sort(new ScheduleByLocalDateComparator());
+          Schedule newestSchedule= schedules.get(0) ;
+//sprawdzanie czy mecze są zainicjalizowane (lazy)
+        if(!((PersistentBag) newestSchedule.getRounds().get(0).getMatches()).wasInitialized())
+        {
+         //inicjalizacja
+      newestSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(newestSchedule.getId()).getRounds());
+
+        }
+
+
+
+        return newestSchedule;
+    }
+
+    @Override
+    public List<Schedule> getSchedules() {
+      List<Schedule> schedules=  mzCache.getSchedules();
+      if(schedules.size()==0)
+      {
+          schedules=scheduleDAO.findAll();
+        //  schedules=scheduleDAO.findAllFetchRoundsEagerly();
+      }
+
+        return schedules;
+    }
+
+
     @Override
     public Schedule utworzTerminarzWielodniowy(LocalDate data, List<UserData> grajki, String nazwa) throws DatatypeConfigurationException {
 
@@ -79,8 +181,8 @@ private MZCache mzCache;
                 System.out.println(para);
 
                 var tempMatch = new Match();
-               tempMatch.setUser(listyGrajkow.getGrajkiA().get(i));
-                tempMatch.setopponentUser(listyGrajkow.getGrajkiB().get(i));
+               tempMatch.setUserData(listyGrajkow.getGrajkiA().get(i));
+                tempMatch.setOpponentUserData(listyGrajkow.getGrajkiB().get(i));
                 tempMatch.setDateDB(data.plusDays(7L *(j-1)));
 /*tempMatch.setDate(runda.getDateTimeItem());
 tempMatch.setDateDB(runda.getDateTimeItem());
@@ -154,8 +256,8 @@ int yy=0;
             {
                 var tempMatch = new Match();
                tempMatch.setDateDB(data);
-                tempMatch.setUser(mecze.get(i));
-                tempMatch.setopponentUser(mecze.get(i+1));
+                tempMatch.setUserData(mecze.get(i));
+                tempMatch.setOpponentUserData(mecze.get(i+1));
                 round.getMatches().add(tempMatch);
             }
 
@@ -226,12 +328,15 @@ return schedule;
             Team tempTeam= new Team();
             tempTeam.setTeamName(" ");
             tempTeam.setTeamId(0);
+            tempTeam.setUser(tempuser);
             List<Team> tempTeams= new ArrayList<>();
             tempTeams.add(tempTeam);
             tempuser.setTeamlist(tempTeams);
             grajki.add(tempuser);
 
-          userDAO.save(tempuser);
+
+
+            userDAO.save(tempuser);
           if(mzCache.getUsers().size()!=0)
           mzCache.addUser(tempuser);
 
@@ -247,6 +352,7 @@ return schedule;
 
     }
     }
+
 
 
 

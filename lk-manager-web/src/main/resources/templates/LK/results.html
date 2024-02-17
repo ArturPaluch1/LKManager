@@ -127,15 +127,15 @@
 
                 <tr th:each="match : ${matches}"   th:name="matches">
 <!--                    <td th:text="${match .getUser().getTeamlist().get(0).getTeamName()}">userTeam</td>-->
-                    <td th:text="${match.getUser()!=null}? ${match.getUser().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+                    <td th:text="${match.getUserData()!=null}? ${match.getUserData().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
 
 
 
 
                   <!--  <td th:text="${match .getUser().getUsername()}"  >Gracz 1</td>-->
-                    <td th:text="${match.getUser()!=null}? ${match .getUser().getUsername()}:'NA'" style="width: 150px">user</td>
+                    <td th:text="${match.getUserData()!=null}? ${match .getUserData().getUsername()}:'NA'" style="width: 150px">user</td>
 
-                    <input   hidden  th:name="user" th:value="${match.getUser().getUsername()}">
+                    <input   hidden  th:name="user" th:value="${match.getUserData().getUsername()}">
                     <td  align="center">
                         <input   hidden  th:name="matchId" th:value="${match.getId()}">
                         <input style="width: 25px"
@@ -161,12 +161,12 @@
                                   th:value="${match .getOpponentMatchResult2()}">
                     </td>
 
-                    <td th:text="${match.getopponentUser().getUsername()}"
+                    <td th:text="${match.getOpponentUserData().getUsername()}"
                     >1</td>
-                    <input   hidden  th:name="opponentUser" th:value="${match.getopponentUser().getUsername()}">
+                    <input   hidden  th:name="opponentUser" th:value="${match.getOpponentUserData().getUsername()}">
 
 
-                    <td th:text="${match .getopponentUser().getTeamlist().get(0).getTeamName()}"
+                    <td th:text="${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}"
                     >opponentUserTeam</td>
 
                 </tr>
@@ -220,10 +220,10 @@
 
 
             <tr th:each="match : ${matches}"   >
-                <td th:text="${match .getUser().getTeamlist().get(0).getTeamName()}" >userTeam</td>
+                <td th:text="${match .getUserData().getTeamlist().get(0).getTeamName()}" >userTeam</td>
 
 
-                <td th:text="${match .getUser().getUsername()}" >Gracz 1</td>
+                <td th:text="${match .getUserData().getUsername()}" >Gracz 1</td>
 
                 <td  style="width: 25px"  th:text="${match.getUserMatchResult1()}" align="right" >
 
@@ -241,8 +241,8 @@
                 <td  >:</td>
                 <td style="width: 25px"  th:text="${match .getOpponentMatchResult2()}" align="left">wynik2</td>
 
-                <td th:text="${match.getopponentUser().getUsername()}">1</td>
-                <td th:text="${match .getopponentUser().getTeamlist().get(0).getTeamName()}"  >opponentUserTeam</td>
+                <td th:text="${match.getOpponentUserData().getUsername()}">1</td>
+                <td th:text="${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}"  >opponentUserTeam</td>
 
             </tr>
             </tbody>

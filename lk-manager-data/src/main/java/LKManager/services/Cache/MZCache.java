@@ -2,12 +2,13 @@ package LKManager.services.Cache;
 
 import LKManager.DAO.ScheduleDAO;
 import LKManager.LK.Comparators.scheduleIdComparator;
-import LKManager.LK.Table;
 import LKManager.LK.Schedule;
+import LKManager.LK.Table;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 import lombok.Getter;
-import org.springframework.stereotype.Repository;
+import lombok.Setter;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -16,24 +17,30 @@ import java.util.stream.Collectors;
 
 
 @Getter
-@Repository
+@Component
 @Transactional
+
+@Setter
+
 public class MZCache {
 
   //  private final ScheduleDAO customScheduleDAOimpl;
     private final ScheduleDAO scheduleDAO;
-    private Table table = null;
+    private Table table;
     private List<UserData> users = new ArrayList<>();
-    private Schedule lastSchedule;
+  //  private Schedule lastSchedule;
     private List<Schedule> schedules;
     private List<Match> matches;
 
    // ScheduleDAO customScheduleDAOImpl,
-    public MZCache( ScheduleDAO scheduleDAO) {
 
 
-        //this.customScheduleDAOimpl = customScheduleDAOImpl;
+    public MZCache(ScheduleDAO scheduleDAO) {
         this.scheduleDAO = scheduleDAO;
+        this.table = new Table();
+        this.users= new ArrayList<>();
+        this.schedules = new ArrayList<>();
+        this.matches = new ArrayList<>();
     }
 
     public Table getTable() {
@@ -55,7 +62,7 @@ public class MZCache {
             }
             return gracze;
         }*/
-    @Transactional
+  /*  @Transactional
 
     public List<Schedule> getSchedulesFromCacheOrDatabase() {
         List<Schedule> s;
@@ -64,29 +71,10 @@ public class MZCache {
         } else {
             System.out.println("getSchedulesFromCacheOrDatabase ->findall db");
             //   s= terminarzDAO.findAll();
-       /*    Hibernate.initialize(s.get(0).getRundy());
-            for (var runda:s.get(0).getRundy()
-                 ) {
-             // Hibernate.initialize(runda.getMecze());
-                for (var mecz:runda.getMecze()
-                     ) {
-                    if(!Hibernate.isInitialized(mecz.getUser()))
-                    {
 
-                        Hibernate.initialize(mecz.getUser());
-                    }
-                    if(!Hibernate.isInitialized(mecz.getopponentUser()))
-                    {
-                        Hibernate.initialize(mecz.getopponentUser());
-                    }
-                 //   Hibernate.initialize(mecz.getUser().getTeamlist());
-
-                //    Hibernate.initialize(mecz.getopponentUser().getTeamlist());
-                }
-            }*/
 
             //s=terminarzDAOimpl.findAll1();
-            s = scheduleDAO.findByIdAndFetchRolesEagerly();
+            s = scheduleDAO.findByIdAndFetchRoundsEagerly();
             if (s.size() != 0) {
 
                 this.setSchedules(s);
@@ -94,7 +82,7 @@ public class MZCache {
             }
         }
         return s;
-    }
+    }*/
 
     public Schedule findChosenScheduleByScheduleNameFromCacheOrDatabase(String chosenSchedule) {
         Schedule schedule = null;

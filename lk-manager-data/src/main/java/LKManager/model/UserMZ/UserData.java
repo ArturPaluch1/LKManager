@@ -1,16 +1,13 @@
 package LKManager.model.UserMZ;
 
 
-
-import LKManager.model.MatchesMz.Match;
 import lombok.AllArgsConstructor;
-import org.hibernate.annotations.*;
-
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -73,9 +70,9 @@ private Match meczUser;*/
         this.id = id;
     }
 */
-  @Column(name = "DELETED",columnDefinition = "TINYINT")
+ // @Column(name = "DELETED",columnDefinition = "TINYINT")
     //prod \/
-  // @Column(name = "DELETED",columnDefinition = "BIT")
+   @Column(name = "DELETED",columnDefinition = "BIT")
    private boolean deleted = false;
 
     // getters and setters

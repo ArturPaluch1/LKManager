@@ -95,15 +95,15 @@ private final CustomScheduleDAOImpl terminarzDAO;
                 ) {
 
                     //sprawdzanie czy  gospodarzem jest apuza
-                    if (!(mecz.getUser().getUsername().equals("pauza") || mecz.getUser().getUsername().equals("pauza"))) {
+                    if (!(mecz.getUserData().getUsername().equals("pauza") || mecz.getUserData().getUsername().equals("pauza"))) {
 
 
 
 
 
-                        UserData user = mecz.getUser();
+                        UserData user = mecz.getUserData();
                         var userTeamId = user.getTeamlist().get(0).getTeamId();
-                        var oponent = mecz.getopponentUser();
+                        var oponent = mecz.getOpponentUserData();
                         var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
 
                         var rozegrane = matchService.findPlayedByUser(user);
@@ -121,7 +121,7 @@ private final CustomScheduleDAOImpl terminarzDAO;
                                 //tutaj user ma id =0 oponent 1
                                 if (rozegranyMecz.getTeamlist().get(0).getTeamId() == userTeamId) {
                                     //sprawdzanie czy prawidlowy przeciwnik
-                                    if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
+                                    if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                         //aktualizacja
                                         //  mecz.setMatchResult1("1");
 
@@ -135,7 +135,7 @@ private final CustomScheduleDAOImpl terminarzDAO;
                                 //tutaj user ma id 1  oponent =0
                                 else if (rozegranyMecz.getTeamlist().get(1).getTeamId() == userTeamId) {
                                     //sprawdzanie czy prawidlowy przeciwnik
-                                    if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getopponentUser().getTeamlist().get(0).getTeamId()) {
+                                    if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                         //aktualizacja
                                         //  mecz.setMatchResult1("1");
                                         mecz.setUserMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));

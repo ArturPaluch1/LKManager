@@ -118,14 +118,14 @@
 
             <tr th:each="match : ${matches}">
           <!--      <td th:text="${mecz .getUser().getTeamlist().get(0).getTeamName()}" style="width: 150px">userTeam</td>-->
-                <td th:text="${match.getUser()!=null}? ${match.getUser().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+                <td th:text="${match.getUserData()!=null}? ${match.getUserData().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
         <!--        <td th:text="${mecz .getUser().getUsername()}" style="width: 150px">user</td>-->
-                <td th:text="${match.getUser()!=null}? ${match .getUser().getUsername()}:'NA'" style="width: 150px">user</td>
+                <td th:text="${match.getUserData()!=null}? ${match .getUserData().getUsername()}:'NA'" style="width: 150px">user</td>
                 <td style="width: 50px" > - </td>
              <!--   <td th:text="${mecz.getopponentUser().getUsername()}"style="width: 150px">1</td>-->
-                <td th:text="${match.getopponentUser()!=null}? ${match.getopponentUser().getUsername()}:'NA'" style="width: 150px">user</td>
+                <td th:text="${match.getOpponentUserData()!=null}? ${match.getOpponentUserData().getUsername()}:'NA'" style="width: 150px">user</td>
             <!--    <td th:text="${mecz .getopponentUser().getTeamlist().get(0).getTeamName()}" style="width: 150px" >opponentUserTeam</td>-->
-                <td th:text="${match.getopponentUser()!=null}? ${match .getopponentUser().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+                <td th:text="${match.getOpponentUserData()!=null}? ${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
 
             </tr>
             </tbody>

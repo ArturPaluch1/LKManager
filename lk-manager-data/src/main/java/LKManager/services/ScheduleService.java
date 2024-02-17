@@ -15,6 +15,19 @@ public interface ScheduleService {
 
    Schedule wczytajTerminarz(String sciezka) throws JAXBException;
 
+     Schedule findByIdWithRoundsMatchesUsersAndTeams(long scheduleId);
+
+    Schedule getSchedule_ByName(String scheduleName);
+
+
+
+    Schedule getSchedule_ById(long id);
+
+    Schedule getSchedule_TheNewest();
+    List<Schedule> getSchedules();
 
     void aktualizujTerminarz(Schedule schedule, String nazwaPliku);
+
+
+
 }

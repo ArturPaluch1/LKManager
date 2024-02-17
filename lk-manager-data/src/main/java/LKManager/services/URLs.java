@@ -65,11 +65,17 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
 
 
 
+try{
+    ManagerZone_UserData user = (ManagerZone_UserData) jaxbUnmarshaller.unmarshal( url);
+    return user.getUserData();
+}
+catch(Exception e)
+        {
+            return null;
+        }
 
 
-        ManagerZone_UserData user = (ManagerZone_UserData) jaxbUnmarshaller.unmarshal( url);
 
-        return user.getUserData();
 
 
     }

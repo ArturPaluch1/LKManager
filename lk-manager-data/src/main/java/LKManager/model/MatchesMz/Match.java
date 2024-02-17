@@ -68,19 +68,19 @@ public class Match implements Serializable {
   //  @Fetch(FetchMode.JOIN)
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "przeciwnik")//, referencedColumnName= "user_id")//, updatable = false, insertable = false)
-    private UserData opponentUser;
+    private UserData opponentUserData;
 
     // @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
    // @Fetch(FetchMode.JOIN)
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user")//, referencedColumnName= "user_id")//, updatable = false, insertable = false)
-    private UserData user;
+    private UserData userData;
     /* public XMLGregorianCalendar getDate() {
                 return date;
             }*/
 
 
-    public Match(Round round, Long id, String date, String status, String type, String typeName, int typeId, UserData user) {
+    public Match(Round round, Long id, String date, String status, String type, String typeName, int typeId, UserData userData) {
         this.round = round;
         this.id = id;
         this.date = date;
@@ -88,7 +88,7 @@ public class Match implements Serializable {
         this.type = type;
         this.typeName = typeName;
         this.typeId = typeId;
-        this.user = user;
+        this.userData = userData;
 
     }
 
@@ -241,21 +241,31 @@ dateDB=date;
         return teamlist;
     }
 
+
+/*    public UserData getopponentUser() {
+        return opponentUserData;
+    }*/
     @XmlElement
-    public UserData getopponentUser() {
-        return opponentUser;
+    public UserData getOpponentUserData() {
+        return opponentUserData;
     }
 
+    public void setOpponentUserData(UserData opponentUserData) {
+        this.opponentUserData = opponentUserData;
+    }
+
+/*
     public void setopponentUser(UserData opponentUser) {
-        this.opponentUser = opponentUser;
+        this.opponentUserData = opponentUser;
     }
+*/
 
     @XmlElement
-    public UserData getUser() {
-        return user;
+    public UserData getUserData() {
+        return userData;
     }
 
-    public void setUser(UserData user) {
-        this.user = user;
+    public void setUserData(UserData userData) {
+        this.userData = userData;
     }
 }

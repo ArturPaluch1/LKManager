@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Service
 public class TableServiceImpl implements TableService {
     @Autowired
@@ -42,18 +45,28 @@ public class TableServiceImpl implements TableService {
        // matches.stream().filter(a->a.getUser())
         for (var item: matches
         ) {
-            users.add(item.getUser());
-            users.add(item.getopponentUser());
+
+            users.add(item.getUserData());
+            users.add(item.getOpponentUserData());
         }
-users=users.stream().distinct().toList();
+        List<UserData> distinctUsers = users.stream()
+                .collect(Collectors.toMap(UserData::getUsername, Function.identity(), (existing, replacement) -> existing))
+                .values().stream().toList();
+
+// \/nie dzała jeśli obiekty mają te same property ale są innym obiektem
+      //  distinctUsers=users.stream().distinct().toList();
+
+
+      //  users.forEach(u-> u.getUsername());
+
       //  terminarzDAO.findAllParticipantsOfSchedule(wybranyTerminarz);
 
 
 
 
-        if(users.size()!=0 && matches.size()!=0)
+        if(distinctUsers.size()!=0 && matches.size()!=0)
         {
-            users.forEach(a->{
+            distinctUsers.forEach(a->{
                 var tempGracz= new PlayerSummary();
                 tempGracz.setGracz(a);
 
@@ -67,9 +80,9 @@ users=users.stream().distinct().toList();
 
 
                 var   user = table.getPlayerSummaries().stream().
-                        filter(a->a.getGracz().getUserId().equals(match.getUser().getUserId())).findFirst().orElse(null);
+                        filter(a->a.getGracz().getUserId().equals(match.getUserData().getUserId())).findFirst().orElse(null);
                 var   userOp = table.getPlayerSummaries().stream().
-                        filter(a->a.getGracz().getUserId().equals(match.getopponentUser().getUserId())).findFirst().orElse(null);
+                        filter(a->a.getGracz().getUserId().equals(match.getOpponentUserData().getUserId())).findFirst().orElse(null);
 
                 checkResult(match,user,userOp);
 

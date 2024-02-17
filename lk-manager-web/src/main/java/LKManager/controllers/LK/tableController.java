@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,13 +81,17 @@ private final LKUserService lkUserService;
        Table table = null;
 if(!chosenscheduleName.equals(null))
 {
-    if(mzCache.getSchedules()!=null)
+    if(mzCache.getSchedules().size()!=0)
     {
 
 
         String finalChosenScheduleName = chosenscheduleName;
-        Schedule schedule =  mzCache.getSchedules().stream().filter(a->a.getName().equals(finalChosenScheduleName)).findFirst().get();
-        List<Match> matches= matchDAOimpl.findAllbyScheduleId(schedule.getId());// mzCache.getTerminarze().stream().filter(a->a.getName().equals(finalWybranyTerminarz)).distinct().toList();
+        Schedule schedule =  mzCache.getSchedules().stream().filter(a->a.getName().equals(finalChosenScheduleName)).findFirst().orElse(null);
+        List<Match> matches = new ArrayList<>();
+        if(schedule!=null)
+           // if(mzCache.getSchedules())
+     //       matches=  matchDAOimpl.findAllbyScheduleId(schedule.getId());// mzCache.getTerminarze().stream().filter(a->a.getName().equals(finalWybranyTerminarz)).distinct().toList();
+    schedule.getRounds().forEach(r->matches.addAll(r.getMatches()));
        // Terminarz schedule;
         if(matches.size()!=0)
         {
@@ -250,7 +255,8 @@ boolean nowaRownosc= false;
 
 if(table!=null)
 {
-    model.addAttribute("schedules", scheduleDAO.findAll());
+  //  model.addAttribute("schedules", scheduleDAO.findAll());
+    model.addAttribute("schedules",mzCache.getSchedules());
     model.addAttribute("chosenSchedule",chosenscheduleName);
     model.addAttribute("table",table.getPlayerSummaries());
 }

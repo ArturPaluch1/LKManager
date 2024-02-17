@@ -1,9 +1,9 @@
 package LKManager.controllers.LK;
 
+import LKManager.DAO.CustomUserDAOImpl;
 import LKManager.DAO.MatchDAO;
 import LKManager.DAO.RoundDAOImpl;
 import LKManager.DAO.ScheduleDAO;
-import LKManager.DAO.UserDAOImpl;
 import LKManager.LK.Round;
 import LKManager.LK.Schedule;
 import LKManager.model.MatchesMz.Match;
@@ -37,11 +37,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -57,7 +53,7 @@ public class scheduleController {
     private final PlikiService plikiService;
     private final ScheduleDAO scheduleDAO;
     //   private String wybranyTerminarz;
-    private final UserDAOImpl userDAO;
+    private final CustomUserDAOImpl userDAO;
     private final RoundDAOImpl rundaDAO;
     private final MatchDAO matchDAO;
     private final CookieManager cookieManager;
@@ -71,7 +67,7 @@ public class scheduleController {
     @Autowired
     private MZCache mzCache;
 
-    public scheduleController(MZUserService MZUserService, MatchDAO matchDAOInterface, LKUserService lkUserService, ScheduleService scheduleService, PlikiService plikiService, ScheduleDAO scheduleDAO, UserDAOImpl userDAO, RoundDAOImpl rundaDAO, MatchDAO matchDAO, CookieManager cookieManager) {
+    public scheduleController(MZUserService MZUserService, MatchDAO matchDAOInterface, LKUserService lkUserService, ScheduleService scheduleService, PlikiService plikiService, ScheduleDAO scheduleDAO, CustomUserDAOImpl userDAO, RoundDAOImpl rundaDAO, MatchDAO matchDAO, CookieManager cookieManager) {
         this.MZUserService = MZUserService;
         this.matchDAOInterface = matchDAOInterface;
 
@@ -148,8 +144,8 @@ public class scheduleController {
 
 
         System.out.println("w terminarze =mzCache.getSchedulesFromCacheOrDatabase()");
-        var schedules = mzCache.getSchedulesFromCacheOrDatabase();
-
+      //  var schedules = mzCache.getSchedulesFromCacheOrDatabase();
+        var schedules = scheduleService.getSchedules();
         //   terminarz= terminarzDAO.findByTerminarzId(106);
         //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
 
@@ -168,8 +164,8 @@ public class scheduleController {
             //            terminarz=     terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
             System.out.println("w mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(wybranyTerminarz);");
-            schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
-
+          //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
+            schedule = scheduleService.getSchedule_ByName(chosenSchedule);
 
             //nie znaleziono przekierowanie do tworzenia
             if (schedule == null) {
@@ -182,8 +178,10 @@ public class scheduleController {
         //nie podano nazwy terminarza
         else {
 //ostatni wg id
-            //  terminarz=     terminarzDAO.findLastById();
-            mzCache.findLastScheduleByIdFromCacheOrDatabase();
+
+
+         //   mzCache.findLastScheduleByIdFromCacheOrDatabase();
+            scheduleService.getSchedule_TheNewest();
             //nie ma żadnych terminarzy
             if (schedule == null) {
                 return "redirect:/addSchedule";
@@ -193,30 +191,37 @@ public class scheduleController {
             }
         }
 
-        Round round = rundaDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
-        List<Round> rounds = rundaDAO.findAllByScheduleId(schedule.getId());
+
+
     //    List<Match> mecze = meczDAO.findAllById(Collections.singleton(terminarz.getId()));
-        List<Match> matches = matchDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+
         //  mecze=mzCache.getTerminarze().get(0).getRundy().get(0).getMecze();
         // model.addAttribute("wybranyTerminarz", terminarze.get(0));
 //mecze=terminarze.get(0).getRundy().get(0).getMecze();
 
         System.out.println("---cache:  ");
 
-        model.addAttribute("chosenSchedule", chosenSchedule);
+
+
+
+       model.addAttribute("chosenSchedule", chosenSchedule);
+       List<Round> rounds = rundaDAO.findAllByScheduleId(schedule.getId());
+      //  List<Round> rounds = new ArrayList<>(schedule.getRounds());
+     //   rounds.sort(Comparator.comparing(Round::getNr));
         model.addAttribute("rounds", rounds);
-        //   model.addAttribute("nrRundy",terminarz.getRundy());
-        //   model.addAttribute("runda", terminarz.getRundy().get(Integer.parseInt(nrRundy)-1));
+
+        Round round = rundaDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+      //  Round  round=rounds.get(Integer.parseInt(roundNumber) - 1);
         model.addAttribute("round", round);
-        //   model.addAttribute("mecze", terminarz.getRundy().get(Integer.parseInt(nrRundy)-1).getMecze()  );
+
+       List<Match> matches = matchDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+       // List<Match> matches =round.getMatches();
         model.addAttribute("matches", matches);
 
         model.addAttribute("roundNumber", roundNumber);
 
 
         model.addAttribute("schedules", schedules);
-
-
         return "LK/schedule/schedule";
     }
 
@@ -224,8 +229,12 @@ public class scheduleController {
     @GetMapping(value = "/addSchedule")
     public String dodajTerminarz(Model model) throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
+
+
+
+
         //lkUserService.wczytajGraczyZXML();
-        List<UserData> players = userDAO.findAll(false);
+        List<UserData> players = userDAO.findNotDeletedUsers();
 
         players = players.stream().sorted(
                 (o1, o2) -> o1.getUsername().compareToIgnoreCase(o2.getUsername())
@@ -281,7 +290,8 @@ List<String> playerNames = new ArrayList<String>();
     @GetMapping("/deleteSchedule")
     public String usuwanieTerminarza(Model model)//@RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
     {
-        List<Schedule> schedules = mzCache.getSchedulesFromCacheOrDatabase();
+      //  List<Schedule> schedules = mzCache.getSchedulesFromCacheOrDatabase();
+        List<Schedule> schedules = scheduleService.getSchedules();
         //plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
 //this.wybranyTerminarz=null;
@@ -375,13 +385,22 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         data.setMonth(Integer.parseInt(command.data.split("-")[1]));
         data.setDay(Integer.parseInt(command.data.split("-")[2]));
 */
-        LocalDate date = LocalDate.parse(command.getDate().trim(), DateTimeFormatter.ofPattern("yyyy-M-d"));
+  String[] dateParts=  command.date.trim().split("-");
+        for (String part:dateParts
+             ) {
+           if( part.length()<2)
+               part="0"+part;
+        }
+  LocalDate date= LocalDate.of(Integer.parseInt(dateParts[0]), Integer.parseInt(dateParts[1]),Integer.parseInt(dateParts[2]));
+      //  LocalDate date = LocalDate.parse(command.getDate().trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+
         //    LocalDateTime data = LocalDateTime.of(command.data.trim().split("-")[0],
         //           command.data.split("-")[1]))
 ////////////////////////////////////////
 
 
-        List<UserData> players = userDAO.findAll(false);
+        List<UserData> players = userDAO.findNotDeletedUsers();
 
         //nie wybrano graczy do wielodniowego terminarza
         if (chosenPlayers == null) {

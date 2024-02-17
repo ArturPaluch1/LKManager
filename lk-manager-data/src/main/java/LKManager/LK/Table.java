@@ -1,10 +1,14 @@
 package LKManager.LK;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
+@Repository
+@Component
 @XmlRootElement(name = "Tabela")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({PlayerSummary.class})
