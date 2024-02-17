@@ -125,28 +125,37 @@ public class LKManagerApplication {
 			@Override
 			public void run() {
 				//	Queue<MZCacheAction> actionQuery = new LinkedList<>();
-				MZCacheAction action=null;
-				for (Schedule s : mzCache.getSchedules()
-				) {
-					if(!((PersistentBag) s.getRounds().get(0).getMatches()).wasInitialized())
-					{
-						action=new updateScheduleCacheByScheduleId(s.getId(), mzCache, scheduleService, scheduleDAO);
-						break;
-					}
 
-
+				if (mzCache.getSchedules().size() == 0 || mzCache.getUsers().size() == 0) {
+					initializeUsersAndTheNewestSchedule();
 				}
-				if(action!=null)
+				else
 				{
-					action.update();
-					System.out.println("updated ");
-				}
+					MZCacheAction action=null;
+					for (Schedule s : mzCache.getSchedules()
+					) {
+						if(!((PersistentBag) s.getRounds().get(0).getMatches()).wasInitialized())
+						{
+							action=new updateScheduleCacheByScheduleId(s.getId(), mzCache, scheduleService, scheduleDAO);
+							break;
+						}
+
+
+					}
+					if(action!=null)
+					{
+						action.update();
+						System.out.println("updated ");
+					}
 
 			/*	for (var i : actionQuery
 				) {
 					i.update();
 					System.out.println("updated ");
 				}*/
+				}
+
+
 			}
 		};
 		//\/ 62 minuty  3720000
