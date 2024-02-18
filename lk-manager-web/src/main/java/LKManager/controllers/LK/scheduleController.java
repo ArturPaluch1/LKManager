@@ -37,6 +37,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -389,6 +391,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         data.setMonth(Integer.parseInt(command.data.split("-")[1]));
         data.setDay(Integer.parseInt(command.data.split("-")[2]));
 */
+        /*
   String[] dateParts=  command.date.trim().split("-");
         for (int i = 0; i < dateParts.length; i++) {
             if (dateParts[i].length() == 1) {
@@ -396,8 +399,17 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
             }
         }
   LocalDate date= LocalDate.of(Integer.parseInt(dateParts[0]), Integer.parseInt(dateParts[1]),Integer.parseInt(dateParts[2]));
-      //  LocalDate date = LocalDate.parse(command.getDate().trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+      */
 
+        LocalDate date= null;
+        try {
+            date    = LocalDate.parse(command.getDate().trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            // Użycie parsowanej daty
+        } catch (DateTimeParseException e) {
+            // Obsługa wyjątku parsowania daty
+            System.out.println(e.getCause());
+        }
 
         //    LocalDateTime data = LocalDateTime.of(command.data.trim().split("-")[0],
         //           command.data.split("-")[1]))

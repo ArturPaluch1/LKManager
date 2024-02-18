@@ -17,6 +17,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -27,7 +28,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 @SpringBootApplication
@@ -276,6 +280,7 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 
 	abstract class MZCacheAction {
 
+
 		public abstract void update();
 
 	}
@@ -288,7 +293,7 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 		private MZCache mzCache;
 		private final UserDAO userDAO;
 
-		@Override
+		@Override @Transactional
 		public void update() {
 			//dodawanie users do cache
 			mzCache.setUsers(userDAO.findNotDeletedUsers());
@@ -303,7 +308,7 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 		private MZCache mzCache;
 		private final ScheduleDAO scheduleDAO;
 
-		@Override
+		@Override @Transactional
 		public void update() {
 			List<Schedule> schedules = scheduleDAO.findAllFetchRoundsEagerly();
 			schedules.sort(new ScheduleByLocalDateComparator());
@@ -324,7 +329,7 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 		private final ScheduleDAO scheduleDAO;
 
 
-		@Override
+		@Override @Transactional
 		public void update() {
 			List<Schedule> schedules = null;
 			if (mzCache.getSchedules().size() != 0) {
@@ -348,7 +353,7 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 		private final ScheduleService scheduleService;
 		private final ScheduleDAO scheduleDAO;
 
-		@Override
+		@Override @Transactional
 		public void update() {
 
 			List<Schedule> schedules = null;
