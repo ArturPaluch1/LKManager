@@ -143,7 +143,7 @@ public class scheduleController {
 //wybranyTerminarz="ja i kyo";
 
 
-        System.out.println("w terminarze =mzCache.getSchedulesFromCacheOrDatabase()");
+        System.out.println("w terminarze scheduleService.getSchedules()");
       //  var schedules = mzCache.getSchedulesFromCacheOrDatabase();
         var schedules = scheduleService.getSchedules();
         //   terminarz= terminarzDAO.findByTerminarzId(106);
@@ -170,7 +170,10 @@ public class scheduleController {
             //nie znaleziono przekierowanie do tworzenia
             if (schedule == null) {
 //todo przekierowanie że nie ma takiego terminarza
-                return "redirect:/errorMessage";
+             //   return "redirect:/errorMessage";
+
+                model.addAttribute("schedules", schedules);
+                return "LK/schedule/schedule";
             }
 
 
@@ -328,13 +331,14 @@ List<String> playerNames = new ArrayList<String>();
                 cookieTerminarz.setHttpOnly(true);
 
             }*/
-            scheduleDAO.deleteByName(scheduleToDelete);
+            scheduleService.deleteSchedule(scheduleToDelete);
 
-            mzCache.setSchedules(scheduleDAO.findAll());
+            Schedule schedule1=scheduleService.getSchedule_TheNewest();
 
 
-            Schedule schedule1 = scheduleDAO.findLastById();
-            try {
+
+        //    Schedule schedule1 = scheduleDAO.findLastById();
+          /*  try {*/
 
                 //       Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
                 //        Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter( a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
@@ -347,10 +351,10 @@ List<String> playerNames = new ArrayList<String>();
 
                 // CookieManager.checkCookies(response,request,"1",terminarz1.getName(),terminarzDAO);
 
-            } catch (Exception e) {
+      /*      } catch (Exception e) {
 
-            }
-            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of(""), Optional.ofNullable(schedule1.getName()), response, request, scheduleDAO);
+            }*/
+            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(schedule1.getName()), response, request, scheduleDAO);
             CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(schedule1.getName()), response, request, scheduleDAO);
             attributes.addAttribute("chosenSchedule", schedule1.getName());
             attributes.addAttribute("roundNumber", "1");
@@ -386,10 +390,10 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         data.setDay(Integer.parseInt(command.data.split("-")[2]));
 */
   String[] dateParts=  command.date.trim().split("-");
-        for (String part:dateParts
-             ) {
-           if( part.length()<2)
-               part="0"+part;
+        for (int i = 0; i < dateParts.length; i++) {
+            if (dateParts[i].length() == 1) {
+                dateParts[i] = "0" + dateParts[i];
+            }
         }
   LocalDate date= LocalDate.of(Integer.parseInt(dateParts[0]), Integer.parseInt(dateParts[1]),Integer.parseInt(dateParts[2]));
       //  LocalDate date = LocalDate.parse(command.getDate().trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));

@@ -1,6 +1,7 @@
 package LKManager.services;
 
 import LKManager.LK.Schedule;
+import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 
 import javax.xml.bind.JAXBException;
@@ -23,7 +24,11 @@ public interface ScheduleService {
 
     Schedule getSchedule_ById(long id);
 
+    void deleteSchedule(String scheduleToDeleteName);
+
     Schedule getSchedule_TheNewest();
+
+    List<Match> getAllMatchesOfSchedule(Schedule schedule);
     List<Schedule> getSchedules();
 
     void aktualizujTerminarz(Schedule schedule, String nazwaPliku);

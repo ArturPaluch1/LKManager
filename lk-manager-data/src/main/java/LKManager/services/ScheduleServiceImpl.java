@@ -49,34 +49,49 @@ private final MZCache mzCache;
     public Schedule findByIdWithRoundsMatchesUsersAndTeams(long scheduleId)
     {
         Schedule schedule= scheduleDAO.findByIdAndFetchRoundsEagerly(scheduleId);
+/*
 schedule.getRounds().forEach(
         r-> r.setMatches( roundDAO.findRoundWitchMatches(schedule.getName(),r.getNr()).getMatches()));
+*/
 
     //    r->r.setMatches(r.getMatches()));
 return schedule;
     }
     @Override
     public Schedule getSchedule_ByName(String scheduleName) {
-        //sprawdzanie terminarzy w cache
-        List<Schedule> schedules= mzCache.getSchedules();
-        if(schedules.size()==0)
+        if(scheduleName.equals(null))
         {
-            //nie ma zapisanych w cache, pobieranie z bazy
-            schedules = scheduleDAO.findAllFetchRoundsEagerly();
+            return null;
         }
-     Schedule foundSchedule= schedules.stream().filter(s->s.getName().equals(scheduleName)).findFirst().get();
+        else{
+            System.out.println("W Schedule getSchedule_ByName(String scheduleName)");
+            System.out.println("sprawdzanie terminarzy w cache");
+            List<Schedule> schedules= mzCache.getSchedules();
+            if(schedules.size()==0)
+            {
+                System.out.println("nie ma zapisanych w cache, pobieranie z bazy");
+                schedules = scheduleDAO.findAllFetchRoundsEagerly();
+            }
 
-//sprawdzanie czy mecze są zainicjalizowane (lazy)
-        if(!((PersistentBag) foundSchedule.getRounds().get(0).getMatches()).wasInitialized())
-        {
-            //inicjalizacja
-            foundSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(foundSchedule.getId()).getRounds());
+            Schedule foundSchedule= schedules.stream().filter(s->s.getName().equals(scheduleName)).findFirst()
+                    .orElse(null);
+if(foundSchedule!=null)
+{
+    System.out.println("sprawdzanie czy mecze są zainicjalizowane (lazy)");
+    if(!((PersistentBag) foundSchedule.getRounds().get(0).getMatches()).wasInitialized())
+    {
+        System.out.println("inicjalizacja rund");
+        foundSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(foundSchedule.getId()).getRounds());
 
+    }
+
+
+}
+
+
+            return foundSchedule;
         }
 
-
-
-        return foundSchedule;
     }
     @Override
     public Schedule getSchedule_ById(long id) {
@@ -103,6 +118,13 @@ return schedule;
     }
 
     @Override
+    public void deleteSchedule(String scheduleToDeleteName) {
+        scheduleDAO.deleteByName(scheduleToDeleteName);
+        mzCache.setSchedules(scheduleDAO.findAll());
+
+    }
+
+    @Override
     public Schedule getSchedule_TheNewest() {
         //sprawdzanie terminarzy w cache
         List<Schedule> schedules= mzCache.getSchedules();
@@ -125,6 +147,13 @@ return schedule;
 
 
         return newestSchedule;
+    }
+
+    @Override
+    public List<Match> getAllMatchesOfSchedule(Schedule schedule) {
+       List<Match>tempList= new ArrayList<>();
+        schedule.getRounds().forEach(a-> tempList.addAll(a.getMatches()));
+        return tempList;
     }
 
     @Override

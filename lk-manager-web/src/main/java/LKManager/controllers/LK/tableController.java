@@ -98,6 +98,13 @@ if(!chosenscheduleName.equals(null))
 
             table=   tableService.createTable(matches);
         }
+        else //nie znaleziono podanego terminarza ani z cookies - tu els w razie jakby był np. usunięty
+        {
+            table=   tableService.createTable( scheduleService.getAllMatchesOfSchedule(scheduleService.getSchedule_TheNewest()));
+
+         /*   scheduleService.getSchedule_TheNewest().getRounds().;
+            table=*/
+        }
 
 
 

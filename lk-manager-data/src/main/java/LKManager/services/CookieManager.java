@@ -80,18 +80,23 @@ public  class CookieManager {
           return "1";
        //    response.addCookie( utworzNowyCookie("numerRundy","1"));
        }
-       else */if(chosenSchedule.isPresent())
+       else */
+
+        //wybrano schedule
+        if(chosenSchedule.isPresent())
        {
+           //
            if(  !decodeCookie(chosenScheduleCookie.getValue()).equals(decodeCookie(chosenSchedule.get())))
            {
                return "1";
            }
            else //cookie i wybrany terminarz są takie same
            {
-               if(roundNumber.isEmpty()) //nie podano nr rundy
+               //nie podano nr rundy
+               if(roundNumber.isEmpty())
                {
-
-                   if(roundNumberCookie==null)//nie ma pliku cookie
+            //nie ma pliku cookie
+                   if(roundNumberCookie==null)
                    {
                        createNewCookie("roundNumber","1");
                        return  "1";
@@ -117,6 +122,7 @@ public  class CookieManager {
                {
                    if(roundNumberCookie==null) //nie ma pliku cookie
                    {
+                       //tworzenie cookie z podaną rundą
                        response.addCookie( createNewCookie("roundNumber",roundNumber.get()));
                        return roundNumber.get();
                        //  return nrRundy;
@@ -151,6 +157,7 @@ public  class CookieManager {
 
            }
         }
+        //nie podano schedule
 else
         {
             if( roundNumberCookie!=null)

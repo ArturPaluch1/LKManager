@@ -194,15 +194,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserData> findUsers_NotDeletedWithoutPause() {
         //próbowanie z cache
+        System.out.println("trying find users in cache");
 List<UserData> users=userDAO.findUsersFromCache_NotDeletedWithoutPause();
 if(users.size()!=0)
 {
+    System.out.println("found users in cache");
     return users;
 }
 else
 {
-  return userDAO.findUsers_NotDeletedWithoutPause();
-
+    //todo zrobic redirect ze nie polaczono z db
+    System.out.println("trying find users in db");
+  users= userDAO.findUsers_NotDeletedWithoutPause();
+mzCache.setUsers(users);
+    System.out.println("found users in db");
+return users;
 }
 
     }
