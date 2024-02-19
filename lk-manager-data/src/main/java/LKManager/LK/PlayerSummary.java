@@ -37,7 +37,7 @@ public class PlayerSummary {
         return goleStrzelone;
     }
 
-    public void addGoleStrzelone(Integer goleStrzelone) {
+    public void addGoleStrzelone(Byte goleStrzelone) {
         this.goleStrzelone += goleStrzelone;
     }
     @XmlAttribute
@@ -45,7 +45,7 @@ public class PlayerSummary {
         return goleStracone;
     }
 
-    public void addGoleStracone(Integer goleStracone) {
+    public void addGoleStracone(Byte goleStracone) {
         this.goleStracone +=goleStracone;
     }
     @XmlAttribute

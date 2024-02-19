@@ -131,4 +131,18 @@ public class MZCache {
     public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
     }
+
+    public void updateScheduleMatchesCache(Schedule schedule) {
+        //check if matches initialized
+        if(schedule.checkMatchesInitialization()) {
+            Schedule foundSchedule=this.getSchedules().stream().filter(a->a.getId()==schedule.getId()).findFirst().orElse(null);
+            if(foundSchedule!=null)
+            {
+                foundSchedule.setRounds(schedule.getRounds());
+                System.out.println("updateScheduleMatchesCache - success");
+             }
+
+        }
+
+    }
 }

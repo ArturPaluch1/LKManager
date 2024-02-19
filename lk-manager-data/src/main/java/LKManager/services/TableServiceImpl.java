@@ -176,19 +176,19 @@ mzCache.setTable(table);
 
     private void checkResult(Match match, PlayerSummary user, PlayerSummary opponent) {
         //todo sprawdzic null/ ""
-        Integer goalsUser1 = null;
-        Integer goalsUser2=null;
-        Integer goalsOpponent1=null;
-        Integer goalsOpponent2=null;
+        Byte goalsUser1 = null;
+        Byte goalsUser2=null;
+        Byte goalsOpponent1=null;
+        Byte goalsOpponent2=null;
 
-        if(!(match.getUserMatchResult1()==null || match.getUserMatchResult1().equals("")))
-            goalsUser1 = Integer.parseInt(match.getUserMatchResult1());
-        if (!(match.getUserMatchResult2()==null ||  match.getUserMatchResult2().equals("")))
-            goalsUser2 = Integer.parseInt(match.getUserMatchResult2());
-        if(!(match.getOpponentMatchResult1()==null ||  match.getOpponentMatchResult1().equals("")))
-            goalsOpponent1 = Integer.parseInt(match.getOpponentMatchResult1());
-        if(!(match.getOpponentMatchResult2()==null || match.getOpponentMatchResult2().equals("")))
-            goalsOpponent2 = Integer.parseInt(match.getOpponentMatchResult2());
+        if(!(match.getUserMatchResult1()==null || match.getUserMatchResult1()==null))
+            goalsUser1 = match.getUserMatchResult1();
+        if (!(match.getUserMatchResult2()==null ||  match.getUserMatchResult2()==null))
+            goalsUser2 = match.getUserMatchResult2();
+        if(!(match.getOpponentMatchResult1()==null ||  match.getOpponentMatchResult1()==null))
+            goalsOpponent1 = match.getOpponentMatchResult1();
+        if(!(match.getOpponentMatchResult2()==null || match.getOpponentMatchResult2()==null))
+            goalsOpponent2 = match.getOpponentMatchResult2();
 
 
 

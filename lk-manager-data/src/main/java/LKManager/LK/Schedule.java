@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.collection.internal.PersistentBag;
 
 import javax.persistence.*;
 import javax.persistence.Table;
@@ -53,6 +54,11 @@ public class Schedule implements Serializable {
     @XmlElement(name = "Runda")
     public List<Round> getRounds() {
         return rounds;
+    }
+
+   public boolean checkMatchesInitialization()
+    {
+        return ((PersistentBag) this.getRounds().get(0).getMatches()).wasInitialized();
     }
 
     public void setRounds(List<Round> rounds) {

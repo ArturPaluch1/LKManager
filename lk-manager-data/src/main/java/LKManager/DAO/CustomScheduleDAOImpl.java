@@ -410,8 +410,8 @@ finally {
                                   if (playedMzMatch.getTeamlist().get(1).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                       //aktualizacja
                                       //  mecz.setMatchResult1("1");
-                                      match.setUserMatchResult1(String.valueOf(playedMzMatch.getTeamlist().get(0).getGoals()));
-                                      match.setOpponentMatchResult1(String.valueOf(playedMzMatch.getTeamlist().get(1).getGoals()));
+                                      match.setUserMatchResult1(playedMzMatch.getTeamlist().get(0).getGoals());
+                                      match.setOpponentMatchResult1(playedMzMatch.getTeamlist().get(1).getGoals());
                                   }
 
 
@@ -422,8 +422,8 @@ finally {
                                   if (playedMzMatch.getTeamlist().get(0).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                       //aktualizacja
                                       //  mecz.setMatchResult1("1");
-                                      match.setUserMatchResult2(String.valueOf(playedMzMatch.getTeamlist().get(1).getGoals()));
-                                      match.setOpponentMatchResult2(String.valueOf(playedMzMatch.getTeamlist().get(0).getGoals()));
+                                      match.setUserMatchResult2(playedMzMatch.getTeamlist().get(1).getGoals());
+                                      match.setOpponentMatchResult2(playedMzMatch.getTeamlist().get(0).getGoals());
                                   }
 
 

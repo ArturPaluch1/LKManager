@@ -2,8 +2,8 @@ package LKManager.controllers.LK;
 
 import LKManager.DAO.MatchDAO;
 import LKManager.DAO.ScheduleDAO;
-import LKManager.LK.Table;
 import LKManager.LK.Schedule;
+import LKManager.LK.Table;
 import LKManager.model.MatchesMz.Match;
 import LKManager.services.Cache.MZCache;
 import LKManager.services.*;
@@ -89,35 +89,78 @@ if(!chosenscheduleName.equals(null))
         Schedule schedule =  mzCache.getSchedules().stream().filter(a->a.getName().equals(finalChosenScheduleName)).findFirst().orElse(null);
         List<Match> matches = new ArrayList<>();
         if(schedule!=null)
-           // if(mzCache.getSchedules())
-     //       matches=  matchDAOimpl.findAllbyScheduleId(schedule.getId());// mzCache.getTerminarze().stream().filter(a->a.getName().equals(finalWybranyTerminarz)).distinct().toList();
-    schedule.getRounds().forEach(r->matches.addAll(r.getMatches()));
-       // Terminarz schedule;
-        if(matches.size()!=0)
         {
+            if(schedule.checkMatchesInitialization())
+            {
+                // if(mzCache.getSchedules())
+                //       matches=  matchDAOimpl.findAllbyScheduleId(schedule.getId());// mzCache.getTerminarze().stream().filter(a->a.getName().equals(finalWybranyTerminarz)).distinct().toList();
+                schedule.getRounds().forEach(r->matches.addAll(r.getMatches()));
+                // Terminarz schedule;
+    /*            if(matches.size()!=0)
+                {*/
 
-            table=   tableService.createTable(matches);
-        }
-        else //nie znaleziono podanego terminarza ani z cookies - tu els w razie jakby był np. usunięty
-        {
-            table=   tableService.createTable( scheduleService.getAllMatchesOfSchedule(scheduleService.getSchedule_TheNewest()));
+                    table=   tableService.createTable(scheduleService.getAllMatchesOfSchedule(schedule));
+            /*    }
+                else //nie znaleziono podanego terminarza ani z cookies - tu els w razie jakby był np. usunięty
+                {
+                    table=   tableService.createTable( scheduleService.getAllMatchesOfSchedule(scheduleService.getSchedule_TheNewest()));
+
+         *//*   scheduleService.getSchedule_TheNewest().getRounds().;
+            table=*//*
+                }*/
+
+                System.out.println("matches initialized , table created");
+            }
+            else
+            {
+                //proba inicjalizacji
+                schedule=scheduleService.getSchedule_ById(schedule.getId());
+
+             //    schedule.getRounds().forEach(r->matches.addAll(r.getMatches()));
+                // Terminarz schedule;
+           //     schedule.getRounds().get(0).getMatches();
+                if(!schedule.checkMatchesInitialization())
+                {
+                    mzCache.updateScheduleMatchesCache(schedule);
+                    table=   tableService.createTable(scheduleService.getAllMatchesOfSchedule(schedule));
+
+                    System.out.println("matches initialized from db, cache updated, table created");
+                }
+                else
+                {
+                    System.out.println("else");
+                    int y=0;
+                    // null - nie tworzyć tabeli
+                   // table=   tableService.createTable( scheduleService.getAllMatchesOfSchedule(scheduleService.getSchedule_TheNewest()));
+                }
+
+
+
 
          /*   scheduleService.getSchedule_TheNewest().getRounds().;
             table=*/
+
+            }
         }
+
 
 
 
     }
-    else
+    //todo sprawdzić czy ten warunek w ogóle jest potrzebny, bo wcześniej też jest w scheduleService próbowane cache a potem z bazy
+    else  //nie ma schedules w cache
     {
         try {
                        /*        List<Match> matches=   terminarzDAO.findAllMatchesByTerminarzName(wybranyTerminarz);
                                List<UserData> participants = terminarzDAO.findAllParticipantsOfSchedule(wybranyTerminarz);
                  */
-            Schedule schedule= scheduleDAO.findByScheduleName(chosenscheduleName);
+            Schedule schedule= scheduleService.getSchedule_ByName(chosenscheduleName);
+            if(schedule!=null)
+            {
+                mzCache.updateScheduleMatchesCache(schedule);
+                table= tableService.createTable(scheduleService.getAllMatchesOfSchedule(schedule));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
+            }
 
-            table= tableService.createTable(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
         }
         catch (Exception e )
         {
@@ -266,11 +309,18 @@ if(table!=null)
     model.addAttribute("schedules",mzCache.getSchedules());
     model.addAttribute("chosenSchedule",chosenscheduleName);
     model.addAttribute("table",table.getPlayerSummaries());
+    return "LK/table";
+}
+else
+{
+    model.addAttribute("chosenSchedule",chosenscheduleName);
+    model.addAttribute("schedules",mzCache.getSchedules());
+    return "LK/table";
 }
 
 
 
-        return "LK/table";
+
     }
 
 

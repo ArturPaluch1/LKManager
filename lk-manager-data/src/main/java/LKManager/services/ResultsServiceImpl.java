@@ -126,8 +126,8 @@ private final CustomScheduleDAOImpl terminarzDAO;
                                         //  mecz.setMatchResult1("1");
 
 
-                                        mecz.setUserMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
-                                        mecz.setOpponentMatchResult1(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
+                                        mecz.setUserMatchResult1(rozegranyMecz.getTeamlist().get(0).getGoals());
+                                        mecz.setOpponentMatchResult1(rozegranyMecz.getTeamlist().get(1).getGoals());
                                     }
 
 
@@ -138,8 +138,8 @@ private final CustomScheduleDAOImpl terminarzDAO;
                                     if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                         //aktualizacja
                                         //  mecz.setMatchResult1("1");
-                                        mecz.setUserMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(1).getGoals()));
-                                        mecz.setOpponentMatchResult2(String.valueOf(rozegranyMecz.getTeamlist().get(0).getGoals()));
+                                        mecz.setUserMatchResult2(rozegranyMecz.getTeamlist().get(1).getGoals());
+                                        mecz.setOpponentMatchResult2(rozegranyMecz.getTeamlist().get(0).getGoals());
                                     }
 
 

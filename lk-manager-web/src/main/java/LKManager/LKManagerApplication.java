@@ -7,10 +7,12 @@ import LKManager.LK.Schedule;
 import LKManager.services.Cache.MZCache;
 import LKManager.services.ScheduleService;
 import LKManager.services.ScheduleServiceImpl;
+import com.zaxxer.hikari.pool.HikariPool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.collection.internal.PersistentBag;
+import org.hibernate.exception.JDBCConnectionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -28,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Timer;
@@ -184,6 +187,33 @@ public class LKManagerApplication {
 	ApplicationRunner applicationRunner(Environment environment) {
 
 		return args -> {
+			MZCacheAction userCacheUpdate = new UpdateUsersCache(mzCache, userDAO);
+			for (int i = 0; i < 10; i++) {
+				System.out.println("i="+i);
+				try{
+					userCacheUpdate.update();
+				}
+				catch (HikariPool.PoolInitializationException   ex)
+				{
+					System.out.println("info o bledzie");
+					ex.printStackTrace();
+				}
+				try {
+					userCacheUpdate.update();
+				} catch (JDBCConnectionException ex) {
+					if (ex.getCause() instanceof SQLException && ex.getCause().getMessage().contains("User 'freedb_kingsajz' has exceeded the 'max_questions' resource")) {
+						// Obsługa wyjątku
+						System.out.println("Przekroczono limit zapytań dla użytkownika 'freedb_kingsajz'");
+						// Dodatkowo, możesz podjąć odpowiednie działania, na przykład zwrócić użytkownikowi komunikat o błędzie
+					} else {
+						// Obsługa innych wyjątków JDBCConnectionException
+						ex.printStackTrace(); // Możesz wydrukować lub zarejestrować informacje o błędzie
+					}
+				}
+
+				System.out.println("users cache updated");
+			}
+
 
 			if (mzCache.getSchedules().size() == 0 || mzCache.getUsers().size() == 0)
 	initializeUsersAndTheNewestSchedule();

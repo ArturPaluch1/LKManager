@@ -56,13 +56,13 @@ public class Match implements Serializable {
     private MatchTeam team;
 
     @Column(name = "user_wynik1")
-    private String userMatchResult1;
+    private Byte userMatchResult1;
     @Column(name = "user_wynik2")
-    private String userMatchResult2;
+    private Byte userMatchResult2;
     @Column(name = "przeciwnik_wynik1")
-    private String opponentMatchResult1;
+    private Byte opponentMatchResult1;
     @Column(name = "przeciwnik_wynik2")
-    private String opponentMatchResult2;
+    private Byte opponentMatchResult2;
 
     //  @Column(name = "user")
   //  @Fetch(FetchMode.JOIN)
@@ -98,38 +98,38 @@ public class Match implements Serializable {
 
 
     @XmlAttribute
-    public String getUserMatchResult1() {
+    public Byte getUserMatchResult1() {
         return userMatchResult1;
     }
 
-    public void setUserMatchResult1(String userMatchResult1) {
+    public void setUserMatchResult1(Byte userMatchResult1) {
         this.userMatchResult1 = userMatchResult1;
     }
 
     @XmlAttribute
-    public String getOpponentMatchResult1() {
+    public Byte getOpponentMatchResult1() {
         return opponentMatchResult1;
     }
 
-    public void setOpponentMatchResult1(String opponentMatchResult1) {
+    public void setOpponentMatchResult1(Byte opponentMatchResult1) {
         this.opponentMatchResult1 = opponentMatchResult1;
     }
 
     @XmlAttribute
-    public String getUserMatchResult2() {
+    public Byte getUserMatchResult2() {
         return userMatchResult2;
     }
 
-    public void setUserMatchResult2(String userMatchResult2) {
+    public void setUserMatchResult2(Byte userMatchResult2) {
         this.userMatchResult2 = userMatchResult2;
     }
 
     @XmlAttribute
-    public String getOpponentMatchResult2() {
+    public Byte getOpponentMatchResult2() {
         return opponentMatchResult2;
     }
 
-    public void setOpponentMatchResult2(String opponentMatchResult2) {
+    public void setOpponentMatchResult2(Byte opponentMatchResult2) {
         this.opponentMatchResult2 = opponentMatchResult2;
     }
 

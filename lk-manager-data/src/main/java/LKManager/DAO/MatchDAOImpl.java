@@ -473,8 +473,8 @@ query.setParameter("userMatchResult1",userMatchResult1);
                                 if (playedMatch.getTeamlist().get(1).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                     //aktualizacja
                                     //  mecz.setMatchResult1("1");
-                                    match.setUserMatchResult1(String.valueOf(playedMatch.getTeamlist().get(0).getGoals()));
-                                    match.setOpponentMatchResult1(String.valueOf(playedMatch.getTeamlist().get(1).getGoals()));
+                                    match.setUserMatchResult1(playedMatch.getTeamlist().get(0).getGoals());
+                                    match.setOpponentMatchResult1(playedMatch.getTeamlist().get(1).getGoals());
                                 }
 
 
@@ -485,8 +485,8 @@ query.setParameter("userMatchResult1",userMatchResult1);
                                 if (playedMatch.getTeamlist().get(0).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
                                     //aktualizacja
                                     //  mecz.setMatchResult1("1");
-                                    match.setUserMatchResult2(String.valueOf(playedMatch.getTeamlist().get(1).getGoals()));
-                                    match.setOpponentMatchResult2(String.valueOf(playedMatch.getTeamlist().get(0).getGoals()));
+                                    match.setUserMatchResult2(playedMatch.getTeamlist().get(1).getGoals());
+                                    match.setOpponentMatchResult2(playedMatch.getTeamlist().get(0).getGoals());
                                 }
 
 
