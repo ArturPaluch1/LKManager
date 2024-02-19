@@ -80,18 +80,18 @@ public class Team implements Serializable {
 
   //@Column(name = "DELETED",columnDefinition = "TINYINT")
     //prod \/
-   @Column(name = "DELETED",columnDefinition = "BIT")
-    private boolean deleted = false;
+  /* @Column(name = "DELETED",columnDefinition = "BIT")
+    private boolean deleted = false;*/
 
     // getters and setters
-    public boolean getDeleted()
+  /*  public boolean getDeleted()
     {
         return  this.deleted;
     }
     public void setDeleted() {
         this.deleted = true;
     }
-
+*/
     @XmlAttribute
     public String getSport() {
         return sport;
