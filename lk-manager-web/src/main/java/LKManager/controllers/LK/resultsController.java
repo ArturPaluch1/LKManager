@@ -1,7 +1,7 @@
 package LKManager.controllers.LK;
 
 import LKManager.DAO.MatchDAOImpl;
-import LKManager.DAO.RoundDAOImpl;
+import LKManager.DAO.RoundDAO;
 import LKManager.DAO.ScheduleDAO;
 import LKManager.LK.Round;
 import LKManager.LK.Schedule;
@@ -34,44 +34,44 @@ public class resultsController {
     private final LKManager.services.MZUserService MZUserService;
     private final MatchService matchService;
     private final ScheduleService scheduleService;
-    private  final RoundDAOImpl rundaDAO;
-    private  final MatchDAOImpl meczDAO;
+    private final RoundDAO roundDAO;
+    private final MatchDAOImpl meczDAO;
 
     // private Integer numerRundy;
-  //  private Terminarz terminarz;
+    //  private Terminarz terminarz;
     private Schedule schedule;
     private final PlikiService plikiService;
     private String poprzednioWybranyTerminarz;
-    private  final ResultsService resultsService;
+    private final ResultsService resultsService;
     @Autowired
-private  MZCache mzCache;
+    private MZCache mzCache;
     private final CookieManager cookieManager;
 
-  //  private List<Terminarz> terminarze;
-  private File[] terminarzeFiles;
-  private List<Schedule>schedules;
-
+    //  private List<Terminarz> terminarze;
+    private File[] terminarzeFiles;
+    private List<Schedule> schedules;
 
 
     private final ScheduleDAO scheduleDAO;
-   /* public resultsController(MZUserService MZUserService, LKManager.services.MZUserService mzUserService, MatchService matchService, URLs urLs, ScheduleService scheduleService, RoundDAOImpl rundaDAO, MatchDAOImpl meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
-        this.MZUserService = mzUserService;
-        this.rundaDAO = rundaDAO;
-        this.meczDAO = meczDAO;
-        this.cookieManager = cookieManager;
-        this.scheduleDAO = scheduleDAO;
-        MZUserService = mzUserService;
-        this.matchService = matchService;
-        this.scheduleService = scheduleService;
-        this.plikiService = plikiService;
-        this.resultsService = resultsService;
-    }
-*/
+
+    /* public resultsController(MZUserService MZUserService, LKManager.services.MZUserService mzUserService, MatchService matchService, URLs urLs, ScheduleService scheduleService, RoundDAOImpl rundaDAO, MatchDAOImpl meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
+         this.MZUserService = mzUserService;
+         this.rundaDAO = rundaDAO;
+         this.meczDAO = meczDAO;
+         this.cookieManager = cookieManager;
+         this.scheduleDAO = scheduleDAO;
+         MZUserService = mzUserService;
+         this.matchService = matchService;
+         this.scheduleService = scheduleService;
+         this.plikiService = plikiService;
+         this.resultsService = resultsService;
+     }
+ */
     /*          todo cookies info linki
     https://dzone.com/articles/how-to-use-cookies-in-spring-boot
 https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-character-such-as-i-get-a-500-internal-error-is-there-any-way-to-fix-this
     */
-    public File[] listFilesForFolder (File folder){
+    public File[] listFilesForFolder(File folder) {
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
                 listFilesForFolder(fileEntry);
@@ -105,11 +105,11 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
     //, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy
 
 
-    public resultsController( ScheduleService scheduleService,MatchService matchService, LKManager.services.MZUserService MZUserService, RoundDAOImpl rundaDAO, MatchDAOImpl meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
+    public resultsController(ScheduleService scheduleService, MatchService matchService, LKManager.services.MZUserService MZUserService, RoundDAO roundDAO, MatchDAOImpl meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
         this.MZUserService = MZUserService;
         this.matchService = matchService;
         this.scheduleService = scheduleService;
-        this.rundaDAO = rundaDAO;
+        this.roundDAO = roundDAO;
         this.meczDAO = meczDAO;
         this.plikiService = plikiService;
         this.resultsService = resultsService;
@@ -117,50 +117,45 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
         this.scheduleDAO = scheduleDAO;
     }
 
-    @GetMapping({"/results"} )
-   // public String index(HttpServletResponse response, Model model, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
-        public String getResults(HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam (value="chosenSchedule", required = false)String chosenSchedule, @RequestParam (value="roundNumber", required = false)String roundNumber) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
+    @GetMapping({"/results"})
+    // public String index(HttpServletResponse response, Model model, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
+    public String getResults(HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule, @RequestParam(value = "roundNumber", required = false) String roundNumber) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
 //,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie,
 //decode cookie bo cookie nie mają spacji i trzeba zakodować
 
-    //    Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
-   //     Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter(a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
+        //    Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
+        //     Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter(a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
 
-   //     cookieManager.decodeCookie(wybranyTerminarzCookie.getValue());
+        //     cookieManager.decodeCookie(wybranyTerminarzCookie.getValue());
 
 
   /*     String numerRundy=    cookieManager.saveOrUpdateNumerRundyCookie(response,nrRundy,request);
         wybranyTerminarz=  cookieManager.saveOrUpdateChosenScheduleCookie(response,wybranyTerminarz,request, terminarzDAO);
  */
         //todo wyzej bkp
- //CookieManager.checkCookies(response,request,nrRundy,wybranyTerminarz,terminarzDAO);
-        roundNumber= CookieManager.saveOrUpdateRoundNumberCookie(Optional.ofNullable(roundNumber), Optional.ofNullable(chosenSchedule),response,request, scheduleDAO);
-        chosenSchedule= CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenSchedule),response,request, scheduleDAO);
+        //CookieManager.checkCookies(response,request,nrRundy,wybranyTerminarz,terminarzDAO);
+        roundNumber = CookieManager.saveOrUpdateRoundNumberCookie(Optional.ofNullable(roundNumber), Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
+        chosenSchedule = CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
 
 
-
-
-     //   cookieManagement(response,numerRundyCookie,wybranyTerminarzCookie, wybranyTerminarz, nrRundy);
-
-
+        //   cookieManagement(response,numerRundyCookie,wybranyTerminarzCookie, wybranyTerminarz, nrRundy);
 
 
 /////////////////////////////////////////////
 
-       // wybranyTerminarzCookie=  URLDecoder.decode(wybranyTerminarzCookie, "utf-8");
-
+        // wybranyTerminarzCookie=  URLDecoder.decode(wybranyTerminarzCookie, "utf-8");
 
 
         /*************************
-        schedules= scheduleDAO.findAll();
-        schedule = scheduleDAO.findByScheduleName(chosenSchedule);
-***************************************/
+         schedules= scheduleDAO.findAll();
+         schedule = scheduleDAO.findByScheduleName(chosenSchedule);
+         ***************************************/
 
 
-      //  schedules= mzCache.getSchedulesFromCacheOrDatabase();
-        schedules=scheduleService.getSchedules();
-      //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
-        schedule =scheduleService.getSchedule_ByName(chosenSchedule);
+        //  schedules= mzCache.getSchedulesFromCacheOrDatabase();
+        schedules = scheduleService.getSchedules();
+        //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
+        schedule = scheduleService.getSchedule_ByName(chosenSchedule);
 
 
 
@@ -212,14 +207,13 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 */
 
 
-        Round  round=rundaDAO.findByScheduleIdAndRoundId(schedule.getId(),Integer.parseInt(roundNumber)-1);
-        List<Round> roundNumbers = rundaDAO.findAllByScheduleId(schedule.getId());
-        List<Match> matches=meczDAO.findAllByScheduleIdAndRoundId(schedule.getId(),Integer.parseInt(roundNumber)-1);
+        Round round = roundDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+        List<Round> roundNumbers = roundDAO.findAllByScheduleId(schedule.getId());
+        List<Match> matches = meczDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
 
 
         model.addAttribute("roundNumber", roundNumber);
         //   model.addAttribute("terminarz", terminarz1);
-
 
 
         model.addAttribute("matches", matches);
@@ -354,14 +348,12 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
     }
 
     @GetMapping({"/results/changeSchedule"})
-    public String changeSchedule(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response,@RequestParam (value="chosenSchedule", required = false)String chosenSchedule)
-    {
-        try{
+    public String changeSchedule(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) {
+        try {
             //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
-            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(chosenSchedule),response,request, scheduleDAO);
-            CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenSchedule),response,request, scheduleDAO);       }
-        catch (Exception e)
-        {
+            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
+            CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -374,120 +366,119 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 
         return "redirect:/results";
     }
-/*
-    private void cookieManagement(HttpServletResponse response,String roundNumberCookie, String chosenScheduleCookie, String chosenSchedule ,String roundNumber) {
+
+    /*
+        private void cookieManagement(HttpServletResponse response,String roundNumberCookie, String chosenScheduleCookie, String chosenSchedule ,String roundNumber) {
 
 
 
-   //     wybranyTerminarz=null;
+       //     wybranyTerminarz=null;
 
-      Cookie cookieRoundNumber=null;
-      //został podany nr rundy
-        if(roundNumber !=null) {
-        //sprawdzanie czy różny, żeby niepotrzebnie nie nadpisywać
-            if(roundNumber!=roundNumberCookie)
-            {
-                cookieRoundNumber = new Cookie("numerRundy", roundNumber);
-                cookieRoundNumber.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
-                cookieRoundNumber.setSecure(true);
-                cookieRoundNumber.setHttpOnly(true);
-                response.addCookie(cookieRoundNumber);
+          Cookie cookieRoundNumber=null;
+          //został podany nr rundy
+            if(roundNumber !=null) {
+            //sprawdzanie czy różny, żeby niepotrzebnie nie nadpisywać
+                if(roundNumber!=roundNumberCookie)
+                {
+                    cookieRoundNumber = new Cookie("numerRundy", roundNumber);
+                    cookieRoundNumber.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+                    cookieRoundNumber.setSecure(true);
+                    cookieRoundNumber.setHttpOnly(true);
+                    response.addCookie(cookieRoundNumber);
+                }
+
             }
 
-        }
+
+            Cookie cookieTerminarz=null;
+            //nie podano terminara
+            if(chosenSchedule ==null) {
+                try{
+    //nie ma cookie terminarza
+    //tworzenie cookie wg najnowszego terminarza (wg id)
+                    if(chosenScheduleCookie.equals("null"))
+                    {
+                        Session s = sessionFactory.openSession();
+                        s.beginTransaction();
 
 
-        Cookie cookieTerminarz=null;
-        //nie podano terminara
-        if(chosenSchedule ==null) {
-            try{
-//nie ma cookie terminarza
-//tworzenie cookie wg najnowszego terminarza (wg id)
-                if(chosenScheduleCookie.equals("null"))
+                        String hql =   " from Terminarz t where t.id=" +
+                                "(select max(t.id) from Terminarz t)";
+
+                        Query query = s.createQuery(hql);
+                        Schedule schedule2 = (Schedule) query.getSingleResult();
+                        s.getTransaction().commit();
+    s.close();
+                        cookieTerminarz = new Cookie("wybranyTerminarz", URLEncoder.encode(schedule2.getName(),"utf-8") );
+                        cookieTerminarz.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+                        cookieTerminarz.setSecure(true);
+                        cookieTerminarz.setHttpOnly(true);
+                    }
+                    else
+                    {
+                        cookieTerminarz = new Cookie("wybranyTerminarz", URLEncoder.encode(chosenScheduleCookie, StandardCharsets.UTF_8) );
+                  //      cookieTerminarz = new Cookie("wybranyTerminarz", URLEncoder.encode("null","utf-8") );
+                        cookieTerminarz.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+                        cookieTerminarz.setSecure(true);
+                        cookieTerminarz.setHttpOnly(true);
+                    }
+
+                    //add cookie to response
+
+                    response.addCookie(cookieTerminarz);
+                    }
+
+                catch (Exception e)
                 {
-                    Session s = sessionFactory.openSession();
-                    s.beginTransaction();
 
-
-                    String hql =   " from Terminarz t where t.id=" +
-                            "(select max(t.id) from Terminarz t)";
-
-                    Query query = s.createQuery(hql);
-                    Schedule schedule2 = (Schedule) query.getSingleResult();
-                    s.getTransaction().commit();
-s.close();
-                    cookieTerminarz = new Cookie("wybranyTerminarz", URLEncoder.encode(schedule2.getName(),"utf-8") );
-                    cookieTerminarz.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
-                    cookieTerminarz.setSecure(true);
-                    cookieTerminarz.setHttpOnly(true);
-                }
-                else
-                {
-                    cookieTerminarz = new Cookie("wybranyTerminarz", URLEncoder.encode(chosenScheduleCookie, StandardCharsets.UTF_8) );
-              //      cookieTerminarz = new Cookie("wybranyTerminarz", URLEncoder.encode("null","utf-8") );
-                    cookieTerminarz.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
-                    cookieTerminarz.setSecure(true);
-                    cookieTerminarz.setHttpOnly(true);
+            int te=1;
                 }
 
+            }
+            //został podany terminarz
+            else
+            {
+
+                cookieTerminarz = new Cookie("wybranyTerminarz", chosenSchedule);
+
+
+                cookieTerminarz.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
+                cookieTerminarz.setSecure(true);
+                cookieTerminarz.setHttpOnly(true);
                 //add cookie to response
 
                 response.addCookie(cookieTerminarz);
-                }
-
-            catch (Exception e)
-            {
-
-        int te=1;
             }
 
+
+
         }
-        //został podany terminarz
-        else
-        {
-
-            cookieTerminarz = new Cookie("wybranyTerminarz", chosenSchedule);
-
-
-            cookieTerminarz.setMaxAge(7 * 24 * 60 * 60); // expires in 7 days
-            cookieTerminarz.setSecure(true);
-            cookieTerminarz.setHttpOnly(true);
-            //add cookie to response
-
-            response.addCookie(cookieTerminarz);
-        }
-
-
-
-    }
-*/
-    @PostMapping({"/editResults"} )
+    */
+    @PostMapping({"/editResults"})
     public String editResults(Model model,
-                               RedirectAttributes redirectAttributes,
-                               @RequestParam(value = "chosenSchedule", required=true)String chosenSchedule,
-                               //NUMER RUNDY NIE INDEX RUNDY czyli -1
-                               @RequestParam(value = "roundNumber", required=true)Integer roundNumber,
-                               @RequestParam(value = "matchId", required=true)List<Long> matchesId,
-                               @RequestParam(value = "matches", required=false ) List<Match> matches,
-                               @RequestParam(value = "user", required=true ) List<String> user,
-                               @RequestParam(value = "opponentUser", required=true ) List<String> opponentUser,
-                               @RequestParam(value = "UserMatchResult1", required=false ) List<String> userMatchResults1,
-                               @RequestParam(value = "OpponentMatchResult1", required=false ) List<String> opponentMatchResults1,
-                               @RequestParam(value = "UserMatchResult2", required=false ) List<String> userMatchResults2,
-                               @RequestParam(value = "OpponentMatchResult2", required=false ) List<String> opponentMatchResults2,
-                               @RequestParam(value = "bob", required=false ) List<String> bob) throws JAXBException {
+                              RedirectAttributes redirectAttributes,
+                              @RequestParam(value = "chosenSchedule", required = true) String chosenSchedule,
+                              //NUMER RUNDY NIE INDEX RUNDY czyli -1
+                              @RequestParam(value = "roundNumber", required = true) Integer roundNumber,
+                              @RequestParam(value = "matchId", required = true) List<Long> matchesId,
+                              @RequestParam(value = "matches", required = false) List<Match> matches,
+                              @RequestParam(value = "user", required = true) List<String> user,
+                              @RequestParam(value = "opponentUser", required = true) List<String> opponentUser,
+                              @RequestParam(value = "UserMatchResult1", required = false) List<String> userMatchResults1,
+                              @RequestParam(value = "OpponentMatchResult1", required = false) List<String> opponentMatchResults1,
+                              @RequestParam(value = "UserMatchResult2", required = false) List<String> userMatchResults2,
+                              @RequestParam(value = "OpponentMatchResult2", required = false) List<String> opponentMatchResults2,
+                              @RequestParam(value = "bob", required = false) List<String> bob) throws JAXBException {
 
 
         roundNumber--;
-        if(roundNumber==-1)
-        {
-            roundNumber=0;
+        if (roundNumber == -1) {
+            roundNumber = 0;
         }
-        meczDAO.updateMatchesResults(matchesId,userMatchResults1,userMatchResults2,opponentMatchResults1,opponentMatchResults2);
+        meczDAO.updateMatchesResults(matchesId, userMatchResults1, userMatchResults2, opponentMatchResults1, opponentMatchResults2);
 
         //folder z terminarzami
-       // terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
-
+        // terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
 
         // zmiana nazwy numeru rundy na indeks
@@ -516,21 +507,18 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
         terminarzService.aktualizujTerminarz(terminarz,wybranyTerminarz);
 */
-        redirectAttributes.addAttribute("roundNumber", roundNumber+1);
+        redirectAttributes.addAttribute("roundNumber", roundNumber + 1);
         redirectAttributes.addAttribute("chosenSchedule", chosenSchedule);
 
         return "redirect:/results";
     }
 
 
-
-    @GetMapping ("/getRoundResults")
-    public String getRoundResults(RedirectAttributes redirectAttributes, @RequestParam(value = "round", required = true)Integer roundNumber, @RequestParam(value = "chosenSchedule", required = false)String chosenSchedule)
-    {
-        int oo=9;
+    @GetMapping("/getRoundResults")
+    public String getRoundResults(RedirectAttributes redirectAttributes, @RequestParam(value = "round", required = true) Integer roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) {
+        int oo = 9;
         //     this.numerRundy=numerRundy;
         //  this.wybranyTerminarz=wybranyTerminarz;
-
 
 
         redirectAttributes.addAttribute("roundNumber", roundNumber);
@@ -540,145 +528,42 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
     }
 
 
-
-
-    @PostMapping ("/update")
+    @PostMapping("/update")
     public String aktualizujWyniki(
             Model model,
             RedirectAttributes redirectAttributes,
-            @RequestParam(value = "roundNumber",required = false)Integer roundNumber,
-            @RequestParam(value = "chosenSchedule", required = true)String chosenSchedule
-
+            @RequestParam(value = "roundNumber", required = false) Integer roundNumber,
+            @RequestParam(value = "chosenSchedule", required = true) String chosenScheduleName,
+            RedirectAttributes attributes
     ) throws JAXBException, DatatypeConfigurationException, ParserConfigurationException, IOException, SAXException {
-        if(roundNumber== null||roundNumber==0)
-        {
-            roundNumber=1;
+        if (roundNumber == null || roundNumber == 0) {
+            //numer rundy nie id  !!!
+            roundNumber = 1;
         }
 
-        Round round = rundaDAO.findRoundWitchMatches(chosenSchedule,roundNumber);
-
-        if(round != null)
+Schedule chosenSchedule= scheduleService.getSchedule_ByName(chosenScheduleName);
+        if(chosenSchedule!=null)
         {
-            // terminarz= terminarzService.wczytajTerminarz("terminarz.xml");
+            if (resultsService.updateResults(roundNumber, chosenSchedule) != null) {
+                redirectAttributes.addAttribute("roundNumber", roundNumber);
+                redirectAttributes.addAttribute("chosenSchedule", chosenSchedule);
+
+                //  mzCache.updateRound(round);
+
+                return "redirect:/results";
+            } else {
+                //todo
+                attributes.addAttribute("errorMessage", "nie udało się zaktualizować rundy");
+                return "redirect:/errorMessage";
+            }
         }
         else
         {
-            //    terminarz=terminarzService.wczytajTerminarz("lk-manager-web/src/main/java/LKManager/XMLData/terminarz.xml");
-     //       terminarz=terminarzService.wczytajTerminarz(wybranyTerminarz);
-          //  terminarz=terminarzDAO.findByTerminarzName(wybranyTerminarz);
-
-
-                //todo zablokowac robienie 2 z ta samą nazwą?
-
-
-
-                //todo nie ma takiej rundy
-                return "redirect:/dodajTerminarz";
-
-
-        }
-
-// runda -1 bo rundy od 1 a indeksy w liscie od 0
-  //      if(terminarz.getRundy().get(numerRundy-1).getStatus()== Runda.status.rozegrana)
-        if(round.isPlayed())
-        {
-            // TODO: 2022-11-23   zamienic na zapytanie, że czy na pewno chcesz zmienić rozegrana runde
-            //rundy.get(numerRundy-1).setPlayed(true);
-            resultsService.updateResults(roundNumber, round,matchService, chosenSchedule);
-            redirectAttributes.addAttribute("numerRundy", roundNumber);
-            redirectAttributes.addAttribute("chosenSchedule",chosenSchedule );
-
-
-            return "redirect:/results";
-        }
-        else
-        {
-            round.setPlayed(true);
-            resultsService.updateResults(roundNumber, round,matchService, chosenSchedule);
-            redirectAttributes.addAttribute("roundNumber", roundNumber);
-            redirectAttributes.addAttribute("chosenSchedule",chosenSchedule );
-            return "redirect:/results";
+            attributes.addAttribute("errorMessage", "nie ma takiego terminarza");
+            return "redirect:/errorMessage";
         }
 
 
 
-
-  /*//////////////////////////////////////////////////////////
-      var data=  terminarz.getTerminarz().get(getNumerRundy()).getData();
-
- //       searchLoop:
- //       break searchLoop;
-
-      //mecze danej rundy
-      for (var item :terminarz.getTerminarz().get(getNumerRundy()).getMecze()
-             )
-      {
-             var grajek1= item.getUser();
-             var meczeGrajka1=  matchService.findPlayedByUsername(grajek1.getUsername());
-var idDruzynyPrzeciwnika =item.getopponentUser().getTeamlist().get(0).getTeamId();
-          List<Match> znalezione= new ArrayList<>();
-          //mecze danego grajka
-            for (var mecz:meczeGrajka1.getMatches()
-                 ) {
-                    if (mecz.getDate().contains(terminarz.getTerminarz().get(getNumerRundy()).getData().toString()))
-                    {
-                        if (mecz.getType().equals("friendly")) {
-                            var oponent = item.getopponentUser().getTeamlist().get(0).getTeamId();
-
-                            if ( idDruzynyPrzeciwnika
-                                    ==    mecz.getTeamlist().get(0).getTeamId()
-                                    ||  idDruzynyPrzeciwnika== mecz.getTeamlist().get(1).getTeamId())
-
-                                    {
-                                znalezione.add(mecz);
-
-                            }
-
-                        }
-                    }
-
-
-
-            }
-
-            if(znalezione.size()!=0)
-            {
-int y=9;
-             //  znaleziony.getTeamlist().get(0).
-
-            }
-            else
-            {
-                int j=0;
-                //todo wyswetlic ze nie znaleziono meczu ->wpisac nr
-            }
-
-        }/////////////////////////////////////////////////////////////*/
     }
-
-
-/*
-@ResponseStatus(HttpStatus.NOT_FOUND)
-@ExceptionHandler(NotFoundException.class)
-    public ModelAndView handleNotFound()
-    {
-        ModelAndView mav = new ModelAndView();
-        mav.setViewName("temp");
-        return  mav;
-    }
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class NotFoundException extends  RuntimeException{
-    public NotFoundException() {
-        super();
-    }
-
-    public NotFoundException(String message) {
-        super(message);
-    }
-
-    public NotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-}
-*/
 }

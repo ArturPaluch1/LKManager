@@ -1,7 +1,9 @@
 package LKManager.services.Cache;
 
+import LKManager.DAO.RoundDAO;
 import LKManager.DAO.ScheduleDAO;
 import LKManager.LK.Comparators.scheduleIdComparator;
+import LKManager.LK.Round;
 import LKManager.LK.Schedule;
 import LKManager.LK.Table;
 import LKManager.model.MatchesMz.Match;
@@ -31,18 +33,27 @@ public class MZCache {
   //  private Schedule lastSchedule;
     private List<Schedule> schedules;
     private List<Match> matches;
+    private final RoundDAO roundDAO;
 
    // ScheduleDAO customScheduleDAOImpl,
 
 
-    public MZCache(ScheduleDAO scheduleDAO) {
+    public MZCache(ScheduleDAO scheduleDAO, RoundDAO roundDAO) {
         this.scheduleDAO = scheduleDAO;
+        this.roundDAO = roundDAO;
         this.table = new Table();
         this.users= new ArrayList<>();
         this.schedules = new ArrayList<>();
         this.matches = new ArrayList<>();
     }
 
+    public Round updateRound(Round round, Schedule schedule)
+    {
+    Round round1 =    schedules.stream().filter(s -> s.getId() == schedule.getId()).findFirst().orElse(null).getRounds().stream().filter(r -> r.getId() == round.getId()).findFirst().orElse(null);
+    round.setMatches(round1.getMatches());
+   return round;
+       // Round roundInDB= roundDAO.findById(round.getId()).orElse(null);
+    }
     public Table getTable() {
         return table;
     }

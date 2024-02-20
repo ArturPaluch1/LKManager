@@ -15,9 +15,12 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, CustomSchedu
     )
     List<Schedule> findAllFetchRoundsEagerly();
 
-    @Query("SELECT distinct s FROM Schedule s left JOIN FETCH s.rounds r where s.id=:scheduleId "
-    )
-    Schedule findByIdAndFetchRoundsEagerly(@Param("scheduleId") long scheduleId);
+    @Query("SELECT distinct s FROM Schedule s left JOIN FETCH s.rounds r where s.id=:scheduleId ")
+ //   @Query("SELECT DISTINCT s FROM Schedule s LEFT JOIN FETCH s.rounds r LEFT JOIN FETCH r.matches WHERE s.id = :scheduleId")
+ //   @Query("SELECT DISTINCT s FROM Schedule s LEFT JOIN FETCH s.rounds LEFT JOIN FETCH s.rounds.matches WHERE s.id = :scheduleId")
+
+
+    Schedule findByIdAndFetchMatchesEagerly(@Param("scheduleId") long scheduleId);
 
   /*  @Query("SELECT DISTINCT s FROM Schedule s " +
             "LEFT JOIN FETCH s.rounds r " +

@@ -140,6 +140,7 @@ public class LKManagerApplication {
 					) {
 						if(!((PersistentBag) s.getRounds().get(0).getMatches()).wasInitialized())
 						{
+							System.out.println(s.getName() + "not initialized");
 							action=new updateScheduleCacheByScheduleId(s.getId(), mzCache, scheduleService, scheduleDAO);
 							break;
 						}
@@ -167,7 +168,7 @@ public class LKManagerApplication {
 		//prod co 62 min
 		timer.schedule(task2, 3720000, 3720000  );
 		//dev co 30s
-	//	timer.schedule(task2, 30000 , 30000 );
+	//	timer.schedule(task2, 0 , 30000 );
 	}
 	public static void main(String[] args) {
 
@@ -314,6 +315,7 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 			List<Schedule> schedules = scheduleDAO.findAllFetchRoundsEagerly();
 			schedules.sort(new ScheduleByLocalDateComparator());
 			mzCache.setSchedules(schedules);
+
 		}
 	}
 
@@ -340,8 +342,8 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 			}
 
 			//List<Schedule> finalSchedules = schedules;
-			var temps = mzCache.getSchedules().stream().filter(s -> s.getId() == id).findFirst().get();
-			temps.setRounds(scheduleService.findByIdWithRoundsMatchesUsersAndTeams(id).getRounds());
+			 mzCache.getSchedules().stream().filter(s -> s.getId() == id).findFirst().get().setRounds(scheduleService.findByIdWithRoundsMatchesUsersAndTeams(id).getRounds());
+			//System.out.println("schedule cache update"+temps.getRounds().get(0).getMatches());
 		}
 	}
 

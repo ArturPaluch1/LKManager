@@ -30,7 +30,7 @@ public class RoundDAOImpl implements CustomRoundDAO {
 
     @Override
     @Transactional
-    public void saveRound(Round round) {
+    public Round saveRound(Round round) {
 
 
 
@@ -64,6 +64,7 @@ public class RoundDAOImpl implements CustomRoundDAO {
 
 
             System.out.println("po commicie");
+           // return round;
 
         }
 
@@ -72,9 +73,11 @@ public class RoundDAOImpl implements CustomRoundDAO {
             e.printStackTrace();
             System.out.println("error po commicie");
         } finally {
+
             s.close();
         }
-
+//todo na pewno zwraca tu round z meczami?
+        return round;
     }
    @Override
    @Transactional
@@ -195,7 +198,7 @@ public class RoundDAOImpl implements CustomRoundDAO {
         }
     }
 
-    @Override
+  /*  @Override
     public Round findRoundWitchMatches(String chosenScheduleName, Integer roundNumber) {
         Session s = sessionFactory.openSession();
      Round round= null;
@@ -205,11 +208,11 @@ public class RoundDAOImpl implements CustomRoundDAO {
 
 
             //   String hql = " from Runda r  where r.id=(select max(r.id) from Runda r)";
-           /* String hql = " Select r from Runda r " +
+           *//* String hql = " Select r from Runda r " +
                     "left join fetch  r.mecze"+
                     " inner join "+
                     "Terminarz t on t.id=r.terminarz "+
-                    "where t.Name=:terminarzName and r.nr=:numerRundy order by r.date";*/
+                    "where t.Name=:terminarzName and r.nr=:numerRundy order by r.date";*//*
             String hql = " Select r from Round r " +
                     " join fetch  r.matches"+
                     "  join fetch r.schedule s"+
@@ -228,7 +231,7 @@ public class RoundDAOImpl implements CustomRoundDAO {
             s.close();
             return round;
         }
-    }
+    }*/
     public Round findLastById() {
         Session s = sessionFactory.openSession();
         Round round =null;

@@ -14,7 +14,7 @@ public interface ResultsService {
  //   void aktualizujWyniki(Integer runda,Terminarz terminarz, MatchService matchService, String nazwaPliku) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException;
 
 
-    void updateResults(Integer roundNumber, Round round, MatchService matchService, String scheduleName) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException;
+    Round updateResults(Integer roundNumber, Schedule schedule) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException;
 
     void saveToXML(Schedule schedule, String fileName);
 

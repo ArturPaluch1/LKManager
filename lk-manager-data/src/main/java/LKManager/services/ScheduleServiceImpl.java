@@ -48,7 +48,12 @@ private final MZCache mzCache;
 
     public Schedule findByIdWithRoundsMatchesUsersAndTeams(long scheduleId)
     {
-        Schedule schedule= scheduleDAO.findByIdAndFetchRoundsEagerly(scheduleId);
+        Schedule schedule= scheduleDAO.findByScheduleId(scheduleId);
+
+  //    var t=  roundDAO.findRoundWithMatches(schedule.getName(),1);
+      var tt= roundDAO.findAllRoundsOfSchedule(schedule.getName());
+       // schedule.getRounds().forEach(r->r.setMatches(roundDAO.findRoundWithMatches(schedule.getName(),r.getNr()).getMatches()));
+schedule.setRounds(tt);
 /*
 schedule.getRounds().forEach(
         r-> r.setMatches( roundDAO.findRoundWitchMatches(schedule.getName(),r.getNr()).getMatches()));
@@ -57,8 +62,15 @@ schedule.getRounds().forEach(
     //    r->r.setMatches(r.getMatches()));
 return schedule;
     }
+
+
+
     @Override
+
+
     public Schedule getSchedule_ByName(String scheduleName) {
+
+        System.out.println("temp in getsch by name");
         if(scheduleName.equals(null))
         {
             return null;
@@ -151,6 +163,7 @@ if(foundSchedule!=null)
 
     @Override
     public List<Match> getAllMatchesOfSchedule(Schedule schedule) {
+
        List<Match>tempList= new ArrayList<>();
         schedule.getRounds().forEach(a-> tempList.addAll(a.getMatches()));
         return tempList;

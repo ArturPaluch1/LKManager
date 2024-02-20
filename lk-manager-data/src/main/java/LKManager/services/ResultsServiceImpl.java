@@ -1,10 +1,12 @@
 package LKManager.services;
 
-import LKManager.DAO.RoundDAOImpl;
 import LKManager.DAO.CustomScheduleDAOImpl;
+import LKManager.DAO.RoundDAO;
 import LKManager.LK.Round;
 import LKManager.LK.Schedule;
 import LKManager.model.UserMZ.UserData;
+import LKManager.services.Cache.MZCache;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
@@ -25,35 +27,80 @@ import java.util.GregorianCalendar;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ResultsServiceImpl implements ResultsService {
 
 
 private final MZUserService mzUserService;
     private final CustomScheduleDAOImpl customScheduleDAOimpl;
-private final RoundDAOImpl rundaDAO;
-
+ private final    MatchService matchService;
+private final RoundDAO roundDAO;
+private MZCache mzCache;
 private final ScheduleService scheduleService;
   private final EntityManager entityManager;
-    public ResultsServiceImpl(MZUserService mzUserService, CustomScheduleDAOImpl customScheduleDAOimpl, RoundDAOImpl rundaDAO, ScheduleService scheduleService, EntityManager entityManager, CustomScheduleDAOImpl terminarzDAO) {
-        this.mzUserService = mzUserService;
-        this.customScheduleDAOimpl = customScheduleDAOimpl;
-        this.rundaDAO = rundaDAO;
 
 
-        this.scheduleService = scheduleService;
-        this.entityManager = entityManager;
-        this.terminarzDAO = terminarzDAO;
-    }
 
-private final CustomScheduleDAOImpl terminarzDAO;
 
 
 
     @Override
-    public void updateResults(Integer roundNumber, Round round, MatchService matchService, String scheduleName) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
+    public Round updateResults(Integer roundNumber,  Schedule schedule) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
 
 
-        extracted(roundNumber, scheduleName, matchService );
+        //todo tu zamienic zeby najpierw szukalo w cache
+        Round round = roundDAO.findRoundWitchMatches(schedule.getName(),roundNumber);
+
+        if(round != null)
+        {
+            // terminarz= terminarzService.wczytajTerminarz("terminarz.xml");
+        }
+        else
+        {
+            //todo zablokowac robienie 2 z ta samą nazwą?
+            //todo nie ma takiej rundy
+            return null;
+        }
+
+// runda -1 bo rundy od 1 a indeksy w liscie od 0
+        //      if(terminarz.getRundy().get(numerRundy-1).getStatus()== Runda.status.rozegrana)
+        //todo to jest sprawdzane ale zawsze jest false, a w baie jest niezapisane bo nie ma takiej kolumny. Albo usunąć albo dodać kolumnę
+  /*      if(round.isPlayed())
+        {
+            // TODO: 2022-11-23   zamienic na zapytanie, że czy na pewno chcesz zmienić rozegrana runde
+            //rundy.get(numerRundy-1).setPlayed(true);
+            resultsService.updateResults(roundNumber, round,matchService, chosenSchedule);
+            redirectAttributes.addAttribute("numerRundy", roundNumber);
+            redirectAttributes.addAttribute("chosenSchedule",chosenSchedule );
+
+
+            return "redirect:/results";
+        }
+        else
+        {
+            round.setPlayed(true);
+            resultsService.updateResults(roundNumber, round,matchService, chosenSchedule);
+            redirectAttributes.addAttribute("roundNumber", roundNumber);
+            redirectAttributes.addAttribute("chosenSchedule",chosenSchedule );
+
+            mzCache.updateRound(round);
+
+            return "redirect:/results";
+        }
+
+*/
+
+
+
+
+
+       round= getResultsFromMZ(roundNumber, schedule.getName() );
+
+        //todo to zamienić na  jpql
+     //   roundDAO.saveRound(round);
+        roundDAO.save(round);
+
+mzCache.updateRound(round, schedule);
 
 
      //   terminarzDAO.saveRound(terminarz, runda);
@@ -65,10 +112,10 @@ private final CustomScheduleDAOImpl terminarzDAO;
 
 
 //terminarzDAO.saveResults(roundNumber, terminarz,matchService, mzUserService);
-
+return round;
     }
 @Transactional
-    private  void extracted(Integer roundNumber, String scheduleName, MatchService matchService) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
+    private  Round getResultsFromMZ(Integer roundNumber, String scheduleName) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 
@@ -84,7 +131,7 @@ private final CustomScheduleDAOImpl terminarzDAO;
       //  Runda round= rundaDAO.findRound(scheduleName,roundNumber);
 
         //todo jak wyzej nie dzała to nizej sprobowac
-      Round round= rundaDAO.findRoundWitchMatches(scheduleName,roundNumber);
+      Round round= roundDAO.findRoundWitchMatches(scheduleName,roundNumber);
 
 
 
@@ -154,7 +201,7 @@ private final CustomScheduleDAOImpl terminarzDAO;
 
                 }
 
-               rundaDAO.saveRound(round);
+            return   round;
 
 
 

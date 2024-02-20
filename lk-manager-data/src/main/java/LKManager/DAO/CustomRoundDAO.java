@@ -8,7 +8,7 @@ public interface CustomRoundDAO {
 
 //    Runda save(Runda runda);
 
-    void saveRound(Round round);
+    Round saveRound(Round round);
 
     //  void saveRound(Runda runda, int runda);
     //  List<Terminarz> findAll();
@@ -21,7 +21,10 @@ public interface CustomRoundDAO {
 
     Round findRound(String chosenScheduleName, Integer roundNumber);
 
-    Round findRoundWitchMatches(String chosenScheduleName, Integer roundNumber);
+ /*   Round findRoundWitchMatches(String chosenScheduleName, Integer roundNumber);*/
+
+
+
 
     //  Terminarz findByTerminarzName(String name);
 
