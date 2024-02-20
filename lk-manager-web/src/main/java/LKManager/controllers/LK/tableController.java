@@ -94,7 +94,7 @@ if(!chosenscheduleName.equals(null))
             {
                 // if(mzCache.getSchedules())
                 //       matches=  matchDAOimpl.findAllbyScheduleId(schedule.getId());// mzCache.getTerminarze().stream().filter(a->a.getName().equals(finalWybranyTerminarz)).distinct().toList();
-                schedule.getRounds().forEach(r->matches.addAll(r.getMatches()));
+//                schedule.getRounds().forEach(r->matches.addAll(r.getMatches()));
                 // Terminarz schedule;
     /*            if(matches.size()!=0)
                 {*/

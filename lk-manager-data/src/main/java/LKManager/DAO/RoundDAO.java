@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface RoundDAO extends JpaRepository<Round,Long> ,CustomRoundDAO{
 
-    @Query("SELECT r FROM Round r LEFT JOIN Schedule s ON r.schedule = s join fetch r.matches m  WHERE s.name = :scheduleName order by r.date")
+    @Query("SELECT distinct r FROM Round r LEFT JOIN Schedule s ON r.schedule = s join fetch r.matches m  WHERE s.name = :scheduleName order by r.date")
     List<Round> findAllRoundsOfSchedule(@Param("scheduleName")String scheduleName);
 
     @Query("SELECT r FROM Round r LEFT JOIN Schedule s ON r.schedule = s WHERE s.name = :scheduleName and r.nr=:roundNumber")

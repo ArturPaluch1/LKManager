@@ -342,6 +342,8 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 			}
 
 			//List<Schedule> finalSchedules = schedules;
+
+
 			 mzCache.getSchedules().stream().filter(s -> s.getId() == id).findFirst().get().setRounds(scheduleService.findByIdWithRoundsMatchesUsersAndTeams(id).getRounds());
 			//System.out.println("schedule cache update"+temps.getRounds().get(0).getMatches());
 		}
@@ -359,6 +361,10 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 		@Override @Transactional
 		public void update() {
 
+
+
+
+
 			List<Schedule> schedules = null;
 			if (mzCache.getSchedules().size() != 0) {
 				schedules = mzCache.getSchedules();
@@ -366,8 +372,12 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 				schedules = scheduleDAO.findAllFetchRoundsEagerly();
 			}
 
+
 			List<Schedule> finalSchedules = schedules;
 			var temps = mzCache.getSchedules().stream().filter(s -> s.getId() == finalSchedules.get(0).getId()).findFirst().get();
+
+
+
 			temps.setRounds(scheduleService.findByIdWithRoundsMatchesUsersAndTeams(schedules.get(0).getId()).getRounds());
 
 		}
