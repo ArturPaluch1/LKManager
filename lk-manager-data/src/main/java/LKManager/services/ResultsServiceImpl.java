@@ -47,10 +47,10 @@ private final ScheduleService scheduleService;
     @Override
     public Round updateResults(Integer roundNumber,  Schedule schedule) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
 
-
+        System.out.println("round number: "+roundNumber+"  sched: "+schedule.getName());
         //todo tu zamienic zeby najpierw szukalo w cache
         Round round = roundDAO.findRoundWitchMatches(schedule.getName(),roundNumber);
-
+     //   System.out.println("round"+round.getMatches());
         if(round != null)
         {
             // terminarz= terminarzService.wczytajTerminarz("terminarz.xml");
@@ -98,10 +98,10 @@ private final ScheduleService scheduleService;
 
         //todo to zamienić na  jpql
      //   roundDAO.saveRound(round);
-        roundDAO.save(round);
-
+    round=    roundDAO.save(round);
+        System.out.println("round=" + round.getMatches());
 mzCache.updateRound(round, schedule);
-
+        //System.out.println("cache:=" + mzCache.getSchedules().stream().filter(s->s.getName().equals(schedule)).findFirst().get().getRounds().get(0).getMatches());
 
      //   terminarzDAO.saveRound(terminarz, runda);
 //zapiszDoXml(terminarz, nazwaPliku);
@@ -131,7 +131,7 @@ return round;
       //  Runda round= rundaDAO.findRound(scheduleName,roundNumber);
 
         //todo jak wyzej nie dzała to nizej sprobowac
-      Round round= roundDAO.findRoundWitchMatches(scheduleName,roundNumber);
+      Round round=    roundDAO.findRoundWitchMatches(scheduleName,roundNumber);
 
 
 

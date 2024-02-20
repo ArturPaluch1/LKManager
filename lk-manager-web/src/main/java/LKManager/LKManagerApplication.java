@@ -3,10 +3,11 @@ package LKManager;
 import LKManager.DAO.ScheduleDAO;
 import LKManager.DAO.UserDAO;
 import LKManager.LK.Comparators.ScheduleByLocalDateComparator;
+import LKManager.LK.Round;
 import LKManager.LK.Schedule;
 import LKManager.services.Cache.MZCache;
+import LKManager.services.ResultsService;
 import LKManager.services.ScheduleService;
-import LKManager.services.ScheduleServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,9 +19,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.transaction.annotation.Transactional;
+import org.xml.sax.SAXException;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.xml.bind.JAXBException;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,25 +33,33 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 @SpringBootApplication
 public class LKManagerApplication {
+
+	@AllArgsConstructor @Getter @Setter
+	public class RoundAndSchedule
+	{
+		private 	Round round;
+		private 	Schedule schedule;
+	}
 	@Autowired
 
 	protected MZCache mzCache;
 	protected final UserDAO userDAO;
+	private final ResultsService resultsService;
 	protected final ScheduleDAO scheduleDAO;
-	private final ScheduleServiceImpl scheduleService;
+	private final ScheduleService scheduleService;
 	private static final long delay = 14L;
 
-	public LKManagerApplication(MZCache mzCache, UserDAO userDAO, ScheduleDAO scheduleDAO, ScheduleServiceImpl scheduleService) {
+	public LKManagerApplication(MZCache mzCache, UserDAO userDAO, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService) {
 		this.mzCache = mzCache;
 		this.userDAO = userDAO;
+		this.resultsService = resultsService;
 		this.scheduleDAO = scheduleDAO;
 		this.scheduleService = scheduleService;
 	}
@@ -135,6 +148,9 @@ public class LKManagerApplication {
 				}
 				else
 				{
+
+
+
 					MZCacheAction action=null;
 					for (Schedule s : mzCache.getSchedules()
 					) {
@@ -151,6 +167,10 @@ public class LKManagerApplication {
 					{
 						action.update();
 						System.out.println("updated ");
+					}
+					else  //sprawdza dopiero jak wszystkie schedule sa w cache
+					{
+						checkRoundsToUpdate();
 					}
 
 			/*	for (var i : actionQuery
@@ -170,6 +190,63 @@ public class LKManagerApplication {
 		//dev co 30s
 	//	timer.schedule(task2, 0 , 30000 );
 	}
+
+	private void checkRoundsToUpdate() {
+		List<Round> rounds=new ArrayList<>();
+
+
+
+		List<Schedule> t = mzCache.getSchedules()
+				.stream()
+				.filter(s -> s.getRounds().stream()
+						.anyMatch(r -> r.getDate().equals(LocalDate.now().minusDays(1))))
+				.collect(Collectors.toList());
+
+
+
+		List<RoundAndSchedule> matchingRounds = mzCache.getSchedules()
+				.stream()
+				.flatMap(s -> s.getRounds().stream()
+						.filter(r -> r.getDate().equals(LocalDate.now().minusDays(1)))
+						.findFirst()
+						.map(round -> new RoundAndSchedule(round, s)) // Tworzy obiekt RoundAndSchedule
+						.stream())
+				.collect(Collectors.toList());
+
+if(matchingRounds.size()!=0)
+{
+
+
+	for (RoundAndSchedule ras:matchingRounds
+		 ) {
+		if(ras.getRound().getMatches().stream().filter(
+					m->  (m.getUserMatchResult1()==null&&m.getOpponentMatchResult1()==null)||
+							(m.getUserMatchResult2()==null&&m.getOpponentMatchResult2()==null)
+		)
+		.count()>=ras.getRound().getMatches().size())
+		try {
+
+			System.out.println("proba aktualizacji");
+			if(resultsService.updateResults(Long.valueOf(ras.getRound().getNr()).intValue(),ras.getSchedule())!=null)
+			System.out.println("proba udana");
+		} catch (DatatypeConfigurationException e) {
+			throw new RuntimeException(e);
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException(e);
+		} catch (JAXBException e) {
+			throw new RuntimeException(e);
+		} catch (SAXException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+}
+
+	}
+
+
 	public static void main(String[] args) {
 
 		SpringApplication.run(LKManagerApplication.class, args);
