@@ -67,10 +67,14 @@ public class TableServiceImpl implements TableService {
         if(distinctUsers.size()!=0 && matches.size()!=0)
         {
             distinctUsers.forEach(a->{
-                var tempGracz= new PlayerSummary();
-                tempGracz.setGracz(a);
+                if(!a.getUsername().equals("pauza"))
+                {
+                    var tempGracz= new PlayerSummary();
+                    tempGracz.setGracz(a);
 
-                table.getPlayerSummaries().add(tempGracz);
+                    table.getPlayerSummaries().add(tempGracz);
+                }
+
             });
 
 
