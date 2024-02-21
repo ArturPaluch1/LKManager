@@ -50,8 +50,8 @@ public class MZCache {
     public Round updateRound(Round round, Schedule schedule)
     {
     Round round1 =    schedules.stream().filter(s -> s.getId() == schedule.getId()).findFirst().orElse(null).getRounds().stream().filter(r -> r.getId() == round.getId()).findFirst().orElse(null);
-    round.setMatches(round1.getMatches());
-   return round;
+    round1.setMatches(round.getMatches());
+   return round1;
        // Round roundInDB= roundDAO.findById(round.getId()).orElse(null);
     }
     public Table getTable() {

@@ -33,10 +33,11 @@ public class MatchDAOImpl implements CustomMatchDAO {
 
     private final EntityManager entityManager;
     @Autowired
-    public MatchDAOImpl(EntityManager entityManager) {
+    public MatchDAOImpl(EntityManager entityManager, RoundDAO roundDAO) {
         this.entityManager = entityManager;
+        this.roundDAO = roundDAO;
     }
-
+private final RoundDAO roundDAO;
     @Autowired
     private SessionFactory sessionFactory;
 
@@ -197,12 +198,16 @@ finally {
 //todo ?
     }
 @Transactional
-public void updateMatchesResults(List<Long> matchIds, List<String> userMatchResults1,List<String> userMatchResults2,List<String> opponentMatchResults1,List<String> opponentMatchResults2 ) {
+@Override
+public void updateMatchesResults(Schedule schedule, Integer roundNumber, List<Long> matchIds, List<String> userMatchResults1, List<String> userMatchResults2, List<String> opponentMatchResults1, List<String> opponentMatchResults2) {
 
+/*
+Round round=roundDAO.findRoundWitchMatches(schedule.getName(), roundNumber);
+round.getMatches(). forEach(a->{
+    if(a.getUserMatchResult1()!=)
 
-
-
-
+    });
+*/
     for (int i = 0; i < matchIds.size(); i++) {
 
         //   var b = session.load(Match.class, matchIds.get(i));

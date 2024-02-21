@@ -1,9 +1,11 @@
 package LKManager.services;
 
 import LKManager.DAO.CustomScheduleDAOImpl;
+import LKManager.DAO.MatchDAO;
 import LKManager.DAO.RoundDAO;
 import LKManager.LK.Round;
 import LKManager.LK.Schedule;
+import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.Cache.MZCache;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,7 +41,7 @@ private final RoundDAO roundDAO;
 private MZCache mzCache;
 private final ScheduleService scheduleService;
   private final EntityManager entityManager;
-
+  private final MatchDAO matchDAO;
 
 
 
@@ -114,7 +117,84 @@ mzCache.updateRound(round, schedule);
 //terminarzDAO.saveResults(roundNumber, terminarz,matchService, mzUserService);
 return round;
     }
-@Transactional
+
+    @Override
+    public Round editResults(Schedule schedule, Integer roundNumber, List<Long> matchIds, List<String> userMatchResults1, List<String> userMatchResults2, List<String> opponentMatchResults1, List<String> opponentMatchResults2)
+ {
+     Round round= null;
+     try{
+         System.out.println("w try");
+
+         for (int i = 0; i < matchIds.size(); i++) {
+             System.out.println("id="+i);
+             Boolean changed=false;
+             Match tempMatch= matchDAO.findByMatchId(matchIds.get(i));
+
+             if(tempMatch.getUserMatchResult1()==null||tempMatch.getUserMatchResult1()!=Byte.valueOf(userMatchResults1.get(i)) ||
+                     tempMatch.getOpponentMatchResult1()==null||  tempMatch.getOpponentMatchResult1()!=Byte.valueOf(opponentMatchResults1.get(i))
+             )
+             {
+                 if(userMatchResults1.get(i)!=null&&opponentMatchResults1.get(i)!="")
+                 {
+                     tempMatch.setUserMatchResult1(Byte.valueOf(userMatchResults1.get(i)));
+
+                     tempMatch.setOpponentMatchResult1(Byte.valueOf(opponentMatchResults1.get(i)));
+
+                     changed=true;
+                 }
+
+
+             }
+             System.out.println("-2");
+             if(tempMatch.getUserMatchResult2()==null||tempMatch.getUserMatchResult2()!=Byte.valueOf(userMatchResults2.get(i)) ||
+                     tempMatch.getOpponentMatchResult2()==null|| tempMatch.getOpponentMatchResult2()!=Byte.valueOf(opponentMatchResults2.get(i))
+             )
+             {
+                 System.out.println("2");
+                 if(userMatchResults2.get(i)!=null&&opponentMatchResults2.get(i)!="")
+                 {
+                     tempMatch.setUserMatchResult2(Byte.valueOf(userMatchResults1.get(i)));
+                     tempMatch.setOpponentMatchResult2(Byte.valueOf(opponentMatchResults1.get(i)));
+                     changed=true;
+                 }
+
+             }
+             System.out.println(changed);
+             if(changed==true)
+             {
+                 System.out.println("changed=true try save");
+                 matchDAO.save(tempMatch);
+                 System.out.println("saved");
+             }
+
+         }
+
+ /*    for (var matchId:matchIds
+          ) {
+       Match tempMatch= matchDAO.findByMatchId(matchId);
+       if(tempMatch.)
+         matchDAO.save(tempMatch);
+     }
+
+        matchDAO.updateMatchesResults( schedule,  roundNumber,matchIds, userMatchResults1, userMatchResults2, opponentMatchResults1, opponentMatchResults2);
+   */
+          round = roundDAO.findRoundWitchMatches(schedule.getName(),roundNumber);
+         System.out.println("try save cache rn="+roundNumber);
+         mzCache.updateRound(round, schedule);
+         System.out.println("saved");
+         return round;
+     }
+     catch (Exception e)
+     {
+         System.out.println("catch");
+         return round;
+     }
+
+
+
+    }
+
+    @Transactional
     private  Round getResultsFromMZ(Integer roundNumber, String scheduleName) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 

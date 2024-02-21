@@ -188,7 +188,7 @@ public class LKManagerApplication {
 		//prod co 62 min
 		timer.schedule(task2, 3720000, 3720000  );
 		//dev co 30s
-	//	timer.schedule(task2, 0 , 30000 );
+	//	timer.schedule(task2, 30000 , 30000 );
 	}
 
 	private void checkRoundsToUpdate() {

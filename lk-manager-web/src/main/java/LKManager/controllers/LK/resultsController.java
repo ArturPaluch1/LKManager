@@ -457,9 +457,10 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
     @PostMapping({"/editResults"})
     public String editResults(Model model,
                               RedirectAttributes redirectAttributes,
-                              @RequestParam(value = "chosenSchedule", required = true) String chosenSchedule,
+                              @RequestParam(value = "chosenSchedule", required = true) String chosenScheduleName,
                               //NUMER RUNDY NIE INDEX RUNDY czyli -1
                               @RequestParam(value = "roundNumber", required = true) Integer roundNumber,
+
                               @RequestParam(value = "matchId", required = true) List<Long> matchesId,
                               @RequestParam(value = "matches", required = false) List<Match> matches,
                               @RequestParam(value = "user", required = true) List<String> user,
@@ -475,8 +476,22 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
         if (roundNumber == -1) {
             roundNumber = 0;
         }
-        meczDAO.updateMatchesResults(matchesId, userMatchResults1, userMatchResults2, opponentMatchResults1, opponentMatchResults2);
 
+
+        Schedule chosenSchedule= scheduleService.getSchedule_ByName(chosenScheduleName);
+
+        if(  resultsService.editResults(chosenSchedule,roundNumber+1,matchesId,userMatchResults1,userMatchResults2,opponentMatchResults1,opponentMatchResults2)!=null)
+      {
+          redirectAttributes.addAttribute("roundNumber", roundNumber + 1);
+          redirectAttributes.addAttribute("chosenSchedule", chosenSchedule.getName());
+
+          return "redirect:/results";
+      }
+      else
+      {
+          redirectAttributes.addAttribute("errorMessage", "nie udało się edytować rundy");
+          return "redirect:/errorMessage";
+      }
         //folder z terminarzami
         // terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
@@ -507,10 +522,7 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
         terminarzService.aktualizujTerminarz(terminarz,wybranyTerminarz);
 */
-        redirectAttributes.addAttribute("roundNumber", roundNumber + 1);
-        redirectAttributes.addAttribute("chosenSchedule", chosenSchedule);
 
-        return "redirect:/results";
     }
 
 
