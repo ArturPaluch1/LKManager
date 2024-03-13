@@ -29,7 +29,7 @@ public class MZCache {
   //  private final ScheduleDAO customScheduleDAOimpl;
     private final ScheduleDAO scheduleDAO;
     private Table table;
-    private List<UserData> users = new ArrayList<>();
+    private List<UserData> users;
   //  private Schedule lastSchedule;
     private List<Schedule> schedules;
     private List<Match> matches;

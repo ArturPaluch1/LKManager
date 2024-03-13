@@ -1,5 +1,6 @@
 package LKManager;
 
+import LKManager.DAO.FailedDatabaseOperationRepository.FailedDatabaseOperationRepository;
 import LKManager.DAO.ScheduleDAO;
 import LKManager.DAO.UserDAO;
 import LKManager.LK.Comparators.ScheduleByLocalDateComparator;
@@ -8,6 +9,7 @@ import LKManager.LK.Schedule;
 import LKManager.services.Cache.MZCache;
 import LKManager.services.ResultsService;
 import LKManager.services.ScheduleService;
+import LKManager.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +20,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataAccessResourceFailureException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.xml.sax.SAXException;
 
@@ -51,14 +56,18 @@ public class LKManagerApplication {
 
 	protected MZCache mzCache;
 	protected final UserDAO userDAO;
+	protected final UserService userService;
 	private final ResultsService resultsService;
 	protected final ScheduleDAO scheduleDAO;
 	private final ScheduleService scheduleService;
+	@Autowired
+	private FailedDatabaseOperationRepository failedDatabaseOperationRepository;
 	private static final long delay = 14L;
 
-	public LKManagerApplication(MZCache mzCache, UserDAO userDAO, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService) {
+	public LKManagerApplication(MZCache mzCache, UserDAO userDAO, UserService userService, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService) {
 		this.mzCache = mzCache;
 		this.userDAO = userDAO;
+		this.userService = userService;
 		this.resultsService = resultsService;
 		this.scheduleDAO = scheduleDAO;
 		this.scheduleService = scheduleService;
@@ -143,42 +152,7 @@ public class LKManagerApplication {
 			public void run() {
 				//	Queue<MZCacheAction> actionQuery = new LinkedList<>();
 
-				if (mzCache.getSchedules().size() == 0 || mzCache.getUsers().size() == 0) {
-					initializeUsersAndTheNewestSchedule();
-				}
-				else
-				{
-
-
-
-					MZCacheAction action=null;
-					for (Schedule s : mzCache.getSchedules()
-					) {
-						if(!((PersistentBag) s.getRounds().get(0).getMatches()).wasInitialized())
-						{
-							System.out.println(s.getName() + "not initialized");
-							action=new updateScheduleCacheByScheduleId(s.getId(), mzCache, scheduleService, scheduleDAO);
-							break;
-						}
-
-
-					}
-					if(action!=null)
-					{
-						action.update();
-						System.out.println("updated ");
-					}
-					else  //sprawdza dopiero jak wszystkie schedule sa w cache
-					{
-						checkRoundsToUpdate();
-					}
-
-			/*	for (var i : actionQuery
-				) {
-					i.update();
-					System.out.println("updated ");
-				}*/
-				}
+				initializeCache();
 
 
 			}
@@ -186,9 +160,9 @@ public class LKManagerApplication {
 		//\/ 62 minuty  3720000
 		//30000  30s
 		//prod co 62 min
-		timer.schedule(task2, 3720000, 3720000  );
+	//	timer.schedule(task2, 3720000, 3720000  );
 		//dev co 30s
-		//timer.schedule(task2, 30000 , 30000 );
+		timer.schedule(task2, 30000 , 30000 );
 	}
 
 	private void checkRoundsToUpdate() {
@@ -249,7 +223,11 @@ if(matchingRounds.size()!=0)
 
 	public static void main(String[] args) {
 
-		SpringApplication.run(LKManagerApplication.class, args);
+
+			SpringApplication.run(LKManagerApplication.class, args);
+
+
+
 
 
 
@@ -269,7 +247,11 @@ if(matchingRounds.size()!=0)
 
 			System.out.println(environment.getProperty("msg"));
 			startTimer();
-			startTimer2();
+		//	startTimer2();
+
+			initializeCache();
+
+
 
 
 	/*
@@ -291,6 +273,45 @@ mzCache.getSchedules().get(0).getRounds().forEach(r->r.getMatches().forEach(m-> 
 		};
 
 
+	}
+
+	private void initializeCache() {
+		if (mzCache.getSchedules().size() == 0 || mzCache.getUsers().size() == 0) {
+			initializeUsersAndTheNewestSchedule();
+		}
+		else
+		{
+
+
+
+			MZCacheAction action=null;
+			for (Schedule s : mzCache.getSchedules()
+			) {
+				if(!((PersistentBag) s.getRounds().get(0).getMatches()).wasInitialized())
+				{
+					System.out.println(s.getName() + "not initialized");
+					action=new updateScheduleCacheByScheduleId(s.getId(), mzCache, scheduleService, scheduleDAO);
+					break;
+				}
+
+
+			}
+			if(action!=null)
+			{
+				action.update();
+				System.out.println("updated ");
+			}
+			else  //sprawdza dopiero jak wszystkie schedule sa w cache
+			{
+				checkRoundsToUpdate();
+			}
+
+		/*	for (var i : actionQuery
+			) {
+				i.update();
+				System.out.println("updated ");
+			}*/
+		}
 	}
 
 	@PostConstruct
@@ -340,7 +361,7 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 
 
 	public void initializeUsersAndTheNewestSchedule() {
-		MZCacheAction userCacheUpdate = new UpdateUsersCache(mzCache, userDAO);
+		MZCacheAction userCacheUpdate = new UpdateUsersCache(mzCache, userService);
 		userCacheUpdate.update();
 		System.out.println("users cache updated");
 
@@ -360,7 +381,7 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 	abstract class MZCacheAction {
 
 
-		public abstract void update();
+		public abstract MZCache update();
 
 	}
 
@@ -370,12 +391,26 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 	class UpdateUsersCache extends MZCacheAction {
 		@Autowired
 		private MZCache mzCache;
-		private final UserDAO userDAO;
-
+	//	private final UserDAO userDAO;
+		private final UserService userService;
 		@Override @Transactional
-		public void update() {
+		public MZCache update() {
 			//dodawanie users do cache
-			mzCache.setUsers(userDAO.findNotDeletedUsers());
+			userService.findUsers_NotDeletedWithPause();
+			try {
+				userService.findUsers_NotDeletedWithPause();
+			//	mzCache.setUsers(userDAO.findNotDeletedUsers());
+			}
+
+			catch (Exception e)
+			{
+		//		failedDatabaseOperationRepository.addFailedOperation(new GetUsersFailedDatabaseOperation(SQLOperation.AddUserDatabaseAccessFailureException));
+
+			}
+
+			finally {
+				return mzCache;
+			}
 		}
 	}
 
@@ -388,11 +423,20 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 		private final ScheduleDAO scheduleDAO;
 
 		@Override @Transactional
-		public void update() {
-			List<Schedule> schedules = scheduleDAO.findAllFetchRoundsEagerly();
-			schedules.sort(new ScheduleByLocalDateComparator());
-			mzCache.setSchedules(schedules);
+		public MZCache update() {
 
+			try {
+				List<Schedule> schedules = scheduleDAO.findAllFetchRoundsEagerly();
+				schedules.sort(new ScheduleByLocalDateComparator());
+				mzCache.setSchedules(schedules);
+			}
+			catch (DataAccessResourceFailureException ex)
+			{
+				ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Przekroczono limit połączeń z bazą danych.");
+			}
+			finally {
+				return mzCache;
+			}
 		}
 	}
 
@@ -410,20 +454,30 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 
 
 		@Override @Transactional
-		public void update() {
-			List<Schedule> schedules = null;
-			if (mzCache.getSchedules().size() != 0) {
-				schedules = mzCache.getSchedules();
-			} else {
-				schedules = scheduleDAO.findAllFetchRoundsEagerly();
+		public MZCache update() {
+			try{
+				List<Schedule> schedules = null;
+				if (mzCache.getSchedules().size() != 0) {
+					schedules = mzCache.getSchedules();
+				} else {
+					schedules = scheduleDAO.findAllFetchRoundsEagerly();
+				}
+
+				//List<Schedule> finalSchedules = schedules;
+
+
+				mzCache.getSchedules().stream().filter(s -> s.getId() == id).findFirst().get().setRounds(scheduleService.findByIdWithRoundsMatchesUsersAndTeams(id).getRounds());
+				//System.out.println("schedule cache update"+temps.getRounds().get(0).getMatches());
 			}
-
-			//List<Schedule> finalSchedules = schedules;
-
-
-			 mzCache.getSchedules().stream().filter(s -> s.getId() == id).findFirst().get().setRounds(scheduleService.findByIdWithRoundsMatchesUsersAndTeams(id).getRounds());
-			//System.out.println("schedule cache update"+temps.getRounds().get(0).getMatches());
+			catch (Exception e)
+			{
+				ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Przekroczono limit połączeń z bazą danych.");
+			}
+			finally {
+				return mzCache;
+			}
 		}
+
 	}
 
 	@AllArgsConstructor
@@ -436,26 +490,33 @@ https://www.udemy.com/course/spring-framework-5-beginner-to-guru/learn/lecture/2
 		private final ScheduleDAO scheduleDAO;
 
 		@Override @Transactional
-		public void update() {
+		public MZCache update() {
+
+			try {
+				List<Schedule> schedules = null;
+				if (mzCache.getSchedules().size() != 0) {
+					schedules = mzCache.getSchedules();
+				} else {
+					schedules = scheduleDAO.findAllFetchRoundsEagerly();
+				}
+
+
+				List<Schedule> finalSchedules = schedules;
+				var temps = mzCache.getSchedules().stream().filter(s -> s.getId() == finalSchedules.get(0).getId()).findFirst().get();
 
 
 
+				temps.setRounds(scheduleService.findByIdWithRoundsMatchesUsersAndTeams(schedules.get(0).getId()).getRounds());
 
-
-			List<Schedule> schedules = null;
-			if (mzCache.getSchedules().size() != 0) {
-				schedules = mzCache.getSchedules();
-			} else {
-				schedules = scheduleDAO.findAllFetchRoundsEagerly();
+			}
+			catch (Exception ex)
+			{
+				ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Przekroczono limit połączeń z bazą danych.");
+			}
+finally {
+				return mzCache;
 			}
 
-
-			List<Schedule> finalSchedules = schedules;
-			var temps = mzCache.getSchedules().stream().filter(s -> s.getId() == finalSchedules.get(0).getId()).findFirst().get();
-
-
-
-			temps.setRounds(scheduleService.findByIdWithRoundsMatchesUsersAndTeams(schedules.get(0).getId()).getRounds());
 
 		}
 	}

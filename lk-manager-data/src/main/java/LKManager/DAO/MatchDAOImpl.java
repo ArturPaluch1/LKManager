@@ -627,9 +627,21 @@ e.printStackTrace();
             s.getTransaction().commit();
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+        } catch (org.hibernate.TransactionException e) {
+            // Obsługa wyjątku TransactionException
+            System.err.println("Błąd transakcji JDBC: " + e.getMessage());
+            // Tutaj możesz podjąć odpowiednie kroki w zależności od potrzeb, np. ponowne próby, logowanie błędu itp.
+        }
+        catch (Exception exception) {
+            // Obsługa innych ogólnych wyjątków
+            System.err.println("Inny błąd: " + exception.getMessage());
+            // Tutaj możesz podjąć odpowiednie kroki dla innych ogólnych wyjątków
+        }
+
+
+
+        finally {
+            System.out.println("in public List<Match> findAllByScheduleIdAndRoundId(long scheduleId, int roundId)");
             s.close();
             return matches;
         }

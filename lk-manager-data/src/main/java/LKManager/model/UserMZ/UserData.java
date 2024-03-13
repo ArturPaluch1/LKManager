@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="users")
+@Table(name="users", schema="lkm_dev")
 //@Where(clause = "DELETED = 0")
 @FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 @Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
@@ -70,7 +70,7 @@ private Match meczUser;*/
         this.id = id;
     }
 */
- // @Column(name = "DELETED",columnDefinition = "TINYINT")
+// @Column(name = "DELETED",columnDefinition = "TINYINT")
     //prod \/
    @Column(name = "DELETED",columnDefinition = "BIT")
    private boolean deleted = false;

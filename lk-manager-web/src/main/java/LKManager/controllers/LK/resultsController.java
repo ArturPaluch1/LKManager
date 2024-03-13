@@ -1,6 +1,6 @@
 package LKManager.controllers.LK;
 
-import LKManager.DAO.MatchDAOImpl;
+import LKManager.DAO.MatchDAO;
 import LKManager.DAO.RoundDAO;
 import LKManager.DAO.ScheduleDAO;
 import LKManager.LK.Round;
@@ -35,7 +35,7 @@ public class resultsController {
     private final MatchService matchService;
     private final ScheduleService scheduleService;
     private final RoundDAO roundDAO;
-    private final MatchDAOImpl meczDAO;
+    private final MatchDAO meczDAO;
 
     // private Integer numerRundy;
     //  private Terminarz terminarz;
@@ -105,7 +105,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
     //, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy
 
 
-    public resultsController(ScheduleService scheduleService, MatchService matchService, LKManager.services.MZUserService MZUserService, RoundDAO roundDAO, MatchDAOImpl meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
+    public resultsController(ScheduleService scheduleService, MatchService matchService, LKManager.services.MZUserService MZUserService, RoundDAO roundDAO, MatchDAO meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
         this.MZUserService = MZUserService;
         this.matchService = matchService;
         this.scheduleService = scheduleService;
@@ -119,7 +119,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 
     @GetMapping({"/results"})
     // public String index(HttpServletResponse response, Model model, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
-    public String getResults(HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule, @RequestParam(value = "roundNumber", required = false) String roundNumber) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
+    public String getResults(RedirectAttributes attributes,HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule, @RequestParam(value = "roundNumber", required = false) String roundNumber) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
 //,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie,
 //decode cookie bo cookie nie mają spacji i trzeba zakodować
 
@@ -205,11 +205,42 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 
         ///ok
 */
+        Round round=null;
+try {
+     round = roundDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber)) ;
+}
+catch (Exception exception) {
+    // Obsługa innych ogólnych wyjątków
+    System.err.println("Inny błąd: " + exception.getMessage());
+    attributes.addAttribute("errorMessage", "błąd w usuwaniu");
+    return "redirect:/errorMessage";
+    // Tutaj możesz podjąć odpowiednie kroki dla innych ogólnych wyjątków
+}
 
+        List<Round> roundNumbers=null;
+        try{
+    roundNumbers = roundDAO.findAllByScheduleId(schedule.getId());
+}
+catch (Exception exception) {
+    // Obsługa innych ogólnych wyjątków
+    System.err.println("Inny błąd: " + exception.getMessage());
+    attributes.addAttribute("errorMessage", "błąd w usuwaniu");
+    return "redirect:/errorMessage";
+}
 
-        Round round = roundDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
-        List<Round> roundNumbers = roundDAO.findAllByScheduleId(schedule.getId());
-        List<Match> matches = meczDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+        List<Match> matches=null;
+try{
+     matches = meczDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+
+}
+catch (Exception exception) {
+    // Obsługa innych ogólnych wyjątków
+    System.err.println("Inny błąd: " + exception.getMessage());
+    attributes.addAttribute("errorMessage", "błąd w usuwaniu");
+    return "redirect:/errorMessage";
+    // Tutaj możesz podjąć odpowiednie kroki dla innych ogólnych wyjątków
+}
+
 
 
         model.addAttribute("roundNumber", roundNumber);

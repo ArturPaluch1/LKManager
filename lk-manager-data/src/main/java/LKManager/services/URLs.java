@@ -55,10 +55,9 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
     }
 
 
-    public static UserData URLtoUserData(URL url) throws JAXBException, ParserConfigurationException, SAXException, IOException {
+    public static UserData URLtoUserData(URL url) throws JAXBException {
         JAXBContext jaxbContext;
-     /* try
-      {*/
+
         jaxbContext = JAXBContext.newInstance (ManagerZone_UserData.class);
 
         Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();

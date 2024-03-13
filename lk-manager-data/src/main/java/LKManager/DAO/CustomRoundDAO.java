@@ -13,9 +13,11 @@ public interface CustomRoundDAO {
     //  void saveRound(Runda runda, int runda);
     //  List<Terminarz> findAll();
     //  void saveResults(Integer runda, Terminarz terminarz1, MatchService matchService, MZUserService mzUserService) throws DatatypeConfigurationException, JAXBException, IOException, ParserConfigurationException, SAXException;
-    Round findByScheduleIdAndRoundId(long scheduleId, int roundId);
 
-    List<Round> findAllByScheduleId(long id);
+
+  //  Round findByScheduleIdAndRoundId(long scheduleId, int roundId);
+
+    List<Round> findAllByScheduleId(long id)throws java.sql.SQLSyntaxErrorException;
 
     List<Round> findAllByScheduleName(String chosenScheduleName);
 

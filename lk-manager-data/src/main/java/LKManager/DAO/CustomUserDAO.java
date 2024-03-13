@@ -2,11 +2,7 @@ package LKManager.DAO;
 
 import LKManager.model.UserMZ.UserData;
 import org.springframework.stereotype.Repository;
-import org.xml.sax.SAXException;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.util.List;
 @Repository
 public interface CustomUserDAO  {
@@ -36,7 +32,7 @@ public interface CustomUserDAO  {
 
 
 
-     void delete(UserData object) throws JAXBException, IOException, ParserConfigurationException, SAXException;
+     void delete(UserData object) ;
 
     void deleteById(Long id);
 }

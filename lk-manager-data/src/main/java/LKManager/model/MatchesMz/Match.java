@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "mecze")
+@Table(name = "mecze", schema="lkm_dev")
 @Getter
 @Setter
 @XmlRootElement(name = "Match")
@@ -73,7 +73,7 @@ public class Match implements Serializable {
     // @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
    // @Fetch(FetchMode.JOIN)
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
-    @JoinColumn(name = "user")//, referencedColumnName= "user_id")//, updatable = false, insertable = false)
+    @JoinColumn(name = "gracz")//, referencedColumnName= "user_id")//, updatable = false, insertable = false)
     private UserData userData;
     /* public XMLGregorianCalendar getDate() {
                 return date;

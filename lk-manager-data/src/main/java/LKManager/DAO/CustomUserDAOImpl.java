@@ -53,12 +53,13 @@ private final EntityManager entityManager;
         System.out.println(" users !deleted !pauza - cache");
         return mzCache.getUsers().stream().filter(u->u.getDeleted()==false&& !u.getUsername().equals("pauza")).collect(Collectors.toList());
     }
-
     @Override
     public List<UserData> findUsersFromCache_NotDeletedWithPause() {
-        System.out.println(" users !deleted && pauza - cache");
+        System.out.println(" users !deleted !pauza - cache");
         return mzCache.getUsers().stream().filter(u->u.getDeleted()==false).collect(Collectors.toList());
     }
+
+
 
   /*  @Override
     public List<UserData> findUsers_NotDeletedWithoutPause() {

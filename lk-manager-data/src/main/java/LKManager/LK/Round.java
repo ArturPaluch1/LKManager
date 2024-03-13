@@ -16,7 +16,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "rundy")
+@Table(name = "rundy", schema="lkm_dev")
 @Getter
 @Setter
 @XmlRootElement

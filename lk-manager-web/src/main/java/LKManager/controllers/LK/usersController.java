@@ -1,5 +1,7 @@
 package LKManager.controllers.LK;
 
+//import LKManager.DAO.Exceptions.GetUsersUserDatabaseAccessFailureException;
+import LKManager.DAO.FailedDatabaseOperationRepository.*;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.LKUserService;
 import LKManager.services.MZUserService;
@@ -10,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
@@ -30,113 +33,73 @@ private final MZUserService mzUserService;
 //  private final UserDAO userDAOImpl;
 //private final UserDAO userDAO;
 private final UserService userService;
-
+private FailedDatabaseOperationRepository failedDatabaseOperationRepository;
 
 
     @RequestMapping(value="/users")
-public String showUsers(Model model)
+public String showUsers(Model model, RedirectAttributes attributes )
 {
-/*
-UserData tempuser=userDAO.findById(0).get();
-    Team tempTeam= new Team();
-    tempTeam.setTeamName(" ");
-    tempTeam.setTeamId(0);
-    tempTeam.setUser(tempuser);
-    List<Team> tempTeams= new ArrayList<>();
-    tempTeams.add(tempTeam);
-    tempuser.setTeamlist(tempTeams);
-    userDAO.save(tempuser);
 
-*/
     /*---------------z xmla---------------
    var gracze= lkUserService.wczytajGraczyZXML();
 ***************************************************/
-
-   // List<UserData>users=userDAO.findUsers_NotDeletedWithoutPause();
-    List<UserData>users=userService.findUsers_NotDeletedWithoutPause();
-
-    //próbowanie pobrania graczy z cache
- /*   List<UserData>users= mzCache.getUsers();//userDAO.findAllUsersFromCache();
-           if(users.size()==0)
-           {
-               users=userDAO.findNotDeletedUsers();
-               mzCache.setUsers(users);
-           }
-*/
-   // List<UserData>users  =userDAO.findAll();
-
-
-
-
-  //  List<UserData>users=userDAO.findAll(false);
+    List<UserData>users=null;
+try{
+    users=userService.findUsers_NotDeletedWithoutPause();
+}
+catch (Exception e)
+{
+  //  failedDatabaseOperationRepository. addFailedOperation(new GetUsersFailedDatabaseOperation(SQLOperation.GetUsersDatabaseAccessFailureException));
+/*e.handleDataAccessResourceFailureException();
+e.redirectToErrorPage(attributes,"Błąd dostępu do bazy danych - Users");*/
+}
 
 
 
     users= users.stream().sorted(
             (o1,o2)->o1.getUsername().compareToIgnoreCase(o2.getUsername())
     ).collect(Collectors.toList());
-
-  //  System.out.println("gracze(0)"+gracze.get(0));
-
-
-
-   // this.userDAOImpl.save(gracze.get(1));
-
-
-
-
-
    model.addAttribute("users", users);
     return "LK/users";
 }
 
 
 @PostMapping(value="/addUser")
-public String addUser(@RequestParam(value = "chosenUser" , required = false) String chosenUser, @RequestParam(value = "chosenUsers" , required = false) List<String>  chosenUsers) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+public String addUser(@RequestParam(value = "chosenUser" , required = false) String chosenUser, @RequestParam(value = "chosenUsers" , required = false) List<String>  chosenUsers) throws JAXBException, IOException, ParserConfigurationException, SAXException{//, GetUsersUserDatabaseAccessFailureException {
     //sprawdzanie poprawnosci  wpisanego nicka z MZ
- /*   try
-    {*/
-
 
         //jeśli są podane i checkboksy i w inpucie to usuwa tylko checkboxy
 //z checkboxow
         //to chyba nigdy sie nie dzieje...
-        if(chosenUsers!= null)
+ /*       if(chosenUsers!= null)
         {
-            userService.AddUsers(chosenUsers);
+            try {
+                userService.AddUsers(chosenUsers);
+            } catch (AddUserUserDatabaseAccessFailureException e) {
 
-
+            }
 
         }
-
-
         //wpisany z input
-      else  if(chosenUser!="")
+      else
+          */
+          if(chosenUser!="")
         {
-            userService.AddUser(chosenUser);
-
-
-
-
+            try {
+                userService.AddUser(chosenUser);
+            } catch (Exception e) {
+//failedDatabaseOperationRepository.addFailedOperation(new AddUserFailedDatabaseOperation(SQLOperation.AddUserDatabaseAccessFailureException,chosenUser));
+            }
         }
 else
         {
             //todo w razie pustego/zlego nicku i  inputa i checkboxa
         }
 
-
             return "redirect:/users";
 
 
- //   }
-   /* catch (Exception e)
-    {
 
-        return "LK/temp";
-    }*/
-
-  //
-  //  return null;
 }
 
 
@@ -161,7 +124,7 @@ else
         }
         catch (Exception e)
         {
-
+//failedDatabaseOperationRepository.addFailedOperation(new DeleteUserFailedDatabaseOperation(SQLOperation.DeleteUserDatabaseAccessFailureException, chosenUser,chosenUsers));
             return "LK/temp";
         }
 

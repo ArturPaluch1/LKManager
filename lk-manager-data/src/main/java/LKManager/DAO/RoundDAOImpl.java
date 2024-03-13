@@ -79,7 +79,7 @@ public class RoundDAOImpl implements CustomRoundDAO {
 //todo na pewno zwraca tu round z meczami?
         return round;
     }
-   @Override
+  /* @Override
    @Transactional
     public Round findByScheduleIdAndRoundId(long scheduleId, int roundId) {
         Session s = sessionFactory.openSession();
@@ -109,7 +109,7 @@ public class RoundDAOImpl implements CustomRoundDAO {
         }
        return round;
     }
-
+*/
     @Override
     public List<Round> findAllByScheduleId(long scheduleId) {
 

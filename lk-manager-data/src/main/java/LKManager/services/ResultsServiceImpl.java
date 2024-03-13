@@ -130,8 +130,10 @@ return round;
              Boolean changed=false;
              Match tempMatch= matchDAO.findByMatchId(matchIds.get(i));
 
-             if(tempMatch.getUserMatchResult1()==null||tempMatch.getUserMatchResult1()!=Byte.valueOf(userMatchResults1.get(i)) ||
-                     tempMatch.getOpponentMatchResult1()==null||  tempMatch.getOpponentMatchResult1()!=Byte.valueOf(opponentMatchResults1.get(i))
+             if(tempMatch.getUserMatchResult1()==null
+                     ||tempMatch.getUserMatchResult1()!=Byte.valueOf(userMatchResults1.get(i)) ||
+                     tempMatch.getOpponentMatchResult1()==null||
+                     tempMatch.getOpponentMatchResult1()!=Byte.valueOf(opponentMatchResults1.get(i))
              )
              {
                  if(userMatchResults1.get(i)!=null&&opponentMatchResults1.get(i)!="")
@@ -153,8 +155,8 @@ return round;
                  System.out.println("2");
                  if(userMatchResults2.get(i)!=null&&opponentMatchResults2.get(i)!="")
                  {
-                     tempMatch.setUserMatchResult2(Byte.valueOf(userMatchResults1.get(i)));
-                     tempMatch.setOpponentMatchResult2(Byte.valueOf(opponentMatchResults1.get(i)));
+                     tempMatch.setUserMatchResult2(Byte.valueOf(userMatchResults2.get(i)));
+                     tempMatch.setOpponentMatchResult2(Byte.valueOf(opponentMatchResults2.get(i)));
                      changed=true;
                  }
 

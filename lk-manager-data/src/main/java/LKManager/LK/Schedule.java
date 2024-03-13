@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "terminarze")
+@Table(name = "terminarze", schema="lkm_dev")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

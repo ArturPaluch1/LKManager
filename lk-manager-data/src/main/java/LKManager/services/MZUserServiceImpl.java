@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -20,11 +21,20 @@ public class MZUserServiceImpl implements MZUserService, Serializable {
         return null;
     }
 
-    public  UserData findByUsername(String username) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+    public  UserData findByUsername(String username) {
 
-      URL url=  URLs.MakeUserURL(username);
+        URL url= null;
+        try {
+            url = URLs.MakeUserURL(username);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
 
-      return URLs.URLtoUserData(url) ;
+        try {
+            return URLs.URLtoUserData(url) ;
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
     }
     @Override
     public UserData findByTeamId(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {

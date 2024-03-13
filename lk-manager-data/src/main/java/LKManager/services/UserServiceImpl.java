@@ -7,11 +7,7 @@ import LKManager.services.Cache.MZCache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +32,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(String chosenUser, List<String> chosenUsers) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+    public void deleteUser(String chosenUser, List<String> chosenUsers)
+    {
 
 /*
         //wpisany z input
@@ -157,7 +154,13 @@ public class UserServiceImpl implements UserService {
                     if(userInDb!=null
                     )
                     {
-                        ( (CustomUserDAO) userDAO).delete(userInDb);
+                        try {
+                            ( (CustomUserDAO) userDAO).delete(userInDb);
+                        } catch (Exception e) {
+
+                           //todo \/
+                          // e.redirectToErrorPage();
+                        }
                     }
                     else
                     {
@@ -183,13 +186,13 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    @Override
+ /*   @Override
     public List<UserData> findAllUsersFromCache() {
 
 
 
         return mzCache.getUsers();
-    }
+    }*/
 
     @Override
     public List<UserData> findUsers_NotDeletedWithoutPause() {
@@ -214,13 +217,31 @@ return users;
     }
 
     @Override
-    public List<UserData> findUsersFromCache_NotDeletedWithPause() {
-        return null;
+    public List<UserData> findUsers_NotDeletedWithPause(){
+        //próbowanie z cache
+        System.out.println("trying find users in cache");
+        List<UserData> users =userDAO.findUsersFromCache_NotDeletedWithPause();
+     //  users.get(5);
+
+        if (users.size() != 0) {
+            System.out.println("found users in cache");
+            return users;
+        } else {
+            //todo zrobic redirect ze nie polaczono z db
+            System.out.println("trying find users in db");
+
+                users = userDAO.findUsers_NotDeletedWithPause();
+
+
+            mzCache.setUsers(users);
+            System.out.println("found users in db");
+            return users;
+        }
     }
 
-
     @Override
-    public UserData AddUser(String userToAdd) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+
+    public UserData AddUser(String userToAdd)  {
         //czy jest o takim id w mz
         var playerMZ= mzUserService.findByUsername(userToAdd);
         //    var gracze=lkUserService.wczytajGraczyZXML();
@@ -286,6 +307,7 @@ return savedUser;
 
     }
 
+/*
     @Override
     public List<UserData> AddUsers(List<String> usersToAdd) {
         // todo to sie chyba nigdy nie dzieje bo jak dodać kilku na raz??
@@ -301,14 +323,10 @@ return savedUser;
         for (var item: usersToAdd
         ) {
             UserData playerMZ= null;
-            try {
+
 
                 playerMZ = mzUserService.findByUsername(item);
-            } catch (IOException | SAXException | ParserConfigurationException e) {
-                throw new RuntimeException(e);
-            } catch (JAXBException e) {
-                throw new RuntimeException(e);
-            }
+
             UserData finalPlayerMZ = playerMZ;
             if(!users.stream()
                     .filter(a->a.getUserId().equals(finalPlayerMZ.getUserId())
@@ -333,5 +351,6 @@ return savedUser;
         return null;
     }
 
+*/
 
 }

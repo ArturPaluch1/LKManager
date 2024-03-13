@@ -20,7 +20,7 @@
     <description>Demo project for Spring Boot</description>
     <properties>
         <maven.assembly.plugin.version>2.4</maven.assembly.plugin.version>
-        <java.version>18</java.version>
+        <java.version>17</java.version>
 
 
             <!-- The main class to start by executing "java -jar" -->

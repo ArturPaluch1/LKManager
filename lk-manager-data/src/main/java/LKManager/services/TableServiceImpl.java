@@ -5,6 +5,7 @@ import LKManager.LK.Comparators.GraczPodsumowanieComparatorGoalLost;
 import LKManager.LK.Comparators.GraczPodsumowanieComparatorGoalScored;
 import LKManager.LK.Comparators.GraczPodsumowanieComparatorPoints;
 import LKManager.LK.PlayerSummary;
+import LKManager.LK.Schedule;
 import LKManager.LK.Table;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
@@ -22,27 +23,109 @@ import java.util.stream.Collectors;
 public class TableServiceImpl implements TableService {
     @Autowired
     MZCache mzCache;
+    @Autowired
+    ScheduleService scheduleService;
+
+
     @Override
     @Transactional
-    public Table createTable(List<Match>matches) {
-        Table table = new Table();
-      /*  List<Match> matches = new ArrayList<>();
-        for (var item: schedule.getRundy()
-             ) {
-            matches.addAll(item.getMecze());
+    public Table createTable(String chosenscheduleName)
+    {
+        Table table = null;
+
+//schedules are in cache
+        if(mzCache.getSchedules().size()!=0)
+        {
+
+
+            String finalChosenScheduleName = chosenscheduleName;
+            Schedule schedule =  mzCache.getSchedules().stream().filter(a->a.getName().equals(finalChosenScheduleName)).findFirst().orElse(null);
+            List<Match> matches = new ArrayList<>();
+            //in cache  exist chosen schedule
+            if(schedule!=null)
+            {
+                if(schedule.checkMatchesInitialization())
+                {
+
+
+                    table=   this.calculateTable(scheduleService.getAllMatchesOfSchedule(schedule));
+
+
+                    System.out.println("matches initialized , table created");
+                }
+                else
+                {
+                    //proba inicjalizacji
+                    schedule=scheduleService.getSchedule_ById(schedule.getId());
+
+
+                    if(!schedule.checkMatchesInitialization())
+                    {
+                        mzCache.updateScheduleMatchesCache(schedule);
+                        table=   this.calculateTable(scheduleService.getAllMatchesOfSchedule(schedule));
+
+                        System.out.println("matches initialized from db, cache updated, table created");
+                    }
+                    else
+                    {
+                        System.out.println("else");
+                        int y=0;
+
+                    }
+
+
+                }
+            }
+            else
+            {
+                // todo  - probowanie pobrania z bazy danych
+                //in cache do not exist chosen schedule
+            }
+
+
+
+
         }
-        */
-     //   schedule.getRundy().forEach(round->matches.addAll( round.getMecze()));
-                //terminarzDAO.findAllMatchesByTerminarzName(wybranyTerminarz);
+        //todo sprawdzić czy ten warunek w ogóle jest potrzebny, bo wcześniej też jest w scheduleService próbowane cache a potem z bazy
+        else  //nie ma schedules w cache
+        {
+            try {
 
-        List<UserData> users=new ArrayList<>();
-     /*   schedule.getRundy().get(0).getMecze().forEach(match -> {
-            users.add(match.getUser());
-            users.add(match.getopponentUser());
+                Schedule schedule= scheduleService.getSchedule_ByName(chosenscheduleName);
+                if(schedule!=null)
+                {
+                    mzCache.updateScheduleMatchesCache(schedule);
+                    table= this.calculateTable(scheduleService.getAllMatchesOfSchedule(schedule));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
+                }
 
-        });*/
+            }
+            catch (Exception e )
+            {
+                System.out.println("nie można pobrać wyników, spróbuj później");
+            }
 
-       // matches.stream().filter(a->a.getUser())
+
+
+        }
+
+        return table;
+    }
+
+
+
+
+
+
+
+
+
+    @Transactional
+    private Table calculateTable(List<Match>matches) {
+        Table table = new Table();
+
+
+        List<UserData> users=new  ArrayList<>();
+
         for (var item: matches
         ) {
 
@@ -80,22 +163,12 @@ public class TableServiceImpl implements TableService {
 
             for (Match match:matches
             ){
-
-
-
                 var   user = table.getPlayerSummaries().stream().
                         filter(a->a.getGracz().getUserId().equals(match.getUserData().getUserId())).findFirst().orElse(null);
                 var   userOp = table.getPlayerSummaries().stream().
                         filter(a->a.getGracz().getUserId().equals(match.getOpponentUserData().getUserId())).findFirst().orElse(null);
 
                 checkResult(match,user,userOp);
-
-
-
-
-
-
-
 
             }
         }
@@ -104,13 +177,6 @@ public class TableServiceImpl implements TableService {
         {
             //todo ze brak danych z db
         }
-
-
-
-
-
-
-
 ///////////////////////////////////////////////
         //sortowanie po punktach
         table.getPlayerSummaries().sort(new GraczPodsumowanieComparatorPoints());
