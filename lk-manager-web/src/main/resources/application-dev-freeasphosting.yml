@@ -1,0 +1,47 @@
+
+
+
+  spring:
+  config:
+    import: optional:file:.env[.properties]
+  spring.jpa.show-sql: true
+
+  datsource:
+
+   spring:
+    config:
+      import: optional:file:.env[.properties]
+
+    spring.jpa.show-sql: false
+    url: jdbc:sqlserver://sql.bsite.net\MSSQL2016;encrypt=true;trustServerCertificate=true;
+    databaseName: ${databaseName-freeasphostingDEV}
+    username: ${dbUsername-freeasphostingDEV}
+    password: ${dbPassword-freeasphostingDEV}
+
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    database: sql_server
+    show-sql: true
+    logging.level.org.hibernate.SQL : DEBUG
+    logging.level.org.springframework.web: DEBUG
+    #jpa:
+    # hibernate:
+    #   ddl-auto: validate
+    #  database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    #  database: mysql
+    # show-sql: true
+    #  logging.level.org.hibernate.SQL : DEBUG
+    #  logging.level.org.springframework.web: DEBUG
+
+
+
+
+
+    #org:
+    # hibernate:
+    #  dialect:
+    #   MySQLDialect:
