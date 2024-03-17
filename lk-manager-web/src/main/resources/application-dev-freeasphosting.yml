@@ -1,23 +1,26 @@
 
 
 
-  spring:
+spring:
   config:
     import: optional:file:.env[.properties]
   spring.jpa.show-sql: true
 
-  datsource:
+  datasource:
 
-   spring:
-    config:
-      import: optional:file:.env[.properties]
 
-    spring.jpa.show-sql: false
+
     url: jdbc:sqlserver://sql.bsite.net\MSSQL2016;encrypt=true;trustServerCertificate=true;
+
     databaseName: ${databaseName-freeasphostingDEV}
     username: ${dbUsername-freeasphostingDEV}
     password: ${dbPassword-freeasphostingDEV}
 
+
+ #   url: jdbc:sqlserver://localhost\SQLEXPRESS;encrypt=true;trustServerCertificate=true;
+  #  databaseName: ${databaseName-freeasphosting}
+  #  username: ${dbUsername-freeasphosting}
+  #  password: ${dbPassword-freeasphosting}
 
   jpa:
     hibernate:

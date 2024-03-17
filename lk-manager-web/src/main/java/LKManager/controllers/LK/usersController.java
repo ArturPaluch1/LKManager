@@ -1,7 +1,7 @@
 package LKManager.controllers.LK;
 
 //import LKManager.DAO.Exceptions.GetUsersUserDatabaseAccessFailureException;
-import LKManager.DAO.FailedDatabaseOperationRepository.*;
+
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.LKUserService;
 import LKManager.services.MZUserService;
@@ -33,7 +33,7 @@ private final MZUserService mzUserService;
 //  private final UserDAO userDAOImpl;
 //private final UserDAO userDAO;
 private final UserService userService;
-private FailedDatabaseOperationRepository failedDatabaseOperationRepository;
+//private FailedDatabaseOperationRepository failedDatabaseOperationRepository;
 
 
     @RequestMapping(value="/users")

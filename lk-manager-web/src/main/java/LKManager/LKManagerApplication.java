@@ -1,6 +1,5 @@
 package LKManager;
 
-import LKManager.DAO.FailedDatabaseOperationRepository.FailedDatabaseOperationRepository;
 import LKManager.DAO.ScheduleDAO;
 import LKManager.DAO.UserDAO;
 import LKManager.LK.Comparators.ScheduleByLocalDateComparator;
@@ -60,8 +59,8 @@ public class LKManagerApplication {
 	private final ResultsService resultsService;
 	protected final ScheduleDAO scheduleDAO;
 	private final ScheduleService scheduleService;
-	@Autowired
-	private FailedDatabaseOperationRepository failedDatabaseOperationRepository;
+	/*@Autowired
+	private FailedDatabaseOperationRepository failedDatabaseOperationRepository;*/
 	private static final long delay = 14L;
 
 	public LKManagerApplication(MZCache mzCache, UserDAO userDAO, UserService userService, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService) {

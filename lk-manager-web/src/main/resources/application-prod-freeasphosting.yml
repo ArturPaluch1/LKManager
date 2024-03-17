@@ -14,7 +14,7 @@ spring:
 
     databaseName: ${databaseName-freeasphosting}
     username: ${dbUsername-freeasphosting}
-    password:  ${dbPassword-freeasphosting}
+    password: ${dbPassword-freeasphosting}
 
 
 
