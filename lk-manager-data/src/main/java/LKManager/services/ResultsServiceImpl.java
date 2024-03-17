@@ -7,7 +7,6 @@ import LKManager.LK.Round;
 import LKManager.LK.Schedule;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
-import LKManager.services.Cache.MZCache;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +37,7 @@ private final MZUserService mzUserService;
     private final CustomScheduleDAOImpl customScheduleDAOimpl;
  private final    MatchService matchService;
 private final RoundDAO roundDAO;
-private MZCache mzCache;
+//private MZCache mzCache;
 private final ScheduleService scheduleService;
   private final EntityManager entityManager;
   private final MatchDAO matchDAO;
@@ -103,7 +102,14 @@ private final ScheduleService scheduleService;
      //   roundDAO.saveRound(round);
     round=    roundDAO.save(round);
         System.out.println("round=" + round.getMatches());
+
+        /** ****************************
+         * todo uncomment if need to use cache
+         *
 mzCache.updateRound(round, schedule);
+*/
+
+
         //System.out.println("cache:=" + mzCache.getSchedules().stream().filter(s->s.getName().equals(schedule)).findFirst().get().getRounds().get(0).getMatches());
 
      //   terminarzDAO.saveRound(terminarz, runda);
@@ -182,7 +188,13 @@ return round;
    */
           round = roundDAO.findRoundWitchMatches(schedule.getName(),roundNumber);
          System.out.println("try save cache rn="+roundNumber);
+
+         /** ****************************
+          * todo uncomment if need to use cache
+
          mzCache.updateRound(round, schedule);
+
+         */
          System.out.println("saved");
          return round;
      }

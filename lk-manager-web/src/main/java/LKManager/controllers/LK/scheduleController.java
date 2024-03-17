@@ -466,8 +466,12 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         try {
             //    Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
   //          scheduleDAO.save(terminarz);
+            /** ****************************
+             * todo uncomment if need to use cache
+
             if (mzCache.getSchedules().size() != 0)
                 mzCache.getSchedules().add(schedule);
+            */
 /*
  Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter( a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
             cookieManager.saveOrUpdateChosenScheduleCookie(response, terminarz.getName(), request, terminarzDAO);

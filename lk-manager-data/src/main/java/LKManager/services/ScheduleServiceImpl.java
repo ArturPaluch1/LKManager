@@ -3,7 +3,6 @@ package LKManager.services;
 import LKManager.DAO.RoundDAO;
 import LKManager.DAO.ScheduleDAO;
 import LKManager.DAO.UserDAO;
-import LKManager.LK.Comparators.ScheduleByLocalDateComparator;
 import LKManager.LK.Round;
 import LKManager.LK.Schedule;
 import LKManager.model.MatchesMz.Match;
@@ -78,6 +77,10 @@ return schedule;
         else{
             System.out.println("W Schedule getSchedule_ByName(String scheduleName)");
             System.out.println("sprawdzanie terminarzy w cache");
+
+            /** ****************************
+             * todo uncomment if need to use cache
+
             List<Schedule> schedules= mzCache.getSchedules();
             if(schedules.size()==0)
             {
@@ -87,10 +90,14 @@ return schedule;
 
             Schedule foundSchedule= schedules.stream().filter(s->s.getName().equals(scheduleName)).findFirst()
                     .orElse(null);
+             */
+            Schedule foundSchedule=this.scheduleDAO.findByScheduleName(scheduleName);
+
 if(foundSchedule!=null)
 {
+
     System.out.println("sprawdzanie czy mecze są zainicjalizowane (lazy)");
-    if(!((PersistentBag) foundSchedule.getRounds().get(0).getMatches()).wasInitialized())
+    if(!((PersistentBag) foundSchedule.getRounds()).wasInitialized())
     {
         System.out.println("inicjalizacja rund");
         foundSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(foundSchedule.getId()).getRounds());
@@ -108,6 +115,9 @@ if(foundSchedule!=null)
     @Override
     public Schedule getSchedule_ById(long id) {
         //sprawdzanie terminarzy w cache
+
+        /** ****************************
+         * todo uncomment if need to use cache
         List<Schedule> schedules= mzCache.getSchedules();
         if(schedules.size()==0)
         {
@@ -115,6 +125,9 @@ if(foundSchedule!=null)
             schedules = scheduleDAO.findAllFetchRoundsEagerly();
         }
         Schedule foundSchedule= schedules.stream().filter(s->s.getId()==id).findFirst().get();
+
+        */
+        Schedule foundSchedule=this.getSchedule_ById(id);
 
 //sprawdzanie czy mecze są zainicjalizowane (lazy)
         if(!((PersistentBag) foundSchedule.getRounds().get(0).getMatches()).wasInitialized())
@@ -132,13 +145,19 @@ if(foundSchedule!=null)
     @Override
     public void deleteSchedule(String scheduleToDeleteName) {
         scheduleDAO.deleteByName(scheduleToDeleteName);
+        /** ****************************
+         * todo uncomment if need to use cache
         mzCache.setSchedules(scheduleDAO.findAll());
+*/
 
     }
 
     @Override
     public Schedule getSchedule_TheNewest() {
         //sprawdzanie terminarzy w cache
+        /** ****************************
+         * todo uncomment if need to use cache
+
         List<Schedule> schedules= mzCache.getSchedules();
         if(schedules.size()==0)
         {
@@ -148,6 +167,11 @@ if(foundSchedule!=null)
         //szukanie najnowszego wg daty pierwszej rundy terminarza
         schedules.sort(new ScheduleByLocalDateComparator());
           Schedule newestSchedule= schedules.get(0) ;
+          */
+
+
+        Schedule newestSchedule=this.getSchedule_TheNewest();
+
 //sprawdzanie czy mecze są zainicjalizowane (lazy)
         if(!((PersistentBag) newestSchedule.getRounds().get(0).getMatches()).wasInitialized())
         {
@@ -171,12 +195,18 @@ if(foundSchedule!=null)
 
     @Override
     public List<Schedule> getSchedules() {
+        /** ****************************
+         * todo replace if need to use cache
       List<Schedule> schedules=  mzCache.getSchedules();
       if(schedules.size()==0)
       {
           schedules=scheduleDAO.findAll();
         //  schedules=scheduleDAO.findAllFetchRoundsEagerly();
       }
+      */
+
+
+        List<Schedule> schedules=scheduleDAO.findAll();
 
         return schedules;
     }
@@ -379,9 +409,13 @@ return schedule;
 
 
             userDAO.save(tempuser);
+
+            /** ****************************
+             * todo uncomment if need to use cache
+
           if(mzCache.getUsers().size()!=0)
           mzCache.addUser(tempuser);
-
+*/
         }
     }
     @Override

@@ -134,7 +134,12 @@ public class UserServiceImpl implements UserService {
                         //todo nie bylo takiego grajka
                         int i=0;
                     }
+
+                    /** ****************************
+                     * todo uncomment if need to use cache
                     mzCache.setUsers( userDAO.findNotDeletedUsers() );
+
+                    */
                 }
 
 
@@ -171,8 +176,10 @@ public class UserServiceImpl implements UserService {
 
                     }
                 }
-
+/** ****************************
+ * todo uncomment if need to use cache
                 mzCache.setUsers( userDAO.findNotDeletedUsers() );
+ */
             }
 
 
@@ -197,6 +204,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserData> findUsers_NotDeletedWithoutPause() {
         //próbowanie z cache
+        /** ****************************
+         * todo uncomment if need to use cache
         System.out.println("trying find users in cache");
 List<UserData> users=userDAO.findUsersFromCache_NotDeletedWithoutPause();
 if(users.size()!=0)
@@ -205,19 +214,24 @@ if(users.size()!=0)
     return users;
 }
 else
-{
+{*/
     //todo zrobic redirect ze nie polaczono z db
     System.out.println("trying find users in db");
-  users= userDAO.findUsers_NotDeletedWithoutPause();
+        List<UserData> users= userDAO.findUsers_NotDeletedWithoutPause();
+    /** ****************************
+     * todo uncomment if need to use cache
 mzCache.setUsers(users);
+*/
     System.out.println("found users in db");
 return users;
-}
+//}
 
     }
 
     @Override
     public List<UserData> findUsers_NotDeletedWithPause(){
+        /** ****************************
+         * todo uncomment if need to use cache
         //próbowanie z cache
         System.out.println("trying find users in cache");
         List<UserData> users =userDAO.findUsersFromCache_NotDeletedWithPause();
@@ -227,16 +241,19 @@ return users;
             System.out.println("found users in cache");
             return users;
         } else {
+         */
             //todo zrobic redirect ze nie polaczono z db
             System.out.println("trying find users in db");
 
-                users = userDAO.findUsers_NotDeletedWithPause();
+        List<UserData> users = userDAO.findUsers_NotDeletedWithPause();
 
-
+/** ****************************
+ * todo uncomment if need to use cache
             mzCache.setUsers(users);
+            */
             System.out.println("found users in db");
             return users;
-        }
+   //     }
     }
 
     @Override
@@ -287,7 +304,10 @@ return users;
                  //   playerMZ.getTeamlist().get(0).setUser(playerMZ);
                     //       this.userDAO.save(playerMZ);
               var  savedUser=    this.saveUser(playerMZ);
+                    /** ****************************
+                     * todo uncomment if need to use cache
                     mzCache.addUser(playerMZ);
+                     */
 return savedUser;
                 }
             }
@@ -296,7 +316,10 @@ return savedUser;
                 //        lkUserService.dodajGraczaDoXML(graczMZ);
                 // this.userDAO.save(playerMZ);
                 var  savedUser=   this.saveUser(playerMZ);
+                /** ****************************
+                 * todo uncomment if need to use cache
                 mzCache.addUser(playerMZ);
+                 */
                 return savedUser;
             }
 

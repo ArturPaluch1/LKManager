@@ -34,12 +34,17 @@ public class TableServiceImpl implements TableService {
         Table table = null;
 
 //schedules are in cache
+        /** ****************************
+         * todo uncomment if need to use cache
+
         if(mzCache.getSchedules().size()!=0)
         {
 
 
             String finalChosenScheduleName = chosenscheduleName;
+
             Schedule schedule =  mzCache.getSchedules().stream().filter(a->a.getName().equals(finalChosenScheduleName)).findFirst().orElse(null);
+
             List<Match> matches = new ArrayList<>();
             //in cache  exist chosen schedule
             if(schedule!=null)
@@ -89,6 +94,7 @@ public class TableServiceImpl implements TableService {
         //todo sprawdzić czy ten warunek w ogóle jest potrzebny, bo wcześniej też jest w scheduleService próbowane cache a potem z bazy
         else  //nie ma schedules w cache
         {
+            */
             try {
 
                 Schedule schedule= scheduleService.getSchedule_ByName(chosenscheduleName);
@@ -106,7 +112,7 @@ public class TableServiceImpl implements TableService {
 
 
 
-        }
+      //  }
 
         return table;
     }
