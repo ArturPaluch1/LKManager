@@ -127,8 +127,14 @@
 
                 <tr th:each="match : ${matches}"   th:name="matches">
 <!--                    <td th:text="${match .getUser().getTeamlist().get(0).getTeamName()}">userTeam</td>-->
-                    <td th:text="${match.getUserData()!=null}? ${match.getUserData().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
 
+                    <div th:if="${not #lists.isEmpty(match?.getUserData()?.getTeamlist() )}">
+                    <td th:text="${match.getUserData()!=null}? ${match.getUserData().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+                    </div>
+                    <div th:unless="${not #lists.isEmpty(match?.getUserData()?.getTeamlist() )}">
+                        <td text=" "
+                        >UserTeam</td>
+                    </div>
 
 
 
@@ -165,9 +171,16 @@
                     >1</td>
                     <input   hidden  th:name="opponentUser" th:value="${match.getOpponentUserData().getUsername()}">
 
+<div th:if="${not #lists.isEmpty(match?.getOpponentUserData()?.getTeamlist() )}">
+    <td th:text="${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}"
+    >opponentUserTeam</td>
+</div>
 
-                    <td th:text="${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}"
-                    >opponentUserTeam</td>
+                    <div th:unless="${not #lists.isEmpty(match?.getOpponentUserData()?.getTeamlist() )}">
+                        <td text=" "
+                        >opponentUserTeam</td>
+                    </div>
+
 
                 </tr>
                 </tbody>
@@ -242,8 +255,15 @@
                 <td style="width: 25px"  th:text="${match .getOpponentMatchResult2()}" align="left">wynik2</td>
 
                 <td th:text="${match.getOpponentUserData().getUsername()}">1</td>
-                <td th:text="${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}"  >opponentUserTeam</td>
 
+
+                <div th:if="${not #lists.isEmpty(match?.getOpponentUserData()?.getTeamlist() )}">
+                <td th:text="${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}"  >opponentUserTeam</td>
+                </div>
+                <div th:unless="${not #lists.isEmpty(match?.getOpponentUserData()?.getTeamlist() )}">
+                    <td text=" "
+                    >OpponentUserTeam</td>
+                </div>
             </tr>
             </tbody>
 
