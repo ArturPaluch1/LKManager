@@ -170,7 +170,7 @@ if(foundSchedule!=null)
           */
 
 
-        Schedule newestSchedule=this.getSchedule_TheNewest();
+        Schedule newestSchedule=scheduleDAO.getTheNewest();
 
 //sprawdzanie czy mecze są zainicjalizowane (lazy)
         if(!((PersistentBag) newestSchedule.getRounds().get(0).getMatches()).wasInitialized())
@@ -213,13 +213,32 @@ if(foundSchedule!=null)
 
 
     @Override
-    public Schedule utworzTerminarzWielodniowy(LocalDate data, List<UserData> grajki, String nazwa) throws DatatypeConfigurationException {
+    public Schedule utworzTerminarzWielodniowy(LocalDate data, List<String> chosenPlayers, String nazwa) throws DatatypeConfigurationException {
+        List<UserData> players = userDAO.findNotDeletedUsers();
+
+        List<UserData> chosenPlayersUserData = new ArrayList<>();
+        for (var player : players
+        ) {
+            for (int i = 0; i < chosenPlayers.size(); i++
+            ) {
+                if (player.getUsername().equals(chosenPlayers.get(i))) {
+                    chosenPlayersUserData.add(player);
+                    i = 0;
+                    break;
+                }
+            }
+        }
+
+
+
+
+
 
         ////////////////////////////////////////////////////////
-        dodajPauzeDlaParzystosci(grajki);
+        dodajPauzeDlaParzystosci(chosenPlayersUserData);
 /////////////////podzial grajkow na pol  /////////////////
-        var grajkiA = grajki.subList(0, (grajki.size()) / 2);
-        var grajkiB = grajki.subList(grajki.size() / 2, grajki.size());
+        var grajkiA = chosenPlayersUserData.subList(0, (chosenPlayersUserData.size()) / 2);
+        var grajkiB = chosenPlayersUserData.subList(chosenPlayersUserData.size() / 2, chosenPlayersUserData.size());
 
 
         Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
@@ -228,7 +247,7 @@ if(foundSchedule!=null)
         List<Round> calyTerminarz = new ArrayList<>();
 
 /////////tworzenie terminarza/////////////////
-        for (int j = 1; j < grajki.size(); j++) {
+        for (int j = 1; j < chosenPlayersUserData.size(); j++) {
             /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
             Round round;
             if (j != 1) {
@@ -297,9 +316,24 @@ return schedule;
     }
 
     @Override
-    public Schedule utworzTerminarzJednodniowy(LocalDate data, List<UserData> mecze, String nazwa) {
+    public Schedule utworzTerminarzJednodniowy(LocalDate data, List<String> chosenPlayers, String nazwa) {
+        List<UserData> playersUserData = userDAO.findNotDeletedUsers();
+
+        List<UserData> playersUserDataList = new ArrayList<>();
+        for (int i = 0; i < chosenPlayers.size(); i++
+        ) {
 
 
+            for (int j = 0; j < playersUserData.size(); j++) {
+
+
+                if (playersUserData.get(j).getUsername().equals(chosenPlayers.get(i))) {
+                    playersUserDataList.add(playersUserData.get(j));
+                    j = 0;
+                    break;
+                }
+            }
+        }
         ////////////////////////////////////////////////////////
    //     dodajPauzeDlaParzystosci(grajki);
 /////////////////podzial grajkow na pol  /////////////////
@@ -319,7 +353,7 @@ return schedule;
 
                 round = new Round(1, data);
 
-        for (int i = 0; i < mecze.size(); i++) {
+        for (int i = 0; i < playersUserDataList.size(); i++) {
             if(i%2!=0)
             {
 int yy=0;
@@ -328,8 +362,8 @@ int yy=0;
             {
                 var tempMatch = new Match();
                tempMatch.setDateDB(data);
-                tempMatch.setUserData(mecze.get(i));
-                tempMatch.setOpponentUserData(mecze.get(i+1));
+                tempMatch.setUserData(playersUserDataList.get(i));
+                tempMatch.setOpponentUserData(playersUserDataList.get(i+1));
                 round.getMatches().add(tempMatch);
             }
 

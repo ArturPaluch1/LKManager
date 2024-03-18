@@ -414,10 +414,11 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 ////////////////////////////////////////
 
 
-        List<UserData> players = userDAO.findNotDeletedUsers();
+
 
         //nie wybrano graczy do wielodniowego terminarza
         if (chosenPlayers == null) {
+
             if (command.getPlayersList().size() == 0) {
                 //todo nie wybrano tez pojedynczych meczy
                 int tt = 0;
@@ -425,42 +426,17 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
                 if (command.getPlayersList().size() % 2 != 0) {
                     //todo brakuje pary dla grajka  ewentuanie w js wybierzgrajka-> pauza
                 } else {
-                    List<UserData> templist = new ArrayList<>();
-                    for (int i = 0; i < command.playersList.size(); i++
-                    ) {
 
-
-                        for (int j = 0; j < players.size(); j++) {
-
-
-                            if (players.get(j).getUsername().equals(command.playersList.get(i))) {
-                                templist.add(players.get(j));
-                                j = 0;
-                                break;
-                            }
-                        }
-                    }
 //////////////////////////////
-                    schedule = scheduleService.utworzTerminarzJednodniowy(date, templist, command.name);
+                    schedule = scheduleService.utworzTerminarzJednodniowy(date, command.playersList, command.name);
 
                 }
 
             }
         } else {
-            List<UserData> templist = new ArrayList<>();
-            for (var player : players
-            ) {
-                for (int i = 0; i < chosenPlayers.size(); i++
-                ) {
-                    if (player.getUsername().equals(chosenPlayers.get(i))) {
-                        templist.add(player);
-                        i = 0;
-                        break;
-                    }
-                }
-            }
+
 //////////////////////////////
-            schedule = scheduleService.utworzTerminarzWielodniowy(date, templist, command.name);
+            schedule = scheduleService.utworzTerminarzWielodniowy(date, chosenPlayers, command.name);
         }
 
         try {

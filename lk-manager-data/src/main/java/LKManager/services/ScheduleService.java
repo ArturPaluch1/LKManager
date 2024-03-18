@@ -2,7 +2,6 @@ package LKManager.services;
 
 import LKManager.LK.Schedule;
 import LKManager.model.MatchesMz.Match;
-import LKManager.model.UserMZ.UserData;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -11,8 +10,8 @@ import java.util.List;
 
 public interface ScheduleService {
 
-   Schedule utworzTerminarzWielodniowy(LocalDate data, List<UserData> grajki, String nazwa  ) throws DatatypeConfigurationException;
-    Schedule utworzTerminarzJednodniowy(LocalDate data, List<UserData> mecze, String nazwa );
+   Schedule utworzTerminarzWielodniowy(LocalDate data, List<String> grajki, String nazwa  ) throws DatatypeConfigurationException;
+    Schedule utworzTerminarzJednodniowy(LocalDate data, List<String> mecze, String nazwa );
 
    Schedule wczytajTerminarz(String sciezka) throws JAXBException;
 
