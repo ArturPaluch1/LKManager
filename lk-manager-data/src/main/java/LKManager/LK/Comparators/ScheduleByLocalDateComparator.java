@@ -1,6 +1,6 @@
 package LKManager.LK.Comparators;
 
-import LKManager.LK.Schedule;
+import LKManager.model.Schedule;
 
 import java.util.Comparator;
 

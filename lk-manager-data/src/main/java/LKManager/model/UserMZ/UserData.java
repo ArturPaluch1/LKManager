@@ -112,6 +112,9 @@ public boolean getDeleted()
             cascade = CascadeType.ALL,
             orphanRemoval = true)*/
    // @JoinColumn(name = "team_id")
+
+
+
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL,
          //   orphanRemoval = true,
@@ -125,6 +128,7 @@ public boolean getDeleted()
   //  @SQLDelete(sql = "UPDATE teams SET deleted = true WHERE team_id=?")
          //   , orphanRemoval = true)
 private List<Team> teamlist= new ArrayList();
+
 
 
     @XmlElement(name = "Team")

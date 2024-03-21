@@ -1,7 +1,7 @@
 package LKManager.DAO;
 
 
-import LKManager.LK.Schedule;
+import LKManager.model.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

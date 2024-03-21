@@ -1,6 +1,6 @@
 package LKManager.DAO;
 
-import LKManager.LK.Schedule;
+import LKManager.model.Schedule;
 import LKManager.model.MatchesMz.Match;
 import LKManager.services.MZUserService;
 import LKManager.services.MatchService;

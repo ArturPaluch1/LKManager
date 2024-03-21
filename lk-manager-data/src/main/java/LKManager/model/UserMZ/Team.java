@@ -3,11 +3,9 @@ package LKManager.model.UserMZ;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -50,7 +48,10 @@ public class Team implements Serializable {
     private long id;*/
 
    // @JoinColumn(name="u_id")
-    @ManyToOne//( cascade = CascadeType.ALL)//(fetch = FetchType.LAZY)
+
+
+
+   @ManyToOne//( cascade = CascadeType.ALL)//(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     private UserData user;
 

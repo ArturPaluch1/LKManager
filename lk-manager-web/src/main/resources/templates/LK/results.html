@@ -258,11 +258,11 @@
 
 
                 <div th:if="${not #lists.isEmpty(match?.getOpponentUserData()?.getTeamlist() )}">
-                <td th:text="${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}"  >opponentUserTeam</td>
+                <td th:text="${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}"  ></td>
                 </div>
                 <div th:unless="${not #lists.isEmpty(match?.getOpponentUserData()?.getTeamlist() )}">
                     <td text=" "
-                    >OpponentUserTeam</td>
+                    ></td>
                 </div>
             </tr>
             </tbody>

@@ -1,6 +1,6 @@
 package LKManager.DAO;
 
-import LKManager.LK.Round;
+import LKManager.model.Round;
 
 import java.util.List;
 

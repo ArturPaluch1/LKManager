@@ -1,7 +1,7 @@
 package LKManager.DAO;
 
 import LKManager.model.MatchesMz.Match;
-import LKManager.LK.Schedule;
+import LKManager.model.Schedule;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

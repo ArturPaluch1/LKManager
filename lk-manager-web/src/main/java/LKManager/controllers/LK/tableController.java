@@ -2,10 +2,11 @@ package LKManager.controllers.LK;
 
 import LKManager.DAO.MatchDAO;
 import LKManager.DAO.ScheduleDAO;
-import LKManager.LK.Schedule;
-import LKManager.LK.Table;
-import LKManager.services.Cache.MZCache;
+import LKManager.model.Schedule;
+import LKManager.model.Table;
+import LKManager.HardCodedCache_unused.Cache.MZCache;
 import LKManager.services.*;
+import LKManager.services.FilesService_unused.PlikiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,7 +29,7 @@ private final ScheduleService scheduleService;
   private   MZCache mzCache;
     private String chosenSchedule;
     private Schedule schedule;
-    private final  PlikiService plikiService;
+    private final PlikiService plikiService;
     private final TableService tableService;
     private final ScheduleDAO scheduleDAO;
 

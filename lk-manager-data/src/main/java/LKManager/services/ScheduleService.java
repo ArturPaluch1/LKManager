@@ -1,6 +1,6 @@
 package LKManager.services;
 
-import LKManager.LK.Schedule;
+import LKManager.model.Schedule;
 import LKManager.model.MatchesMz.Match;
 
 import javax.xml.bind.JAXBException;

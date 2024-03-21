@@ -1,6 +1,6 @@
 package LKManager.DAO;
 
-import LKManager.LK.Round;
+import LKManager.model.Round;
 import LKManager.model.MatchesMz.Match;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

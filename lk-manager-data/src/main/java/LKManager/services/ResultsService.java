@@ -1,13 +1,14 @@
 package LKManager.services;
 
-import LKManager.LK.Round;
-import LKManager.LK.Schedule;
+import LKManager.model.Round;
+import LKManager.model.Schedule;
 import org.xml.sax.SAXException;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface ResultsService {
@@ -21,6 +22,6 @@ public interface ResultsService {
     Round editResults(Schedule schedule, Integer roundNumber, List<Long> matchIds, List<String> userMatchResults1, List<String> userMatchResults2, List<String> opponentMatchResults1, List<String> opponentMatchResults2);
     void saveToXML(Schedule schedule, String fileName);
 
-
+    List<Round>  updateRoundResultsForDate(LocalDate date);
 
 }

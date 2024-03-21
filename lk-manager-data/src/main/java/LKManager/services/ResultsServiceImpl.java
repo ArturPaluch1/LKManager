@@ -3,9 +3,9 @@ package LKManager.services;
 import LKManager.DAO.CustomScheduleDAOImpl;
 import LKManager.DAO.MatchDAO;
 import LKManager.DAO.RoundDAO;
-import LKManager.LK.Round;
-import LKManager.LK.Schedule;
 import LKManager.model.MatchesMz.Match;
+import LKManager.model.Round;
+import LKManager.model.Schedule;
 import LKManager.model.UserMZ.UserData;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -125,6 +127,47 @@ return round;
     }
 
     @Override
+    @Transactional
+    public List<Round> updateRoundResultsForDate(LocalDate date) {
+
+
+        List<Round> roundsForDate=   roundDAO.findRoundsByDate(date);
+
+List<Round>resultsList=  roundsForDate.stream().map( round-> {
+    try {
+        System.out.println("Trying to update round:");
+
+                    System.out.println(round.getSchedule().getName()+" round: "+round.getNr());
+
+
+        Round tempRound = getResultsFromMZ(round);
+         tempRound= roundDAO.save(tempRound);
+        System.out.println("With success");
+return tempRound;
+
+    } catch (Exception e) {
+        //todo redirect to error page with message: could not retrive mz match results
+        // or not redirect? It works on the server, not from user.
+
+        e.printStackTrace();
+        System.out.println("With failure");
+        return null;
+    }
+
+
+    //todo to zamienić na  jpql
+    //   roundDAO.saveRound(round);
+}).filter(Objects::nonNull).collect(Collectors.toList());
+
+
+
+        return resultsList;
+    }
+
+
+
+
+    @Override
     public Round editResults(Schedule schedule, Integer roundNumber, List<Long> matchIds, List<String> userMatchResults1, List<String> userMatchResults2, List<String> opponentMatchResults1, List<String> opponentMatchResults2)
  {
      Round round= null;
@@ -210,9 +253,20 @@ return round;
 
     @Transactional
     private  Round getResultsFromMZ(Integer roundNumber, String scheduleName) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
+
+        //todo jak wyzej nie dzała to nizej sprobowac
+      Round round=    roundDAO.findRoundWitchMatches(scheduleName,roundNumber);
+        return getMZResults(round);
+    }
+    @Transactional
+    private  Round getResultsFromMZ(Round round) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
+
+        return getMZResults(round);
+    }
+    private Round getMZResults(Round round) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-
+// todo \/  to niepotrzebne??
         GregorianCalendar gregorianCalendar = new GregorianCalendar();
         DatatypeFactory datatypeFactory = DatatypeFactory.newInstance();
         XMLGregorianCalendar now =
@@ -221,92 +275,75 @@ return round;
 
         Duration d = DatatypeFactory.newInstance().newDuration(false, 0, 0, 7, 0, 0, 0);
         now.add(d);
+// todo /\  to niepotrzebne??
 
-      //  Runda round= rundaDAO.findRound(scheduleName,roundNumber);
+        for (var mecz : round.getMatches()
+        ) {
 
-        //todo jak wyzej nie dzała to nizej sprobowac
-      Round round=    roundDAO.findRoundWitchMatches(scheduleName,roundNumber);
-
-
-
-
+            //sprawdzanie czy  gospodarzem jest apuza
+            if (!(mecz.getUserData().getUsername().equals("pauza") || mecz.getOpponentUserData().getUsername().equals("pauza"))) {
 
 
-                for (var mecz : round.getMatches()
+
+
+
+                UserData user = mecz.getUserData();
+                var userTeamId = user.getTeamlist().get(0).getTeamId();
+                var oponent = mecz.getOpponentUserData();
+                var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
+
+                var rozegrane = matchService.findPlayedByUser(user);
+
+                var meczeTurniejowe = rozegrane.getMatches().stream().
+                        filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
+                        filter(a -> a.getType().equals("friendly")).collect(Collectors.toList());
+
+                //todo sprawzic czy id oponenta to id z terminarza
+                for (var rozegranyMecz : meczeTurniejowe
                 ) {
-
-                    //sprawdzanie czy  gospodarzem jest apuza
-                    if (!(mecz.getUserData().getUsername().equals("pauza") || mecz.getUserData().getUsername().equals("pauza"))) {
-
-
-
-
-
-                        UserData user = mecz.getUserData();
-                        var userTeamId = user.getTeamlist().get(0).getTeamId();
-                        var oponent = mecz.getOpponentUserData();
-                        var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
-
-                        var rozegrane = matchService.findPlayedByUser(user);
-
-                        var meczeTurniejowe = rozegrane.getMatches().stream().
-                                filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
-                                filter(a -> a.getType().equals("friendly")).collect(Collectors.toList());
-
-                        //todo sprawzic czy id oponenta to id z terminarza
-                        for (var rozegranyMecz : meczeTurniejowe
-                        ) {
-                            //sprawdzanie daty  contains a nie equals bo rozegranyMecz.getDate() zawiera godziny a w round jest bez godzin
-                            if(rozegranyMecz.getDate().contains(round.getDate().toString()))
-                            {
-                                //tutaj user ma id =0 oponent 1
-                                if (rozegranyMecz.getTeamlist().get(0).getTeamId() == userTeamId) {
-                                    //sprawdzanie czy prawidlowy przeciwnik
-                                    if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
-                                        //aktualizacja
-                                        //  mecz.setMatchResult1("1");
+                    //sprawdzanie daty  contains a nie equals bo rozegranyMecz.getDate() zawiera godziny a w round jest bez godzin
+                    if(rozegranyMecz.getDate().contains(round.getDate().toString()))
+                    {
+                        //tutaj user ma id =0 oponent 1
+                        if (rozegranyMecz.getTeamlist().get(0).getTeamId() == userTeamId) {
+                            //sprawdzanie czy prawidlowy przeciwnik
+                            if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                //aktualizacja
+                                //  mecz.setMatchResult1("1");
 
 
-                                        mecz.setUserMatchResult1(rozegranyMecz.getTeamlist().get(0).getGoals());
-                                        mecz.setOpponentMatchResult1(rozegranyMecz.getTeamlist().get(1).getGoals());
-                                    }
-
-
-                                }
-                                //tutaj user ma id 1  oponent =0
-                                else if (rozegranyMecz.getTeamlist().get(1).getTeamId() == userTeamId) {
-                                    //sprawdzanie czy prawidlowy przeciwnik
-                                    if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
-                                        //aktualizacja
-                                        //  mecz.setMatchResult1("1");
-                                        mecz.setUserMatchResult2(rozegranyMecz.getTeamlist().get(1).getGoals());
-                                        mecz.setOpponentMatchResult2(rozegranyMecz.getTeamlist().get(0).getGoals());
-                                    }
-
-
-                                }
-
+                                mecz.setUserMatchResult1(rozegranyMecz.getTeamlist().get(0).getGoals());
+                                mecz.setOpponentMatchResult1(rozegranyMecz.getTeamlist().get(1).getGoals());
                             }
+
+
+                        }
+                        //tutaj user ma id 1  oponent =0
+                        else if (rozegranyMecz.getTeamlist().get(1).getTeamId() == userTeamId) {
+                            //sprawdzanie czy prawidlowy przeciwnik
+                            if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                //aktualizacja
+                                //  mecz.setMatchResult1("1");
+                                mecz.setUserMatchResult2(rozegranyMecz.getTeamlist().get(1).getGoals());
+                                mecz.setOpponentMatchResult2(rozegranyMecz.getTeamlist().get(0).getGoals());
+                            }
+
+
                         }
 
                     }
-
-
-
                 }
 
-            return   round;
+            }
 
 
 
+        }
+
+        return round;
     }
 
-    private void extracted2(Integer runda, Round round, MatchService matchService) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
 
-
-
-
-    }
 
     @Override
     public void saveToXML(Schedule calySchedule, String fileName) {
@@ -330,6 +367,8 @@ return round;
             e.printStackTrace();
         }
     }
+
+
 
 
 }

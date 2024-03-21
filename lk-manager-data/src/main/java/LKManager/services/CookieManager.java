@@ -2,7 +2,7 @@ package LKManager.services;
 
 import LKManager.DAO.CustomScheduleDAOImpl;
 import LKManager.DAO.ScheduleDAO;
-import LKManager.LK.Schedule;
+import LKManager.model.Schedule;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

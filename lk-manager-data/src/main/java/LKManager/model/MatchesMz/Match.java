@@ -1,6 +1,6 @@
 package LKManager.model.MatchesMz;
 
-import LKManager.LK.Round;
+import LKManager.model.Round;
 import LKManager.model.UserMZ.UserData;
 import lombok.Getter;
 import lombok.Setter;

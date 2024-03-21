@@ -4,17 +4,18 @@ import LKManager.DAO.CustomUserDAOImpl;
 import LKManager.DAO.MatchDAO;
 import LKManager.DAO.RoundDAOImpl;
 import LKManager.DAO.ScheduleDAO;
-import LKManager.LK.Round;
-import LKManager.LK.Schedule;
+import LKManager.model.Round;
+import LKManager.model.Schedule;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
-import LKManager.services.Cache.MZCache;
+import LKManager.HardCodedCache_unused.Cache.MZCache;
 import LKManager.services.*;
+import LKManager.services.FilesService_unused.PlikiService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.json.simple.parser.ParseException;
+//import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -84,7 +85,7 @@ public class scheduleController {
 
 
     @GetMapping("/schedule")
-    public String getSchedule(HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "roundNumber", required = false) String roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, ParseException, URISyntaxException {
+    public String getSchedule(HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "roundNumber", required = false) String roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
         //, @CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
 
         //   Arrays.stream(request.getCookies()).forEach(a-> System.out.println(a.getValue()));

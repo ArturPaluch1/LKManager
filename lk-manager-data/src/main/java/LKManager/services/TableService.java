@@ -1,6 +1,6 @@
 package LKManager.services;
 
-import LKManager.LK.Table;
+import LKManager.model.Table;
 
 public interface TableService {
     //Table createTable(List<Match> matches);
