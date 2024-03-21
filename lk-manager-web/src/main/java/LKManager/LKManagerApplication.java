@@ -2,7 +2,6 @@ package LKManager;
 
 import LKManager.DAO.ScheduleDAO;
 import LKManager.DAO.UserDAO;
-import LKManager.HardCodedCache_unused.Cache.MZCache;
 import LKManager.HardCodedCache_unused.CacheService;
 import LKManager.TimerTasks.RefreshSiteTimer;
 import LKManager.TimerTasks.RoundResultsUpdateTimer;
@@ -27,7 +26,7 @@ public class LKManagerApplication {
 	@Autowired
 
 	private final CacheService cacheService;
-	protected MZCache mzCache;
+//	protected MZCache mzCache;
 	protected final UserDAO userDAO;
 	protected final UserService userService;
 	private final ResultsService resultsService;
@@ -37,9 +36,9 @@ public class LKManagerApplication {
 	private FailedDatabaseOperationRepository failedDatabaseOperationRepository;*/
 	private static final long delay = 14L;
 
-	public LKManagerApplication(CacheService cacheService, MZCache mzCache, UserDAO userDAO, UserService userService, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService) {
+	public LKManagerApplication(CacheService cacheService,  UserDAO userDAO, UserService userService, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService) {
 		this.cacheService = cacheService;
-		this.mzCache = mzCache;
+	//	this.mzCache = mzCache;
 		this.userDAO = userDAO;
 		this.userService = userService;
 		this.resultsService = resultsService;
