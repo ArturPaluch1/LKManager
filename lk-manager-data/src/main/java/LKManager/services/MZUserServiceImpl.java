@@ -21,7 +21,7 @@ public class MZUserServiceImpl implements MZUserService, Serializable {
         return null;
     }
 
-    public  UserData findByUsername(String username) {
+    public  UserData findByUsernameInManagerzone(String username) {
 
         URL url= null;
         try {

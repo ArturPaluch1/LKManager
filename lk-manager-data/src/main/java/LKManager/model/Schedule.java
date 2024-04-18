@@ -1,10 +1,7 @@
 package LKManager.model;
 
 import LKManager.model.MatchesMz.MatchTeam;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.collection.internal.PersistentBag;
 
@@ -18,7 +15,6 @@ import java.util.List;
 @Entity
 @Table(name = "terminarze", schema="lkm_dev")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @XmlRootElement(name = "terminarz")
@@ -44,11 +40,10 @@ public class Schedule implements Serializable {
             fetch = FetchType.LAZY)
     private List<Round> rounds = new ArrayList<>();
 
-
-    public Schedule(List<Round> rounds) {
-        this.rounds = rounds;
+    public Schedule(List<Round> rounds, String name) {
+        this.rounds=rounds;
+        this.name=name;
     }
-
 
     //  @XmlElementWrapper(name="terminarz")
     @XmlElement(name = "Runda")

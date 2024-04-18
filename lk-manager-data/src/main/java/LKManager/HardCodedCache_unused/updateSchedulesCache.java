@@ -1,7 +1,7 @@
 package LKManager.HardCodedCache_unused;
 
-import LKManager.DAO.ScheduleDAO;
-import LKManager.LK.Comparators.ScheduleByLocalDateComparator;
+import LKManager.DAO_SQL.ScheduleDAO;
+import LKManager.services.Comparators.ScheduleByLocalDateComparator;
 import LKManager.model.Schedule;
 import LKManager.HardCodedCache_unused.Cache.MZCache;
 import lombok.AllArgsConstructor;

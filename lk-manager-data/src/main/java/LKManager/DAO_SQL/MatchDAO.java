@@ -1,4 +1,4 @@
-package LKManager.DAO;
+package LKManager.DAO_SQL;
 
 import LKManager.model.MatchesMz.Match;
 import org.springframework.data.jpa.repository.JpaRepository;

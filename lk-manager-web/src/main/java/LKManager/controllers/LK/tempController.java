@@ -38,7 +38,7 @@ public class tempController {
     @GetMapping({"/temp"} )
     public String index(Model model) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
 
-
+model.addAttribute("error",model.getAttribute("errorMessage"));
         return "LK/temp";
     }
 

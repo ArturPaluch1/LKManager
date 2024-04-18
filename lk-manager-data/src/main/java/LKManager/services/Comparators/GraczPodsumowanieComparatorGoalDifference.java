@@ -1,4 +1,4 @@
-package LKManager.LK.Comparators;
+package LKManager.services.Comparators;
 
 import LKManager.LK.PlayerSummary;
 
@@ -8,6 +8,6 @@ public class GraczPodsumowanieComparatorGoalDifference implements Comparator<Pla
     @Override
     public int compare(PlayerSummary o1, PlayerSummary o2) {
 
-        return Integer.compare(o2.getRoznica(),o1.getRoznica());
+        return Integer.compare(o2.getDifference(),o1.getDifference());
     }
 }

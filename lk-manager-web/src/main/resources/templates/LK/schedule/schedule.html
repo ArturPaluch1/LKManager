@@ -72,15 +72,15 @@
             <tr>
             </thead>
             <tbody>
-            <tr th:each="match : ${round}">
-                <td  id="round" th:text="${match.getNr()}" style="width: 150px">Joe</td>
-                <td  id="data" th:text="${match.getDate()}"style="width: 150px">1</td>
+            <tr th:each="round : ${round}">
+                <td  id="round" th:text="${round.getNr()}" style="width: 150px">Joe</td>
+                <td  id="data" th:text="${round.getDate()}"style="width: 150px">1</td>
                 <td>
                     <form th:action="@{/showRound}" method="post">
 
                <select    class="form-control" id="dropDownList"  th:name="roundNumber" onchange="this.form.submit()" >
                         <option selected>Zmień rundę</option>
-                        <option  th:each="nr : ${rounds}" th:value="${nr.getNr()}" th:text="Runda+' '+${nr.getNr()}+' '+data+': '+${nr.getDate()}  " ></option>
+                        <option  th:each="round : ${schedule.getRounds()}" th:value="${round.getNr()}" th:text="Runda+' '+${round.getNr()}+' '+data+': '+${round.getDate()}  " ></option>
 
                     </select>
 
@@ -114,28 +114,28 @@
             <tr>
             </thead>
             <tbody id="table-zawartosc" align="center">
+<label th:text="${matches}"/>
 
-
-            <tr th:each="match : ${matches}">
+            <tr th:each="match : ${round.getMatches()}">
           <!--      <td th:text="${mecz .getUser().getTeamlist().get(0).getTeamName()}" style="width: 150px">userTeam</td>-->
-                <div th:if="${not #lists.isEmpty(match?.getUserData()?.getTeamlist() )}">
-                <td th:text="${match.getUserData()!=null}? ${match.getUserData().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+                <div th:if="${not #lists.isEmpty(match?.getUserDataDTO()?.getTeamName() )}">
+                <td th:text="${match.getUserDataDTO()!=null}? ${match.getUserDataDTO().getTeamName()}:'NA'" style="width: 150px">userTeam</td>
                 </div>
-                <div th:unless="${not #lists.isEmpty(match?.getUserData()?.getTeamlist() )}">
+                <div th:unless="${not #lists.isEmpty(match?.getUserDataDTO()?.getTeamName() )}">
                     <td text=" "
                     ></td>
                 </div>
         <!--        <td th:text="${mecz .getUser().getUsername()}" style="width: 150px">user</td>-->
-                <td th:text="${match.getUserData()!=null}? ${match .getUserData().getUsername()}:'NA'" style="width: 150px">user</td>
+                <td th:text="${match.getUserDataDTO()!=null}? ${match .getUserDataDTO().getUsername()}:'NA'" style="width: 150px">user</td>
                 <td style="width: 50px" > - </td>
              <!--   <td th:text="${mecz.getopponentUser().getUsername()}"style="width: 150px">1</td>-->
-                <td th:text="${match.getOpponentUserData()!=null}? ${match.getOpponentUserData().getUsername()}:'NA'" style="width: 150px">user</td>
+                <td th:text="${match.getOpponentUserDataDTO()!=null}? ${match.getOpponentUserDataDTO().getUsername()}:'NA'" style="width: 150px">user</td>
             <!--    <td th:text="${mecz .getopponentUser().getTeamlist().get(0).getTeamName()}" style="width: 150px" >opponentUserTeam</td>-->
 
-                <div th:if="${not #lists.isEmpty(match?.getOpponentUserData()?.getTeamlist() )}">
-                <td th:text="${match.getOpponentUserData()!=null}? ${match .getOpponentUserData().getTeamlist().get(0).getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+                <div th:if="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName() )}">
+                <td th:text="${match.getOpponentUserDataDTO()!=null}? ${match .getOpponentUserDataDTO().getTeamName()}:'NA'" style="width: 150px">userTeam</td>
                 </div>
-                <div th:unless="${not #lists.isEmpty(match?.getOpponentUserData()?.getTeamlist() )}">
+                <div th:unless="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName() )}">
                     <td text=" "
                     ></td>
                 </div>

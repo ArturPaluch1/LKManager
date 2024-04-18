@@ -1,4 +1,4 @@
-package LKManager.LK.Comparators;
+package LKManager.services.Comparators;
 
 import LKManager.model.Schedule;
 

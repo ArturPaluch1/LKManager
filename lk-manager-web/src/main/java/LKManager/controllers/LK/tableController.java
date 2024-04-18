@@ -1,13 +1,13 @@
 package LKManager.controllers.LK;
 
-import LKManager.DAO.MatchDAO;
-import LKManager.DAO.ScheduleDAO;
+import LKManager.DAO_SQL.MatchDAO;
+import LKManager.DAO_SQL.ScheduleDAO;
+import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.Schedule;
 import LKManager.model.Table;
-import LKManager.HardCodedCache_unused.Cache.MZCache;
 import LKManager.services.*;
 import LKManager.services.FilesService_unused.PlikiService;
-import org.springframework.beans.factory.annotation.Autowired;
+import LKManager.services.RedisService.RedisTableService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,15 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Optional;
+import java.util.List;
 
 @Controller
 public class tableController {
     private final MZUserService MZUserService;
 
 private final ScheduleService scheduleService;
-@Autowired
-  private   MZCache mzCache;
+/*@Autowired
+  private   MZCache mzCache;*/
     private String chosenSchedule;
     private Schedule schedule;
     private final PlikiService plikiService;
@@ -36,7 +36,9 @@ private final ScheduleService scheduleService;
     private final MatchDAO matchDAO;
     private final MatchDAO matchDAOimpl;
 private final LKUserService lkUserService;
-    public tableController(MZUserService MZUserService, ScheduleService scheduleService, PlikiService plikiService, TableService tableService, ScheduleDAO scheduleDAO, MatchDAO matchDAO1, MatchDAO matchDAO, LKUserService lkUserService) {
+private final CookieManager cookieManager;
+private final RedisTableService redisTableService;
+    public tableController(MZUserService MZUserService, ScheduleService scheduleService, PlikiService plikiService, TableService tableService, ScheduleDAO scheduleDAO, MatchDAO matchDAO1, MatchDAO matchDAO, LKUserService lkUserService, CookieManager cookieManager, RedisTableService redisTableService) {
         this.MZUserService = MZUserService;
 
         this.scheduleService = scheduleService;
@@ -48,6 +50,8 @@ private final LKUserService lkUserService;
         this.matchDAO = matchDAO1;
         this.matchDAOimpl = matchDAO;
         this.lkUserService = lkUserService;
+        this.cookieManager = cookieManager;
+        this.redisTableService = redisTableService;
     }
 
 
@@ -56,7 +60,7 @@ private final LKUserService lkUserService;
     public String index(HttpServletResponse response, HttpServletRequest request,Model model, @RequestParam(value="chosenSchedule", required = false)String chosenscheduleName) throws URISyntaxException, IOException, JAXBException {
 
 
-       chosenscheduleName= CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenscheduleName),response,request, scheduleDAO);
+       chosenscheduleName= cookieManager.saveOrUpdateChosenScheduleCookie(chosenscheduleName);
 
 
 
@@ -65,7 +69,20 @@ private final LKUserService lkUserService;
 if(!chosenscheduleName.equals(null))
 {
 
-   table= tableService.createTable(chosenscheduleName);
+
+
+    table= redisTableService.getTable(chosenscheduleName);
+    if(table==null)
+    {
+        //todo zrobić wyjątek jeśli nie ma terminarza o danej nazwie
+        List<ScheduleNameDTO> scheduleNameDTOList = scheduleService.getScheduleNames();
+        String finalChosenscheduleName = chosenscheduleName;
+        table=tableService.createTable(scheduleNameDTOList.stream().filter(s-> s.getName().equals(finalChosenscheduleName)).findFirst().get().getId());
+
+        redisTableService.setTable(table);
+
+    }
+
 
 
 
@@ -77,7 +94,9 @@ if(!chosenscheduleName.equals(null))
 if(table!=null)
 {
   //  model.addAttribute("schedules", scheduleDAO.findAll());
-    model.addAttribute("schedules",mzCache.getSchedules());
+    //todo zaminic \/ cache na redis
+   // model.addAttribute("schedules",mzCache.getSchedules());
+    model.addAttribute("schedules",scheduleService.getScheduleNames());
     model.addAttribute("chosenSchedule",chosenscheduleName);
     model.addAttribute("table",table.getPlayerSummaries());
     return "LK/table";
@@ -85,7 +104,8 @@ if(table!=null)
 else
 {
     model.addAttribute("chosenSchedule",chosenscheduleName);
-    model.addAttribute("schedules",mzCache.getSchedules());
+    //todo zaminic \/ cache na redis
+   // model.addAttribute("schedules",mzCache.getSchedules());
     return "LK/table";
 }
 

@@ -1,4 +1,4 @@
-package LKManager.LK.Comparators;
+package LKManager.services.Comparators;
 
 import LKManager.LK.PlayerSummary;
 
@@ -9,6 +9,6 @@ public class GraczPodsumowanieComparatorPoints implements Comparator<PlayerSumma
     public int compare(PlayerSummary o1, PlayerSummary o2) {
    /*     if(o1.getSumaPunktow()=="")o1.setSumaPunktow("0");
         if(o2.getSumaPunktow()=="")o2.setSumaPunktow("0");*/
-        return Integer.compare(o2.getSumaPunktow(),o1.getSumaPunktow());
+        return Integer.compare(o2.getTotalPoints(),o1.getTotalPoints());
     }
 }

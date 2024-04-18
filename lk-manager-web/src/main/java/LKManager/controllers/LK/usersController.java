@@ -2,15 +2,15 @@ package LKManager.controllers.LK;
 
 //import LKManager.DAO.Exceptions.GetUsersUserDatabaseAccessFailureException;
 
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.RecordsAndDTO.UserDataDTO;
 import LKManager.services.LKUserService;
 import LKManager.services.MZUserService;
 import LKManager.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.xml.sax.SAXException;
@@ -36,16 +36,17 @@ private final UserService userService;
 //private FailedDatabaseOperationRepository failedDatabaseOperationRepository;
 
 
-    @RequestMapping(value="/users")
+    @GetMapping(value="/users")
 public String showUsers(Model model, RedirectAttributes attributes )
 {
 
     /*---------------z xmla---------------
    var gracze= lkUserService.wczytajGraczyZXML();
 ***************************************************/
-    List<UserData>users=null;
+    List<UserDataDTO>users=null;
 try{
-    users=userService.findUsers_NotDeletedWithoutPause();
+    users=userService.findAllUsers(false,false);
+   // users=userService.findUsers_NotDeletedWithoutPause();
 }
 catch (Exception e)
 {
@@ -86,7 +87,7 @@ public String addUser(@RequestParam(value = "chosenUser" , required = false) Str
           if(chosenUser!="")
         {
             try {
-                userService.AddUser(chosenUser);
+                userService.addUser(chosenUser);
             } catch (Exception e) {
 //failedDatabaseOperationRepository.addFailedOperation(new AddUserFailedDatabaseOperation(SQLOperation.AddUserDatabaseAccessFailureException,chosenUser));
             }
@@ -104,8 +105,9 @@ else
 
 
     @PostMapping(value="/deleteUser")
-    public String deleteUser(@RequestParam(value = "chosenUser" , required = false) String chosenUser, @RequestParam(value = "chosenUsers" , required = false) List<String>  chosenUsers)
+    public String deleteUser(@RequestParam(value = "chosenUser" , required = false) String chosenUser, @RequestParam(value = "chosenUsers" , required = false) List<String>  chosenUsers ,RedirectAttributes attributes)
     {
+
 
         //sprawdzanie poprawnosci  wpisanego nicka z MZ
         try
@@ -125,7 +127,9 @@ else
         catch (Exception e)
         {
 //failedDatabaseOperationRepository.addFailedOperation(new DeleteUserFailedDatabaseOperation(SQLOperation.DeleteUserDatabaseAccessFailureException, chosenUser,chosenUsers));
-            return "LK/temp";
+
+            attributes.addAttribute("errorMessage", "błąd w usuwaniu");
+            return "redirect:/errorMessage";
         }
 
     }

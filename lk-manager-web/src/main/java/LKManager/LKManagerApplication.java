@@ -1,10 +1,11 @@
 package LKManager;
 
-import LKManager.DAO.ScheduleDAO;
-import LKManager.DAO.UserDAO;
-import LKManager.HardCodedCache_unused.CacheService;
+import LKManager.DAO_SQL.ScheduleDAO;
+import LKManager.DAO_SQL.UserDAO;
 import LKManager.TimerTasks.RefreshSiteTimer;
 import LKManager.TimerTasks.RoundResultsUpdateTimer;
+import LKManager.model.RecordsAndDTO.UserDataDTO;
+import LKManager.services.RedisService.RedisUserService;
 import LKManager.services.ResultsService;
 import LKManager.services.ScheduleService;
 import LKManager.services.UserService;
@@ -17,6 +18,7 @@ import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.List;
 
 
 @SpringBootApplication
@@ -25,25 +27,28 @@ public class LKManagerApplication {
 
 	@Autowired
 
-	private final CacheService cacheService;
+//	private final CacheService cacheService;
 //	protected MZCache mzCache;
 	protected final UserDAO userDAO;
 	protected final UserService userService;
 	private final ResultsService resultsService;
 	protected final ScheduleDAO scheduleDAO;
 	private final ScheduleService scheduleService;
+
+	private final RedisUserService redisUserService;
 	/*@Autowired
 	private FailedDatabaseOperationRepository failedDatabaseOperationRepository;*/
 	private static final long delay = 14L;
 
-	public LKManagerApplication(CacheService cacheService,  UserDAO userDAO, UserService userService, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService) {
-		this.cacheService = cacheService;
+	public LKManagerApplication( UserDAO userDAO, UserService userService, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService, RedisUserService redisUserService) {
+	//	this.cacheService = cacheService;
 	//	this.mzCache = mzCache;
 		this.userDAO = userDAO;
 		this.userService = userService;
 		this.resultsService = resultsService;
 		this.scheduleDAO = scheduleDAO;
 		this.scheduleService = scheduleService;
+		this.redisUserService = redisUserService;
 	}
 
 
@@ -154,14 +159,59 @@ public class LKManagerApplication {
 	ApplicationRunner applicationRunner(Environment environment) {
 
 		return args -> {
+			List<UserDataDTO> usersNotDeletedWithPause=	userService.findAllUsers(false,true);//findUsers_NotDeletedWithPause();
+			List<UserDataDTO> usersNotDeletedWithoutPause=	userService.findAllUsers(false,false);//findUsers_NotDeletedWithoutPause();
 
-	/*		List<UserData>  users=	userService.findUsers_NotDeletedWithPause();
+			List<UserDataDTO> usersDeletedWithPause=	userService.findAllUsers(true,true);//findUsers_NotDeletedWithPause();
+			List<UserDataDTO> usersDeletedWithoutPause=	userService.findAllUsers(true,false);
+
+
+
+			System.out.println(	"\nusersNotDeletedWithPause\n"+ usersNotDeletedWithPause);
+			System.out.println("\n usersNotDeletedWithoutPause\n"	+ usersNotDeletedWithoutPause);
+			/*
+			List<UserData> users=	userService.findUsers_NotDeletedWithPause();
+
+			List<UserDataDTO> usersDTO = new ArrayList<>();
+
+			for (UserData user:users
+			) {
+				usersDTO.add(new UserDataDTO().UserDataToDTO(user));
+			}
+			Gson gson = new Gson();
+			String usersJson = gson.toJson(usersDTO);
+
+			ValueOperations<String, Object> valueOperations =	redisService.getRedisTemplate().opsForValue();
+			valueOperations.set("users1",usersJson);
+*/
+
+
+		/** to jest niepotrzebne chyba bo w user service sie dodaje
+		*
+			redisService.addAllUsers(usersNotDeletedWithPause,false,true);
+			redisService.addAllUsers(usersNotDeletedWithoutPause);
+		*
+			*/
+
+
+		/*	Gson gson = new Gson();
+
+			ValueOperations<String, Object> valueOperations =	redisService.getRedisTemplate().opsForValue();
+			String  r= valueOperations.get("users1").toString();
+			List<UserDataDTO> usersFromRedis = gson.fromJson(r, new TypeToken<List<UserDataDTO>>(){}.getType());
+*/
+		//	List<UserDataDTO> usersFromRedis = redisService.GetUsers_NotDeletedWithPause();
+		//	System.out.println(	usersFromRedis);
+	/*
+		List<UserData> users=	userService.findUsers_NotDeletedWithPause();
 			List<UserDataDTO> usersDTO = new ArrayList<>();
 
 			for (UserData user:users
 				 ) {
 				usersDTO.add(new UserDataDTO().UserDataToDTO(user));
 			}
+
+
 
 
 // Konwertowanie listy na JSON
@@ -188,9 +238,9 @@ public class LKManagerApplication {
 
 			// Zamknięcie klienta Redisson
 			redisson.shutdown();
+
+
 */
-
-
 
 
 

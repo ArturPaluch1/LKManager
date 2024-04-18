@@ -1,15 +1,14 @@
 package LKManager.services;
 
-import LKManager.LK.Comparators.GraczPodsumowanieComparatorGoalDifference;
-import LKManager.LK.Comparators.GraczPodsumowanieComparatorGoalLost;
-import LKManager.LK.Comparators.GraczPodsumowanieComparatorGoalScored;
-import LKManager.LK.Comparators.GraczPodsumowanieComparatorPoints;
+import LKManager.services.Comparators.GraczPodsumowanieComparatorGoalDifference;
+import LKManager.services.Comparators.GraczPodsumowanieComparatorGoalLost;
+import LKManager.services.Comparators.GraczPodsumowanieComparatorGoalScored;
+import LKManager.services.Comparators.GraczPodsumowanieComparatorPoints;
 import LKManager.LK.PlayerSummary;
-import LKManager.model.Schedule;
+import LKManager.model.RecordsAndDTO.MatchDTO;
+import LKManager.model.RecordsAndDTO.ScheduleDTO;
+import LKManager.model.RecordsAndDTO.UserDataDTO;
 import LKManager.model.Table;
-import LKManager.model.MatchesMz.Match;
-import LKManager.model.UserMZ.UserData;
-import LKManager.HardCodedCache_unused.Cache.MZCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,17 +20,17 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableServiceImpl implements TableService {
-    @Autowired
-    MZCache mzCache;
+ /*   @Autowired
+    MZCache mzCache;*/
     @Autowired
     ScheduleService scheduleService;
 
 
     @Override
     @Transactional
-    public Table createTable(String chosenscheduleName)
+    public Table createTable(long chosenscheduleId)
     {
-        Table table = null;
+
 
 //schedules are in cache
         /** ****************************
@@ -95,13 +94,17 @@ public class TableServiceImpl implements TableService {
         else  //nie ma schedules w cache
         {
             */
+        Table table = null;
             try {
 
-                Schedule schedule= scheduleService.getSchedule_ByName(chosenscheduleName);
-                if(schedule!=null)
+            //    ScheduleDTO schedule= scheduleService.getSchedule_ByName(chosenscheduleName);
+                ScheduleDTO schedule= scheduleService.getSchedule_ById(chosenscheduleId);
+               if(schedule!=null)
                 {
-                    mzCache.updateScheduleMatchesCache(schedule);
-                    table= this.calculateTable(scheduleService.getAllMatchesOfSchedule(schedule));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
+                //    mzCache.updateScheduleMatchesCache(schedule);
+
+                    table= new Table(schedule.getName());
+                       table.setPlayerSummaries(     this.calculateTable(scheduleService.getAllMatchesOfSchedule(schedule)));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
                 }
 
             }
@@ -113,6 +116,7 @@ public class TableServiceImpl implements TableService {
 
 
       //  }
+
 
         return table;
     }
@@ -126,20 +130,20 @@ public class TableServiceImpl implements TableService {
 
 
     @Transactional
-    private Table calculateTable(List<Match>matches) {
-        Table table = new Table();
+    private List<PlayerSummary> calculateTable(List<MatchDTO>matches) {
+    //    Table table = new Table();
+        List<PlayerSummary> playerSummaries= new ArrayList<>();
 
-
-        List<UserData> users=new  ArrayList<>();
+        List<UserDataDTO> users=new  ArrayList<>();
 
         for (var item: matches
         ) {
 
-            users.add(item.getUserData());
-            users.add(item.getOpponentUserData());
+            users.add(item.getUserDataDTO());
+            users.add(item.getOpponentUserDataDTO());
         }
-        List<UserData> distinctUsers = users.stream()
-                .collect(Collectors.toMap(UserData::getUsername, Function.identity(), (existing, replacement) -> existing))
+        List<UserDataDTO> distinctUsers = users.stream()
+                .collect(Collectors.toMap(UserDataDTO::getUsername, Function.identity(), (existing, replacement) -> existing))
                 .values().stream().toList();
 
 // \/nie dzała jeśli obiekty mają te same property ale są innym obiektem
@@ -159,20 +163,26 @@ public class TableServiceImpl implements TableService {
                 if(!a.getUsername().equals("pauza"))
                 {
                     var tempGracz= new PlayerSummary();
-                    tempGracz.setGracz(a);
+                    tempGracz.setPlayer(a);
 
-                    table.getPlayerSummaries().add(tempGracz);
+                 //   table.getPlayerSummaries().add(tempGracz);
+                    playerSummaries.add(tempGracz);
                 }
 
             });
 
 
-            for (Match match:matches
+            for (MatchDTO match:matches
             ){
-                var   user = table.getPlayerSummaries().stream().
-                        filter(a->a.getGracz().getUserId().equals(match.getUserData().getUserId())).findFirst().orElse(null);
+              /*  var   user = table.getPlayerSummaries().stream().
+                        filter(a->a.getPlayer().getUserId().equals(match.getUserDataDTO().getUserId())).findFirst().orElse(null);
                 var   userOp = table.getPlayerSummaries().stream().
-                        filter(a->a.getGracz().getUserId().equals(match.getOpponentUserData().getUserId())).findFirst().orElse(null);
+                        filter(a->a.getPlayer().getUserId().equals(match.getOpponentUserDataDTO().getUserId())).findFirst().orElse(null);
+*/
+                var   user = playerSummaries.stream().
+                        filter(a->a.getPlayer().getUserId().equals(match.getUserDataDTO().getUserId())).findFirst().orElse(null);
+                var   userOp = playerSummaries.stream().
+                        filter(a->a.getPlayer().getUserId().equals(match.getOpponentUserDataDTO().getUserId())).findFirst().orElse(null);
 
                 checkResult(match,user,userOp);
 
@@ -185,15 +195,17 @@ public class TableServiceImpl implements TableService {
         }
 ///////////////////////////////////////////////
         //sortowanie po punktach
-        table.getPlayerSummaries().sort(new GraczPodsumowanieComparatorPoints());
-        var gracze= table.getPlayerSummaries();
-        boolean nowaRownosc= false;
+      /*  table.getPlayerSummaries().sort(new GraczPodsumowanieComparatorPoints());
+        var gracze= table.getPlayerSummaries();*/
+        playerSummaries.sort(new GraczPodsumowanieComparatorPoints());
+        var gracze= playerSummaries;
+      //  boolean nowaRownosc= false;
 
 //indeksy zmian punktów -> i=początek zmiany
         List<Integer> listaIndeksow= new ArrayList<>();
         listaIndeksow.add(0);
         for (int i = 0; i <gracze.size()-1 ; i++) {
-            if(!(gracze.get(i+1).getSumaPunktow().equals(gracze.get(i).getSumaPunktow())))
+            if(!(gracze.get(i+1).getTotalPoints().equals(gracze.get(i).getTotalPoints())))
             {
                 listaIndeksow.add(i+1);
             }
@@ -242,15 +254,15 @@ public class TableServiceImpl implements TableService {
 
 
 
-mzCache.setTable(table);
+//mzCache.setTable(table);
 
-        return table;
+        return playerSummaries;
     }
 
 
 
 
-    private void checkResult(Match match, PlayerSummary user, PlayerSummary opponent) {
+    private void checkResult(MatchDTO match, PlayerSummary user, PlayerSummary opponent) {
         //todo sprawdzic null/ ""
         Byte goalsUser1 = null;
         Byte goalsUser2=null;
@@ -272,18 +284,18 @@ mzCache.setTable(table);
         if(goalsUser1!=null && goalsOpponent1!=null)
         {
             managePoints(user,opponent,goalsUser1,goalsOpponent1);
-            user.addGoleStracone(goalsOpponent1);
-            user.addGoleStrzelone(goalsUser1);
-            opponent.addGoleStrzelone(goalsOpponent1);
-            opponent.addGoleStracone(goalsUser1);
+            user.addGoalsConceded(goalsOpponent1);
+            user.addGoalsScored(goalsUser1);
+            opponent.addGoalsScored(goalsOpponent1);
+            opponent.addGoalsConceded(goalsUser1);
         }
         if(goalsUser2!=null && goalsOpponent2!=null)
         {
             managePoints(user,opponent,goalsUser2,goalsOpponent2);
-            user.addGoleStracone(goalsOpponent2);
-            user.addGoleStrzelone(goalsUser2);
-            opponent.addGoleStrzelone(goalsOpponent2);
-            opponent.addGoleStracone(goalsUser2);
+            user.addGoalsConceded(goalsOpponent2);
+            user.addGoalsScored(goalsUser2);
+            opponent.addGoalsScored(goalsOpponent2);
+            opponent.addGoalsConceded(goalsUser2);
         }
 
 
@@ -300,16 +312,16 @@ mzCache.setTable(table);
         int difference= goalsUser-goalsOpponent;
         if(difference<0)
         {
-            opponent.zwiekszSumePunktow(3);
+            opponent.increaseTotalPoints(3);
         }
         else if(difference>0)
         {
-            user.zwiekszSumePunktow(3);
+            user.increaseTotalPoints(3);
         }
         else // remis nierozegrane ma byc sprawdzone wczesniej !
         {
-            opponent.zwiekszSumePunktow(1);
-            user.zwiekszSumePunktow(1);
+            opponent.increaseTotalPoints(1);
+            user.increaseTotalPoints(1);
         }
 
 
@@ -372,7 +384,7 @@ mzCache.setTable(table);
         List<Integer> listaIndeksow1= new ArrayList<>();
         listaIndeksow1.add(0);
         for (int ii = 0; ii < gracze.size()-1 ; ii++) {
-            if(!(gracze.get(ii+1).getRoznica().equals(gracze.get(ii).getRoznica())))
+            if(!(gracze.get(ii+1).getDifference().equals(gracze.get(ii).getDifference())))
             {
                 listaIndeksow1.add(ii+1);
             }
@@ -384,7 +396,7 @@ mzCache.setTable(table);
         List<Integer> listaIndeksow1= new ArrayList<>();
         listaIndeksow1.add(0);
         for (int ii = 0; ii < gracze.size()-1 ; ii++) {
-            if(!(gracze.get(ii+1).getGoleStrzelone().equals(gracze.get(ii).getGoleStrzelone())))
+            if(!(gracze.get(ii+1).getGoalsScored().equals(gracze.get(ii).getGoalsScored())))
             {
                 listaIndeksow1.add(ii+1);
             }

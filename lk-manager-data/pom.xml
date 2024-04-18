@@ -35,20 +35,24 @@
             <artifactId>mssql-jdbc</artifactId>
             <version>12.6.1.jre11</version>
         </dependency>
-
+        <!-- Rediis  Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis -->
         <!-- https://mvnrepository.com/artifact/redis.clients/jedis -->
-        <dependency>
+       <!-- <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>5.1.2</version>
+        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.redisson/redisson -->
-        <dependency>
+      <!--  <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
             <version>3.27.2</version>
-        </dependency>
-
+        </dependency>-->
+     <!-- Rediis  Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis Rediis -->
 
         <dependency>
             <groupId>org.springframework</groupId>

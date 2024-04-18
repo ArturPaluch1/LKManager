@@ -1,22 +1,17 @@
 package LKManager.controllers.LK;
 
-import LKManager.DAO.CustomUserDAOImpl;
-import LKManager.DAO.MatchDAO;
-import LKManager.DAO.RoundDAOImpl;
-import LKManager.DAO.ScheduleDAO;
-import LKManager.model.Round;
-import LKManager.model.Schedule;
-import LKManager.model.MatchesMz.Match;
-import LKManager.model.UserMZ.UserData;
-import LKManager.HardCodedCache_unused.Cache.MZCache;
+import LKManager.DAO_SQL.CustomUserDAOImpl;
+import LKManager.DAO_SQL.MatchDAO;
+import LKManager.DAO_SQL.RoundDAOImpl;
+import LKManager.DAO_SQL.ScheduleDAO;
+import LKManager.model.RecordsAndDTO.*;
 import LKManager.services.*;
 import LKManager.services.FilesService_unused.PlikiService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-//import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,10 +33,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
-@Controller
+@Controller @RequiredArgsConstructor
 //@Validated
 //@RequestMapping({"schedule.html", "/terminarz", "terminarz"})
 public class scheduleController {
@@ -57,7 +54,9 @@ public class scheduleController {
     private final CustomUserDAOImpl userDAO;
     private final RoundDAOImpl rundaDAO;
     private final MatchDAO matchDAO;
+    private final UserService userService;
     private final CookieManager cookieManager;
+
     /*  public Integer getNumerRundy() {
           return numerRundy;
       }
@@ -65,23 +64,10 @@ public class scheduleController {
       public void setNumerRundy(Integer numerRundy) {
           this.numerRundy = numerRundy;
       }*/
-    @Autowired
+   /* @Autowired
     private MZCache mzCache;
+*/
 
-    public scheduleController(MZUserService MZUserService, MatchDAO matchDAOInterface, LKUserService lkUserService, ScheduleService scheduleService, PlikiService plikiService, ScheduleDAO scheduleDAO, CustomUserDAOImpl userDAO, RoundDAOImpl rundaDAO, MatchDAO matchDAO, CookieManager cookieManager) {
-        this.MZUserService = MZUserService;
-        this.matchDAOInterface = matchDAOInterface;
-
-        this.lkUserService = lkUserService;
-
-        this.scheduleService = scheduleService;
-        this.plikiService = plikiService;
-        this.scheduleDAO = scheduleDAO;
-        this.userDAO = userDAO;
-        this.rundaDAO = rundaDAO;
-        this.matchDAO = matchDAO;
-        this.cookieManager = cookieManager;
-    }
 
 
     @GetMapping("/schedule")
@@ -108,8 +94,8 @@ public class scheduleController {
         //////////////////////
         //  nrRundy="1";
 
-        roundNumber = CookieManager.saveOrUpdateRoundNumberCookie(Optional.ofNullable(roundNumber), Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
-        chosenSchedule = CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
+        roundNumber = cookieManager.saveOrUpdateRoundNumberCookie(roundNumber, chosenSchedule);
+        chosenSchedule = cookieManager.saveOrUpdateChosenScheduleCookie(chosenSchedule);
         //    }
         //    else
         //    {
@@ -146,14 +132,14 @@ public class scheduleController {
 
         System.out.println("w terminarze scheduleService.getSchedules()");
       //  var schedules = mzCache.getSchedulesFromCacheOrDatabase();
-        var schedules = scheduleService.getSchedules();
+        var scheduleNames = scheduleService.getScheduleNames();
         //   terminarz= terminarzDAO.findByTerminarzId(106);
         //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
 
         //podano nazwe terminarza
 
 
-        Schedule schedule = null;
+        ScheduleDTO schedule = null;
         if (chosenSchedule != null) {
 
 
@@ -173,7 +159,7 @@ public class scheduleController {
 //todo przekierowanie że nie ma takiego terminarza
              //   return "redirect:/errorMessage";
 
-                model.addAttribute("schedules", schedules);
+                model.addAttribute("schedules", scheduleNames);
                 return "LK/schedule/schedule";
             }
 
@@ -185,7 +171,8 @@ public class scheduleController {
 
 
          //   mzCache.findLastScheduleByIdFromCacheOrDatabase();
-            scheduleService.getSchedule_TheNewest();
+       //todo tu musi byc: schedule=
+              scheduleService.getSchedule_TheNewest();
             //nie ma żadnych terminarzy
             if (schedule == null) {
                 return "redirect:/addSchedule";
@@ -207,39 +194,61 @@ public class scheduleController {
 
 
 
-
        model.addAttribute("chosenSchedule", chosenSchedule);
-     //  List<Round> rounds = rundaDAO.findAllByScheduleId(schedule.getId());
-        List<Round> rounds = new ArrayList<>(schedule.getRounds());
-        rounds.sort(Comparator.comparing(Round::getNr));
-        model.addAttribute("rounds", rounds);
+        model.addAttribute("schedule", schedule);
 
-     //   Round round = rundaDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
-        Round  round=rounds.get(Integer.parseInt(roundNumber) - 1);
-        model.addAttribute("round", round);
 
-     //  List<Match> matches = matchDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
-        List<Match> matches =round.getMatches();
-        model.addAttribute("matches", matches);
+      //  List<Round> rounds = null;//new ArrayList<>(schedule.getRounds());
+   //     rounds.sort(Comparator.comparing(Round::getNr));
+    //    model.addAttribute("rounds", rounds);
+
+      RoundDTO round=schedule.getRounds().get(Integer.parseInt(roundNumber) - 1);
+       model.addAttribute("round", round);
+
+     //   List<Match> matches =round.getMatches();
+    //    model.addAttribute("matches",schedule.getRounds().get(Integer.parseInt(roundNumber) - 1).getMatchesDTO());
 
         model.addAttribute("roundNumber", roundNumber);
 
 
-        model.addAttribute("schedules", schedules);
+        model.addAttribute("schedules", scheduleNames);
         return "LK/schedule/schedule";
+
+        /**
+         *
+         *
+         model.addAttribute("chosenSchedule", chosenSchedule);
+
+
+         List<Round> rounds = null;//new ArrayList<>(schedule.getRounds());
+         rounds.sort(Comparator.comparing(Round::getNr));
+         model.addAttribute("rounds", rounds);
+
+         Round  round=rounds.get(Integer.parseInt(roundNumber) - 1);
+         model.addAttribute("round", round);
+
+         List<Match> matches =round.getMatches();
+         model.addAttribute("matches", matches);
+
+         model.addAttribute("roundNumber", roundNumber);
+
+
+         model.addAttribute("schedules", scheduleNames);
+         return "LK/schedule/schedule";
+         */
     }
 
 
     @GetMapping(value = "/addSchedule")
-    public String dodajTerminarz(Model model) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+    public String createSchedule(Model model) throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
 
 
 
 
         //lkUserService.wczytajGraczyZXML();
-        List<UserData> players = userDAO.findNotDeletedUsers();
-
+      //  List<UserData> players = userService.findUsers_NotDeletedWithPause();//userDAO.findUsersFromCache_NotDeletedWithPause();
+        List<UserDataDTO> players = userService.findAllUsers(false,true);//userDAO.findUsersFromCache_NotDeletedWithPause();
         players = players.stream().sorted(
                 (o1, o2) -> o1.getUsername().compareToIgnoreCase(o2.getUsername())
         ).collect(Collectors.toList());
@@ -277,7 +286,7 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
       //  model.addAttribute("userListWrapper", terminarzCommand);
         model.addAttribute("players", players);
         model.addAttribute("schedule", terminarzCommand);
-List<String> playerNames = new ArrayList<String>();
+List<String> playerNames = new ArrayList<>();
         players.forEach(p-> playerNames.add(p.getUsername()));
         model.addAttribute("playerNames", playerNames);
 
@@ -286,16 +295,16 @@ List<String> playerNames = new ArrayList<String>();
 
 
     @GetMapping(value = "/schedule/chose")
-    public String wybierzTerminarz() {
+    public String pickSchedule() {
         return "LK/schedule/choseSchedule";
     }
 
 
     @GetMapping("/deleteSchedule")
-    public String usuwanieTerminarza(Model model)//@RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
+    public String deleteSchedule(Model model)//@RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
     {
       //  List<Schedule> schedules = mzCache.getSchedulesFromCacheOrDatabase();
-        List<Schedule> schedules = scheduleService.getSchedules();
+        List<ScheduleNameDTO> schedules = scheduleService.getScheduleNames();
         //plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
 //this.wybranyTerminarz=null;
@@ -306,7 +315,7 @@ List<String> playerNames = new ArrayList<String>();
     }
 
     @PostMapping("/deleteSchedule")
-    public String usunTerminarz(RedirectAttributes attributes, HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "chosenSchedule", required = true) String scheduleToDelete)//, @CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie)
+    public String deleteSchedule(RedirectAttributes attributes, HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "chosenSchedule", required = true) String scheduleToDelete)//, @CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie)
     {
 
 
@@ -332,34 +341,47 @@ List<String> playerNames = new ArrayList<String>();
                 cookieTerminarz.setHttpOnly(true);
 
             }*/
-            scheduleService.deleteSchedule(scheduleToDelete);
-
-            Schedule schedule1=scheduleService.getSchedule_TheNewest();
+         boolean result=   scheduleService.deleteSchedule(scheduleToDelete);
 
 
 
-        //    Schedule schedule1 = scheduleDAO.findLastById();
-          /*  try {*/
 
+
+         //   Schedule schedule1 = scheduleDAO.findLastById();
+            try {
+                ScheduleDTO schedule1=scheduleService.getSchedule_TheNewest();
                 //       Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
                 //        Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter( a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
-/*
-                cookieManager.saveOrUpdateChosenScheduleCookie(response,terminarz1.getName(),request, terminarzDAO);
-                cookieManager.saveOrUpdateNumerRundyCookie(response,"1",request);
-       */
+
+                cookieManager.saveOrUpdateChosenScheduleCookie(schedule1.getName());
+                cookieManager.saveOrUpdateRoundNumberCookie("1",schedule1.getName());
+
                 //todo wyzej bkp
 
 
                 // CookieManager.checkCookies(response,request,"1",terminarz1.getName(),terminarzDAO);
 
-      /*      } catch (Exception e) {
+            } catch (Exception e) {
 
-            }*/
-            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(schedule1.getName()), response, request, scheduleDAO);
+            }
+            if(result==true)
+            {
+                //todo make another html file for success
+                attributes.addAttribute("errorMessage", "Usuwanie terminarza: "+scheduleToDelete+"\nZakończyło się sukcesem.");
+
+                return "redirect:/errorMessage";
+            }
+            else
+            {
+                attributes.addAttribute("errorMessage", "błąd w usuwaniu");
+
+                return "redirect:/errorMessage";
+            }
+        /*    CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(schedule1.getName()), response, request, scheduleDAO);
             CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(schedule1.getName()), response, request, scheduleDAO);
             attributes.addAttribute("chosenSchedule", schedule1.getName());
             attributes.addAttribute("roundNumber", "1");
-            return "redirect:/schedule";
+            return "redirect:/schedule";*/
         } catch (Exception e) {
             attributes.addAttribute("errorMessage", "błąd w usuwaniu");
             System.out.println(e);
@@ -369,7 +391,7 @@ List<String> playerNames = new ArrayList<String>();
     }
 
     @PostMapping("/addSchedule")
-    public String stworzTerminarz(HttpServletResponse response, HttpServletRequest request, RedirectAttributes attributes, @ModelAttribute @Valid TerminarzCommand command, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
+    public String createSchedule(HttpServletResponse response, HttpServletRequest request, RedirectAttributes attributes, @ModelAttribute @Valid TerminarzCommand command, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
 //,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
 
 
@@ -381,7 +403,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
    int y=0;
 }*/
 
-        Schedule schedule = null;
+        ScheduleDTO schedule = null;
 
 
    /*     XMLGregorianCalendar data = DatatypeFactory.newInstance().newXMLGregorianCalendar();
@@ -416,7 +438,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 
 
 
-
+        CreateScheduleResult createScheduleResult=null;
         //nie wybrano graczy do wielodniowego terminarza
         if (chosenPlayers == null) {
 
@@ -429,7 +451,9 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
                 } else {
 
 //////////////////////////////
-                    schedule = scheduleService.utworzTerminarzJednodniowy(date, command.playersList, command.name);
+
+                             createScheduleResult= scheduleService.createOneDayShedule(date, command.playersList, command.name);
+
 
                 }
 
@@ -437,44 +461,57 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         } else {
 
 //////////////////////////////
-            schedule = scheduleService.utworzTerminarzWielodniowy(date, chosenPlayers, command.name);
+             createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, command.name);
         }
+        if(createScheduleResult.schedule()!=null)
+        {
+            try {
+                //    Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
+                //          scheduleDAO.save(terminarz);
+                /** ****************************
+                 * todo uncomment if need to use cache
 
-        try {
-            //    Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
-  //          scheduleDAO.save(terminarz);
-            /** ****************************
-             * todo uncomment if need to use cache
+                 if (mzCache.getSchedules().size() != 0)
+                 mzCache.getSchedules().add(schedule);
+                 */
 
-            if (mzCache.getSchedules().size() != 0)
-                mzCache.getSchedules().add(schedule);
-            */
 /*
  Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter( a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
             cookieManager.saveOrUpdateChosenScheduleCookie(response, terminarz.getName(), request, terminarzDAO);
        */
-            //todo wyzej bkp
-            //   CookieManager.checkCookies(response,request,"1",terminarz.getName(),terminarzDAO);
-            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(schedule.getName()), response, request, scheduleDAO);
-            CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(schedule.getName()), response, request, scheduleDAO);
-            attributes.addAttribute("chosenSchedule", schedule.getName());
-            attributes.addAttribute("roundNumber", "1");
-            return "redirect:/schedule";
-        } catch (Exception e) {
-            System.out.println("error in addSchedule - post");
-            attributes.addAttribute("errorMessage","error in addSchedule - post");
+                //todo wyzej bkp
+                //   CookieManager.checkCookies(response,request,"1",terminarz.getName(),terminarzDAO);
+
+
+
+
+                cookieManager.saveOrUpdateRoundNumberCookie("1",createScheduleResult.schedule().getName());
+                cookieManager.saveOrUpdateChosenScheduleCookie(createScheduleResult.schedule().getName());
+                attributes.addAttribute("chosenSchedule", createScheduleResult.schedule().getName());
+                attributes.addAttribute("roundNumber", "1");
+                return "redirect:/schedule";
+            } catch (Exception e) {
+                System.out.println("error in addSchedule - post");
+                attributes.addAttribute("errorMessage","error in addSchedule - post");
+                return "redirect:/errorMessage";
+            }
+        }
+       else
+        {
+            String errorMessage="Schedule creation failed. Those players do not exist in MZ:\n"+createScheduleResult.playersNotInMZ();
+            attributes.addAttribute("errorMessage",errorMessage);
             return "redirect:/errorMessage";
         }
     }
 
 
     @PostMapping("/showRound")
-    public String pokazRunde(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "roundNumber", required = true) Integer roundNumber, @RequestParam(value = "chosenSchedule", required = true) String chosenSchedule) {
+    public String showRound(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "roundNumber", required = true) Integer roundNumber, @RequestParam(value = "chosenSchedule", required = true) String chosenSchedule) {
 //cookieManager.saveOrUpdateNumerRundyCookie(response, numerRundy.toString(),request);
         //todo wyzej bpk
         try {
             //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
-            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of(roundNumber.toString()), Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
+            cookieManager.saveOrUpdateRoundNumberCookie(roundNumber.toString(), chosenSchedule);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -494,8 +531,8 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 
         try {
             //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
-            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
-            CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
+            cookieManager.saveOrUpdateRoundNumberCookie("1", chosenSchedule);
+            cookieManager.saveOrUpdateChosenScheduleCookie(chosenSchedule);
         } catch (Exception e) {
             e.printStackTrace();
         }

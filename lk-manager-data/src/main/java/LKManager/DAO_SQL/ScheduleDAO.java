@@ -1,6 +1,7 @@
-package LKManager.DAO;
+package LKManager.DAO_SQL;
 
 
+import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -27,12 +28,21 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, CustomSchedu
     )
     List<Schedule> findAllFetchRoundsEagerly();
 
+//@Query("SELECT  new LKManager.model.RecordsAndDTO.ScheduleDTO( s.id, s.name,s.rounds) FROM Schedule s ")
 
+
+/*@Query("SELECT new LKManager.model.RecordsAndDTO.ScheduleDTO(s.id, s.name, " +
+        "(SELECT  new LKManager.model.RecordsAndDTO.RoundDTO(r.id, r.nr) " +
+        " FROM Round r WHERE r.schedule = s)) " +
+        "FROM Schedule s")*/
+/*@Query("SELECT new LKManager.model.RecordsAndDTO.ScheduleDTO(s.id, s.name, r.id, r.nr) " +
+        "FROM Schedule s " +
+        "LEFT JOIN s.rounds r")*/
+
+
+    @Query("select new LKManager.model.RecordsAndDTO.ScheduleNameDTO(id, name) from Schedule ")
+    List<ScheduleNameDTO> getScheduleNames();
     @Query("SELECT distinct s FROM Schedule s left JOIN FETCH s.rounds r where s.id=:scheduleId ")
- //   @Query("SELECT DISTINCT s FROM Schedule s LEFT JOIN FETCH s.rounds r LEFT JOIN FETCH r.matches WHERE s.id = :scheduleId")
- //   @Query("SELECT DISTINCT s FROM Schedule s LEFT JOIN FETCH s.rounds LEFT JOIN FETCH s.rounds.matches WHERE s.id = :scheduleId")
-
-
     Schedule findByIdAndFetchMatchesEagerly(@Param("scheduleId") long scheduleId);
 
   /*  @Query("SELECT DISTINCT s FROM Schedule s " +

@@ -1,8 +1,7 @@
-package LKManager.DAO;
+package LKManager.DAO_SQL;
 
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
-import LKManager.HardCodedCache_unused.Cache.MZCache;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -25,8 +23,8 @@ public class CustomUserDAOImpl implements CustomUserDAO {
 
     @Autowired
     SessionFactory sessionFactory;
-    @Autowired
-    MZCache mzCache;
+   /* @Autowired
+    MZCache mzCache;*/
     @Autowired
 private final EntityManager entityManager;
 
@@ -34,7 +32,7 @@ private final EntityManager entityManager;
 
 
 
-    public List<UserData> findUsersFromCache_All()
+/*    public List<UserData> findUsersFromCache_All()
     {
         System.out.println("all users - cache");
        return mzCache.getUsers();
@@ -42,13 +40,13 @@ private final EntityManager entityManager;
 
 
 
-    }
+    }*/
 
-    @Override
+   /* @Override
     public List<UserData> findNotDeletedUsers() {
         return this.findAll(false);
-    }
-    @Override
+    }*/
+ /*   @Override
     public List<UserData> findUsersFromCache_NotDeletedWithoutPause() {
         System.out.println(" users !deleted !pauza - cache");
         return mzCache.getUsers().stream().filter(u->u.getDeleted()==false&& !u.getUsername().equals("pauza")).collect(Collectors.toList());
@@ -57,7 +55,7 @@ private final EntityManager entityManager;
     public List<UserData> findUsersFromCache_NotDeletedWithPause() {
         System.out.println(" users !deleted !pauza - cache");
         return mzCache.getUsers().stream().filter(u->u.getDeleted()==false).collect(Collectors.toList());
-    }
+    }*/
 
 
 
@@ -173,13 +171,10 @@ private final EntityManager entityManager;
 
 
 
-    //@Override
+  @Override
     @Transactional
-    public UserData save(UserData user) {
- /*       for (var i:user
-             ) {
-            entityManager.persist(i);
-        }*/
+    public UserData saveUser(UserData user) {
+
 
 
 user.getTeamlist().get(0).setUser(user);
@@ -280,7 +275,7 @@ s.getTransaction().commit();
 /**********************************/
 
             UserData userToDelete= s.get(UserData.class, id.intValue());
- userToDelete.setDeleted();
+ userToDelete.setDeleted(true);
 
 /*******************************
 *       i potem usunąć Usera

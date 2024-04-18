@@ -1,4 +1,4 @@
-package LKManager.DAO;
+package LKManager.DAO_SQL;
 
 import LKManager.model.Schedule;
 import LKManager.model.MatchesMz.Match;
@@ -134,16 +134,8 @@ return allQuery.stream().toList();
 
 
     @Transactional
-    public Schedule save1(Schedule schedule) {
-
-
-
-
-
-
-
-
-
+    @Override
+    public Schedule saveSchedule(Schedule schedule) {
 
 
 
@@ -197,7 +189,7 @@ s.getTransaction().commit();
         } finally {
         s.close();
         }
-  /*
+
 try {  s = sessionFactory.getCurrentSession();
 }
   catch (Exception e)
@@ -207,19 +199,21 @@ try {  s = sessionFactory.getCurrentSession();
   }
 finally {
 
-    s.saveOrUpdate(terminarz);
+    s.saveOrUpdate(schedule);
     s.close();
 }
-*/
+
+
         return schedule;
     }
+
 
 
     public void delete(Schedule object)  {
 //todo ?
     }
 
-    public void deleteByName(String objectName) {
+    public boolean deleteByName(String objectName) {
        var scheduleToDelete= findByScheduleName(objectName);
 
 // todo jesli nie znajduje po nazwie albo >1
@@ -230,12 +224,13 @@ finally {
             s.delete(terminarz);
             s.getTransaction().commit();
 
-
+return true;
 
 
         }
         catch (Exception e){
             System.out.println("db delete terminarz error");
+            return false;
         }
         finally {
             s.close();

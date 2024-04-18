@@ -73,15 +73,15 @@ private Match meczUser;*/
 // @Column(name = "DELETED",columnDefinition = "TINYINT")
     //prod \/
    @Column(name = "DELETED",columnDefinition = "BIT")
-   private boolean deleted = false;
+   private boolean deleted ;//= false;
 
     // getters and setters
 public boolean getDeleted()
 {
     return  this.deleted;
 }
-    public void setDeleted() {
-        this.deleted = true;
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
 

@@ -1,7 +1,8 @@
 package LKManager.HardCodedCache_unused;
 
-import LKManager.DAO.ScheduleDAO;
+import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.HardCodedCache_unused.Cache.MZCache;
+import LKManager.model.RecordsAndDTO.ScheduleDTO;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
 import LKManager.services.ResultsService;
@@ -9,22 +10,13 @@ import LKManager.services.ScheduleService;
 import LKManager.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.collection.internal.PersistentBag;
 import org.springframework.stereotype.Service;
-import org.xml.sax.SAXException;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CacheService {
 
   private   MZCache mzCache;
@@ -102,7 +94,7 @@ public class CacheService {
 
 
     private void checkRoundsToUpdate() {
-        List<Round> rounds=new ArrayList<>();
+       /* List<Round> rounds=new ArrayList<>();
 
 
 
@@ -152,7 +144,7 @@ public class CacheService {
                     }
             }
 
-        }
+        }*/
 
     }
 
@@ -162,6 +154,6 @@ public class CacheService {
     public class RoundAndSchedule
     {
         private 	Round round;
-        private 	Schedule schedule;
+        private ScheduleDTO schedule;
     }
 }

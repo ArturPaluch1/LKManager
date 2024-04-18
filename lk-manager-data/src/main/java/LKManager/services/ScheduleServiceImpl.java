@@ -1,18 +1,24 @@
 package LKManager.services;
 
-import LKManager.DAO.RoundDAO;
-import LKManager.DAO.ScheduleDAO;
-import LKManager.DAO.UserDAO;
+import LKManager.DAO_SQL.RoundDAO;
+import LKManager.DAO_SQL.ScheduleDAO;
+import LKManager.DAO_SQL.UserDAO;
+import LKManager.model.MatchesMz.Match;
+import LKManager.model.RecordsAndDTO.CreateScheduleResult;
+import LKManager.model.RecordsAndDTO.MatchDTO;
+import LKManager.model.RecordsAndDTO.ScheduleDTO;
+import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
-import LKManager.model.MatchesMz.Match;
-import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
-import LKManager.HardCodedCache_unused.Cache.MZCache;
+import LKManager.services.Adapters.MatchAdapter;
+import LKManager.services.Adapters.ScheduleAdapter;
+import LKManager.services.RedisService.RedisScheduleService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.collection.internal.PersistentBag;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -25,25 +31,28 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 //@AllArgsConstructor
-
+@Transactional
 public class ScheduleServiceImpl implements ScheduleService {
 
+    @Autowired
+    private SessionFactory sessionFactory;
 
 private final ScheduleDAO scheduleDAO;
     @Autowired
     private final RoundDAO roundDAO;
-
-
+private final UserService userService;
    // @Autowired
 private final UserDAO userDAO;
-    @Autowired
+/*    @Autowired
 private final MZCache mzCache;
-
-
+*/
+private final MZUserService mzUserService;
+private final RedisScheduleService redisScheduleService;
 
     public Schedule findByIdWithRoundsMatchesUsersAndTeams(long scheduleId)
     {
@@ -64,10 +73,12 @@ return schedule;
 
 
 
-    @Override
+   // @Override
 
 
-    public Schedule getSchedule_ByName(String scheduleName) {
+    //todo usunac\/ bo jest uzywane query na interfejsie
+
+    public ScheduleDTO getSchedule_ByName(String scheduleName) {
 
         System.out.println("temp in getsch by name");
         if(scheduleName.equals(null))
@@ -91,29 +102,41 @@ return schedule;
             Schedule foundSchedule= schedules.stream().filter(s->s.getName().equals(scheduleName)).findFirst()
                     .orElse(null);
              */
-            Schedule foundSchedule=this.scheduleDAO.findByScheduleName(scheduleName);
 
-if(foundSchedule!=null)
-{
-
-    System.out.println("sprawdzanie czy mecze są zainicjalizowane (lazy)");
-    if(!((PersistentBag) foundSchedule.getRounds()).wasInitialized())
-    {
-        System.out.println("inicjalizacja rund");
-        foundSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(foundSchedule.getId()).getRounds());
-
-    }
-
+ScheduleDTO foundSchedule=redisScheduleService.getSchedule_ByName(scheduleName);
+if(foundSchedule==null) {
+    foundSchedule = ScheduleAdapter.adapt(this.scheduleDAO.findByScheduleName(scheduleName));
+redisScheduleService.setSchedule(foundSchedule);
 
 }
+       /*     if(foundSchedule!=null)
+            {
 
+                System.out.println("sprawdzanie czy mecze są zainicjalizowane (lazy)");
+                if(!foundSchedule.getRounds().isEmpty())
+                {
+                    System.out.println("inicjalizacja rund");
+                    foundSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(foundSchedule.getId()).getRounds());
+
+                }
+
+
+            }
+
+
+          ScheduleDTO scheduleDTO= ScheduleAdapter.adapt(foundSchedule);
+
+            return scheduleDTO;*/
 
             return foundSchedule;
         }
 
+
+
+
     }
     @Override
-    public Schedule getSchedule_ById(long id) {
+    public ScheduleDTO getSchedule_ById(long id) {
         //sprawdzanie terminarzy w cache
 
         /** ****************************
@@ -127,7 +150,14 @@ if(foundSchedule!=null)
         Schedule foundSchedule= schedules.stream().filter(s->s.getId()==id).findFirst().get();
 
         */
-        Schedule foundSchedule=this.getSchedule_ById(id);
+
+        ScheduleDTO foundSchedule=redisScheduleService.getSchedule_ById(id);
+        if(foundSchedule==null) {
+            foundSchedule = ScheduleAdapter.adapt(this.scheduleDAO.findByScheduleId(id));
+            redisScheduleService.setSchedule(foundSchedule);
+        }
+    /*
+            ScheduleDTO foundSchedule=this.getSchedule_ById(id);
 
 //sprawdzanie czy mecze są zainicjalizowane (lazy)
         if(!((PersistentBag) foundSchedule.getRounds().get(0).getMatches()).wasInitialized())
@@ -136,24 +166,32 @@ if(foundSchedule!=null)
             foundSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(foundSchedule.getId()).getRounds());
 
         }
-
+*/
 
 
         return foundSchedule;
     }
 
     @Override
-    public void deleteSchedule(String scheduleToDeleteName) {
-        scheduleDAO.deleteByName(scheduleToDeleteName);
-        /** ****************************
-         * todo uncomment if need to use cache
-        mzCache.setSchedules(scheduleDAO.findAll());
-*/
+    public boolean deleteSchedule(String scheduleToDeleteName) {
+        ScheduleNameDTO tempSchedule=this.getScheduleNames().stream().filter(s->s.getName().equals(scheduleToDeleteName)).findFirst().orElse(null);
+     if(tempSchedule!=null)
+     {
+         boolean result=  scheduleDAO.deleteByName(scheduleToDeleteName);
+         redisScheduleService.deleteScheduleByName(tempSchedule);
+
+         /** ****************************
+          * todo uncomment if need to use cache
+          mzCache.setSchedules(scheduleDAO.findAll());
+          */
+         return result;
+     }
+     else return false;
 
     }
 
     @Override
-    public Schedule getSchedule_TheNewest() {
+    public ScheduleDTO getSchedule_TheNewest() {
         //sprawdzanie terminarzy w cache
         /** ****************************
          * todo uncomment if need to use cache
@@ -170,8 +208,9 @@ if(foundSchedule!=null)
           */
 
 
-        Schedule newestSchedule=scheduleDAO.getTheNewest();
+        ScheduleDTO newestSchedule=ScheduleAdapter.adapt(scheduleDAO.getTheNewest());
 
+/*
 //sprawdzanie czy mecze są zainicjalizowane (lazy)
         if(!((PersistentBag) newestSchedule.getRounds().get(0).getMatches()).wasInitialized())
         {
@@ -179,6 +218,7 @@ if(foundSchedule!=null)
       newestSchedule.setRounds(  this.findByIdWithRoundsMatchesUsersAndTeams(newestSchedule.getId()).getRounds());
 
         }
+*/
 
 
 
@@ -186,11 +226,21 @@ if(foundSchedule!=null)
     }
 
     @Override
-    public List<Match> getAllMatchesOfSchedule(Schedule schedule) {
+    public <T> List<MatchDTO> getAllMatchesOfSchedule(T schedule) {
+if(schedule instanceof Schedule)
+{
+    List<MatchDTO>tempList= new ArrayList<>();
+    ((Schedule) schedule).getRounds().forEach(a-> tempList.addAll(a.getMatches().stream().map(m-> MatchAdapter.adapt(m)).collect(Collectors.toList())));
+    return tempList;
+}
+else if (schedule instanceof ScheduleDTO)
+{
+    List<MatchDTO>tempList= new ArrayList<>();
+    ((ScheduleDTO) schedule).getRounds().forEach(a-> tempList.addAll(a.getMatches()));
+    return tempList;
+}
+else return null;
 
-       List<Match>tempList= new ArrayList<>();
-        schedule.getRounds().forEach(a-> tempList.addAll(a.getMatches()));
-        return tempList;
     }
 
     @Override
@@ -213,9 +263,28 @@ if(foundSchedule!=null)
 
 
     @Override
-    public Schedule utworzTerminarzWielodniowy(LocalDate data, List<String> chosenPlayers, String nazwa) throws DatatypeConfigurationException {
-        List<UserData> players = userDAO.findNotDeletedUsers();
+    @Transactional
+    public CreateScheduleResult createMultiDaySchedule(LocalDate data, List<String> chosenPlayers, String scheduleName) throws DatatypeConfigurationException, DatatypeConfigurationException {
+        List<UserData> playersNotInMZ= new ArrayList<>();
+        List<UserData> playersForSchedule= new ArrayList<>();
+        chosenPlayers.stream().forEach(
+                player-> {
+                    UserData foundPlaer= mzUserService.findByUsernameInManagerzone(player);
+                    if(foundPlaer==null)
+                        playersNotInMZ.add(foundPlaer);
+                    else playersForSchedule.add(foundPlaer);
 
+                }
+        );
+        if(!playersNotInMZ.isEmpty())
+        {
+            return new CreateScheduleResult(null,playersNotInMZ);
+        }
+        else {
+
+            // List<UserData> players = userDAO.findUsers_NotDeletedWithPause();
+
+/*
         List<UserData> chosenPlayersUserData = new ArrayList<>();
         for (var player : players
         ) {
@@ -230,155 +299,209 @@ if(foundSchedule!=null)
         }
 
 
+*/
+
+
+
+            ////////////////////////////////////////////////////////
+            AddPauseForParity(playersForSchedule);
+            /////////////////podzial grajkow na pol  /////////////////
 
 
 
 
-        ////////////////////////////////////////////////////////
-        dodajPauzeDlaParzystosci(chosenPlayersUserData);
-/////////////////podzial grajkow na pol  /////////////////
-        var grajkiA = chosenPlayersUserData.subList(0, (chosenPlayersUserData.size()) / 2);
-        var grajkiB = chosenPlayersUserData.subList(chosenPlayersUserData.size() / 2, chosenPlayersUserData.size());
+            Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
 
 
-        Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
-        ListyGrajkow listyGrajkow = new ListyGrajkow(grajkiA, grajkiB);
-
-        List<Round> calyTerminarz = new ArrayList<>();
+            List<Round> rounds = new ArrayList<>();
 
 /////////tworzenie terminarza/////////////////
-        for (int j = 1; j < chosenPlayersUserData.size(); j++) {
-            /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
-            Round round;
-            if (j != 1) {
-             /*   LocalDate tempDate= LocalDate.of(calyTerminarz.get(calyTerminarz.size() - 1).getData().getYear(),
-                        calyTerminarz.get(calyTerminarz.size() - 1).getData().getMonth(),
-                        calyTerminarz.get(calyTerminarz.size() - 1).getData().getDay());*/
-         /*       XMLGregorianCalendar tempData = DatatypeFactory.newInstance().newXMLGregorianCalendar();
-                tempData.setYear(calyTerminarz.get(calyTerminarz.size() - 1).getData().getYear());
-                tempData.setMonth(calyTerminarz.get(calyTerminarz.size() - 1).getData().getMonth());
-                tempData.setDay(calyTerminarz.get(calyTerminarz.size() - 1).getData().getDay());
-                tempData.add(d);
-*/
-                round = new Round(j, calyTerminarz.get((calyTerminarz.size()-1)).getDate().plusDays(7L));
-            } else {
-                round = new Round(j, data);
+            for (int j = 1; j < playersForSchedule.size(); j++) {
+                /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
+                Round round;
+                if (j != 1) {
+                    round = new Round(j, rounds.get((rounds.size()-1)).getDate().plusDays(7L));
+                } else {
+                    round = new Round(j, data);
+                }
+                //////////ustalanie par /////////////////////////////
+                for (int i = 0; i < playersForSchedule.size()-1; i+=2) {
+
+                  /*  var para = listyGrajkow.getGrajkiA().get(i).getUsername() + " - " + listyGrajkow.getGrajkiB().get(i).getUsername();
+                    System.out.println(para);*/
+
+                    var tempMatch = new Match();
+                    int shift=i+j;
+                    if(shift>=playersForSchedule.size())
+                    {
+                        shift=shift-playersForSchedule.size();
+                    }
+                    tempMatch.setUserData(playersForSchedule.get(i));
+                    tempMatch.setOpponentUserData(playersForSchedule.get(shift));
+                    tempMatch.setDateDB(data.plusDays(7L *(j-1)));
+
+                    round.getMatches().add(tempMatch);
+
+                }
+
+
+
+
+
+                round.setPlayed(false);
+                rounds.add(round);
+                System.out.println("=======" + round.getNr() + " === " + round.getDate());
+
+
             }
 
-            //////////ustalanie par /////////////////////////////
-            for (int i = 0; i < grajkiA.size(); i++) {
+            /////////////// zapis termnarza do xml    //////////////////////
+            Schedule schedule = new Schedule(rounds,scheduleName);
 
-                var para = listyGrajkow.getGrajkiA().get(i).getUsername() + " - " + listyGrajkow.getGrajkiB().get(i).getUsername();
-                System.out.println(para);
-
-                var tempMatch = new Match();
-               tempMatch.setUserData(listyGrajkow.getGrajkiA().get(i));
-                tempMatch.setOpponentUserData(listyGrajkow.getGrajkiB().get(i));
-                tempMatch.setDateDB(data.plusDays(7L *(j-1)));
-/*tempMatch.setDate(runda.getDateTimeItem());
-tempMatch.setDateDB(runda.getDateTimeItem());
-*/
-                round.getMatches().add(tempMatch);
-
-            }
-
-  //runda.setData(data);
-  //runda.setDateTimeItem();
-round.setPlayed(false);
-            calyTerminarz.add(round);
-            System.out.println("=======" + round.getNr() + " === " + round.getDate());
-            listyGrajkow.przesunListy();
-
-        }
-
-
-
-
-
-        /////////////// zapis termnarza do xml    //////////////////////
-       Schedule schedule = new Schedule(calyTerminarz);
-
-
-
- //       jaxbObjectToXML(terminarz,nazwa);
+            //       jaxbObjectToXML(terminarz,nazwa);
 
 /////////////////////////////////////////////
 // zapis  sql
-schedule.setName(nazwa);
-//terminarz.getRundy().get(0).getTerminarz()
+            schedule.setName(scheduleName);
+
+         Schedule   savedSchedule=    scheduleDAO.saveSchedule(schedule);
+            redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
+
+            return new CreateScheduleResult(schedule,playersNotInMZ);
+            /*
+/////////////////podzial grajkow na pol  /////////////////
 
 
-        scheduleDAO.save1(schedule);
+
+            var grajkiA = playersForSchedule.subList(0, (playersForSchedule.size()) / 2);
+            var grajkiB = playersForSchedule.subList(playersForSchedule.size() / 2, playersForSchedule.size());
 
 
-return schedule;
+            Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
+            ListyGrajkow listyGrajkow = new ListyGrajkow(grajkiA, grajkiB);
+
+            List<Round> calyTerminarz = new ArrayList<>();
+
+/////////tworzenie terminarza/////////////////
+            for (int j = 1; j < playersForSchedule.size(); j++) {
+                /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
+                Round round;
+                if (j != 1) {
+
+                    round = new Round(j, calyTerminarz.get((calyTerminarz.size()-1)).getDate().plusDays(7L));
+                } else {
+                    round = new Round(j, data);
+                }
+
+                //////////ustalanie par /////////////////////////////
+                for (int i = 0; i < grajkiA.size(); i++) {
+
+                    var para = listyGrajkow.getGrajkiA().get(i).getUsername() + " - " + listyGrajkow.getGrajkiB().get(i).getUsername();
+                    System.out.println(para);
+
+                    var tempMatch = new Match();
+                    tempMatch.setUserData(listyGrajkow.getGrajkiA().get(i));
+                    tempMatch.setOpponentUserData(listyGrajkow.getGrajkiB().get(i));
+                    tempMatch.setDateDB(data.plusDays(7L *(j-1)));
+
+                    round.getMatches().add(tempMatch);
+
+                }
+
+                round.setPlayed(false);
+                calyTerminarz.add(round);
+                System.out.println("=======" + round.getNr() + " === " + round.getDate());
+                listyGrajkow.przesunListy();
+
+            }
+
+            /////////////// zapis termnarza do xml    //////////////////////
+            Schedule schedule = new Schedule(calyTerminarz);
+
+            //       jaxbObjectToXML(terminarz,nazwa);
+
+/////////////////////////////////////////////
+// zapis  sql
+            schedule.setName(nazwa);
+
+            scheduleDAO.save(schedule);
+
+
+            return schedule;
+            */
+
+
+        }
+
+
 //////////////
     }
 
+
+
     @Override
-    public Schedule utworzTerminarzJednodniowy(LocalDate data, List<String> chosenPlayers, String nazwa) {
-        List<UserData> playersUserData = userDAO.findNotDeletedUsers();
+    @Transactional
+    public CreateScheduleResult createOneDayShedule(LocalDate data, List<String> chosenPlayers, String scheduleName) {
+       List<UserData> playersNotInMZ= new ArrayList<>();
+        List<UserData> playersInMZ= new ArrayList<>();
+               chosenPlayers.stream().forEach(
+                player-> {
+                    if(player.equals("pauza"))
+                    {
+                        playersInMZ.add(userService.getPauseObject());
+                    }
+                    else
+                    {
+                        UserData foundPlaer= mzUserService.findByUsernameInManagerzone(player);
+                        if(foundPlaer==null)
+                            playersNotInMZ.add(foundPlaer);
+                        else playersInMZ.add(foundPlaer);
+                    }
 
-        List<UserData> playersUserDataList = new ArrayList<>();
-        for (int i = 0; i < chosenPlayers.size(); i++
-        ) {
 
-
-            for (int j = 0; j < playersUserData.size(); j++) {
-
-
-                if (playersUserData.get(j).getUsername().equals(chosenPlayers.get(i))) {
-                    playersUserDataList.add(playersUserData.get(j));
-                    j = 0;
-                    break;
                 }
-            }
+        );
+        if(!playersNotInMZ.isEmpty())
+        {
+            return new CreateScheduleResult(null,playersNotInMZ);
         }
-        ////////////////////////////////////////////////////////
-   //     dodajPauzeDlaParzystosci(grajki);
-/////////////////podzial grajkow na pol  /////////////////
-  /*      var grajkiA = grajki.subList(0, (grajki.size()) / 2);
-        var grajkiB = grajki.subList(grajki.size() / 2, grajki.size());
-
-
-        Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
-        ListyGrajkow listyGrajkow = new ListyGrajkow(grajkiA, grajkiB);
-*/
-        List<Round> calyTerminarz = new ArrayList<>();
+        else
+        {
+            List<Round> rounds = new ArrayList<>();
 
 /////////tworzenie terminarza/////////////////
 
             /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
             Round round;
 
-                round = new Round(1, data);
+            round = new Round(1, data);
 
-        for (int i = 0; i < playersUserDataList.size(); i++) {
-            if(i%2!=0)
-            {
-int yy=0;
+            for (int i = 0; i < playersInMZ.size(); i++) {
+                if(i%2!=0)
+                {
+                    int yy=0;
+                }
+                else
+                {
+                    var tempMatch = new Match();
+                    tempMatch.setDateDB(data);
+                    tempMatch.setUserData(playersInMZ.get(i));
+                    tempMatch.setOpponentUserData(playersInMZ.get(i+1));
+                    round.getMatches().add(tempMatch);
+                }
+
+
             }
-            else
-            {
-                var tempMatch = new Match();
-               tempMatch.setDateDB(data);
-                tempMatch.setUserData(playersUserDataList.get(i));
-                tempMatch.setOpponentUserData(playersUserDataList.get(i+1));
-                round.getMatches().add(tempMatch);
-            }
-
-
-        }
-        round.setPlayed(false);
-        calyTerminarz.add(round);
-        System.out.println("=======" + round.getNr() + " === " + round.getDate());
+            round.setPlayed(false);
+            rounds.add(round);
+            System.out.println("=======" + round.getNr() + " === " + round.getDate());
 
 
 
 
 
 
-        //////////ustalanie par /////////////////////////////
+            //////////ustalanie par /////////////////////////////
   /*          for (int i = 0; i < grajkiA.size(); i++) {
 
                 var para = listyGrajkow.getGrajkiA().get(i).getUsername() + " - " + listyGrajkow.getGrajkiB().get(i).getUsername();
@@ -404,17 +527,50 @@ int yy=0;
 
 
 //todo do usuniecia po przejsciu na sql
-        /////////////// zapis termnarza do xml    //////////////////////
+            /////////////// zapis termnarza do xml    //////////////////////
  /*       Terminarz terminarz = new Terminarz(calyTerminarz);
         jaxbObjectToXML(terminarz,nazwa);
 */
 /////////////////////////////////////////////
-        Schedule schedule = new Schedule(calyTerminarz);
-        schedule.setName(nazwa);
-scheduleDAO.save1(schedule);
+            Schedule schedule = new Schedule(rounds, scheduleName);
 
-return schedule;
+          Schedule savedSchedule=  scheduleDAO.saveSchedule(schedule);
 
+
+            redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
+
+
+            return new CreateScheduleResult(schedule,playersNotInMZ);
+
+
+        }
+
+/*
+        List<UserData> playersUserDataList = new ArrayList<>();
+        for (int i = 0; i < chosenPlayers.size(); i++
+        ) {
+
+
+            for (int j = 0; j < playersUserData.size(); j++) {
+
+
+                if (playersUserData.get(j).getUsername().equals(chosenPlayers.get(i))) {
+                    playersUserDataList.add(playersUserData.get(j));
+                    j = 0;
+                    break;
+                }
+            }
+        }*/
+        ////////////////////////////////////////////////////////
+   //     dodajPauzeDlaParzystosci(grajki);
+/////////////////podzial grajkow na pol  /////////////////
+  /*      var grajkiA = grajki.subList(0, (grajki.size()) / 2);
+        var grajkiB = grajki.subList(grajki.size() / 2, grajki.size());
+
+
+        Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
+        ListyGrajkow listyGrajkow = new ListyGrajkow(grajkiA, grajkiB);
+*/
 
 
     }
@@ -426,34 +582,15 @@ return schedule;
 
 
 
-    protected void dodajPauzeDlaParzystosci(List<UserData> grajki) {
-        if (grajki.size() % 2 != 0) {
-            UserData tempuser = new UserData();
-            tempuser.setUserId(0);
-            tempuser.setUsername("pauza");
-            Team tempTeam= new Team();
-            tempTeam.setTeamName(" ");
-            tempTeam.setTeamId(0);
-            tempTeam.setUser(tempuser);
-            List<Team> tempTeams= new ArrayList<>();
-            tempTeams.add(tempTeam);
-            tempuser.setTeamlist(tempTeams);
-            grajki.add(tempuser);
+    protected void AddPauseForParity(List<UserData> players) {
+        if (players.size() % 2 != 0)
+players.add(userService.getPauseObject());
 
 
 
-            userDAO.save(tempuser);
-
-            /** ****************************
-             * todo uncomment if need to use cache
-
-          if(mzCache.getUsers().size()!=0)
-          mzCache.addUser(tempuser);
-*/
-        }
     }
     @Override
-    public void aktualizujTerminarz(Schedule schedule, String nazwaPliku)
+    public void updateSchedule(Schedule schedule, String nazwaPliku)
     {
         try {jaxbObjectToXML(schedule,nazwaPliku);
 
@@ -463,7 +600,26 @@ return schedule;
     }
     }
 
+    @Override
+    public List<ScheduleNameDTO> getScheduleNames() {
+        List<ScheduleNameDTO> scheduleNames=null;
+        try{
+          scheduleNames=  redisScheduleService.getScheduleNames();
+        }
+        catch (Exception e)
+        {
 
+        }
+
+        if (scheduleNames.isEmpty())
+        {
+            System.out.println("from sql");
+            scheduleNames= scheduleDAO.getScheduleNames();
+        redisScheduleService.setScheduleNames(scheduleNames);
+
+        }
+        return scheduleNames;
+    }
 
 
     protected void jaxbObjectToXML(Schedule calySchedule, String nazwa) {

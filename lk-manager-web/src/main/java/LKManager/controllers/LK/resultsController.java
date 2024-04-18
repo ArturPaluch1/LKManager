@@ -1,15 +1,17 @@
 package LKManager.controllers.LK;
 
-import LKManager.DAO.MatchDAO;
-import LKManager.DAO.RoundDAO;
-import LKManager.DAO.ScheduleDAO;
-import LKManager.model.Round;
-import LKManager.model.Schedule;
+import LKManager.DAO_SQL.MatchDAO;
+import LKManager.DAO_SQL.RoundDAO;
+import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.MatchesMz.Match;
-import LKManager.HardCodedCache_unused.Cache.MZCache;
-import LKManager.services.*;
+import LKManager.model.RecordsAndDTO.RoundDTO;
+import LKManager.model.RecordsAndDTO.ScheduleDTO;
+import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
+import LKManager.services.CookieManager;
 import LKManager.services.FilesService_unused.PlikiService;
-import org.springframework.beans.factory.annotation.Autowired;
+import LKManager.services.MatchService;
+import LKManager.services.ResultsService;
+import LKManager.services.ScheduleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 
@@ -40,17 +41,17 @@ public class resultsController {
 
     // private Integer numerRundy;
     //  private Terminarz terminarz;
-    private Schedule schedule;
+    private ScheduleDTO schedule;
     private final PlikiService plikiService;
     private String poprzednioWybranyTerminarz;
     private final ResultsService resultsService;
-    @Autowired
-    private MZCache mzCache;
+/*    @Autowired
+    private MZCache mzCache;*/
     private final CookieManager cookieManager;
 
     //  private List<Terminarz> terminarze;
     private File[] terminarzeFiles;
-    private List<Schedule> schedules;
+    private List<ScheduleNameDTO> schedules;
 
 
     private final ScheduleDAO scheduleDAO;
@@ -135,8 +136,8 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
  */
         //todo wyzej bkp
         //CookieManager.checkCookies(response,request,nrRundy,wybranyTerminarz,terminarzDAO);
-        roundNumber = CookieManager.saveOrUpdateRoundNumberCookie(Optional.ofNullable(roundNumber), Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
-        chosenSchedule = CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
+        roundNumber = cookieManager.saveOrUpdateRoundNumberCookie(roundNumber, chosenSchedule);
+        chosenSchedule = cookieManager.saveOrUpdateChosenScheduleCookie(chosenSchedule);
 
 
         //   cookieManagement(response,numerRundyCookie,wybranyTerminarzCookie, wybranyTerminarz, nrRundy);
@@ -154,7 +155,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 
 
         //  schedules= mzCache.getSchedulesFromCacheOrDatabase();
-        schedules = scheduleService.getSchedules();
+        schedules = scheduleService.getScheduleNames();
         //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
         schedule = scheduleService.getSchedule_ByName(chosenSchedule);
 
@@ -206,9 +207,11 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 
         ///ok
 */
-        Round round=null;
+        RoundDTO round=null;
 try {
-     round = roundDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber)) ;
+  //   round = roundDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber)) ;
+    String finalRoundNumber = roundNumber;
+    round=schedule.getRounds().stream().filter(r->r.getNr()==Integer.parseInt( finalRoundNumber)).findFirst().orElse(null);
 }
 catch (Exception exception) {
     // Obsługa innych ogólnych wyjątków
@@ -218,7 +221,7 @@ catch (Exception exception) {
     // Tutaj możesz podjąć odpowiednie kroki dla innych ogólnych wyjątków
 }
 
-        List<Round> roundNumbers=null;
+     /*   List<Round> roundNumbers;
         try{
     roundNumbers = roundDAO.findAllByScheduleId(schedule.getId());
 }
@@ -227,11 +230,12 @@ catch (Exception exception) {
     System.err.println("Inny błąd: " + exception.getMessage());
     attributes.addAttribute("errorMessage", "błąd w usuwaniu");
     return "redirect:/errorMessage";
-}
+}*/
 
-        List<Match> matches=null;
+ /*       List<MatchDTO> matches=null;
 try{
-     matches = meczDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1);
+     matches = meczDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1)
+             .stream().map(MatchAdapter::adapt).collect(Collectors.toList());
 
 }
 catch (Exception exception) {
@@ -240,24 +244,30 @@ catch (Exception exception) {
     attributes.addAttribute("errorMessage", "błąd w usuwaniu");
     return "redirect:/errorMessage";
     // Tutaj możesz podjąć odpowiednie kroki dla innych ogólnych wyjątków
-}
+}*/
 
 
 
-        model.addAttribute("roundNumber", roundNumber);
-        //   model.addAttribute("terminarz", terminarz1);
-
-
+  /*      model.addAttribute("roundNumber", roundNumber);
         model.addAttribute("matches", matches);
         model.addAttribute("schedules", schedules);
         model.addAttribute("chosenSchedule", chosenSchedule);
         model.addAttribute("roundNumbers", roundNumbers);
+        model.addAttribute("round", round);*/
+
+
+        model.addAttribute("roundNumber", roundNumber);
+       // model.addAttribute("matches", );
+        model.addAttribute("schedules", schedules);
+        model.addAttribute("chosenSchedule", schedule);
+     //   model.addAttribute("roundNumbers", roundNumbers);
         model.addAttribute("round", round);
-       /* model.addAttribute("mecze", terminarz1.getRundy().get(Integer.parseInt(nrRundy)-1).getMecze());
-        model.addAttribute("terminarze", terminarze1);
-        model.addAttribute("wybranyTerminarz", wybranyTerminarz);
-        model.addAttribute("nrRundy", terminarz1.getRundy());
-        model.addAttribute("runda", terminarz1.getRundy().get(Integer.parseInt(nrRundy)-1));*/
+
+
+
+
+
+
 
 
 
@@ -383,8 +393,8 @@ catch (Exception exception) {
     public String changeSchedule(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) {
         try {
             //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
-            CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
-            CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(chosenSchedule), response, request, scheduleDAO);
+            cookieManager.saveOrUpdateRoundNumberCookie("1", chosenSchedule);
+            cookieManager.saveOrUpdateChosenScheduleCookie(chosenSchedule);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -510,7 +520,7 @@ catch (Exception exception) {
         }
 
 
-        Schedule chosenSchedule= scheduleService.getSchedule_ByName(chosenScheduleName);
+        ScheduleDTO chosenSchedule= scheduleService.getSchedule_ByName(chosenScheduleName);
 
         if(  resultsService.editResults(chosenSchedule,roundNumber+1,matchesId,userMatchResults1,userMatchResults2,opponentMatchResults1,opponentMatchResults2)!=null)
       {
@@ -573,7 +583,7 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
 
     @PostMapping("/update")
-    public String aktualizujWyniki(
+    public String updateResults(
             Model model,
             RedirectAttributes redirectAttributes,
             @RequestParam(value = "roundNumber", required = false) Integer roundNumber,
@@ -585,12 +595,12 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
             roundNumber = 1;
         }
 
-Schedule chosenSchedule= scheduleService.getSchedule_ByName(chosenScheduleName);
+ScheduleDTO chosenSchedule= scheduleService.getSchedule_ByName(chosenScheduleName);
         if(chosenSchedule!=null)
         {
             if (resultsService.updateResults(roundNumber, chosenSchedule) != null) {
                 redirectAttributes.addAttribute("roundNumber", roundNumber);
-                redirectAttributes.addAttribute("chosenSchedule", chosenSchedule);
+                redirectAttributes.addAttribute("chosenSchedule", chosenSchedule.getName());
 
                 //  mzCache.updateRound(round);
 

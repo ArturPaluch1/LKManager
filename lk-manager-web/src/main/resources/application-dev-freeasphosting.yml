@@ -2,6 +2,12 @@
 
 
 spring:
+  # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
+  redis:
+    url: ${redisLocalhost_Url}
+    # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
+
+# SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
   config:
     import: optional:file:.env[.properties]
   spring.jpa.show-sql: true
@@ -48,3 +54,4 @@ spring:
     # hibernate:
     #  dialect:
     #   MySQLDialect:
+# SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database

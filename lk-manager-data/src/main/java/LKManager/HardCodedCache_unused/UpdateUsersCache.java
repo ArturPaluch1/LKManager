@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
         @Override @Transactional
         public MZCache update() {
             //dodawanie users do cache
-            userService.findUsers_NotDeletedWithPause();
+    /*        userService.findUsers_NotDeletedWithPause();
             try {
                 userService.findUsers_NotDeletedWithPause();
                 //	mzCache.setUsers(userDAO.findNotDeletedUsers());
@@ -35,7 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 
             finally {
                 return mzCache;
-            }
+            }*/
+            return null;
         }
     }
 

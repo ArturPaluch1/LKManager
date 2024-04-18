@@ -53,12 +53,12 @@
 
     <tr th:each="item : ${table}" >
         <td  class="counterCell" th:text="${table.indexOf(item)+1}"></td>
-        <td th:text="${item. getGracz().getTeamlist().get(0).getTeamName()}" >Drużyna</td>
-        <td th:text="${item. getGracz().getUsername()}" >user</td>
-        <td th:text="${item.getSumaPunktow()} ">Punkty</td>
-        <td th:text="${item. getRoznica()}" >Różnica</td>
-        <td th:text="${item. getGoleStrzelone()}" >Strzelone</td>
-        <td th:text="${item. getGoleStracone()}" >Stracone</td>
+        <td th:text="${item. getPlayer().getTeamName()}" >Drużyna</td>
+        <td th:text="${item. getPlayer().getUsername()}" >user</td>
+        <td th:text="${item.getTotalPoints()} ">Punkty</td>
+        <td th:text="${item. getDifference()}" >Różnica</td>
+        <td th:text="${item. getGoalsScored()}" >Strzelone</td>
+        <td th:text="${item. getGoalsConceded()}" >Stracone</td>
 
 
     </tr>

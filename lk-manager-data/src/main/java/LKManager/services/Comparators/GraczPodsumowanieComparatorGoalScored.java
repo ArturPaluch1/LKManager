@@ -1,4 +1,4 @@
-package LKManager.LK.Comparators;
+package LKManager.services.Comparators;
 
 import LKManager.LK.PlayerSummary;
 
@@ -9,6 +9,6 @@ public class GraczPodsumowanieComparatorGoalScored implements Comparator<PlayerS
     public int compare(PlayerSummary o1, PlayerSummary o2) {
    /*     if(o1.getGoleStrzelone()=="")o1.setGoleStrzelone("0");
         if(o2.getGoleStrzelone()=="")o2.setGoleStrzelone("0");*/
-        return Integer.compare(o2.getGoleStrzelone(),o1.getGoleStrzelone());
+        return Integer.compare(o2.getGoalsScored(),o1.getGoalsScored());
     }
 }

@@ -1,12 +1,16 @@
 package LKManager.services;
 
-import LKManager.DAO.CustomScheduleDAOImpl;
-import LKManager.DAO.MatchDAO;
-import LKManager.DAO.RoundDAO;
+import LKManager.DAO_SQL.CustomScheduleDAOImpl;
+import LKManager.DAO_SQL.MatchDAO;
+import LKManager.DAO_SQL.RoundDAO;
 import LKManager.model.MatchesMz.Match;
+import LKManager.model.RecordsAndDTO.ScheduleDTO;
+import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
 import LKManager.model.UserMZ.UserData;
+import LKManager.services.RedisService.RedisScheduleService;
+import LKManager.services.RedisService.RedisTableService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,16 +47,17 @@ private final RoundDAO roundDAO;
 private final ScheduleService scheduleService;
   private final EntityManager entityManager;
   private final MatchDAO matchDAO;
-
-
-
+private final RedisTableService redisTableService;
+private final TableService tableService;
+private final RedisScheduleService redisScheduleService;
 
 
     @Override
-    public Round updateResults(Integer roundNumber,  Schedule schedule) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
+    public Round updateResults(Integer roundNumber,  ScheduleDTO schedule) throws DatatypeConfigurationException, ParserConfigurationException, JAXBException, SAXException, IOException {
 
         System.out.println("round number: "+roundNumber+"  sched: "+schedule.getName());
         //todo tu zamienic zeby najpierw szukalo w cache
+
         Round round = roundDAO.findRoundWitchMatches(schedule.getName(),roundNumber);
      //   System.out.println("round"+round.getMatches());
         if(round != null)
@@ -103,6 +108,10 @@ private final ScheduleService scheduleService;
         //todo to zamienić na  jpql
      //   roundDAO.saveRound(round);
     round=    roundDAO.save(round);
+
+        redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(round.getSchedule().getId(), round.getSchedule().getName()));
+        redisScheduleService.setSchedule(scheduleService.getSchedule_ById(round.getSchedule().getId()));
+
         System.out.println("round=" + round.getMatches());
 
         /** ****************************
@@ -142,6 +151,12 @@ List<Round>resultsList=  roundsForDate.stream().map( round-> {
 
         Round tempRound = getResultsFromMZ(round);
          tempRound= roundDAO.save(tempRound);
+
+        redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(tempRound.getSchedule().getId(), tempRound.getSchedule().getName()));
+        redisScheduleService.setSchedule(scheduleService.getSchedule_ById(tempRound.getSchedule().getId()));
+
+        redisTableService.setTable(tableService.createTable(tempRound.getSchedule().getId()));
+
         System.out.println("With success");
 return tempRound;
 
@@ -168,7 +183,7 @@ return tempRound;
 
 
     @Override
-    public Round editResults(Schedule schedule, Integer roundNumber, List<Long> matchIds, List<String> userMatchResults1, List<String> userMatchResults2, List<String> opponentMatchResults1, List<String> opponentMatchResults2)
+    public Round editResults(ScheduleDTO schedule, Integer roundNumber, List<Long> matchIds, List<String> userMatchResults1, List<String> userMatchResults2, List<String> opponentMatchResults1, List<String> opponentMatchResults2)
  {
      Round round= null;
      try{
@@ -239,6 +254,13 @@ return tempRound;
 
          */
          System.out.println("saved");
+
+         redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(schedule.getId(), schedule.getName()));
+
+         redisScheduleService.setSchedule(scheduleService.getSchedule_ById(schedule.getId()));
+
+
+
          return round;
      }
      catch (Exception e)

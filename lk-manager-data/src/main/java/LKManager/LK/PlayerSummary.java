@@ -1,5 +1,6 @@
 package LKManager.LK;
 
+import LKManager.model.RecordsAndDTO.UserDataDTO;
 import LKManager.model.UserMZ.UserData;
 
 import javax.xml.bind.annotation.*;
@@ -8,53 +9,53 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({UserData.class})
 public class PlayerSummary {
-    private UserData gracz;
-    private Integer sumaPunktow=0;
-    private Integer goleStrzelone=0;
-    private Integer goleStracone=0;
-    private final Integer roznica=0;
+    private UserDataDTO player;
+    private Integer totalPoints =0;
+    private Integer goalsScrored =0;
+    private Integer goalsConceded =0;
+    private  Integer difference =0;
 
     public PlayerSummary() {
     }
     @XmlElement(name = "UserData")
-    public UserData getGracz() {
-        return gracz;
+    public UserDataDTO getPlayer() {
+        return player;
     }
 
-    public void setGracz(UserData gracz) {
-        this.gracz = gracz;
+    public void setPlayer(UserDataDTO player) {
+        this.player = player;
     }
     @XmlAttribute
-    public Integer getSumaPunktow() {
-        return sumaPunktow;
+    public Integer getTotalPoints() {
+        return totalPoints;
     }
 
-    public void zwiekszSumePunktow(Integer dodaj) {
-        this.sumaPunktow +=dodaj;
+    public void increaseTotalPoints(Integer add) {
+        this.totalPoints +=add;
     }
     @XmlAttribute
-    public Integer getGoleStrzelone() {
-        return goleStrzelone;
+    public Integer getGoalsScored() {
+        return goalsScrored;
     }
 
-    public void addGoleStrzelone(Byte goleStrzelone) {
-        this.goleStrzelone += goleStrzelone;
+    public void addGoalsScored(Byte goalsScored) {
+        this.goalsScrored += goalsScored;
     }
     @XmlAttribute
-    public Integer getGoleStracone() {
-        return goleStracone;
+    public Integer getGoalsConceded() {
+        return goalsConceded;
     }
 
-    public void addGoleStracone(Byte goleStracone) {
-        this.goleStracone +=goleStracone;
+    public void addGoalsConceded(Byte goalsConceded) {
+        this.goalsConceded +=goalsConceded;
     }
     @XmlAttribute
-    public Integer getRoznica() {
+    public Integer getDifference() {
         return countDifference();
     }
 
     private Integer countDifference() {
-        return this.goleStrzelone-this.goleStracone;
+        return this.goalsScrored -this.goalsConceded;
     }
 
   /*  public void setRoznica(Integer roznica) {

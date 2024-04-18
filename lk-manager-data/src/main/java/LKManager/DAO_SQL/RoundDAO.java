@@ -1,4 +1,4 @@
-package LKManager.DAO;
+package LKManager.DAO_SQL;
 
 import LKManager.model.Round;
 import org.springframework.data.jpa.repository.JpaRepository;

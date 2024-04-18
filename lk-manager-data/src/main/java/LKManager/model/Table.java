@@ -1,6 +1,8 @@
 package LKManager.model;
 
 import LKManager.LK.PlayerSummary;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
@@ -13,15 +15,17 @@ import java.util.List;
 @XmlRootElement(name = "Tabela")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({PlayerSummary.class})
+@Getter @Setter
 public class Table implements Serializable {
 
     private List<PlayerSummary> playerSummaries = new ArrayList<>();
+private String scheduleName;
+
+    public Table(String scheduleName) {
+        this.scheduleName = scheduleName;
+    }
 
     public Table() {
-
-
-
-
     }
 
     @XmlElement(name = "GraczPodsumowanie")

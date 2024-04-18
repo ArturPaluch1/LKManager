@@ -1,16 +1,15 @@
 package LKManager.HardCodedCache_unused.Cache;
 
-import LKManager.DAO.RoundDAO;
-import LKManager.DAO.ScheduleDAO;
-import LKManager.LK.Comparators.scheduleIdComparator;
+import LKManager.DAO_SQL.RoundDAO;
+import LKManager.DAO_SQL.ScheduleDAO;
+import LKManager.services.Comparators.scheduleIdComparator;
+import LKManager.model.MatchesMz.Match;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
 import LKManager.model.Table;
-import LKManager.model.MatchesMz.Match;
 import LKManager.model.UserMZ.UserData;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 
 
 @Getter
-@Component
+//@Component
 @Transactional
 
 @Setter
@@ -41,7 +40,7 @@ public class MZCache {
     public MZCache(ScheduleDAO scheduleDAO, RoundDAO roundDAO) {
         this.scheduleDAO = scheduleDAO;
         this.roundDAO = roundDAO;
-        this.table = new Table();
+       // this.table = new Table();
         this.users= new ArrayList<>();
         this.schedules = new ArrayList<>();
         this.matches = new ArrayList<>();

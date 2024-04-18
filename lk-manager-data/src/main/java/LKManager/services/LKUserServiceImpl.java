@@ -1,7 +1,6 @@
 package LKManager.services;
 
 import LKManager.LK.Gracze;
-import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
@@ -13,10 +12,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoField;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +30,7 @@ private final MZUserService mzUserService;
       //sprawdzenie czy juz był dodany
 
 
-        var grajek= mzUserService.findByUsername(gracz.getUsername());
+        var grajek= mzUserService.findByUsernameInManagerzone(gracz.getUsername());
 
         UserData user = new UserData();
         user.setUsername(gracz.getUsername());
@@ -57,7 +53,7 @@ private final MZUserService mzUserService;
         //sprawdzenie czy juz był dodany
 
 
-        var grajek= mzUserService.findByUsername(gracz);
+        var grajek= mzUserService.findByUsernameInManagerzone(gracz);
 
         UserData user = new UserData();
         user.setUsername(gracz);
@@ -86,7 +82,7 @@ private final MZUserService mzUserService;
     }
     public boolean usunGraczaZXML(String gracz) throws JAXBException, ParserConfigurationException, IOException, SAXException {
 
-       var graczMZ= mzUserService.findByUsername(gracz);
+       var graczMZ= mzUserService.findByUsernameInManagerzone(gracz);
        if(graczMZ!= null)
        {
            var gracze =wczytajGraczyZXML();
@@ -107,7 +103,7 @@ private final MZUserService mzUserService;
         List<UserData> listaGraczy= new ArrayList<>();
         for (var nick: gracze
         ) {
-            var grajek= mzUserService.findByUsername(nick);
+            var grajek= mzUserService.findByUsernameInManagerzone(nick);
 if(grajek== null)
 {
     // nie ma w mz takiego nicku

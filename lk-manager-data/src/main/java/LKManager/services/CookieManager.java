@@ -1,9 +1,8 @@
 package LKManager.services;
 
-import LKManager.DAO.CustomScheduleDAOImpl;
-import LKManager.DAO.ScheduleDAO;
+import LKManager.DAO_SQL.CustomScheduleDAOImpl;
+import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.Schedule;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
@@ -14,19 +13,29 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public  class CookieManager {
 
     private final CustomScheduleDAOImpl customScheduleDAO;
-/*
-@Autowired
-    public CookieManager(CustomScheduleDAOImpl customScheduleDAO) {
+    private final ScheduleDAO scheduleDAO;
+   private HttpServletResponse response;
+   private HttpServletRequest request;
+
+
+    public CookieManager(CustomScheduleDAOImpl customScheduleDAO, ScheduleDAO scheduleDAO, HttpServletResponse response, HttpServletRequest request) {
         this.customScheduleDAO = customScheduleDAO;
+        this.scheduleDAO = scheduleDAO;
+        this.response = response;
+        this.request = request;
     }
-*/
+
+    /*
+        @Autowired
+            public CookieManager(CustomScheduleDAOImpl customScheduleDAO) {
+                this.customScheduleDAO = customScheduleDAO;
+            }
+        */
   /*public  static String  checkCookies(HttpServletResponse response, HttpServletRequest request, String nrRundy, String wybranyTerminarz, TerminarzDAOImpl terminarzDAO) throws UnsupportedEncodingException {
 
 
@@ -40,7 +49,7 @@ public  class CookieManager {
 
         return nrRundy;
     }*/
-    public static String saveOrUpdateRoundNumberCookie(Optional<String> roundNumber, Optional<String> chosenSchedule, HttpServletResponse response, HttpServletRequest request, ScheduleDAO scheduleDAO) throws UnsupportedEncodingException {
+    public String saveOrUpdateRoundNumberCookie(String roundNumber, String chosenSchedule) throws UnsupportedEncodingException {
        //zmieniono terminarz, runda =1
        // Cookie   numerRundyCookie= null;
       //  Cookie     wybranyTerminarzCookie=null;
@@ -83,10 +92,10 @@ public  class CookieManager {
        else */
 
         //wybrano schedule
-        if(chosenSchedule.isPresent())
+        if(chosenSchedule!=null)
        {
            //
-           if(  !decodeCookie(chosenScheduleCookie.getValue()).equals(decodeCookie(chosenSchedule.get())))
+           if(  !decodeCookie(chosenScheduleCookie.getValue()).equals(decodeCookie(chosenSchedule)))
            {
                return "1";
            }
@@ -123,8 +132,8 @@ public  class CookieManager {
                    if(roundNumberCookie==null) //nie ma pliku cookie
                    {
                        //tworzenie cookie z podaną rundą
-                       response.addCookie( createNewCookie("roundNumber",roundNumber.get()));
-                       return roundNumber.get();
+                       response.addCookie( createNewCookie("roundNumber",roundNumber));
+                       return roundNumber;
                        //  return nrRundy;
                 /*   numerRundyCookie= new Cookie("numerRundy",nrRundy);
                    //   numerRundyCookie.setValue(nrRundy);
@@ -136,10 +145,10 @@ public  class CookieManager {
                    else //jest plik cookie
                    {
                        //cookie i wybrany różnią się
-                       if(roundNumber.get()!=roundNumberCookie.getValue())
+                       if(roundNumber!=roundNumberCookie.getValue())
                        {
-                           response.addCookie( createNewCookie("roundNumber",roundNumber.get()));
-                           return roundNumber.get();
+                           response.addCookie( createNewCookie("roundNumber",roundNumber));
+                           return roundNumber;
                            //           nrRundy=numerRundyCookie.getValue();
                            //     return nrRundy;
                 /*       numerRundyCookie.setValue(nrRundy);
@@ -149,7 +158,7 @@ public  class CookieManager {
                        response.addCookie(numerRundyCookie);*/
 
                        }
-                       else return roundNumber.get();
+                       else return roundNumber;
 
 
                    }
@@ -234,7 +243,7 @@ else
         return roundNumberCookie;
     }
 
-    public static  String saveOrUpdateChosenScheduleCookie( Optional<String> chosenSchedule, HttpServletResponse response, HttpServletRequest request, ScheduleDAO scheduleDAO) throws UnsupportedEncodingException {
+    public String saveOrUpdateChosenScheduleCookie(String chosenSchedule) throws UnsupportedEncodingException {
 
 
         Cookie  chosenScheduleCookie = getChosenScheduleCookie(request, response, scheduleDAO);
@@ -245,7 +254,7 @@ else
     //    Optional<Cookie> wybranyTerminarzCookieOptional  = Optional.ofNullable(Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("wybranyTerminarz")).findAny().orElse(null));
 
 
-        if(chosenSchedule.isEmpty()) {
+        if(chosenSchedule==null) {
             //jest cookie
             if(chosenScheduleCookie!=null)
             {
@@ -308,7 +317,7 @@ else
         else
         {
 
-String cookie=decodeCookie(chosenSchedule.get());
+String cookie=decodeCookie(chosenSchedule);
 Cookie tempCookie= createNewCookie("chosenSchedule",cookie);
     /*        wybranyTerminarzCookieOptional.get().setValue(cookie);// = new Cookie("wybranyTerminarz", cookie);
 

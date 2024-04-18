@@ -1,4 +1,4 @@
-package LKManager.DAO;
+package LKManager.DAO_SQL;
 
 import LKManager.model.Schedule;
 import LKManager.model.MatchesMz.Match;

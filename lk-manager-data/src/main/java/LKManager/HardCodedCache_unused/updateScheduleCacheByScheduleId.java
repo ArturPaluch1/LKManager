@@ -1,6 +1,6 @@
 package LKManager.HardCodedCache_unused;
 
-import LKManager.DAO.ScheduleDAO;
+import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.Schedule;
 import LKManager.HardCodedCache_unused.Cache.MZCache;
 import LKManager.services.ScheduleService;

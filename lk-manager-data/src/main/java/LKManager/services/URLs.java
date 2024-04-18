@@ -50,7 +50,7 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
     }
     public  URL MakeOngoingMatchesURL(String username) throws IOException, ParserConfigurationException, JAXBException, SAXException {
 
-        return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ MZUserService.findByUsername(username).getTeamlist().get(0).getTeamId().toString()+"&match_status=2&limit=100");
+        return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ MZUserService.findByUsernameInManagerzone(username).getTeamlist().get(0).getTeamId().toString()+"&match_status=2&limit=100");
 
     }
 
