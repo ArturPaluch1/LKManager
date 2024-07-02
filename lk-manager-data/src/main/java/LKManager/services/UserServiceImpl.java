@@ -151,6 +151,7 @@ private final GsonService gsonService;
         }
 */
 
+  //      redisUserService.getRedisTemplate().getConnectionFactory().getConnection().flushDb();
 
 
             //wpisany z input
@@ -573,7 +574,7 @@ else
          */
 
         //czy jest o takim id w mz
-        UserData playerMZ = mzUserService.findByUsernameInManagerzone(userToAdd);
+        UserData playerMZ = mzUserService.findByUsernameInManagerzone(userToAdd.trim());
         //    var gracze=lkUserService.wczytajGraczyZXML();
         if (playerMZ != null) {
             Optional<UserData> userInDB = userDAO.findById(playerMZ.getUserId());
@@ -646,6 +647,7 @@ else
             List<Team> tempTeams= new ArrayList<>();
             tempTeams.add(tempTeam);
             newPauseUserData.setTeamlist(tempTeams);
+            newPauseUserData.setReliability(0);
 
             this.userDAO.saveUser(newPauseUserData);
             System.out.println("created new pause object");
@@ -666,6 +668,21 @@ else
          */
     }
 
+    @Override
+    public UserData getUserById(Integer userId) {
+
+        //todo dodać tu pobieranie z redis jeśli jest w redis
+       return userDAO.findById(userId).orElse(null);
+
+
+    }
+
+@Override
+   public UserData getUserDataByUsername(String username)
+    {
+        return userDAO.findByName(username);
+
+    }
   /*  @Override
     public UserDataDTO findUserById(Integer id) {
  UserDataDTO userFromRedis= redisService.findUserById(id);

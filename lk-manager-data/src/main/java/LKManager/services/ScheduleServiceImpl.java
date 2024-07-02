@@ -3,18 +3,21 @@ package LKManager.services;
 import LKManager.DAO_SQL.RoundDAO;
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.DAO_SQL.UserDAO;
+import LKManager.LK.PlayerSummary;
 import LKManager.model.MatchesMz.Match;
-import LKManager.model.RecordsAndDTO.CreateScheduleResult;
-import LKManager.model.RecordsAndDTO.MatchDTO;
-import LKManager.model.RecordsAndDTO.ScheduleDTO;
-import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
+import LKManager.model.RecordsAndDTO.*;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
+import LKManager.model.Table;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.Adapters.MatchAdapter;
 import LKManager.services.Adapters.ScheduleAdapter;
+import LKManager.services.Adapters.UserAdapter;
+import LKManager.services.Comparators.UserDataDTOReliabilityComparator;
 import LKManager.services.RedisService.RedisScheduleService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,8 +31,11 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
 import java.io.File;
+import java.sql.SQLSyntaxErrorException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,8 +57,19 @@ private final UserDAO userDAO;
 /*    @Autowired
 private final MZCache mzCache;
 */
+
 private final MZUserService mzUserService;
 private final RedisScheduleService redisScheduleService;
+private final RoundService roundService;
+
+///temp
+// private final TableService tableService;
+
+
+
+//////////
+
+
 
     public Schedule findByIdWithRoundsMatchesUsersAndTeams(long scheduleId)
     {
@@ -105,8 +122,13 @@ return schedule;
 
 ScheduleDTO foundSchedule=redisScheduleService.getSchedule_ByName(scheduleName);
 if(foundSchedule==null) {
-    foundSchedule = ScheduleAdapter.adapt(this.scheduleDAO.findByScheduleName(scheduleName));
-redisScheduleService.setSchedule(foundSchedule);
+  Schedule scheduleinDB=  this.scheduleDAO.findByScheduleName(scheduleName);
+  if(scheduleinDB!=null)
+  {
+      foundSchedule = ScheduleAdapter.adapt(scheduleinDB);
+      redisScheduleService.setSchedule(foundSchedule);
+  }
+else return null;
 
 }
        /*     if(foundSchedule!=null)
@@ -153,7 +175,7 @@ redisScheduleService.setSchedule(foundSchedule);
 
         ScheduleDTO foundSchedule=redisScheduleService.getSchedule_ById(id);
         if(foundSchedule==null) {
-            foundSchedule = ScheduleAdapter.adapt(this.scheduleDAO.findByScheduleId(id));
+            foundSchedule = ScheduleAdapter.adapt(scheduleDAO.findByScheduleId(id));
             redisScheduleService.setSchedule(foundSchedule);
         }
     /*
@@ -452,10 +474,12 @@ else return null;
                     }
                     else
                     {
-                        UserData foundPlaer= mzUserService.findByUsernameInManagerzone(player);
-                        if(foundPlaer==null)
-                            playersNotInMZ.add(foundPlaer);
-                        else playersInMZ.add(foundPlaer);
+                        //UserData foundPlayer= mzUserService.findByUsernameInManagerzone(player);
+                        UserData foundPlayer= userService.getUserDataByUsername(player);
+
+                        if(foundPlayer==null)
+                            playersNotInMZ.add(foundPlayer);
+                        else playersInMZ.add(foundPlayer);
                     }
 
 
@@ -598,6 +622,19 @@ players.add(userService.getPauseObject());
         catch (Exception e){
 
     }
+    }
+
+    @Override
+    @Transactional
+    public boolean updateSchedule(Schedule schedule) {
+
+        Schedule savedSchedule=  scheduleDAO.saveSchedule(schedule);
+
+
+        redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
+
+
+        return true;
     }
 
     @Override
@@ -757,4 +794,544 @@ players.add(userService.getPauseObject());
 
         }
     }
+
+
+
+
+
+
+
+
+
+
+    public ScheduleDTO createSwissSystemSchedule (List<UserDAO> users)
+    {
+
+return null;
+
+
+
+
+
+
+
+    }
+
+  /*  @Getter
+    @Setter
+    @RequiredArgsConstructor
+
+    class SwissPlayerDTO {
+        private UserDataDTO player;
+        private   int totalPoints;
+        private   boolean wolnyLos;
+
+        public SwissPlayerDTO(UserDataDTO player) {
+            this.player = player;
+            this.totalPoints = 0;
+            this.wolnyLos = false;
+        }
+        public SwissPlayerDTO(UserData player) {
+            this.player = UserAdapter.convertUserDataToUserDataDTO(player);
+            this.totalPoints = 0;
+            this.wolnyLos = false;
+        }
+    }
+*/
+
+    public RoundDTO createPairingsForNextRound(List<UserDAO> players, int roundNr, List<RoundDAO> rounds,LocalDate startDate)
+    {
+return null;
+    }
+
+
+    @Service
+    @Getter @Setter
+    class SwissTable{
+        private List<PlayerSummary> table;
+
+     /*   List<SwissPlayer>
+        createSwissTable()
+        {
+
+        }*/
+    }
+
+    public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber) {
+if(signedPlayers!=null)
+{
+  //  List<UserDataDTO> signedPlayersData= signedPlayers.stream().forEach(p-> userService.get);
+
+
+    List<UserDataDTO> playersInMZ= new ArrayList<>();
+    List<UserDataDTO> playersNotInMZ= new ArrayList<>();
+    signedPlayers.stream().forEach(
+            player-> {
+                if(player.equals("pauza"))
+                {
+                    playersInMZ.add(UserAdapter.convertUserDataToUserDataDTO(userService.getPauseObject()));
+                }
+                else
+                {
+                    UserDataDTO foundPlayer= UserAdapter.convertUserDataToUserDataDTO(userService.getUserDataByUsername(player));
+                    if(foundPlayer==null)
+                        playersNotInMZ.add(foundPlayer);
+                    else playersInMZ.add(foundPlayer);
+                }
+
+
+            }
+    );
+
+    if(playersNotInMZ.size()==0)
+    {
+
+        return createSwissScheduleWithPlayerData(startDate,playersInMZ,scheduleName,roundsNumber);
+    }
+    else return null;
+
+}
+else return null;
+
+    }
+        public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName,Integer roundsNumber) {
+       ScheduleNameDTO scheduleInDB=this.getScheduleNames().stream().filter(schedule->schedule.getName().equals(scheduleName)).findFirst().orElse(null);
+       if(scheduleInDB==null)
+       {
+           List<Round> rounds = new ArrayList<>();
+
+           List<UserData> playersInMZ = new ArrayList<>();
+           List<UserData> playersNotInMZ = new ArrayList<>();
+
+
+
+           if(signedPlayers.size()%2!=0)
+           {
+               signedPlayers.add(UserAdapter.convertUserDataToUserDataDTO( userService.getPauseObject()));
+           }
+
+
+
+
+
+           Collections.sort(signedPlayers, new UserDataDTOReliabilityComparator());
+
+           //todo tutaj wziac pod uwage regularnosc
+           signedPlayers.stream().forEach(
+                   player -> {
+                       if (player.getUserId() == 0) {
+                           playersInMZ.add(userService.getPauseObject());
+                       } else {
+                           // UserData foundPlayer = mzUserService.findByUsernameInManagerzone(player.getUsername());
+                           UserData foundPlayer = userService.getUserDataByUsername(player.getUsername());
+                           if (foundPlayer == null)
+                               playersNotInMZ.add(foundPlayer);
+                           else playersInMZ.add(foundPlayer);
+                       }
+
+
+                   }
+           );
+           if (!playersNotInMZ.isEmpty()) {
+               // todo nie ma takiego grcza w mz  .  dodatkowo zrobić jeszcze sprawdzenie czy ma drużynę w piłce!!!
+               return new CreateScheduleResult(null,playersNotInMZ);
+
+           } else {
+
+               for (int roundNumber = 0; roundNumber <roundsNumber ; roundNumber++) {
+                   /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
+                   Round round = new Round(roundNumber+1,startDate.plusDays(roundNumber*7));
+
+
+                   if(roundNumber==0) //create starting round pairings
+                   {
+                       for (int i = 0; i < playersInMZ.size(); i++) {
+                           if (i % 2 != 0) {
+                               int yy = 0;
+                           } else {
+                               var tempMatch = new Match();
+                               tempMatch.setDateDB(startDate);
+                               tempMatch.setUserData(playersInMZ.get(i));
+                               tempMatch.setOpponentUserData(playersInMZ.get(i + 1));
+                               tempMatch.setRound(round);
+                               round.getMatches().add(tempMatch);
+                           }
+                       }
+
+
+                   }
+
+                   round.setPlayed(false);
+                   rounds.add(round);
+
+
+
+               }
+
+
+               Schedule schedule = new Schedule(rounds, scheduleName);
+
+               Schedule savedSchedule = scheduleDAO.saveSchedule(schedule);
+
+redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(savedSchedule.getId(),savedSchedule.getName()));
+               redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
+
+
+               return new CreateScheduleResult(schedule, playersNotInMZ);
+           }
+           }
+
+
+       else return null;
+
+    }
+
+
+void calculateSwissScheduleTable()
+{
+
+}
+
+
+
+
+@Transactional
+public void calculateNextRoundOfSwissSchedule(ScheduleDTO schedule,Table table) {
+  //  LocalDate startDate = schedule.getRounds().get(schedule.getRounds().size() - 1).getDate().plusDays(7);
+    LocalDate startDate =     LocalDate.now().plusDays(6);
+RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate().equals(LocalDate.now().plusDays(6))).findFirst().orElse(null);
+//todo /\ to są temp opcje
+
+      //  RoundDTO foundRound=schedule.getRounds().stream().filter(r->r.getDate().equals(LocalDate.now())).findFirst().orElse(null);
+
+    System.out.println(table.getPlayerSummaries());
+
+        Round round=null;
+        if(foundRound!=null&&foundRound.getMatches().size()==0)
+        {
+
+            try {
+                round=   roundDAO.findByScheduleIdAndRoundNumber(schedule.getId(),foundRound.getNr());
+            } catch (SQLSyntaxErrorException e) {
+                throw new RuntimeException(e);
+            }
+
+
+
+            List<PlayerSummary> sp = new ArrayList<>();
+
+
+            //   Round round = new Round(schedule.getRounds().size()+1, startDate);
+            //  round.setPlayed(false);
+
+
+            List<UserDataDTO> usersHadPause = schedule.getRounds().stream().flatMap(r -> r.getMatches().stream()).
+                    filter(
+                            matchDTO ->
+                            {
+                                if (matchDTO.getUserDataDTO().getUserId() == 0)//id pauzy /wolnego losu
+                                {
+                                    return true;
+
+                                } else if (matchDTO.getOpponentUserDataDTO().getUserId() == 0) {
+                                    return true;
+                                } else return false;
+                            }
+                    ).map(matchDTO -> {
+                        if (matchDTO.getUserDataDTO().getUserId() == 0) {
+                            return matchDTO.getOpponentUserDataDTO(); // zwraca przeciwnika, jeśli użytkownik miał pauzę / wolny los
+                        } else {
+                            return matchDTO.getUserDataDTO(); // zwraca użytkownika, jeśli przeciwnik miał pauzę / wolny los
+                        }
+                    })
+                    .collect(Collectors.toList());
+
+            /*SwissTable  swissTable= new SwissTable();*/
+
+            List<UserData> allParticipants = scheduleDAO.findAllParticipantsOfSchedule(schedule.getName());
+
+            List<PlayerSummary> availablePlayers = allParticipants.stream()
+                    .map(PlayerSummary::new)
+                    .collect(Collectors.toList());
+
+
+            // Sprawdzenie czy liczba graczy jest nieparzysta
+            if (sp.size() % 2 != 0) {
+                // Znalezienie gracza z najmniejszą całkowitą sumą punktów, który jeszcze nie ma wolnego losu
+                PlayerSummary playerWithMinPoints = null;
+                for (PlayerSummary player : sp) {
+                    if (!player.isWolnyLos()) {
+                        if (playerWithMinPoints == null || player.getTotalPoints() < playerWithMinPoints.getTotalPoints()) {
+                            playerWithMinPoints = player;
+
+                        }
+                    }
+                }
+
+                // Ustawienie zmiennej wolnyLos na true dla znalezionego gracza
+                if (playerWithMinPoints != null) {
+                    playerWithMinPoints.isWolnyLos();// = true;
+
+                    UserData pauseObject = userService.getPauseObject();
+
+                    var tempMatch = new Match();
+                    tempMatch.setDateDB(startDate);
+                    tempMatch.setUserData(userService.getUserById(playerWithMinPoints.getPlayer().getUserId()));
+                    tempMatch.setOpponentUserData(pauseObject);
+                    round.getMatches().add(tempMatch);
+
+
+                    round.getMatches().add(tempMatch);
+
+                    System.out.println("wolny los dostał: " + playerWithMinPoints.getPlayer().getUsername());
+                    sp.remove(playerWithMinPoints);
+                }
+            }
+
+            // Utworzenie rundy
+            //  List<Match>mecze= new ArrayList<>();
+
+
+            // Posortowanie graczy według całkowitej sumy punktów
+            availablePlayers=table.getPlayerSummaries();
+            Collections.sort(availablePlayers, Comparator.comparingInt(PlayerSummary::getTotalPoints).reversed());
+
+
+
+            //  availablePlayers.sort(Comparator.comparingInt(player -> player.totalPoints)).reversed());
+
+            // Parowanie graczy na podstawie najbardziej zbliżonej wartości całkowitej sumy punktów
+            int i=0;
+            while (availablePlayers.size() > 0) {
+// todo ???
+
+                //    for (int i = 0; i < availablePlayers.size() / 2; i++) {
+
+
+                if (availablePlayers.size() < 3) {
+                    int t = 0;//todo???
+                }
+                PlayerSummary player1 = availablePlayers.get(i);
+                PlayerSummary player2= findOpponent(player1, availablePlayers, schedule.getRounds());//= availablePlayers.get(i+1);
+
+                var tmp1=player1.getPlayer().getUsername();
+                //   var tmp2=player2.player.getUsername();
+
+                // Sprawdzenie czy gracze nie grali ze sobą wcześniej
+                // ...
+                //   player2
+
+                if (player2 == null) {
+                    System.out.println(player1.getPlayer().getUsername());
+                    System.out.println(availablePlayers.get(i).getPlayer().getUsername());
+                    System.out.println(availablePlayers.get(i + 1).getPlayer().getUsername());
+                    // System.out.println(player2.name);
+                    player1 = availablePlayers.get(i);
+                    player2 = availablePlayers.get(i + 1);
+
+                    int lastIndex = round.getMatches().size() - 1;
+                    for (int j = lastIndex; j >= 0; j--) {
+                        //player1 -> nowy player1
+                        PlayerSummary tempPlayer1n1 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getUserData()))), schedule.getRounds());
+                        //player1 -> nowy player2
+                        PlayerSummary tempPlayer1n2 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getOpponentUserData()))), schedule.getRounds());
+
+                        PlayerSummary tempPlayer2n1 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer2n2 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getOpponentUserData()))), schedule.getRounds());
+
+
+                        if (tempPlayer1n1 != null && tempPlayer2n2 != null) {
+                            //wcześniejsza para //todo to zamienic tak jak niżej ? \/
+                            System.out.println("zamiana1 " + player1.getPlayer().getUsername() + " " + tempPlayer1n1.getPlayer().getUsername() + " / " + player2.getPlayer().getUsername() + " " + tempPlayer2n2.getPlayer().getUsername());
+
+                            round.getMatches().get(j).setUserData(userService.getUserById(player1.getPlayer().getUserId()));
+                            round.getMatches().get(j).setOpponentUserData(userService.getUserById(tempPlayer1n1.getPlayer().getUserId()));
+                            //ost para
+                            //  round.matches.get(lastIndex).setPlayer1(player2);
+                            //    round.matches.get(lastIndex).setPlayer2(tempPlayer2n2);
+
+                            availablePlayers.remove(player1);
+                            availablePlayers.remove(player2);
+
+                            player1 = player2;
+                            player2 = tempPlayer2n2;
+
+                            break;
+
+                        } else if (tempPlayer1n2 != null && tempPlayer2n1 != null) {
+//wcześniejsza para
+                            PlayerSummary finalPlayer = player1;
+                            round.getMatches().get(j).setUserData(userService.getUserById(player1.getPlayer().getUserId()));
+                            round.getMatches().get(j).setOpponentUserData(userService.getUserById(tempPlayer1n2.getPlayer().getUserId()));
+
+                            //       round.getMatches().get(j).setUserData(allParticipants.stream().filter(u -> u.getUserId() == finalPlayer.player.getUserId()).findFirst().orElse(null));
+                            //       round.getMatches().get(j).setOpponentUserData(allParticipants.stream().filter(u -> u.getUserId() == tempPlayer1n2.player.getUserId()).findFirst().orElse(null));
+                            //ost para
+                            //   round.matches.get(lastIndex).setPlayer1(player2);
+                            //    round.matches.get(lastIndex).setPlayer2(tempPlayer2n1);
+
+                            //   System.out.println("zamiana2 " + player1.name + " " + tempPlayer1n2.getName() + " / " + player2.name + " " + tempPlayer2n1.getName());
+                            availablePlayers.remove(player1);
+                            availablePlayers.remove(player2);
+
+                            player1 = player2;
+                            player2 = tempPlayer2n1;
+
+                            break;
+                        }
+                    }
+                }
+
+                // Utworzenie meczu i dodanie go do rundy
+
+                //  Match match = new Match(player1, player2, "To be played");
+                Match match = new Match();
+                match.setDateDB(startDate);
+                PlayerSummary finalPlayer1 = player1;
+                match.setUserData(allParticipants.stream().filter(u -> u.getUserId().equals(finalPlayer1.getPlayer().getUserId())).findFirst().orElse(null));
+                PlayerSummary finalPlayer2 = player2;
+
+                match.setOpponentUserData(allParticipants.stream().filter(u -> u.getUserId().equals(finalPlayer2.getPlayer().getUserId())).findFirst().orElse(null));
+                match.setRound(round);
+
+                round.getMatches().add(match);
+
+
+                availablePlayers.remove(player1);
+                availablePlayers.remove(player2);
+                //  round.getMatches().add(match);
+
+
+
+
+                //    }
+
+
+
+
+
+                // Wyświetlenie parowania dla danej rundy
+                //    System.out.println("Runda " + roundNr + " - parowanie: ");
+     /*   for (Match match : round.getMatches()
+        ) {
+            //      System.out.println(match.getPlayer1().name+" vs "+match.getPlayer2().name+" "+match.result+"\n");
+        }
+
+        rounds.add(round);
+        //     return round;
+
+
+        Schedule schedule = new Schedule(rounds, scheduleName);*/
+
+
+            }
+
+            roundDAO.save(round);
+   /* Schedule scheduleInDB= scheduleDAO.findByScheduleId(schedule.getId());
+    scheduleInDB.getRounds().add(round);
+    this.updateSchedule(scheduleInDB);*/
+           Schedule updatedSchedule= scheduleDAO.findByScheduleId(schedule.getId());
+            scheduleDAO.refresh(updatedSchedule);
+            ScheduleDTO updatedScheduleDTO=ScheduleAdapter.adapt(updatedSchedule );
+ //  todo /\ jak to nie działa to to na dole to bkp działający !!
+      //     ScheduleDTO updatedSchedule=this.getSchedule_ById(schedule.getId());
+
+
+            //todo to naprawic bo chyba nie usuwa. Najlepiej zamienić na po id
+            redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(updatedSchedule.getId(), updatedSchedule.getName()));
+
+
+            redisScheduleService.setSchedule(updatedScheduleDTO);
+        }
+        else
+        {
+
+        }
+
+
+
+
+
+
+
+
+}
+
+
+
+    private PlayerSummary findOpponent(PlayerSummary player, List<PlayerSummary> opponents, List<RoundDTO> rounds) {
+        for (PlayerSummary opponent : opponents) {
+            if(opponent!=player)
+            {
+
+                if (!havePlayedBefore(player, opponent,rounds)) {
+                    return opponent;
+                }
+            }
+
+        }
+        return null;
+    }
+/*    private SwissPlayerDTO findOpponent(SwissPlayerDTO player, List<SwissPlayerDTO> opponents, List<RoundDTO> rounds) {
+        for (SwissPlayerDTO opponent : opponents) {
+            if(opponent!=player)
+            {
+
+                if (!havePlayedBefore(player, opponent,rounds)) {
+                    return opponent;
+                }
+            }
+
+        }
+        return null;
+    }*/
+    private boolean havePlayedBefore(PlayerSummary player1, PlayerSummary player2, List<RoundDTO> rounds) {
+        for (RoundDTO round:rounds
+        ) {
+            for (MatchDTO match : round.getMatches()) {
+             var u1=  match.getUserDataDTO().getUserId();
+                 var u2=    player1.getPlayer().getUserId() ;
+boolean warunek1=u1==u2;
+          var o1=  match.getOpponentUserDataDTO().getUserId() ;
+         var o2=   player2.getPlayer().getUserId();
+                boolean warunek2=o1==o2;
+
+
+
+
+                    if ((match.getUserDataDTO().getUserId().equals(player1.getPlayer().getUserId()) && match.getOpponentUserDataDTO().getUserId().equals(player2.getPlayer().getUserId())) ||
+                        (match.getUserDataDTO().getUserId().equals(player2.getPlayer().getUserId()) && match.getOpponentUserDataDTO().getUserId().equals(player1.getPlayer().getUserId()))) {
+                    return true;
+                }
+            }
+
+        }
+
+        return false;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

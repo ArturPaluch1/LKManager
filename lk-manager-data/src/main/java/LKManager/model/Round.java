@@ -1,6 +1,7 @@
 package LKManager.model;
 
 import LKManager.model.MatchesMz.Match;
+import LKManager.model.RecordsAndDTO.RoundDTO;
 import LKManager.model.UserMZ.UserData;
 import lombok.Getter;
 import lombok.Setter;
@@ -104,7 +105,10 @@ private boolean played;
     }
 
 
+public Round(RoundDTO roundDto)
+{
 
+}
 
 
     @XmlAttribute

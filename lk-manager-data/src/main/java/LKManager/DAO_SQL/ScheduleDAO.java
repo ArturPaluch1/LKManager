@@ -5,12 +5,14 @@ import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Transactional
+@RedisHash
 public interface ScheduleDAO extends JpaRepository<Schedule, Long>, CustomScheduleDAO {
 
 
@@ -54,4 +56,8 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, CustomSchedu
     List<Schedule> findByIdWitchRoundsMatchesUsersAndTeams(@Param("parentId") long parentId);*/
 /*   "LEFT JOIN FETCH m.userData u " +
             "LEFT JOIN FETCH u.teamlist t " +*/
+
+
+
+
 }

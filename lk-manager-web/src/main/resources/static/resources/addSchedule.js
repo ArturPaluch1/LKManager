@@ -1,6 +1,60 @@
 
 
 
+        document.addEventListener('DOMContentLoaded', function() {
+               const tableBody = document.querySelector('#options-table tbody');
+               let draggedRow = null;
+
+
+               const dragHandles = document.querySelectorAll('.draggable');
+               dragHandles.forEach(dragHandle => {
+                   dragHandle.addEventListener('dragstart', function(e) {
+                       draggedRow = this.parentElement; // dragging row
+                       e.dataTransfer.effectAllowed = 'move';
+                       e.dataTransfer.setData('text/html', this.innerHTML);
+                   });
+
+                   dragHandle.addEventListener('dragover', function(e) {
+                       e.preventDefault();
+                       e.dataTransfer.dropEffect = 'move';
+                   });
+
+                   dragHandle.addEventListener('drop', function(e) {
+
+                       if (draggedRow) {
+
+                           e.preventDefault();
+
+                           if (this.parentElement !== draggedRow) {
+
+                               tableBody.insertBefore(draggedRow, this.parentElement);
+
+                           }
+                           draggedRow = null;
+                       }
+                   });
+               });
+           });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//*************************************************************
+
+
 /*
 function dodajTerminarzPojedynczy(){
 
@@ -176,22 +230,34 @@ console.log(matchPairs.value)
 
 function scheduleChange(value)
 {
+   var schedule1=  document.getElementById("singleSchedule")
+   var schedule2=  document.getElementById("multiSchedule")
+     var roundsNumber= document.getElementById("roundsNumber")
+     var matches =  document.getElementById('matches').innerHTML="";
 
     if(value=='single')
     {
-      var schedule1=  document.getElementById("singleSchedule")
 schedule1.hidden=false;
-var schedule2=  document.getElementById("multiSchedule")
 schedule2.hidden=true;
- document.getElementById('matches').innerHTML=""
+matches.hidden=false;
+   roundsNumber.hidden=true;
     }
-    else
+    else if(value=='swiss')
     {
-        var schedule1=  document.getElementById("singleSchedule")
+    schedule1.hidden=true;
+    schedule2.hidden=false;
+
+     roundsNumber.hidden=false;
+matches.hidden=true;
+    }
+    else//multi schedule
+    {
 schedule1.hidden=true;
-var schedule2=  document.getElementById("multiSchedule")
 schedule2.hidden=false;
- document.getElementById('matches').innerHTML=""
+
+
+   roundsNumber.hidden=true;
+   matches.hidden=true;
     }
 
 }

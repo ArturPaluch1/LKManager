@@ -78,10 +78,14 @@ System.out.println("found users in redis");
     UserDataDTO addUser(String userToAdd) ;
 
     UserData getPauseObject();
-   // UserData findUserById(String pauza);
+
+    UserData getUserById(Integer userId);
+    // UserData findUserById(String pauza);
+
 
     //UserDataDTO findUserById(Integer i);
 
+    UserData getUserDataByUsername(String username);
     //to sie nigdy nie wykonuje bo zawsze dodawany jest tylko jeden gracz na raz
  /*  List< UserData> AddUsers(List<String> usersToAdd)throws AddUsersUserDatabaseAccessFailureException;*/
 

@@ -1,6 +1,7 @@
 package LKManager.DAO_SQL;
 
 import LKManager.model.Schedule;
+import LKManager.model.UserMZ.UserData;
 import LKManager.services.MZUserService;
 import LKManager.services.MatchService;
 import org.springframework.data.jpa.repository.Query;
@@ -11,6 +12,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.List;
 
 @Transactional
 public interface CustomScheduleDAO {
@@ -35,5 +37,7 @@ public interface CustomScheduleDAO {
      boolean deleteByName(String objectName);
 
 
+    public List<UserData> findAllParticipantsOfSchedule(String ScheduleName);
 
+    void refresh(Schedule schedule);
 }

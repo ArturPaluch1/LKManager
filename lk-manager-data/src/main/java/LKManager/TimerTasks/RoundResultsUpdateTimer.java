@@ -19,9 +19,11 @@ private final ResultsService resultsService;
             @Override
             public void run() {
                 System.out.println("Update results task performed on: " + new Date()  + "\n" +"Thread's name: " + Thread.currentThread().getName());
-resultsService.updateRoundResultsForDate(LocalDate.now());
+               // resultsService.updateRoundResultsForDate(LocalDate.now());
+                //todo po testach zamienić na to wyżej
+                resultsService.updateRoundResultsForDate(LocalDate.now());
 
-
+//.plusDays(1)
             }
     };
 

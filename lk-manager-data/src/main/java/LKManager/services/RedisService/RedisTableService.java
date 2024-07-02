@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
 @Data
 public class RedisTableService {
@@ -24,6 +26,7 @@ public class RedisTableService {
         String tableJson  =(String) valueOperations.get("table:"+chosenscheduleName);
         if(tableJson!=null)
         {
+            redisTemplate.expire("table:"+chosenscheduleName,8, TimeUnit.DAYS);
             return gsonService.jsonToObject(tableJson,Table.class);
         }
         else return null;
@@ -38,6 +41,7 @@ if(tableAlreadyExist!=null) {
 }
         String jsonString=  gsonService.objectToJson(table);
 valueOperations.set("table:"+ table.getScheduleName(),jsonString);
+        redisTemplate.expire("table:"+ table.getScheduleName(),8, TimeUnit.DAYS);
 return this.getTable(table.getScheduleName());
 
     }

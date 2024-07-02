@@ -3,12 +3,13 @@ package LKManager;
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.DAO_SQL.UserDAO;
 import LKManager.TimerTasks.RefreshSiteTimer;
+import LKManager.TimerTasks.RoundMatchesUpdateTimer;
 import LKManager.TimerTasks.RoundResultsUpdateTimer;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
+import LKManager.services.*;
+import LKManager.services.RedisService.RedisScheduleService;
+import LKManager.services.RedisService.RedisTableService;
 import LKManager.services.RedisService.RedisUserService;
-import LKManager.services.ResultsService;
-import LKManager.services.ScheduleService;
-import LKManager.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -34,13 +35,16 @@ public class LKManagerApplication {
 	private final ResultsService resultsService;
 	protected final ScheduleDAO scheduleDAO;
 	private final ScheduleService scheduleService;
-
+	private final RedisTableService redisTableService;
+	private final RedisScheduleService redisScheduleService;
+	private final TableService tableService;
+private final RoundService roundService;
 	private final RedisUserService redisUserService;
 	/*@Autowired
 	private FailedDatabaseOperationRepository failedDatabaseOperationRepository;*/
 	private static final long delay = 14L;
 
-	public LKManagerApplication( UserDAO userDAO, UserService userService, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService, RedisUserService redisUserService) {
+	public LKManagerApplication(UserDAO userDAO, UserService userService, ResultsService resultsService, ScheduleDAO scheduleDAO, ScheduleService scheduleService, RedisTableService redisTableService, RedisScheduleService redisScheduleService, TableService tableService, RoundService roundService, RedisUserService redisUserService) {
 	//	this.cacheService = cacheService;
 	//	this.mzCache = mzCache;
 		this.userDAO = userDAO;
@@ -48,6 +52,10 @@ public class LKManagerApplication {
 		this.resultsService = resultsService;
 		this.scheduleDAO = scheduleDAO;
 		this.scheduleService = scheduleService;
+		this.redisTableService = redisTableService;
+		this.redisScheduleService = redisScheduleService;
+		this.tableService = tableService;
+		this.roundService = roundService;
 		this.redisUserService = redisUserService;
 	}
 
@@ -116,6 +124,9 @@ public class LKManagerApplication {
 
 		RoundResultsUpdateTimer roundResultsUpdateTimer = new RoundResultsUpdateTimer(resultsService);
 		roundResultsUpdateTimer.schedule(roundResultsUpdateTimer.getTask(),0, 60 * 60 * 1000);//by a hour
+
+		RoundMatchesUpdateTimer roundMatchesUpdateTimer= new RoundMatchesUpdateTimer(scheduleService,roundService,redisTableService,tableService,redisScheduleService);
+		roundMatchesUpdateTimer.schedule(roundMatchesUpdateTimer.getTask(),0,60 * 60 * 1000);
 		//	timer.schedule(task,0,750000);
 		// \/ 12,5 minut
 	//	timer.schedule(task, 0, 750000);

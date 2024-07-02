@@ -6,6 +6,10 @@ import LKManager.model.UserMZ.UserData;
 public class UserAdapter {
     public static UserDataDTO convertUserDataToUserDataDTO(UserData userData)
     {
+        if(userData==null)
+        {
+            boolean temp=false;
+        }
         Integer teamId;
         String teamName;
         if(userData.getTeamlist().size()!=0)//pause do not have a team
@@ -19,11 +23,12 @@ public class UserAdapter {
             teamName=null;
         }
 
-        UserDataDTO userDTO = new UserDataDTO(userData.getUserId(),userData.getUsername(),teamId,teamName,userData.getDeleted());
+        UserDataDTO userDTO = new UserDataDTO(userData.getUserId(),userData.getUsername(),teamId,teamName, userData.getReliability(), userData.getDeleted());
 
 
         userDTO.setDeleted(userData.getDeleted());
         return userDTO;
     }
+
 
 }

@@ -11,10 +11,11 @@ public class UserDataDTO {
     private Integer teamId;
     private String teamName;
 
+    private long reliability;
     private boolean deleted;
     public UserDataDTO mapUserDataToUserDataDTO(UserData user)
     {
-        return new UserDataDTO(user.getUserId(),user.getUsername(),user.getTeamlist().get(0).getTeamId(),user.getTeamlist().get(0).getTeamName(),user.getDeleted());
+        return new UserDataDTO(user.getUserId(),user.getUsername(),user.getTeamlist().get(0).getTeamId(),user.getTeamlist().get(0).getTeamName(),user.getReliability(),user.getDeleted());
     }
 
 

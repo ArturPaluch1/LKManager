@@ -3,12 +3,14 @@ package LKManager.services;
 import LKManager.DAO_SQL.CustomScheduleDAOImpl;
 import LKManager.DAO_SQL.MatchDAO;
 import LKManager.DAO_SQL.RoundDAO;
+import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.RecordsAndDTO.ScheduleDTO;
 import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
 import LKManager.model.UserMZ.UserData;
+import LKManager.services.Adapters.ScheduleAdapter;
 import LKManager.services.RedisService.RedisScheduleService;
 import LKManager.services.RedisService.RedisTableService;
 import lombok.AllArgsConstructor;
@@ -32,6 +34,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,8 +51,44 @@ private final ScheduleService scheduleService;
   private final EntityManager entityManager;
   private final MatchDAO matchDAO;
 private final RedisTableService redisTableService;
-private final TableService tableService;
+    private final TableService tableService;
 private final RedisScheduleService redisScheduleService;
+private final ScheduleDAO scheduleDAO;
+private final UserService userService;
+
+   public void simulateResults(ScheduleDTO scheduleDTO, int roundNumber)
+   {
+
+        Round   round=roundDAO.findRoundWitchMatches(scheduleDTO.getName(),roundNumber);
+
+           if(round!=null)
+           {
+               //updatuj tylko które nie były rozegrane
+               if(round.getMatches().get(0).getOpponentUserData()!=null)
+               {
+                   for (var match:round.getMatches()
+                   ) {
+
+                       Random random = new Random();
+                       match.setUserMatchResult1((byte)(random.nextInt(5)));
+                       match.setUserMatchResult2((byte)(random.nextInt(5)));
+                       match.setOpponentMatchResult1((byte)(random.nextInt(5)));
+                       match.setOpponentMatchResult2((byte)(random.nextInt(5)));
+                   }
+                   roundDAO.save(round);
+               }
+           }
+
+           redisScheduleService.setSchedule(ScheduleAdapter.adapt(scheduleDAO.findByScheduleId(round.getSchedule().getId())));
+       redisTableService.setTable(tableService.createTable(ScheduleAdapter.adapt(round.getSchedule())));
+
+
+   }
+
+
+
+
+
 
 
     @Override
@@ -110,7 +149,8 @@ private final RedisScheduleService redisScheduleService;
     round=    roundDAO.save(round);
 
         redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(round.getSchedule().getId(), round.getSchedule().getName()));
-        redisScheduleService.setSchedule(scheduleService.getSchedule_ById(round.getSchedule().getId()));
+       ScheduleDTO updatedSchedule= redisScheduleService.setSchedule(scheduleService.getSchedule_ById(round.getSchedule().getId()));
+redisTableService.setTable(tableService.createTable(updatedSchedule));
 
         System.out.println("round=" + round.getMatches());
 
@@ -155,7 +195,11 @@ List<Round>resultsList=  roundsForDate.stream().map( round-> {
         redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(tempRound.getSchedule().getId(), tempRound.getSchedule().getName()));
         redisScheduleService.setSchedule(scheduleService.getSchedule_ById(tempRound.getSchedule().getId()));
 
+
+
         redisTableService.setTable(tableService.createTable(tempRound.getSchedule().getId()));
+
+
 
         System.out.println("With success");
 return tempRound;
@@ -285,6 +329,8 @@ return tempRound;
 
         return getMZResults(round);
     }
+    @Transactional
+
     private Round getMZResults(Round round) throws DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException, JAXBException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -299,68 +345,104 @@ return tempRound;
         now.add(d);
 // todo /\  to niepotrzebne??
 
-        for (var mecz : round.getMatches()
-        ) {
+        if(round.getMatches()!=null)
+        {
+            for (var mecz : round.getMatches()
+            ) {
 
-            //sprawdzanie czy  gospodarzem jest apuza
-            if (!(mecz.getUserData().getUsername().equals("pauza") || mecz.getOpponentUserData().getUsername().equals("pauza"))) {
-
-
-
-
-
-                UserData user = mecz.getUserData();
-                var userTeamId = user.getTeamlist().get(0).getTeamId();
-                var oponent = mecz.getOpponentUserData();
-                var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
-
-                var rozegrane = matchService.findPlayedByUser(user);
-
-                var meczeTurniejowe = rozegrane.getMatches().stream().
-                        filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
-                        filter(a -> a.getType().equals("friendly")).collect(Collectors.toList());
-
-                //todo sprawzic czy id oponenta to id z terminarza
-                for (var rozegranyMecz : meczeTurniejowe
-                ) {
-                    //sprawdzanie daty  contains a nie equals bo rozegranyMecz.getDate() zawiera godziny a w round jest bez godzin
-                    if(rozegranyMecz.getDate().contains(round.getDate().toString()))
-                    {
-                        //tutaj user ma id =0 oponent 1
-                        if (rozegranyMecz.getTeamlist().get(0).getTeamId() == userTeamId) {
-                            //sprawdzanie czy prawidlowy przeciwnik
-                            if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
-                                //aktualizacja
-                                //  mecz.setMatchResult1("1");
+                //sprawdzanie czy  gospodarzem jest apuza
+                if (!(mecz.getUserData().getUsername().equals("pauza") || mecz.getOpponentUserData().getUsername().equals("pauza"))) {
 
 
-                                mecz.setUserMatchResult1(rozegranyMecz.getTeamlist().get(0).getGoals());
-                                mecz.setOpponentMatchResult1(rozegranyMecz.getTeamlist().get(1).getGoals());
+
+
+
+                    UserData user = mecz.getUserData();
+                    var userTeamId = user.getTeamlist().get(0).getTeamId();
+                    var oponent = mecz.getOpponentUserData();
+                    var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
+
+                    var rozegrane = matchService.findPlayedByUser(user);
+
+                    var meczeTurniejowe = rozegrane.getMatches().stream().
+                            filter(a -> a.getDate()!=null).//.contains(item.getData().toString())).
+                                    filter(a -> a.getType().equals("friendly")).collect(Collectors.toList());
+
+                    //todo sprawzic czy id oponenta to id z terminarza
+                    for (var rozegranyMecz : meczeTurniejowe
+                    ) {
+                        //sprawdzanie daty  contains a nie equals bo rozegranyMecz.getDate() zawiera godziny a w round jest bez godzin
+                        if(rozegranyMecz.getDate().contains(round.getDate().toString()))
+                        {
+                            //tutaj user ma id =0 oponent 1
+                            if (rozegranyMecz.getTeamlist().get(0).getTeamId() == userTeamId) {
+                                //sprawdzanie czy prawidlowy przeciwnik
+                                if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                    //aktualizacja
+                                    //  mecz.setMatchResult1("1");
+
+
+
+                                    if(mecz.getUserMatchResult1()==null &&mecz.getOpponentMatchResult1()==null)
+                                    {
+                                        mecz.setUserMatchResult1(rozegranyMecz.getTeamlist().get(0).getGoals());
+                                        mecz.setOpponentMatchResult1(rozegranyMecz.getTeamlist().get(1).getGoals());
+                                      long userReliability=  mecz.getUserData().getReliability();
+                                        long opponentReliability=   mecz.getOpponentUserData().getReliability();
+                                        mecz.getUserData().setReliability(userReliability+=3);
+                                        mecz.getOpponentUserData().setReliability(opponentReliability+=3);
+                                    }
+
+                                }
+
+
+                            }
+                            //tutaj user ma id 1  oponent =0
+                            else if (rozegranyMecz.getTeamlist().get(1).getTeamId() == userTeamId) {
+                                //sprawdzanie czy prawidlowy przeciwnik
+                                if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                    //aktualizacja
+                                    //  mecz.setMatchResult1("1");
+                                    if(mecz.getUserMatchResult2()==null &&mecz.getOpponentMatchResult2()==null) {
+                                        mecz.setUserMatchResult2(rozegranyMecz.getTeamlist().get(1).getGoals());
+                                        mecz.setOpponentMatchResult2(rozegranyMecz.getTeamlist().get(0).getGoals());
+
+                                        long userReliability=  mecz.getUserData().getReliability();
+                                        long opponentReliability=   mecz.getOpponentUserData().getReliability();
+                                        mecz.getUserData().setReliability(userReliability+=3);
+                                        mecz.getOpponentUserData().setReliability(opponentReliability+=3);
+                                    }
+                                }
+
+
                             }
 
-
                         }
-                        //tutaj user ma id 1  oponent =0
-                        else if (rozegranyMecz.getTeamlist().get(1).getTeamId() == userTeamId) {
-                            //sprawdzanie czy prawidlowy przeciwnik
-                            if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
-                                //aktualizacja
-                                //  mecz.setMatchResult1("1");
-                                mecz.setUserMatchResult2(rozegranyMecz.getTeamlist().get(1).getGoals());
-                                mecz.setOpponentMatchResult2(rozegranyMecz.getTeamlist().get(0).getGoals());
-                            }
-
-
-                        }
-
                     }
+
                 }
+        /*        else
+                {
+                   if (mecz.getUserData().getUsername().equals("pauza"))
+                    {
+                        mecz.
+                    }
+                   else if(mecz.getOpponentUserData().getUsername().equals("pauza")){
+
+                }
+                }*/
+
+
 
             }
-
-
-
         }
+        else  //creating matches for swiss schedule ( list of matches is empty, only round entity exists)
+        {
+        //    ScheduleDTO scheduleDTO = ScheduleAdapter.adapt(round.getSchedule());
+         //   scheduleService.calculateNextRoundOfSwissSchedule(scheduleDTO,tableService.createSwissScheduleTable(scheduleDTO));
+        }
+
+
 
         return round;
     }

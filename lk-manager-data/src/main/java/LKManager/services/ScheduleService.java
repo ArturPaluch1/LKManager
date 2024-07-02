@@ -1,10 +1,8 @@
 package LKManager.services;
 
-import LKManager.model.RecordsAndDTO.CreateScheduleResult;
-import LKManager.model.RecordsAndDTO.MatchDTO;
-import LKManager.model.RecordsAndDTO.ScheduleDTO;
-import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
+import LKManager.model.RecordsAndDTO.*;
 import LKManager.model.Schedule;
+import LKManager.model.Table;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -35,6 +33,13 @@ public interface ScheduleService {
 
     void updateSchedule(Schedule schedule, String nazwaPliku);
 
-
+    boolean updateSchedule(Schedule schedule);
     List<ScheduleNameDTO> getScheduleNames();
+
+    public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber);
+    public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName, Integer roundsNumber) ;
+    public void calculateNextRoundOfSwissSchedule(ScheduleDTO schedule, Table table);
+
+
+
 }

@@ -2,6 +2,8 @@ package LKManager.model.UserMZ;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
 import org.hibernate.annotations.ParamDef;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @Entity
 @Table(name="users", schema="lkm_dev")
+@Getter @Setter
 //@Where(clause = "DELETED = 0")
 @FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 @Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
@@ -89,6 +92,11 @@ public boolean getDeleted()
 
     @Column(name = "username")
     private String username;
+
+@Column(name = "reliability")
+private long reliability;
+
+
 
     @Transient
     private String countryShortname;

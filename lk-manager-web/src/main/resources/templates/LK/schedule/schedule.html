@@ -78,6 +78,8 @@
                 <td>
                     <form th:action="@{/showRound}" method="post">
 
+
+
                <select    class="form-control" id="dropDownList"  th:name="roundNumber" onchange="this.form.submit()" >
                         <option selected>Zmień rundę</option>
                         <option  th:each="round : ${schedule.getRounds()}" th:value="${round.getNr()}" th:text="Runda+' '+${round.getNr()}+' '+data+': '+${round.getDate()}  " ></option>

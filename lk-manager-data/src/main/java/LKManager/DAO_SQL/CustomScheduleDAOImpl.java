@@ -42,7 +42,11 @@ public  class CustomScheduleDAOImpl implements CustomScheduleDAO{
     private SessionFactory sessionFactory;
 
 
+    public void refresh(Schedule schedule) {
 
+        Session session = sessionFactory.getCurrentSession();
+        session.refresh(schedule);
+    }
 
 @Transactional
     public List<Schedule> findAll1() {
@@ -133,23 +137,39 @@ return allQuery.stream().toList();
 
 
 
-    @Transactional
+  //  @Transactional
     @Override
     public Schedule saveSchedule(Schedule schedule) {
 
 
 
-//save? sprobowac todo
-       // entityManager.merge(terminarz);
-      //  entityManager.persist(terminarz);
+        try {
 
 
 
- //     Transaction tx = null;
+
+
+
+            schedule.getRounds().forEach(a->
+            {
+                a.setSchedule(schedule);
+                a.getMatches().forEach(b->
+                {
+                    b.setRound(a);
+
+                });
+            });
+
+
+
+
+
+
+
 
 
         Session s =sessionFactory.openSession();
-     try {
+ //    try {
 
 s.beginTransaction();
 
@@ -166,30 +186,23 @@ s.beginTransaction();
              });
          });
 
-
-
-
-
-
-     //      tx = s.beginTransaction();
             s.saveOrUpdate(schedule);
-    //        s.persist(terminarz);
+
 s.getTransaction().commit();
-       //   tx.commit();
+
+
 
 
         }
 
         catch (Exception e) {
-        if (s.getTransaction()!=null)
-          {s.getTransaction().rollback();
-          e.printStackTrace();}
-            int y=0;
+
             System.out.println("db update terminarz error");
         } finally {
-        s.close();
+
         }
 
+/*
 try {  s = sessionFactory.getCurrentSession();
 }
   catch (Exception e)
@@ -202,6 +215,7 @@ finally {
     s.saveOrUpdate(schedule);
     s.close();
 }
+*/
 
 
         return schedule;
@@ -488,13 +502,13 @@ return true;
     }
 
 
-  public List<UserData>  findAllParticipantsOfSchedule(String ScheduleName)
+  public List<UserData>  findAllParticipantsOfSchedule(String scheduleName)
     {
         Session session = sessionFactory.openSession();
         List<UserData>users= null;
         try
         {
-
+            System.out.println("all participants:"+scheduleName);
             session.beginTransaction();
 
             Query querryUser= session.createQuery(
@@ -504,7 +518,7 @@ return true;
                             " inner join Round r on m.round=r.id "+
                             " inner join Schedule s on r.schedule=s.id " +
                             "   where (s.name=:ScheduleName and r.nr=1)");
-            querryUser.setParameter("ScheduleName",ScheduleName );
+            querryUser.setParameter("ScheduleName",scheduleName );
              users= (ArrayList<UserData>) querryUser.getResultList();
 
            Query querryOpponent= session.createQuery(
@@ -514,7 +528,7 @@ return true;
                             " inner join Round r on m.round=r.id "+
                             " inner join Schedule s on r.schedule=s.id " +
                             "   where (s.name=:ScheduleName and r.nr=1)");
-            querryOpponent.setParameter("ScheduleName",ScheduleName );
+            querryOpponent.setParameter("ScheduleName",scheduleName );
             ArrayList<UserData> resultOpponent= (ArrayList<UserData>) querryOpponent.getResultList();
           //  users.add(result.getUser());
            users.addAll(resultOpponent);

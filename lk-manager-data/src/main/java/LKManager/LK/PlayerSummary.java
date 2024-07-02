@@ -2,19 +2,22 @@ package LKManager.LK;
 
 import LKManager.model.RecordsAndDTO.UserDataDTO;
 import LKManager.model.UserMZ.UserData;
+import LKManager.services.Adapters.UserAdapter;
+import lombok.Getter;
 
 import javax.xml.bind.annotation.*;
 
 @XmlRootElement(name = "GraczPodsumowanie")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({UserData.class})
+@Getter
 public class PlayerSummary {
     private UserDataDTO player;
     private Integer totalPoints =0;
     private Integer goalsScrored =0;
     private Integer goalsConceded =0;
     private  Integer difference =0;
-
+    private   boolean wolnyLos=false;
     public PlayerSummary() {
     }
     @XmlElement(name = "UserData")
@@ -39,6 +42,8 @@ public class PlayerSummary {
     }
 
     public void addGoalsScored(Byte goalsScored) {
+
+        if(goalsScored!=null)
         this.goalsScrored += goalsScored;
     }
     @XmlAttribute
@@ -47,6 +52,7 @@ public class PlayerSummary {
     }
 
     public void addGoalsConceded(Byte goalsConceded) {
+        if(goalsConceded!=null)
         this.goalsConceded +=goalsConceded;
     }
     @XmlAttribute
@@ -61,4 +67,18 @@ public class PlayerSummary {
   /*  public void setRoznica(Integer roznica) {
         this.roznica = roznica;
     }*/
+
+
+
+
+    public PlayerSummary(UserData player) {
+        this.player = UserAdapter.convertUserDataToUserDataDTO(player);
+        this.totalPoints = 0;
+        this.wolnyLos = false;
+    }
+
+
+
+
+
 }

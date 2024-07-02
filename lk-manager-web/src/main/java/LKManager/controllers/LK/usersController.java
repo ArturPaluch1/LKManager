@@ -40,6 +40,7 @@ private final UserService userService;
 public String showUsers(Model model, RedirectAttributes attributes )
 {
 
+
     /*---------------z xmla---------------
    var gracze= lkUserService.wczytajGraczyZXML();
 ***************************************************/

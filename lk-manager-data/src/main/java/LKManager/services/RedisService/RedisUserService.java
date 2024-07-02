@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,6 +73,7 @@ public class RedisUserService {
                   //  valueOperations.set("usersDeletedWithPause",usersJson);
                     redisTemplate.delete("usersDeletedWithPause");
                     listOperations.leftPushAll("usersDeletedWithPause",usersJson);
+                    redisTemplate.expire("usersDeletedWithPause",2, TimeUnit.HOURS);
                     return this.getUsers(true,true);
                 }
                 else
@@ -80,6 +82,7 @@ public class RedisUserService {
 
                     redisTemplate.delete("usersDeletedWithoutPause");
                     listOperations.leftPushAll("usersDeletedWithoutPause",usersJson);
+                    redisTemplate.expire("usersDeletedWithoutPause",2, TimeUnit.HOURS);
                     return this.getUsers(true,false);
                 }
             }
@@ -87,12 +90,14 @@ public class RedisUserService {
                 if (withPause == true) {
                     redisTemplate.delete("usersNotDeletedWithPause");
                     listOperations.leftPushAll("usersNotDeletedWithPause",usersJson);
+                    redisTemplate.expire("usersNotDeletedWithPause",30, TimeUnit.DAYS);
                  //   valueOperations.set("usersNotDeletedWithPause",usersJson);
                     return this.getUsers(false,true);
 
                 } else {
                     redisTemplate.delete("usersNotDeletedWithoutPause");
                     listOperations.leftPushAll("usersNotDeletedWithoutPause",usersJson);
+                    redisTemplate.expire("usersNotDeletedWithoutPause",30, TimeUnit.DAYS);
                   //  valueOperations.set("usersNotDeletedWithoutPause",usersJson);
                     return this.getUsers(false,false);
 
@@ -114,9 +119,11 @@ public class RedisUserService {
             if (withPause==true)
             {
                 List<String> jsonStringUsers = listOperations.range("usersDeletedWithPause",0,-1);
+                //todo tu może być błąd?
 
                 if(!jsonStringUsers.isEmpty())
                 {
+                    redisTemplate.expire("usersDeletedWithPause",30, TimeUnit.DAYS);
                     //   List<UserDataDTO> usersFromRedis = gsonService.jsonToList(jsonStringUsers, UserDataDTO.class);// gson.fromJson(jsonStringUsers, new TypeToken<List<UserDataDTO>>(){}.getType());
                    List<UserDataDTO> usersFromRedis = gsonService.jsonToList(jsonStringUsers,UserDataDTO.class);
 
@@ -131,13 +138,14 @@ public class RedisUserService {
             {
            //     List<String> jsonStringUsers = listOperations.range("usersDeletedWithoutPause",0,-1);
                 List<String> jsonStringUsers = listOperations.range("usersDeletedWithoutPause",0,-1);
+
                 if(!jsonStringUsers.isEmpty())
                 {
+                    redisTemplate.expire("usersDeletedWithoutPause",30, TimeUnit.DAYS);
                     //   List<UserDataDTO> usersFromRedis = gsonService.jsonToList(jsonStringUsers, UserDataDTO.class);// gson.fromJson(jsonStringUsers, new TypeToken<List<UserDataDTO>>(){}.getType());
                     List<UserDataDTO> usersFromRedis = gsonService.jsonToList(jsonStringUsers,UserDataDTO.class);
 
 
-                    System.out.println(listOperations.range("usersDeletedWithoutPause",0,-1));
                     return usersFromRedis;
                   //  return jsonStringUsers;
                 }
@@ -155,13 +163,16 @@ public class RedisUserService {
              //   String jsonStringUsers = gsonService.objectToJson( valueOperations.get("usersNotDeletedWithPause"));
           //      List<String> jsonStringUsers =  listOperations.range("usersNotDeletedWithPause",0,-1);
                 List<String> jsonStringUsers =  listOperations.range("usersNotDeletedWithPause",0,-1);
+
                 if(!jsonStringUsers.isEmpty())
                 {
+                    redisTemplate.expire("usersNotDeletedWithPause",30, TimeUnit.DAYS);
                  //   List<UserDataDTO> usersFromRedis = gsonService.jsonToList(jsonStringUsers, UserDataDTO.class);// gson.fromJson(jsonStringUsers, new TypeToken<List<UserDataDTO>>(){}.getType());
                     List<UserDataDTO> usersFromRedis = gsonService.jsonToList(jsonStringUsers,UserDataDTO.class);
 
 
                     System.out.println(listOperations.range("usersNotDeletedWithPause",0,-1));
+
                     return usersFromRedis;
                //     return jsonStringUsers;
                 }
@@ -173,6 +184,7 @@ public class RedisUserService {
           //      List<String> jsonStringUsers =  listOperations.range("usersNotDeletedWithoutPause",0,-1);
                 List<String> jsonStringUsers =  listOperations.range("usersNotDeletedWithoutPause",0,-1);
                   if(!jsonStringUsers.isEmpty()) {
+                      redisTemplate.expire("usersNotDeletedWithoutPause",30, TimeUnit.DAYS);
                     List<UserDataDTO> usersFromRedis = gsonService.jsonToList(jsonStringUsers, UserDataDTO.class);//gson.fromJson(jsonStringUsers, new TypeToken<List<UserDataDTO>>(){}.getType());
 
 
@@ -190,7 +202,7 @@ public class RedisUserService {
 
 
 
-
+//todo to chjyba usunąć, bo lepiej chyba pobrać z redis całą listę i wyszukać niż zapisywać dodatkowo w redis każdego usera oddzielnie
     public UserDataDTO addUserToRedis(Object userData )
     {
         String userJson;
@@ -198,6 +210,7 @@ public class RedisUserService {
 
         userJson  = mapUserDataToJsonString(UserAdapter.convertUserDataToUserDataDTO((UserData) userData));
      valueOperations.set("user:" + ((UserData)userData).getUserId(), userJson);
+            redisTemplate.expire("user:" + ((UserData)userData).getUserId(),1, TimeUnit.DAYS);
 
             System.out.println("addeduser to redis");
             this.addUserToUserLists((UserData) userData);
@@ -207,6 +220,7 @@ public class RedisUserService {
         } else if (userData instanceof UserDataDTO) {
             userJson  = mapUserDataToJsonString( userData);
             valueOperations.set("user:" + ((UserDataDTO)userData).getUserId(), userJson);
+            redisTemplate.expire("user:" + ((UserDataDTO)userData).getUserId(),1, TimeUnit.DAYS);
             System.out.println("addeduser to redis");
             this.addUserToUserLists(userData);
 
@@ -228,6 +242,7 @@ return null;
 
     private UserDataDTO getUserById(Integer userId) {
       String jsonUser=  (String) valueOperations.get("user:"+userId);
+        redisTemplate.expire("user:"+userId,2, TimeUnit.DAYS);
         return gsonService.jsonToObject(jsonUser,UserDataDTO.class);
     }
 
@@ -259,7 +274,10 @@ return null;
     }
 
     public UserDataDTO findUserById(Integer id) {
-      return gsonService.jsonToObject((String)valueOperations.get("user"+id),UserDataDTO.class);
+
+        UserDataDTO user=   gsonService.jsonToObject((String)valueOperations.get("user"+id),UserDataDTO.class);
+        redisTemplate.expire("user"+id,2, TimeUnit.DAYS);
+        return user;
     }
 
     /**
@@ -277,16 +295,18 @@ if(userToAdd instanceof UserData)
 
     if(userDataToadd.getDeleted()==true)
     {
-        System.out.println("tu");
+
         List<UserDataDTO> usersDeletedWithPause=this.getUsers(true,true);
         usersDeletedWithPause.add(UserAdapter.convertUserDataToUserDataDTO(userDataToadd));
         this.addAllUsers(usersDeletedWithPause,UserDataDTO.class,true,true);
+
     //    usersJson = gsonService.listToJson(usersDeletedWithPause);
   //      valueOperations.set("usersDeletedWithPause",usersJson);
 
         List<UserDataDTO>     usersDeletedWithoutPause   =    this.getUsers(true,false);
         usersDeletedWithoutPause.add(UserAdapter.convertUserDataToUserDataDTO(userDataToadd));
         this.addAllUsers(usersDeletedWithoutPause,UserDataDTO.class,true,false);
+
    //     usersJson = gsonService.listToJson(usersDeletedWithoutPause);
     //    valueOperations.set("usersDeletedWithoutPause",usersJson);
         return getUsers(true,true);
@@ -301,7 +321,7 @@ if(userToAdd instanceof UserData)
 
         List<UserDataDTO>    usersNotDeletedWithoutPause  =  this.getUsers(false,false);
         usersNotDeletedWithoutPause.add(UserAdapter.convertUserDataToUserDataDTO(userDataToadd));
-        System.out.println("tam");
+
       //  this.addAllUsers(usersNotDeletedWithoutPause,UserDataDTO.class,false,false);
    //     usersJson = gsonService.listToJson(usersNotDeletedWithoutPause);
     //    valueOperations.set("usersNotDeletedWithoutPause",usersJson);
@@ -500,19 +520,19 @@ else return null;
 
         if(user==null)//nie ma tego usera dodanego do graczy w redis
         {
-            //todo nie wiem co :P
-         Optional<UserData> userInDB=   userDAO.findById(userId);
-         if(userInDB.isEmpty())//nie ma w bd
-         {
-             return null;
-         }
-         else
-         {
+                //todo nie wiem co :P
+             Optional<UserData> userInDB=   userDAO.findById(userId);
+             if(userInDB.isEmpty())//nie ma w bd
+             {
+                 return null;
+             }
+             else
+             {
 
-            addUserToRedis(user.getUserId());
+                addUserToRedis(user.getUserId());
 
 
-         }
+             }
         }
         else
         {

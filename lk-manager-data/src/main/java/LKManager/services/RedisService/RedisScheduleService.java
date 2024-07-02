@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Data
@@ -37,6 +38,7 @@ private final ScheduleDAO scheduleDAO;
     {
 
         List<String> jsonList = listOperations.range("scheduleNames", 0, -1);
+        redisTemplate.expire("scheduleNames",8, TimeUnit.DAYS);
        /* List<ScheduleNamesDTO> scheduleNames = new ArrayList<>();
         for (String json : jsonList) {
                  ScheduleNamesDTO scheduleNamesDTO = gsonService.jsonToObject(json, ScheduleNamesDTO.class);
@@ -57,7 +59,9 @@ private final ScheduleDAO scheduleDAO;
              /*   = scheduleNames.stream()
                 .map(schedule -> gsonService.objectToJson(schedule))
                 .collect(Collectors.toList());*/
-       return listOperations.leftPushAll("scheduleNames",jsonList);
+      Long getScheduleNamesResult=  listOperations.leftPushAll("scheduleNames",jsonList);
+        redisTemplate.expire("scheduleNames",8, TimeUnit.DAYS);
+        return getScheduleNamesResult;
     }
     public ScheduleDTO getSchedule_ByName(String scheduleName)
     {
@@ -70,11 +74,13 @@ private final ScheduleDAO scheduleDAO;
         if(scheduleNameDTO.isPresent())
         {
             scheduleJson  =(String) valueOperations.get("schedule:"+scheduleNameDTO.get().getId());
-        }
+            }
 
        if(scheduleJson!=null)
        {
            System.out.println("found schedule by name in redis");
+           redisTemplate.expire("schedule:"+scheduleNameDTO.get().getId(),8, TimeUnit.DAYS);
+
            return gsonService.jsonToObject(scheduleJson,ScheduleDTO.class);
        }
    else{
@@ -95,6 +101,8 @@ private final ScheduleDAO scheduleDAO;
 //String scheduleName=schedule.getName().replace(" ","_");
 
         valueOperations.set("schedule:"+schedule.getId(), scheduleJson);
+        redisTemplate.expire("schedule:"+schedule.getId(),8, TimeUnit.DAYS);
+
         if(scheduleJson!=null)
         {
 
@@ -159,6 +167,7 @@ catch(Exception e)
         String scheduleJson=(String) valueOperations.get("schedule:"+id);
         if(scheduleJson!=null)
         {
+            redisTemplate.expire("schedule:"+id,8, TimeUnit.DAYS);
             System.out.println("found schedule by name in redis");
             return gsonService.jsonToObject(scheduleJson,ScheduleDTO.class);
         }

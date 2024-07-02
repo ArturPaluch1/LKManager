@@ -5,6 +5,7 @@ import LKManager.DAO_SQL.MatchDAO;
 import LKManager.DAO_SQL.RoundDAOImpl;
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.RecordsAndDTO.*;
+import LKManager.model.Table;
 import LKManager.services.*;
 import LKManager.services.FilesService_unused.PlikiService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -57,6 +58,14 @@ public class scheduleController {
     private final UserService userService;
     private final CookieManager cookieManager;
 
+
+    //temp
+    private final ResultsService resultsService;
+    private final TableService tableService;
+    ////////////////
+
+
+
     /*  public Integer getNumerRundy() {
           return numerRundy;
       }
@@ -67,11 +76,17 @@ public class scheduleController {
    /* @Autowired
     private MZCache mzCache;
 */
+@GetMapping("/scheduleError")
+public String scheduleError(Model model )
+{
+    var scheduleNames = scheduleService.getScheduleNames();
+    model.addAttribute("schedules", scheduleNames);
 
-
+    return"LK/schedule/scheduleError";
+}
 
     @GetMapping("/schedule")
-    public String getSchedule(HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "roundNumber", required = false) String roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
+    public String getSchedule(RedirectAttributes attributes, HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "roundNumber", required = false) String roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
         //, @CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
 
         //   Arrays.stream(request.getCookies()).forEach(a-> System.out.println(a.getValue()));
@@ -131,7 +146,7 @@ public class scheduleController {
 
 
         System.out.println("w terminarze scheduleService.getSchedules()");
-      //  var schedules = mzCache.getSchedulesFromCacheOrDatabase();
+        //  var schedules = mzCache.getSchedulesFromCacheOrDatabase();
         var scheduleNames = scheduleService.getScheduleNames();
         //   terminarz= terminarzDAO.findByTerminarzId(106);
         //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
@@ -151,16 +166,20 @@ public class scheduleController {
             //            terminarz=     terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
             System.out.println("w mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(wybranyTerminarz);");
-          //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
+            //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
             schedule = scheduleService.getSchedule_ByName(chosenSchedule);
 
             //nie znaleziono przekierowanie do tworzenia
             if (schedule == null) {
 //todo przekierowanie że nie ma takiego terminarza
-             //   return "redirect:/errorMessage";
+                //   return "redirect:/errorMessage";
 
                 model.addAttribute("schedules", scheduleNames);
-                return "LK/schedule/schedule";
+           //     return "LK/schedule/schedule";
+
+
+
+                return "redirect:/scheduleError";
             }
 
 
@@ -170,9 +189,10 @@ public class scheduleController {
 //ostatni wg id
 
 
-         //   mzCache.findLastScheduleByIdFromCacheOrDatabase();
-       //todo tu musi byc: schedule=
-              scheduleService.getSchedule_TheNewest();
+            //   mzCache.findLastScheduleByIdFromCacheOrDatabase();
+            //todo tu musi byc: schedule=
+            scheduleService.getSchedule_TheNewest();
+            System.out.println("the newest");
             //nie ma żadnych terminarzy
             if (schedule == null) {
                 return "redirect:/addSchedule";
@@ -183,15 +203,76 @@ public class scheduleController {
         }
 
 
-
-    //    List<Match> mecze = meczDAO.findAllById(Collections.singleton(terminarz.getId()));
+        //    List<Match> mecze = meczDAO.findAllById(Collections.singleton(terminarz.getId()));
 
         //  mecze=mzCache.getTerminarze().get(0).getRundy().get(0).getMecze();
         // model.addAttribute("wybranyTerminarz", terminarze.get(0));
 //mecze=terminarze.get(0).getRundy().get(0).getMecze();
 
-      //  System.out.println("---cache:  ");
+        //  System.out.println("---cache:  ");
 
+        ScheduleDTO  result=null;
+
+
+/*result=   scheduleService.getSchedule_ByName("swiss2");
+if(result==null)
+{
+    List<UserDataDTO> tempusers = userService.findAllUsers(false, false).stream().limit(40).collect(Collectors.toList());
+     result= ScheduleAdapter.adapt(scheduleService.createSwissScheduleWithPlayerData(LocalDate.now(), tempusers, "swiss1",2).schedule());
+
+
+    resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),1);
+
+    Table    table1=    tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
+
+}
+
+     else //  if (result.getName().contains("swiss2")) ;
+        {*/
+
+
+            result=   scheduleService.getSchedule_ByName("swiss23");
+            if(result!=null)
+            {
+            Table  table=tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
+
+            scheduleService.calculateNextRoundOfSwissSchedule(scheduleService.getSchedule_ById(result.getId()),table);
+          //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),2);
+
+
+          //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),0+1);
+            for (int round = 1; round < result.getRounds().size(); round++) {
+              //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),round+1);
+
+
+              //  tableService.createSwissScheduleTable(result);
+
+            //    result=   scheduleService.getSchedule_ByName("swiss1");
+            }
+
+
+          /*  while(result.getRounds().size()<2)
+
+                     {
+
+                       Table  table=tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
+                         scheduleService.calculateNextRoundOfSwissSchedule(scheduleService.getSchedule_ById(result.getId()),table);
+
+
+//resultsService.updateResults()
+                resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),);
+              tableService.createSwissScheduleTable(result);
+
+                         result=   scheduleService.getSchedule_ByName("swiss1");
+
+            }*/
+
+
+
+
+
+
+                 }
 
 
        model.addAttribute("chosenSchedule", chosenSchedule);
@@ -201,8 +282,14 @@ public class scheduleController {
       //  List<Round> rounds = null;//new ArrayList<>(schedule.getRounds());
    //     rounds.sort(Comparator.comparing(Round::getNr));
     //    model.addAttribute("rounds", rounds);
-
-      RoundDTO round=schedule.getRounds().get(Integer.parseInt(roundNumber) - 1);
+        RoundDTO round;
+        //zabezpieczenie przed błędem w cookies
+if(schedule.getRounds().size()<=Integer.parseInt(roundNumber) -1)
+{
+     round=schedule.getRounds().get(0);
+}
+else
+     round=schedule.getRounds().get(Integer.parseInt(roundNumber) - 1);
        model.addAttribute("round", round);
 
      //   List<Match> matches =round.getMatches();
@@ -266,7 +353,7 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
 */
 
 
-        var terminarzCommand = new TerminarzCommand();
+        var addScheduleCommand = new AddScheduleCommand();
 
 
 
@@ -280,12 +367,12 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
     wybraniGracze1.put("bob1","sam1");
 
     terminarzCommand.mapa=wybraniGracze1;*/
-        terminarzCommand.playersList = new ArrayList<String>();
+        addScheduleCommand.playersList = new ArrayList<String>();
 
         //terminarzCommand.bob=b;
       //  model.addAttribute("userListWrapper", terminarzCommand);
         model.addAttribute("players", players);
-        model.addAttribute("schedule", terminarzCommand);
+        model.addAttribute("schedule", addScheduleCommand);
 List<String> playerNames = new ArrayList<>();
         players.forEach(p-> playerNames.add(p.getUsername()));
         model.addAttribute("playerNames", playerNames);
@@ -391,11 +478,18 @@ List<String> playerNames = new ArrayList<>();
     }
 
     @PostMapping("/addSchedule")
-    public String createSchedule(HttpServletResponse response, HttpServletRequest request, RedirectAttributes attributes, @ModelAttribute @Valid TerminarzCommand command, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
+    public String createSchedule(HttpServletResponse response, HttpServletRequest request, RedirectAttributes attributes, @ModelAttribute @Valid scheduleController.AddScheduleCommand command, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
 //,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
 
 
-        //todo walidacja  te same nazwy
+        //todo walidacja  te same nazwy poprawić to
+
+if( scheduleService.getScheduleNames().contains(command.name.trim()))
+{
+    System.out.println("error in addSchedule - post  - schedule name already exists");
+    attributes.addAttribute("errorMessage","error in addSchedule - post - schedule name already exists");
+    return "redirect:/errorMessage";
+}
 /*var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNazwa().trim()+".xml")))
 {
@@ -439,30 +533,56 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 
 
         CreateScheduleResult createScheduleResult=null;
-        //nie wybrano graczy do wielodniowego terminarza
-        if (chosenPlayers == null) {
 
-            if (command.getPlayersList().size() == 0) {
-                //todo nie wybrano tez pojedynczych meczy
-                int tt = 0;
-            } else {
-                if (command.getPlayersList().size() % 2 != 0) {
-                    //todo brakuje pary dla grajka  ewentuanie w js wybierzgrajka-> pauza
+
+        //todo sprawdzic czy może być null
+        switch (command.scheduleType)
+        {
+            case "single":
+            {
+                if (command.getPlayersList().size() == 0) {
+                    //todo nie wybrano tez pojedynczych meczy
+                    int tt = 0;
                 } else {
+                    if (command.getPlayersList().size() % 2 != 0) {
+                        //todo brakuje pary dla grajka  ewentuanie w js wybierzgrajka-> pauza
+                    } else {
 
 //////////////////////////////
 
-                             createScheduleResult= scheduleService.createOneDayShedule(date, command.playersList, command.name);
+                        createScheduleResult= scheduleService.createOneDayShedule(date, command.playersList, command.name);
 
+
+                    }
 
                 }
-
+                break;
             }
-        } else {
+            case "multi":
+            {
+                createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, command.name);
 
-//////////////////////////////
-             createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, command.name);
+                break;
+            }
+            case "swiss":
+            {
+                createScheduleResult=  scheduleService.createSwissScheduleWithPlayerNames(date, chosenPlayers, command.name,command.roundsNumber);
+
+                break;
+            }
         }
+
+
+
+
+
+
+
+
+
+
+
+
         if(createScheduleResult.schedule()!=null)
         {
             try {
@@ -550,7 +670,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
    @Getter
     @Setter
     @NoArgsConstructor
-    public class TerminarzCommand {
+    public class AddScheduleCommand {
 /*todo walidacja
 https://blog.mloza.pl/java-bean-validation-spring-boot-sprawdzanie-poprawnosci-danych-w-spring-boocie/
 
@@ -561,8 +681,8 @@ https://blog.mloza.pl/java-bean-validation-spring-boot-sprawdzanie-poprawnosci-d
         @NotBlank
         private String name;
         private List<String> playersList;
-
-
+private Integer roundsNumber;
+private String scheduleType;
 
       public void setListaGraczy() {
 

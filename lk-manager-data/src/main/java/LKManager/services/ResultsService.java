@@ -25,4 +25,5 @@ public interface ResultsService {
 
     List<Round>  updateRoundResultsForDate(LocalDate date);
 
+    void simulateResults(ScheduleDTO schedule, int roundNumber);
 }
