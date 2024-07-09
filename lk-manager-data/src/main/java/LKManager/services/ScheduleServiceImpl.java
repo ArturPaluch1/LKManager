@@ -286,7 +286,7 @@ else return null;
 
     @Override
     @Transactional
-    public CreateScheduleResult createMultiDaySchedule(LocalDate data, List<String> chosenPlayers, String scheduleName) throws DatatypeConfigurationException, DatatypeConfigurationException {
+    public CreateScheduleResult createMultiDaySchedule(LocalDate data, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType) throws DatatypeConfigurationException, DatatypeConfigurationException {
         List<UserData> playersNotInMZ= new ArrayList<>();
         List<UserData> playersForSchedule= new ArrayList<>();
         chosenPlayers.stream().forEach(
@@ -378,7 +378,7 @@ else return null;
             }
 
             /////////////// zapis termnarza do xml    //////////////////////
-            Schedule schedule = new Schedule(rounds,scheduleName);
+            Schedule schedule = new Schedule(rounds,scheduleName,scheduleType );
 
             //       jaxbObjectToXML(terminarz,nazwa);
 
@@ -463,7 +463,7 @@ else return null;
 
     @Override
     @Transactional
-    public CreateScheduleResult createOneDayShedule(LocalDate data, List<String> chosenPlayers, String scheduleName) {
+    public CreateScheduleResult createOneDayShedule(LocalDate data, List<String> chosenPlayers, String scheduleName,ScheduleType scheduleType) {
        List<UserData> playersNotInMZ= new ArrayList<>();
         List<UserData> playersInMZ= new ArrayList<>();
                chosenPlayers.stream().forEach(
@@ -556,7 +556,7 @@ else return null;
         jaxbObjectToXML(terminarz,nazwa);
 */
 /////////////////////////////////////////////
-            Schedule schedule = new Schedule(rounds, scheduleName);
+            Schedule schedule = new Schedule(rounds, scheduleName,scheduleType);
 
           Schedule savedSchedule=  scheduleDAO.saveSchedule(schedule);
 
@@ -857,7 +857,7 @@ return null;
         }*/
     }
 
-    public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber) {
+    public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber, ScheduleType scheduleType) {
 if(signedPlayers!=null)
 {
   //  List<UserDataDTO> signedPlayersData= signedPlayers.stream().forEach(p-> userService.get);
@@ -886,7 +886,7 @@ if(signedPlayers!=null)
     if(playersNotInMZ.size()==0)
     {
 
-        return createSwissScheduleWithPlayerData(startDate,playersInMZ,scheduleName,roundsNumber);
+        return createSwissScheduleWithPlayerData(startDate,playersInMZ,scheduleName,roundsNumber,scheduleType);
     }
     else return null;
 
@@ -894,7 +894,7 @@ if(signedPlayers!=null)
 else return null;
 
     }
-        public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName,Integer roundsNumber) {
+        public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName,Integer roundsNumber, ScheduleType scheduleType) {
        ScheduleNameDTO scheduleInDB=this.getScheduleNames().stream().filter(schedule->schedule.getName().equals(scheduleName)).findFirst().orElse(null);
        if(scheduleInDB==null)
        {
@@ -969,7 +969,7 @@ else return null;
                }
 
 
-               Schedule schedule = new Schedule(rounds, scheduleName);
+               Schedule schedule = new Schedule(rounds, scheduleName, scheduleType);
 
                Schedule savedSchedule = scheduleDAO.saveSchedule(schedule);
 

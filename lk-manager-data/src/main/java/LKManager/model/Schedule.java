@@ -1,12 +1,15 @@
 package LKManager.model;
 
 import LKManager.model.MatchesMz.MatchTeam;
-import lombok.*;
+import LKManager.model.RecordsAndDTO.ScheduleType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.collection.internal.PersistentBag;
 
-import javax.persistence.*;
 import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,6 +35,10 @@ public class Schedule implements Serializable {
     @Column(name = "nazwa")
     private String name;
 
+    @Column(name = "rodzajTerminarza")
+    private ScheduleType scheduleType;
+
+
     //  @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     //@Fetch(FetchMode.JOIN)
 
@@ -40,9 +47,10 @@ public class Schedule implements Serializable {
             fetch = FetchType.LAZY)
     private List<Round> rounds = new ArrayList<>();
 
-    public Schedule(List<Round> rounds, String name) {
+    public Schedule(List<Round> rounds, String name,ScheduleType scheduleType ) {
         this.rounds=rounds;
         this.name=name;
+        this.scheduleType=scheduleType;
     }
 
     //  @XmlElementWrapper(name="terminarz")

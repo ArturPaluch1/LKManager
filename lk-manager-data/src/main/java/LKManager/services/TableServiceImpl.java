@@ -110,7 +110,28 @@ private final RedisTableService redisTableService;
                 //    mzCache.updateScheduleMatchesCache(schedule);
 
                     table= new Table(schedule.getName());
-                       table.setPlayerSummaries(     this.calculateSwissTable(scheduleService.getAllMatchesOfSchedule(schedule)));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
+                   switch(schedule.getScheduleType())
+                   {
+                       case standardSchedule :
+                       {
+                           table.setPlayerSummaries(     this.calculateTable(scheduleService.getAllMatchesOfSchedule(schedule)));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
+break;
+                       }
+                       case swissSchedule:
+                       {
+                           table.setPlayerSummaries(     this.calculateSwissTable(scheduleService.getAllMatchesOfSchedule(schedule)));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
+break;
+                       }
+                       case oneDaySchedule:
+                       {
+                           table.setPlayerSummaries(     this.calculateTable(scheduleService.getAllMatchesOfSchedule(schedule)));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
+break;
+                       }
+                       default:
+                           return null;
+                   }
+
+                    //          table.setPlayerSummaries(     this.calculateSwissTable(scheduleService.getAllMatchesOfSchedule(schedule)));//(matchDAOimpl.findAllbyScheduleId(schedule.getId()));
                 }
 
             }

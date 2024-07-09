@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface ScheduleService {
 
-    CreateScheduleResult createMultiDaySchedule(LocalDate data, List<String> grajki, String nazwa  ) throws DatatypeConfigurationException;
-    CreateScheduleResult createOneDayShedule(LocalDate data, List<String> mecze, String nazwa );
+    CreateScheduleResult createMultiDaySchedule(LocalDate data, List<String> grajki, String nazwa , ScheduleType scheduleType ) throws DatatypeConfigurationException;
+    CreateScheduleResult createOneDayShedule(LocalDate data, List<String> mecze, String nazwa , ScheduleType scheduleType );
 
    Schedule wczytajTerminarz(String sciezka) throws JAXBException;
 
@@ -36,8 +36,8 @@ public interface ScheduleService {
     boolean updateSchedule(Schedule schedule);
     List<ScheduleNameDTO> getScheduleNames();
 
-    public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber);
-    public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName, Integer roundsNumber) ;
+    public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber , ScheduleType scheduleType);
+    public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName, Integer roundsNumber , ScheduleType scheduleType) ;
     public void calculateNextRoundOfSwissSchedule(ScheduleDTO schedule, Table table);
 
 

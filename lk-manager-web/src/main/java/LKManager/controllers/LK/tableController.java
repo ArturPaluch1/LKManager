@@ -72,7 +72,7 @@ if(!chosenscheduleName.equals(null))
 
 
     table= redisTableService.getTable(chosenscheduleName);
-    if(table==null)
+    if(table==null)//||table.getPlayerSummaries().size()==0)
     {
         //todo zrobić wyjątek jeśli nie ma terminarza o danej nazwie
         List<ScheduleNameDTO> scheduleNameDTOList = scheduleService.getScheduleNames();

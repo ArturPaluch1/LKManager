@@ -73,13 +73,13 @@
             </div>
 
         <div style="float:left; margin-left: 5px;">
-            <input type="radio" id="single" value="single" name="rodzajTerminarza" checked onchange="scheduleChange(value)" th:field="*{scheduleType}" >
+            <input type="radio" id="single" value="oneDaySchedule" name="rodzajTerminarza" checked onchange="scheduleChange(value)" th:field="*{scheduleType}" >
             <label for="single">Terminarz jednodniowy</label>
             <br>
-            <input type="radio" id="multi" value="multi" name="rodzajTerminarza" onchange="scheduleChange(value)" th:field="*{scheduleType}">
+            <input type="radio" id="multi" value="standardSchedule" name="rodzajTerminarza" onchange="scheduleChange(value)" th:field="*{scheduleType}">
             <label for="multi">Terminarz wielodniowy</label>
            <br>
-            <input type="radio" id="swiss" value="swiss" name="rodzajTerminarza" onchange="scheduleChange(value)" th:field="*{scheduleType}">
+            <input type="radio" id="swiss" value="swissSchedule" name="rodzajTerminarza" onchange="scheduleChange(value)" th:field="*{scheduleType}">
             <label for="multi">Terminarz w systemie szwajcarskim</label>
             <br>
 

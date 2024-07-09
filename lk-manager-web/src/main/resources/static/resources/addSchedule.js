@@ -235,14 +235,14 @@ function scheduleChange(value)
      var roundsNumber= document.getElementById("roundsNumber")
      var matches =  document.getElementById('matches').innerHTML="";
 
-    if(value=='single')
+    if(value=='oneDaySchedule')
     {
 schedule1.hidden=false;
 schedule2.hidden=true;
 matches.hidden=false;
    roundsNumber.hidden=true;
     }
-    else if(value=='swiss')
+    else if(value=='swissSchedule')
     {
     schedule1.hidden=true;
     schedule2.hidden=false;

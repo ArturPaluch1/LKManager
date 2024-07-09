@@ -538,7 +538,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         //todo sprawdzic czy może być null
         switch (command.scheduleType)
         {
-            case "single":
+            case oneDaySchedule:
             {
                 if (command.getPlayersList().size() == 0) {
                     //todo nie wybrano tez pojedynczych meczy
@@ -550,7 +550,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 
 //////////////////////////////
 
-                        createScheduleResult= scheduleService.createOneDayShedule(date, command.playersList, command.name);
+                        createScheduleResult= scheduleService.createOneDayShedule(date, command.playersList, command.name,command.getScheduleType());
 
 
                     }
@@ -558,15 +558,15 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
                 }
                 break;
             }
-            case "multi":
+            case standardSchedule:
             {
-                createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, command.name);
+                createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, command.name,command.getScheduleType());
 
                 break;
             }
-            case "swiss":
+            case  swissSchedule:
             {
-                createScheduleResult=  scheduleService.createSwissScheduleWithPlayerNames(date, chosenPlayers, command.name,command.roundsNumber);
+                createScheduleResult=  scheduleService.createSwissScheduleWithPlayerNames(date, chosenPlayers, command.name,command.roundsNumber,command.getScheduleType());
 
                 break;
             }
@@ -682,7 +682,7 @@ https://blog.mloza.pl/java-bean-validation-spring-boot-sprawdzanie-poprawnosci-d
         private String name;
         private List<String> playersList;
 private Integer roundsNumber;
-private String scheduleType;
+private ScheduleType scheduleType;
 
       public void setListaGraczy() {
 
