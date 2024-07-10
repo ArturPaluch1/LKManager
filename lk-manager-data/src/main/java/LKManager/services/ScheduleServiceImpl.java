@@ -33,10 +33,7 @@ import javax.xml.datatype.Duration;
 import java.io.File;
 import java.sql.SQLSyntaxErrorException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -284,6 +281,38 @@ else return null;
     }
 
 
+
+    /*public void przesunListy(List<UserData>grajkiA,List<UserData>grajkiB) {
+        //przesuwanie
+        List<UserData> grajkiPrzesunieteA = new ArrayList<>();
+        List<UserData> grajkiPrzesunieteB = new ArrayList<>();
+
+        //A
+        for (int i = 0; i < grajkiA.size(); i++) {
+            if (i != 0 && i != 1) {
+                grajkiPrzesunieteA.add(grajkiA.get(i - 1));
+            } else {
+                if (i == 0) {
+                    grajkiPrzesunieteA.add(grajkiA.get(0));
+                } else {
+                    grajkiPrzesunieteA.add(grajkiB.get(0));
+                }
+            }
+        }
+//B
+        for (int i = 0; i < grajkiB.size(); i++) {
+            if (i != 0) {
+                grajkiPrzesunieteB.add(grajkiB.get(i));
+            }
+        }
+        grajkiPrzesunieteB.add(grajkiA.get(grajkiA.size() - 1));
+
+
+        grajkiA = grajkiPrzesunieteA;
+        grajkiB = grajkiPrzesunieteB;
+
+    }*/
+
     @Override
     @Transactional
     public CreateScheduleResult createMultiDaySchedule(LocalDate data, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType) throws DatatypeConfigurationException, DatatypeConfigurationException {
@@ -291,10 +320,10 @@ else return null;
         List<UserData> playersForSchedule= new ArrayList<>();
         chosenPlayers.stream().forEach(
                 player-> {
-                    UserData foundPlaer= mzUserService.findByUsernameInManagerzone(player);
-                    if(foundPlaer==null)
-                        playersNotInMZ.add(foundPlaer);
-                    else playersForSchedule.add(foundPlaer);
+                    UserData foundPlayer= mzUserService.findByUsernameInManagerzone(player);
+                    if(foundPlayer==null)
+                        playersNotInMZ.add(foundPlayer);
+                    else playersForSchedule.add(foundPlayer);
 
                 }
         );
@@ -330,6 +359,9 @@ else return null;
             /////////////////podzial grajkow na pol  /////////////////
 
 
+            List<UserData> playersA = playersForSchedule.subList(0, (playersForSchedule.size()) / 2);
+            List<UserData> playersB = playersForSchedule.subList(playersForSchedule.size() / 2, playersForSchedule.size());
+            ListsOfPlayers listsOfPlayers = new ListsOfPlayers(playersA, playersB);
 
 
             Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
@@ -347,24 +379,26 @@ else return null;
                     round = new Round(j, data);
                 }
                 //////////ustalanie par /////////////////////////////
-                for (int i = 0; i < playersForSchedule.size()-1; i+=2) {
+
 
                   /*  var para = listyGrajkow.getGrajkiA().get(i).getUsername() + " - " + listyGrajkow.getGrajkiB().get(i).getUsername();
                     System.out.println(para);*/
 
-                    var tempMatch = new Match();
-                    int shift=i+j;
-                    if(shift>=playersForSchedule.size())
-                    {
-                        shift=shift-playersForSchedule.size();
+
+                    for (int i = 0; i < playersA.size(); i++) {
+
+
+
+                        var tempMatch = new Match();
+
+
+                        tempMatch.setUserData(listsOfPlayers.getPlayersA().get(i));
+                        tempMatch.setOpponentUserData(listsOfPlayers.getPlayersB().get(i));
+                        tempMatch.setDateDB(data.plusDays(7L * (j - 1)));
+
+                        round.getMatches().add(tempMatch);
+
                     }
-                    tempMatch.setUserData(playersForSchedule.get(i));
-                    tempMatch.setOpponentUserData(playersForSchedule.get(shift));
-                    tempMatch.setDateDB(data.plusDays(7L *(j-1)));
-
-                    round.getMatches().add(tempMatch);
-
-                }
 
 
 
@@ -372,6 +406,7 @@ else return null;
 
                 round.setPlayed(false);
                 rounds.add(round);
+                listsOfPlayers.shiftLists();
                 System.out.println("=======" + round.getNr() + " === " + round.getDate());
 
 
@@ -724,73 +759,73 @@ players.add(userService.getPauseObject());
 
 
 
-    class ListyGrajkow {
-        private List<UserData> grajkiPrzesunieteA;
-        private List<UserData> grajkiPrzesunieteB;
-        private List<UserData> grajkiA;
-        private List<UserData> grajkiB;
+    class ListsOfPlayers {
+        private List<UserData> playersShiftedA;
+        private List<UserData> playersShiftedB;
+        private List<UserData> playersA;
+        private List<UserData> playersB;
 
-        public List<UserData> getGrajkiPrzesunieteA() {
-            return grajkiPrzesunieteA;
+        public List<UserData> getPlayersShiftedA() {
+            return playersShiftedA;
         }
 
-        public void setGrajkiPrzesunieteA(List<UserData> grajkiPrzesunieteA) {
-            this.grajkiPrzesunieteA = grajkiPrzesunieteA;
+        public void setPlayersShiftedA(List<UserData> playersShiftedA) {
+            this.playersShiftedA = playersShiftedA;
         }
 
-        public List<UserData> getGrajkiPrzesunieteB() {
-            return grajkiPrzesunieteB;
+        public List<UserData> getPlayersShiftedB() {
+            return playersShiftedB;
         }
 
-        public void setGrajkiPrzesunieteB(List<UserData> grajkiPrzesunieteB) {
-            this.grajkiPrzesunieteB = grajkiPrzesunieteB;
+        public void setPlayersShiftedB(List<UserData> playersShiftedB) {
+            this.playersShiftedB = playersShiftedB;
         }
 
-        public List<UserData> getGrajkiA() {
-            return grajkiA;
-        }
-
-
-        public List<UserData> getGrajkiB() {
-            return grajkiB;
+        public List<UserData> getPlayersA() {
+            return playersA;
         }
 
 
-        public ListyGrajkow(List<UserData> grajkiA, List<UserData> grajkiB) {
-            this.grajkiA = grajkiA;
-            this.grajkiB = grajkiB;
-            grajkiPrzesunieteA = new ArrayList<>();
-            grajkiPrzesunieteB = new ArrayList<>();
+        public List<UserData> getPlayersB() {
+            return playersB;
         }
 
-        public void przesunListy() {
+
+        public ListsOfPlayers(List<UserData> playersA, List<UserData> playersB) {
+            this.playersA = playersA;
+            this.playersB = playersB;
+            playersShiftedA = new ArrayList<>();
+            playersShiftedB = new ArrayList<>();
+        }
+
+        public void shiftLists() {
             //przesuwanie
-            List<UserData> grajkiPrzesunieteA = new ArrayList<>();
-            List<UserData> grajkiPrzesunieteB = new ArrayList<>();
+            List<UserData> playersShiftedA = new ArrayList<>();
+            List<UserData> playersShiftedB = new ArrayList<>();
 
             //A
-            for (int i = 0; i < grajkiA.size(); i++) {
+            for (int i = 0; i < playersA.size(); i++) {
                 if (i != 0 && i != 1) {
-                    grajkiPrzesunieteA.add(grajkiA.get(i - 1));
+                    playersShiftedA.add(playersA.get(i - 1));
                 } else {
                     if (i == 0) {
-                        grajkiPrzesunieteA.add(grajkiA.get(0));
+                        playersShiftedA.add(playersA.get(0));
                     } else {
-                        grajkiPrzesunieteA.add(grajkiB.get(0));
+                        playersShiftedA.add(playersB.get(0));
                     }
                 }
             }
 //B
-            for (int i = 0; i < grajkiB.size(); i++) {
+            for (int i = 0; i < playersB.size(); i++) {
                 if (i != 0) {
-                    grajkiPrzesunieteB.add(grajkiB.get(i));
+                    playersShiftedB.add(playersB.get(i));
                 }
             }
-            grajkiPrzesunieteB.add(grajkiA.get(grajkiA.size() - 1));
+            playersShiftedB.add(playersA.get(playersA.size() - 1));
 
 
-            grajkiA = grajkiPrzesunieteA;
-            grajkiB = grajkiPrzesunieteB;
+            playersA = playersShiftedA;
+            playersB = playersShiftedB;
 
         }
     }
