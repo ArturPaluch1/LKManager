@@ -116,7 +116,7 @@ public class MZCache {
             schedule = this.schedules.stream().sorted(new scheduleIdComparator()).collect(Collectors.toList()).get(0);
         } else {
             System.out.println("in from db last");
-            schedule = scheduleDAO.findLastById();
+            schedule = scheduleDAO.findLastOngoingOrFinishedById();
         }
         return schedule;
     }

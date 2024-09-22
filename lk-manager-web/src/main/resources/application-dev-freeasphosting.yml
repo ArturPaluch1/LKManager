@@ -8,6 +8,24 @@ spring:
     # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
 
 # SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
+      
+
+  mail:
+    host: smtp.office365.com
+    #host: smtp.interia.pl
+    port: 587
+    username: ${email-email}
+    password: ${email-password}
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
   config:
     import: optional:file:.env[.properties]
   spring.jpa.show-sql: true
@@ -55,3 +73,9 @@ spring:
     #  dialect:
     #   MySQLDialect:
 # SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
+
+
+
+
+
+

@@ -65,11 +65,11 @@ Może też edytować wyniki np. w celu wpisania walkowerów.
 <details >
  <summary>Edycja wyników</summary>
 <a href="https://ibb.co/BZqtrt6"><img src="https://i.ibb.co/2tgysyM/wyniki-edycja.png" alt="wyniki-edycja" border="0"></a>
-</div>
+
 </details>
 W zakładce "Tabela" użytkownik może wyświetlać tabelę obliczaną na podstawie danych zapisanych w plikach xml terminarza.
 <details >
  <summary>Tabela</summary>
 <a href="https://ibb.co/s3JQ9Fz"><img src="https://i.ibb.co/pXrZj35/table.png" alt="table" border="0"></a>
-</div>
+
 </details>

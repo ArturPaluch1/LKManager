@@ -18,7 +18,7 @@ public class RedisTableService {
     public RedisTableService(GsonService gsonService, RedisTemplate<String, Object> redisTemplate) {
         this.gsonService = gsonService;
         this.redisTemplate = redisTemplate;
-        this.valueOperations = this.getRedisTemplate().opsForValue();;
+        this.valueOperations = this.getRedisTemplate().opsForValue();
     }
 
     public   Table getTable(String chosenscheduleName)
@@ -27,7 +27,10 @@ public class RedisTableService {
         if(tableJson!=null)
         {
             redisTemplate.expire("table:"+chosenscheduleName,8, TimeUnit.DAYS);
-            return gsonService.jsonToObject(tableJson,Table.class);
+           Table table=  gsonService.jsonToObject(tableJson,Table.class);
+if(table.getPlayerSummaries().isEmpty())
+            return null;
+else return table;
         }
         else return null;
 

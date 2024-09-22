@@ -110,7 +110,7 @@ private final ScheduleDAO scheduleDAO;
            if(scheduleNames.isEmpty())
            {
 
-               scheduleNames=scheduleDAO.getScheduleNames();
+               scheduleNames=scheduleDAO.getScheduleNamesOngoingOrFinished();
 
            }
            if(scheduleNames==null)

@@ -18,12 +18,30 @@ private final ResultsService resultsService;
 
             @Override
             public void run() {
-                System.out.println("Update results task performed on: " + new Date()  + "\n" +"Thread's name: " + Thread.currentThread().getName());
-               // resultsService.updateRoundResultsForDate(LocalDate.now());
-                //todo po testach zamienić na to wyżej
-                resultsService.updateRoundResultsForDate(LocalDate.now());
+                try {
+                    System.out.println("Update results task performed on: " + new Date() + "\n" + "Thread's name: " + Thread.currentThread().getName());
+                    // resultsService.updateRoundResultsForDate(LocalDate.now());
+                    //todo po testach zamienić na to wyżej
+                    resultsService.updateRoundResultsForDate(LocalDate.now());
 
 //.plusDays(1)
+                }
+                catch (Exception e)
+                {
+                    System.err.println("Błąd podczas aktualizacji wyników: " + e.getMessage());
+                    e.printStackTrace();
+
+                    scheduleRetry();
+                }
+            }
+            private void scheduleRetry() {
+                // Ponowne uruchomienie zadania po RETRY_DELAY
+                RoundResultsUpdateTimer.this.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        RoundResultsUpdateTimer.this.task.run();
+                    }
+                }, 5000);
             }
     };
 

@@ -5,6 +5,7 @@ import LKManager.DAO_SQL.MatchDAO;
 import LKManager.DAO_SQL.RoundDAOImpl;
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.RecordsAndDTO.*;
+import LKManager.model.ScheduleStatus;
 import LKManager.model.Table;
 import LKManager.services.*;
 import LKManager.services.FilesService_unused.PlikiService;
@@ -76,16 +77,171 @@ public class scheduleController {
    /* @Autowired
     private MZCache mzCache;
 */
-@GetMapping("/scheduleError")
+@GetMapping("/admin/LK/schedule/scheduleError")
 public String scheduleError(Model model )
 {
-    var scheduleNames = scheduleService.getScheduleNames();
+    System.out.println("in admin/LK/schedule/scheduleError");
+    var scheduleNames = scheduleService.getScheduleNamesOngoingOrFinished();
     model.addAttribute("schedules", scheduleNames);
 
-    return"LK/schedule/scheduleError";
+    return"/admin/LK/schedule/scheduleError";
 }
 
-    @GetMapping("/schedule")
+
+
+/*
+@GetMapping("/admin/LK/schedule/schedule")
+public String getScheduleAdminTemp(RedirectAttributes attributes, HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "roundNumber", required = false) String roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
+    roundNumber = cookieManager.saveOrUpdateRoundNumberCookie(roundNumber, chosenSchedule);
+    chosenSchedule = cookieManager.saveOrUpdateChosenScheduleCookie(chosenSchedule);
+
+    System.out.println("w terminarze scheduleService.getSchedules()");
+    var scheduleNames = scheduleService.getScheduleNames();
+
+
+    ScheduleDTO schedule = null;
+    if (chosenSchedule != null) {
+
+
+        System.out.println("w mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(wybranyTerminarz);");
+        //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
+        schedule = scheduleService.getSchedule_ByName(chosenSchedule);
+
+        //nie znaleziono przekierowanie do tworzenia
+        if (schedule == null) {
+//todo przekierowanie że nie ma takiego terminarza
+            //   return "redirect:/errorMessage";
+
+            model.addAttribute("schedules", scheduleNames);
+            //     return "LK/schedule/schedule";
+
+
+
+            return "redirect:/admin/LK/scheduleError";
+        }
+
+
+    }
+    //nie podano nazwy terminarza
+    else {
+//ostatni wg id
+
+
+        //   mzCache.findLastScheduleByIdFromCacheOrDatabase();
+        //todo tu musi byc: schedule=
+        scheduleService.getSchedule_TheNewest();
+        System.out.println("the newest");
+        //nie ma żadnych terminarzy
+        if (schedule == null) {
+            return "redirect:/admin/LK/addSchedule";
+        } else  //był taki terminarz
+        {
+
+        }
+    }
+
+    ScheduleDTO  result=null;
+
+    result=   scheduleService.getSchedule_ByName("swiss23");
+    if(result!=null)
+    {
+        Table  table=tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
+
+        scheduleService.calculateNextRoundOfSwissSchedule(scheduleService.getSchedule_ById(result.getId()),table);
+        //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),2);
+
+
+        //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),0+1);
+        for (int round = 1; round < result.getRounds().size(); round++) {
+            //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),round+1);
+
+
+            //  tableService.createSwissScheduleTable(result);
+
+            //    result=   scheduleService.getSchedule_ByName("swiss1");
+        }
+
+
+          */
+/*  while(result.getRounds().size()<2)
+
+                     {
+
+                       Table  table=tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
+                         scheduleService.calculateNextRoundOfSwissSchedule(scheduleService.getSchedule_ById(result.getId()),table);
+
+
+//resultsService.updateResults()
+                resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),);
+              tableService.createSwissScheduleTable(result);
+
+                         result=   scheduleService.getSchedule_ByName("swiss1");
+
+            }*//*
+
+
+
+
+
+
+
+    }
+
+
+    model.addAttribute("chosenSchedule", chosenSchedule);
+    model.addAttribute("schedule", schedule);
+
+
+    //  List<Round> rounds = null;//new ArrayList<>(schedule.getRounds());
+    //     rounds.sort(Comparator.comparing(Round::getNr));
+    //    model.addAttribute("rounds", rounds);
+    RoundDTO round;
+    //zabezpieczenie przed błędem w cookies
+    if(schedule.getRounds().size()<=Integer.parseInt(roundNumber) -1)
+    {
+        round=schedule.getRounds().get(0);
+    }
+    else
+        round=schedule.getRounds().get(Integer.parseInt(roundNumber) - 1);
+    model.addAttribute("round", round);
+
+    //   List<Match> matches =round.getMatches();
+    //    model.addAttribute("matches",schedule.getRounds().get(Integer.parseInt(roundNumber) - 1).getMatchesDTO());
+
+    model.addAttribute("roundNumber", roundNumber);
+
+
+    model.addAttribute("schedules", scheduleNames);
+    return "admin/LK/schedule/schedule";
+
+    */
+/**
+     *
+     *
+     model.addAttribute("chosenSchedule", chosenSchedule);
+
+
+     List<Round> rounds = null;//new ArrayList<>(schedule.getRounds());
+     rounds.sort(Comparator.comparing(Round::getNr));
+     model.addAttribute("rounds", rounds);
+
+     Round  round=rounds.get(Integer.parseInt(roundNumber) - 1);
+     model.addAttribute("round", round);
+
+     List<Match> matches =round.getMatches();
+     model.addAttribute("matches", matches);
+
+     model.addAttribute("roundNumber", roundNumber);
+
+
+     model.addAttribute("schedules", scheduleNames);
+     return "LK/schedule/schedule";
+     *//*
+
+}
+*/
+
+    @GetMapping({"/admin/LK/schedule/schedule"})
     public String getSchedule(RedirectAttributes attributes, HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "roundNumber", required = false) String roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
         //, @CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
 
@@ -147,7 +303,7 @@ public String scheduleError(Model model )
 
         System.out.println("w terminarze scheduleService.getSchedules()");
         //  var schedules = mzCache.getSchedulesFromCacheOrDatabase();
-        var scheduleNames = scheduleService.getScheduleNames();
+        var scheduleNames = scheduleService.getScheduleNamesOngoingOrFinished();
         //   terminarz= terminarzDAO.findByTerminarzId(106);
         //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
 
@@ -179,7 +335,7 @@ public String scheduleError(Model model )
 
 
 
-                return "redirect:/scheduleError";
+              return  "redirect:/admin/LK/schedule/scheduleError";
             }
 
 
@@ -191,11 +347,11 @@ public String scheduleError(Model model )
 
             //   mzCache.findLastScheduleByIdFromCacheOrDatabase();
             //todo tu musi byc: schedule=
-            scheduleService.getSchedule_TheNewest();
+            scheduleService.getSchedule_TheNewestOngoingOrFinished();
             System.out.println("the newest");
             //nie ma żadnych terminarzy
             if (schedule == null) {
-                return "redirect:/addSchedule";
+                return "redirect:admin/LK/addSchedule";
             } else  //był taki terminarz
             {
 
@@ -299,7 +455,7 @@ else
 
 
         model.addAttribute("schedules", scheduleNames);
-        return "LK/schedule/schedule";
+        return "admin/LK/schedule/schedule";
 
         /**
          *
@@ -326,8 +482,8 @@ else
     }
 
 
-    @GetMapping(value = "/addSchedule")
-    public String createSchedule(Model model) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+    @GetMapping(value = "/admin/LK/schedule/schedule/addSchedule")
+    public String addSchedule(Model model) throws JAXBException, IOException, ParserConfigurationException, SAXException {
 
 
 
@@ -335,7 +491,7 @@ else
 
         //lkUserService.wczytajGraczyZXML();
       //  List<UserData> players = userService.findUsers_NotDeletedWithPause();//userDAO.findUsersFromCache_NotDeletedWithPause();
-        List<UserDataDTO> players = userService.findAllUsers(false,true);//userDAO.findUsersFromCache_NotDeletedWithPause();
+        List<UserDataDTO> players = userService.findAllUsers(true,true);//userDAO.findUsersFromCache_NotDeletedWithPause();
         players = players.stream().sorted(
                 (o1, o2) -> o1.getUsername().compareToIgnoreCase(o2.getUsername())
         ).collect(Collectors.toList());
@@ -377,31 +533,31 @@ List<String> playerNames = new ArrayList<>();
         players.forEach(p-> playerNames.add(p.getUsername()));
         model.addAttribute("playerNames", playerNames);
 
-        return "LK/schedule/addSchedule";
+        return "admin/LK/schedule/addSchedule";
     }
 
 
-    @GetMapping(value = "/schedule/chose")
+    @GetMapping(value = "/admin/LK/schedule/chose")
     public String pickSchedule() {
-        return "LK/schedule/choseSchedule";
+        return "/admin/LK/schedule/choseSchedule";
     }
 
 
-    @GetMapping("/deleteSchedule")
+    @GetMapping("/admin/LK/schedule/schedule/deleteSchedule")
     public String deleteSchedule(Model model)//@RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
     {
       //  List<Schedule> schedules = mzCache.getSchedulesFromCacheOrDatabase();
-        List<ScheduleNameDTO> schedules = scheduleService.getScheduleNames();
+        List<ScheduleNameDTO> schedules = scheduleService.getScheduleNamesOngoingOrFinished();
         //plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
 //this.wybranyTerminarz=null;
         model.addAttribute("schedules", schedules);
-        return "LK/schedule/deleteSchedule";
+        return "admin/LK/schedule/deleteSchedule";
 
 
     }
 
-    @PostMapping("/deleteSchedule")
+    @PostMapping("/admin/LK/schedule/schedule/deleteSchedule")
     public String deleteSchedule(RedirectAttributes attributes, HttpServletResponse response, HttpServletRequest request, @RequestParam(value = "chosenSchedule", required = true) String scheduleToDelete)//, @CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie)
     {
 
@@ -436,7 +592,7 @@ List<String> playerNames = new ArrayList<>();
 
          //   Schedule schedule1 = scheduleDAO.findLastById();
             try {
-                ScheduleDTO schedule1=scheduleService.getSchedule_TheNewest();
+                ScheduleDTO schedule1=scheduleService.getSchedule_TheNewestOngoingOrFinished();
                 //       Cookie numerRundyCookie= Arrays.stream(request.getCookies()).filter( a->a.getName().equals("numerRundy")).findFirst().orElse(null);
                 //        Cookie wybranyTerminarzCookie = Arrays.stream(request.getCookies()).filter( a->a.getName().equals("wybranyTerminarz")).findFirst().orElse(null);
 
@@ -456,13 +612,13 @@ List<String> playerNames = new ArrayList<>();
                 //todo make another html file for success
                 attributes.addAttribute("errorMessage", "Usuwanie terminarza: "+scheduleToDelete+"\nZakończyło się sukcesem.");
 
-                return "redirect:/errorMessage";
+                return "redirect:/public/LK/error";
             }
             else
             {
                 attributes.addAttribute("errorMessage", "błąd w usuwaniu");
 
-                return "redirect:/errorMessage";
+                return "redirect:/public/LK/error";
             }
         /*    CookieManager.saveOrUpdateRoundNumberCookie(Optional.of("1"), Optional.ofNullable(schedule1.getName()), response, request, scheduleDAO);
             CookieManager.saveOrUpdateChosenScheduleCookie(Optional.ofNullable(schedule1.getName()), response, request, scheduleDAO);
@@ -472,23 +628,23 @@ List<String> playerNames = new ArrayList<>();
         } catch (Exception e) {
             attributes.addAttribute("errorMessage", "błąd w usuwaniu");
             System.out.println(e);
-            return "redirect:/errorMessage";
+            return "redirect:/public/LK/error";
         }
 
     }
 
-    @PostMapping("/addSchedule")
-    public String createSchedule(HttpServletResponse response, HttpServletRequest request, RedirectAttributes attributes, @ModelAttribute @Valid scheduleController.AddScheduleCommand command, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
+    @PostMapping("/admin/LK/schedule/schedule/addSchedule")
+    public String addSchedule(HttpServletResponse response, HttpServletRequest request, RedirectAttributes attributes, @ModelAttribute @Valid scheduleController.AddScheduleCommand command, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
 //,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
 
 
         //todo walidacja  te same nazwy poprawić to
 
-if( scheduleService.getScheduleNames().contains(command.name.trim()))
+if( scheduleService.getScheduleNamesOngoingOrFinished().contains(command.name.trim()))
 {
     System.out.println("error in addSchedule - post  - schedule name already exists");
     attributes.addAttribute("errorMessage","error in addSchedule - post - schedule name already exists");
-    return "redirect:/errorMessage";
+    return "redirect:/public/LK/error";
 }
 /*var terminarze= plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNazwa().trim()+".xml")))
@@ -550,7 +706,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 
 //////////////////////////////
 
-                        createScheduleResult= scheduleService.createOneDayShedule(date, command.playersList, command.name,command.getScheduleType());
+                        createScheduleResult= scheduleService.createOneDayShedule(date, command.playersList, command.name,command.getScheduleType(),ScheduleStatus.ONGOING);
 
 
                     }
@@ -560,13 +716,13 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
             }
             case standardSchedule:
             {
-                createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, command.name,command.getScheduleType());
+                createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, command.name,command.getScheduleType(),ScheduleStatus.ONGOING);
 
                 break;
             }
             case  swissSchedule:
             {
-                createScheduleResult=  scheduleService.createSwissScheduleWithPlayerNames(date, chosenPlayers, command.name,command.roundsNumber,command.getScheduleType());
+                createScheduleResult=  scheduleService.createSwissScheduleWithPlayerNames(date, chosenPlayers, command.name,command.roundsNumber,command.getScheduleType(),ScheduleStatus.ONGOING);
 
                 break;
             }
@@ -603,29 +759,38 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
                 //   CookieManager.checkCookies(response,request,"1",terminarz.getName(),terminarzDAO);
 
 
+if(!createScheduleResult.schedule().getScheduleStatus().equals(ScheduleStatus.PLANNED))
+{
 
+    cookieManager.saveOrUpdateRoundNumberCookie("1",createScheduleResult.schedule().getName());
+    cookieManager.saveOrUpdateChosenScheduleCookie(createScheduleResult.schedule().getName());
+    attributes.addAttribute("chosenSchedule", createScheduleResult.schedule().getName());
+    attributes.addAttribute("roundNumber", "1");
+    return "redirect:/admin/LK/schedule/schedule";
+}
+else
+{
+    attributes.addAttribute("chosenSchedule", createScheduleResult.schedule().getName());
+    attributes.addAttribute("roundNumber", "1");
+    return "redirect:/admin/LK/schedule/schedule";
+}
 
-                cookieManager.saveOrUpdateRoundNumberCookie("1",createScheduleResult.schedule().getName());
-                cookieManager.saveOrUpdateChosenScheduleCookie(createScheduleResult.schedule().getName());
-                attributes.addAttribute("chosenSchedule", createScheduleResult.schedule().getName());
-                attributes.addAttribute("roundNumber", "1");
-                return "redirect:/schedule";
             } catch (Exception e) {
                 System.out.println("error in addSchedule - post");
                 attributes.addAttribute("errorMessage","error in addSchedule - post");
-                return "redirect:/errorMessage";
+                return "redirect:/public/LK/error";
             }
         }
        else
         {
             String errorMessage="Schedule creation failed. Those players do not exist in MZ:\n"+createScheduleResult.playersNotInMZ();
             attributes.addAttribute("errorMessage",errorMessage);
-            return "redirect:/errorMessage";
+            return "redirect:/public/LK/error";
         }
     }
 
 
-    @PostMapping("/showRound")
+    @GetMapping("/admin/LK/schedule/schedule/showRound")
     public String showRound(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "roundNumber", required = true) Integer roundNumber, @RequestParam(value = "chosenSchedule", required = true) String chosenSchedule) {
 //cookieManager.saveOrUpdateNumerRundyCookie(response, numerRundy.toString(),request);
         //todo wyzej bpk
@@ -642,11 +807,11 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         attributes.addAttribute("chosenSchedule", Arrays.stream(request.getCookies()).filter(a -> a.getName().equals("chosenSchedule")).findAny().orElse(null).getValue());
         attributes.addAttribute("roundNumber", roundNumber.toString());
 
-        return "redirect:/schedule";
+        return "redirect:/admin/LK/schedule/schedule";
 
     }
 
-    @GetMapping(value = "/schedule/changeSchedule")
+    @GetMapping(value = "/admin/LK/schedule/schedule/changeSchedule")
     public String changeSchedule(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) {
 
         try {
@@ -664,7 +829,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         attributes.addAttribute("chosenSchedule", chosenSchedule);
         attributes.addAttribute("roundNumber", "1");
 
-        return "redirect:/schedule";
+        return "redirect:/admin/LK/schedule/schedule";
     }
 
    @Getter

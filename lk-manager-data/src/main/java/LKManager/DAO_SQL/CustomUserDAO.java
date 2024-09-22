@@ -2,12 +2,15 @@ package LKManager.DAO_SQL;
 
 import LKManager.model.UserMZ.UserData;
 import org.springframework.stereotype.Repository;
+
 @Repository
 public interface CustomUserDAO  {
 
 
     //@Transactional
     UserData findByTeamId(int id) ;//throws IOException, ParserConfigurationException, SAXException, JAXBException;
+
+
     UserData saveUser(UserData user);
 
 

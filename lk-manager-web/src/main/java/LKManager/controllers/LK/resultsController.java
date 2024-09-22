@@ -119,7 +119,41 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
         this.scheduleDAO = scheduleDAO;
     }
 
-    @GetMapping({"/results"})
+
+    @GetMapping({"/admin/LK/results"})
+    // public String index(HttpServletResponse response, Model model, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
+    public String getResultsAdmin(RedirectAttributes attributes,HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule, @RequestParam(value = "roundNumber", required = false) String roundNumber) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
+
+        roundNumber = cookieManager.saveOrUpdateRoundNumberCookie(roundNumber, chosenSchedule);
+        chosenSchedule = cookieManager.saveOrUpdateChosenScheduleCookie(chosenSchedule);
+
+        schedules = scheduleService.getScheduleNamesOngoingOrFinished();
+        schedule = scheduleService.getSchedule_ByName(chosenSchedule);
+
+
+        RoundDTO round;
+        try {
+            String finalRoundNumber = roundNumber;
+            round=schedule.getRounds().stream().filter(r->r.getNr()==Integer.parseInt( finalRoundNumber)).findFirst().orElse(null);
+        }
+        catch (Exception exception) {
+            // Obsługa innych ogólnych wyjątków
+            System.err.println("Inny błąd: " + exception.getMessage());
+            attributes.addAttribute("errorMessage", "błąd w usuwaniu");
+            return "redirect:/errorMessage";
+        }
+
+        model.addAttribute("roundNumber", roundNumber);
+        model.addAttribute("schedules", schedules);
+        model.addAttribute("chosenSchedule", schedule);
+        model.addAttribute("round", round);
+
+        return "/admin/LK/results";
+    }
+
+
+
+    @GetMapping({"/public/LK/results"})
     // public String index(HttpServletResponse response, Model model, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
     public String getResults(RedirectAttributes attributes,HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule, @RequestParam(value = "roundNumber", required = false) String roundNumber) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException {
 //,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie,
@@ -155,7 +189,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 
 
         //  schedules= mzCache.getSchedulesFromCacheOrDatabase();
-        schedules = scheduleService.getScheduleNames();
+        schedules = scheduleService.getScheduleNamesOngoingOrFinished();
         //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
         schedule = scheduleService.getSchedule_ByName(chosenSchedule);
 
@@ -218,7 +252,7 @@ catch (Exception exception) {
     System.err.println("Inny błąd: " + exception.getMessage());
     attributes.addAttribute("errorMessage", "błąd w usuwaniu");
     return "redirect:/errorMessage";
-    // Tutaj możesz podjąć odpowiednie kroki dla innych ogólnych wyjątków
+
 }
 
      /*   List<Round> roundNumbers;
@@ -232,19 +266,7 @@ catch (Exception exception) {
     return "redirect:/errorMessage";
 }*/
 
- /*       List<MatchDTO> matches=null;
-try{
-     matches = meczDAO.findAllByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber) - 1)
-             .stream().map(MatchAdapter::adapt).collect(Collectors.toList());
 
-}
-catch (Exception exception) {
-    // Obsługa innych ogólnych wyjątków
-    System.err.println("Inny błąd: " + exception.getMessage());
-    attributes.addAttribute("errorMessage", "błąd w usuwaniu");
-    return "redirect:/errorMessage";
-    // Tutaj możesz podjąć odpowiednie kroki dla innych ogólnych wyjątków
-}*/
 
 
 
@@ -386,10 +408,31 @@ catch (Exception exception) {
 
 */
 
-        return "LK/results";
+        return "/public/LK/results";
     }
 
-    @GetMapping({"/results/changeSchedule"})
+
+    @GetMapping({"/admin/LK/results/changeSchedule"})
+    public String changeScheduleAdmin(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) {
+        try {
+            //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
+            cookieManager.saveOrUpdateRoundNumberCookie("1", chosenSchedule);
+            cookieManager.saveOrUpdateChosenScheduleCookie(chosenSchedule);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // response.addCookie(new Cookie("numerRundy","1"));
+        // response.addCookie(new Cookie("wybranyTerminarz",wybranyTerminarz));
+        //    response.addCookie(new Cookie("wybranyTerminarz","wielo"));
+        //   this.numerRundy=numerRundy;
+        attributes.addAttribute("chosenSchedule", chosenSchedule);
+        attributes.addAttribute("roundNumber", "1");
+
+        return "redirect:/admin/LK/results";
+    }
+
+    @GetMapping({"/public/LK/results/changeSchedule"})
     public String changeSchedule(RedirectAttributes attributes, HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) {
         try {
             //     CookieManager.checkCookies(response,request,numerRundy.toString(),null,terminarzDAO);
@@ -406,7 +449,7 @@ catch (Exception exception) {
         attributes.addAttribute("chosenSchedule", chosenSchedule);
         attributes.addAttribute("roundNumber", "1");
 
-        return "redirect:/results";
+        return "redirect:/public/LK/results";
     }
 
     /*
@@ -510,8 +553,8 @@ catch (Exception exception) {
                               @RequestParam(value = "UserMatchResult1", required = false) List<String> userMatchResults1,
                               @RequestParam(value = "OpponentMatchResult1", required = false) List<String> opponentMatchResults1,
                               @RequestParam(value = "UserMatchResult2", required = false) List<String> userMatchResults2,
-                              @RequestParam(value = "OpponentMatchResult2", required = false) List<String> opponentMatchResults2,
-                              @RequestParam(value = "bob", required = false) List<String> bob) throws JAXBException {
+                              @RequestParam(value = "OpponentMatchResult2", required = false) List<String> opponentMatchResults2)
+                            {
 
 
         roundNumber--;
@@ -527,7 +570,7 @@ catch (Exception exception) {
           redirectAttributes.addAttribute("roundNumber", roundNumber + 1);
           redirectAttributes.addAttribute("chosenSchedule", chosenSchedule.getName());
 
-          return "redirect:/results";
+          return "redirect:/admin/LK/results";
       }
       else
       {
@@ -567,8 +610,16 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
     }
 
+    @GetMapping("/admin/LK/getRoundResults")
+    public String getRoundResultsAdmin(RedirectAttributes redirectAttributes, @RequestParam(value = "round", required = true) Integer roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) {
 
-    @GetMapping("/getRoundResults")
+        redirectAttributes.addAttribute("roundNumber", roundNumber);
+        redirectAttributes.addAttribute("chosenSchedule", chosenSchedule);
+        return "redirect:/admin/LK/results";
+
+    }
+
+    @GetMapping("/public/LK/getRoundResults")
     public String getRoundResults(RedirectAttributes redirectAttributes, @RequestParam(value = "round", required = true) Integer roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) {
         int oo = 9;
         //     this.numerRundy=numerRundy;
@@ -577,7 +628,7 @@ terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
         redirectAttributes.addAttribute("roundNumber", roundNumber);
         redirectAttributes.addAttribute("chosenSchedule", chosenSchedule);
-        return "redirect:/results";
+        return "redirect:/public/LK/results";
 //return "redirect:/LKManager.LK/terminarz";
     }
 
@@ -604,7 +655,7 @@ ScheduleDTO chosenSchedule= scheduleService.getSchedule_ByName(chosenScheduleNam
 
                 //  mzCache.updateRound(round);
 
-                return "redirect:/results";
+                return "redirect:/public/LK/results";
             } else {
                 //todo
                 attributes.addAttribute("errorMessage", "nie udało się zaktualizować rundy");

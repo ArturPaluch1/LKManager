@@ -32,12 +32,12 @@ public interface CustomScheduleDAO {
     @Query(" FROM Schedule s where s.name=:name")
     Schedule findByScheduleName(String name);
 
-    Schedule findLastById();
+    Schedule findLastOngoingOrFinishedById();
 
      boolean deleteByName(String objectName);
 
 
-    public List<UserData> findAllParticipantsOfSchedule(String ScheduleName);
+     List<UserData> findAllParticipantsOfSchedule(String ScheduleName);
 
     void refresh(Schedule schedule);
 }

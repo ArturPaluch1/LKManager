@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+
+
+
+>
+<!-- th:replace="~{fragments/layout :: layout (~{::body},'home')}"-->
+<head>
+
+</head>
+<body>
+<div th:replace="~{public/navbar}"/>
+<label>Taki terminarz nie istnieje, wybierz inny</label>
+<br>
+<div style="float: left;">
+    <label  > Opcje terminarza</label>
+    <div id="terminarzOptions" class="display" >
+
+
+        <div >
+            <a class="btn" th:href=@{'/admin/LK/schedule/schedule/addSchedule'}>   Dodaj terminarz</a>
+        </div>
+        <div>
+            <div >
+                <a class="btn" th:href=@{'/admin/LK/schedule/schedule/deleteSchedule'} >   Usuń terminarz</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div style="float: right;">
+    <form th:action="@{'/admin/LK/schedule/schedule/changeSchedule'}" method="get" >
+        <select  th:name="chosenSchedule"  onchange="this.form.submit()" >
+            <option value="" selected>--Wybierz terminarz--</option>
+            <option th:each="schedule : ${schedules}" th:value="${schedule.getName()}" th:text="${schedule.getName()}" />
+            <!--   th:selected="${schedule==75}"></option>-->
+        </select>
+    </form>
+    <div>
+        <label>Wybrany terminarz: </label>
+        <label th:text="${chosenSchedule}"></label>
+    </div>
+
+</div>
+
+
+
+
+</body>
+</html>

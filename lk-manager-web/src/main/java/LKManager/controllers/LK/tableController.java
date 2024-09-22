@@ -2,7 +2,6 @@ package LKManager.controllers.LK;
 
 import LKManager.DAO_SQL.MatchDAO;
 import LKManager.DAO_SQL.ScheduleDAO;
-import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.Schedule;
 import LKManager.model.Table;
 import LKManager.services.*;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.List;
 
 @Controller
 public class tableController {
@@ -56,7 +54,7 @@ private final RedisTableService redisTableService;
 
 
 
-   @GetMapping({"table.html", "table"} )
+   @GetMapping({"public/LK/table.html", "public/LK/table"} )
     public String index(HttpServletResponse response, HttpServletRequest request,Model model, @RequestParam(value="chosenSchedule", required = false)String chosenscheduleName) throws URISyntaxException, IOException, JAXBException {
 
 
@@ -70,18 +68,9 @@ if(!chosenscheduleName.equals(null))
 {
 
 
+table= tableService.getTable(chosenscheduleName);
 
-    table= redisTableService.getTable(chosenscheduleName);
-    if(table==null)//||table.getPlayerSummaries().size()==0)
-    {
-        //todo zrobić wyjątek jeśli nie ma terminarza o danej nazwie
-        List<ScheduleNameDTO> scheduleNameDTOList = scheduleService.getScheduleNames();
-        String finalChosenscheduleName = chosenscheduleName;
-        table=tableService.createTable(scheduleNameDTOList.stream().filter(s-> s.getName().equals(finalChosenscheduleName)).findFirst().get().getId());
 
-        redisTableService.setTable(table);
-
-    }
 
 
 
@@ -96,17 +85,17 @@ if(table!=null)
   //  model.addAttribute("schedules", scheduleDAO.findAll());
     //todo zaminic \/ cache na redis
    // model.addAttribute("schedules",mzCache.getSchedules());
-    model.addAttribute("schedules",scheduleService.getScheduleNames());
+    model.addAttribute("schedules",scheduleService.getScheduleNamesOngoingOrFinished());
     model.addAttribute("chosenSchedule",chosenscheduleName);
     model.addAttribute("table",table.getPlayerSummaries());
-    return "LK/table";
+    return "public/LK/table";
 }
 else
 {
     model.addAttribute("chosenSchedule",chosenscheduleName);
     //todo zaminic \/ cache na redis
    // model.addAttribute("schedules",mzCache.getSchedules());
-    return "LK/table";
+    return "public/LK/table";
 }
 
 

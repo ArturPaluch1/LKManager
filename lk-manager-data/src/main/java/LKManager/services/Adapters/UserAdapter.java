@@ -16,6 +16,7 @@ public class UserAdapter {
         {
             teamId=userData.getTeamlist().get(0).getTeamId();
             teamName=userData.getTeamlist().get(0).getTeamName();
+
         }
 
         else  {
@@ -23,10 +24,10 @@ public class UserAdapter {
             teamName=null;
         }
 
-        UserDataDTO userDTO = new UserDataDTO(userData.getUserId(),userData.getUsername(),teamId,teamName, userData.getReliability(), userData.getDeleted());
+        UserDataDTO userDTO = new UserDataDTO(userData.getUserId(),userData.getUsername(),teamId,teamName, userData.getEmail(), userData.getReliability(), userData.getRole(),userData.getLeagueParticipation());
 
 
-        userDTO.setDeleted(userData.getDeleted());
+        userDTO.setRole(userData.getRole());
         return userDTO;
     }
 

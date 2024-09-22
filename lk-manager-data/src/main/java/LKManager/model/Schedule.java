@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,12 @@ public class Schedule implements Serializable {
     @Column(name = "rodzajTerminarza")
     private ScheduleType scheduleType;
 
+@Column(name = "statusTerminarza", columnDefinition = "TINYINT")
+@Enumerated(EnumType.ORDINAL)
+private ScheduleStatus scheduleStatus;
 
+    @Column(name = "dataStartu")
+private LocalDate startDate;
     //  @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     //@Fetch(FetchMode.JOIN)
 
@@ -47,12 +53,33 @@ public class Schedule implements Serializable {
             fetch = FetchType.LAZY)
     private List<Round> rounds = new ArrayList<>();
 
-    public Schedule(List<Round> rounds, String name,ScheduleType scheduleType ) {
+/*    public Schedule(List<Round> rounds, String name,ScheduleType scheduleType ) {
         this.rounds=rounds;
         this.name=name;
         this.scheduleType=scheduleType;
-    }
+    }*/
+/*    public Schedule( String name,ScheduleType scheduleType ) {
 
+        this.name=name;
+        this.scheduleType=scheduleType;
+    }*/
+
+    public Schedule(List<Round> rounds, String scheduleName, ScheduleType scheduleType, LocalDate startDate, ScheduleStatus status) {
+        this.rounds=rounds;
+        this.startDate=startDate;
+        this.scheduleStatus=status;
+        this.scheduleType=scheduleType;
+        this.name=scheduleName;
+
+    }
+    public Schedule(String scheduleName, ScheduleType scheduleType, LocalDate startDate, ScheduleStatus status) {
+
+        this.startDate=startDate;
+        this.scheduleStatus=status;
+        this.scheduleType=scheduleType;
+        this.name=scheduleName;
+
+    }
     //  @XmlElementWrapper(name="terminarz")
     @XmlElement(name = "Runda")
     public List<Round> getRounds() {

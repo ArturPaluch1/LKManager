@@ -616,7 +616,7 @@ return true;
 
     }
 
-    public Schedule findLastById() {
+    public Schedule findLastOngoingOrFinishedById() {
 
 
         Session s = sessionFactory.openSession();
@@ -626,8 +626,8 @@ return true;
             s.beginTransaction();
 
 
-            String hql = " from Schedule s where s.id=" +
-                    "(select max(s.id) from Schedule s)";
+            String hql = " from Schedule s where  s.startDate=" +
+                    "(select max(s.startDate) from Schedule s where  s.scheduleStatus!=0)";
 
             Query query = s.createQuery(hql);
              schedule2 = (Schedule) query.getSingleResult();

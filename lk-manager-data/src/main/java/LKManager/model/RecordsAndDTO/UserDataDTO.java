@@ -1,21 +1,24 @@
 package LKManager.model.RecordsAndDTO;
 
+import LKManager.model.UserMZ.LeagueParticipation;
+import LKManager.model.UserMZ.Role;
 import LKManager.model.UserMZ.UserData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data @AllArgsConstructor
 public class UserDataDTO {
-    private Integer userId;
+    private Long userId;
     private String username;
     private Integer teamId;
     private String teamName;
-
+private  String email;
     private long reliability;
-    private boolean deleted;
+    private Role role;
+    private LeagueParticipation leagueParticipation;
     public UserDataDTO mapUserDataToUserDataDTO(UserData user)
     {
-        return new UserDataDTO(user.getUserId(),user.getUsername(),user.getTeamlist().get(0).getTeamId(),user.getTeamlist().get(0).getTeamName(),user.getReliability(),user.getDeleted());
+        return new UserDataDTO(user.getUserId(),user.getUsername(),user.getTeamlist().get(0).getTeamId(),user.getTeamlist().get(0).getTeamName(),user.getEmail(),user.getReliability(),user.getRole(),user.getLeagueParticipation());
     }
 
 

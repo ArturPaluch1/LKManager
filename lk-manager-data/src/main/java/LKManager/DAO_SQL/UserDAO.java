@@ -12,24 +12,24 @@ import java.util.List;
 
 //@Repository
 @RedisHash
-public interface UserDAO extends JpaRepository<UserData, Integer>, CustomUserDAO, CustomUserDAO_Redis {
+public interface UserDAO extends JpaRepository<UserData, Long>, CustomUserDAO, CustomUserDAO_Redis {
 
 
-    @Query("select u from UserData u  where u.deleted='false' and u.username!='pauza'")
-    List<UserData> findUsers_NotDeletedWithoutPause();
-    @Query("select u from UserData u  where u.deleted='false' ")
-   List<UserData> findUsers_NotDeletedWithPause();
+    @Query("select u from UserData u  where u.role!=0 and u.username!='pauza'")
+    List<UserData> findUsers_ActiveWithoutPause();
+    @Query("select u from UserData u  where u.role!=0 ")
+   List<UserData> findUsers_ActiveWithPause();
 
     @Query("select u from UserData u where u.username=:userName")
     UserData findByName(@Param("userName") String userName);
 
     @Modifying
-    @Query("update  UserData  set deleted = true where userId=:id")
-    void deleteUserById(@Param("id") Integer id);
-    @Query("select u from UserData u  where u.deleted='true' ")
-    List<UserData> findUsers_DeletedWithPause();
-    @Query("select u from UserData u  where u.deleted='true' and u.username!='pauza'")
-    List<UserData> findUsers_DeletedWithoutPause();
+    @Query("update  UserData  set role = 0 where userId=:id")
+    void deactivateUserById(@Param("id") Long id);
+    @Query("select u from UserData u  where u.role=0 ")
+    List<UserData> findUsers_DeactivatedWithPause();
+    @Query("select u from UserData u  where u.role=0 and u.username!='pauza'")
+    List<UserData> findUsers_DeactivatedWithoutPause();
 
 
 

@@ -1,7 +1,9 @@
 package LKManager.model.RecordsAndDTO;
 
+import LKManager.model.ScheduleStatus;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -13,18 +15,23 @@ private long id;
 private String name;
     private ScheduleType scheduleType;
 private List<RoundDTO> rounds;
-
-   public ScheduleDTO(long id, String name, List<RoundDTO> rounds, ScheduleType scheduleType) {
+private ScheduleStatus scheduleStatus;
+private LocalDate startDate;
+   public ScheduleDTO(long id,LocalDate startDate, String name, List<RoundDTO> rounds, ScheduleType scheduleType,ScheduleStatus scheduleStatus) {
         this.id = id;
         this.name = name;
 this.scheduleType=scheduleType;
         this.rounds = rounds;
+        this.scheduleStatus=scheduleStatus;
+        this.startDate=startDate;
     }
 
-    public ScheduleDTO(long id, String name, ScheduleType scheduleType) {
+    public ScheduleDTO(long id, LocalDate startDate, String name, ScheduleType scheduleType,ScheduleStatus scheduleStatus) {
         this.id = id;
         this.name = name;
         this.scheduleType=scheduleType;
+        this.scheduleStatus=scheduleStatus;
+        this.startDate=startDate;
     }
 
     public String getName() {

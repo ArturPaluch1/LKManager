@@ -1,14 +1,13 @@
 package LKManager.services;
 
+import LKManager.DAO_SQL.LeagueParticipantsDAO;
 import LKManager.DAO_SQL.RoundDAO;
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.DAO_SQL.UserDAO;
 import LKManager.LK.PlayerSummary;
+import LKManager.model.*;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.RecordsAndDTO.*;
-import LKManager.model.Round;
-import LKManager.model.Schedule;
-import LKManager.model.Table;
 import LKManager.model.UserMZ.UserData;
 import LKManager.services.Adapters.MatchAdapter;
 import LKManager.services.Adapters.ScheduleAdapter;
@@ -33,7 +32,10 @@ import javax.xml.datatype.Duration;
 import java.io.File;
 import java.sql.SQLSyntaxErrorException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,7 +56,7 @@ private final UserDAO userDAO;
 /*    @Autowired
 private final MZCache mzCache;
 */
-
+private final LeagueParticipantsDAO leagueParticipantsDAO;
 private final MZUserService mzUserService;
 private final RedisScheduleService redisScheduleService;
 private final RoundService roundService;
@@ -67,6 +69,41 @@ private final RoundService roundService;
 //////////
 
 
+    @Override
+    public boolean addLeagueParticipant(Long userId) {
+        LeagueParticipants participant = new LeagueParticipants(userId);
+
+        LeagueParticipants savedParticipant= leagueParticipantsDAO.save(participant);
+
+        if(savedParticipant==null)return false;//error
+        else return true;//success
+
+    }
+
+    @Override
+    @Transactional
+    public boolean removeLeagueParticipant(Long userId) {
+       // LeagueParticipants participant =leagueParticipantsDAO.findById(userId).orElse(null);
+
+     try {
+         leagueParticipantsDAO.deleteById(userId);
+         return true;//success
+     }
+     catch(Exception e)
+     {
+         return false;//error
+     }
+
+
+    }
+
+    @Override
+    public List<LeagueParticipants> getLeagueParticipants() {
+
+
+
+        return  leagueParticipantsDAO.findAll();
+    }
 
     public Schedule findByIdWithRoundsMatchesUsersAndTeams(long scheduleId)
     {
@@ -118,6 +155,7 @@ return schedule;
              */
 
 ScheduleDTO foundSchedule=redisScheduleService.getSchedule_ByName(scheduleName);
+
 if(foundSchedule==null) {
   Schedule scheduleinDB=  this.scheduleDAO.findByScheduleName(scheduleName);
   if(scheduleinDB!=null)
@@ -193,7 +231,7 @@ else return null;
 
     @Override
     public boolean deleteSchedule(String scheduleToDeleteName) {
-        ScheduleNameDTO tempSchedule=this.getScheduleNames().stream().filter(s->s.getName().equals(scheduleToDeleteName)).findFirst().orElse(null);
+        ScheduleNameDTO tempSchedule=this.getScheduleNamesOngoingOrFinished().stream().filter(s->s.getName().equals(scheduleToDeleteName)).findFirst().orElse(null);
      if(tempSchedule!=null)
      {
          boolean result=  scheduleDAO.deleteByName(scheduleToDeleteName);
@@ -210,7 +248,7 @@ else return null;
     }
 
     @Override
-    public ScheduleDTO getSchedule_TheNewest() {
+    public ScheduleDTO getSchedule_TheNewestOngoingOrFinished() {
         //sprawdzanie terminarzy w cache
         /** ****************************
          * todo uncomment if need to use cache
@@ -227,7 +265,7 @@ else return null;
           */
 
 
-        ScheduleDTO newestSchedule=ScheduleAdapter.adapt(scheduleDAO.getTheNewest());
+        ScheduleDTO newestSchedule=ScheduleAdapter.adapt(scheduleDAO.getTheNewestOngoingOrFinished());
 
 /*
 //sprawdzanie czy mecze są zainicjalizowane (lazy)
@@ -313,9 +351,23 @@ else return null;
 
     }*/
 
+
+    public CreateScheduleResult planSchedule(LocalDate startDate, String scheduleName, ScheduleType scheduleType)
+    {
+        Schedule schedule = new Schedule( scheduleName,scheduleType,startDate,ScheduleStatus.PLANNED);
+        schedule.setName(scheduleName);
+        schedule.setStartDate(startDate);
+
+schedule.setScheduleStatus(ScheduleStatus.PLANNED);
+        Schedule   savedSchedule=    scheduleDAO.saveSchedule(schedule);
+        redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
+return new CreateScheduleResult(savedSchedule,null);
+    }
+
+
     @Override
     @Transactional
-    public CreateScheduleResult createMultiDaySchedule(LocalDate data, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType) throws DatatypeConfigurationException, DatatypeConfigurationException {
+    public CreateScheduleResult createMultiDaySchedule(LocalDate startDate, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType, ScheduleStatus scheduleStatus) throws DatatypeConfigurationException, DatatypeConfigurationException {
         List<UserData> playersNotInMZ= new ArrayList<>();
         List<UserData> playersForSchedule= new ArrayList<>();
         chosenPlayers.stream().forEach(
@@ -376,7 +428,7 @@ else return null;
                 if (j != 1) {
                     round = new Round(j, rounds.get((rounds.size()-1)).getDate().plusDays(7L));
                 } else {
-                    round = new Round(j, data);
+                    round = new Round(j, startDate);
                 }
                 //////////ustalanie par /////////////////////////////
 
@@ -394,7 +446,7 @@ else return null;
 
                         tempMatch.setUserData(listsOfPlayers.getPlayersA().get(i));
                         tempMatch.setOpponentUserData(listsOfPlayers.getPlayersB().get(i));
-                        tempMatch.setDateDB(data.plusDays(7L * (j - 1)));
+                        tempMatch.setDateDB(startDate.plusDays(7L * (j - 1)));
 
                         round.getMatches().add(tempMatch);
 
@@ -413,7 +465,7 @@ else return null;
             }
 
             /////////////// zapis termnarza do xml    //////////////////////
-            Schedule schedule = new Schedule(rounds,scheduleName,scheduleType );
+            Schedule schedule = new Schedule(rounds,scheduleName,scheduleType,startDate,scheduleStatus );
 
             //       jaxbObjectToXML(terminarz,nazwa);
 
@@ -498,7 +550,7 @@ else return null;
 
     @Override
     @Transactional
-    public CreateScheduleResult createOneDayShedule(LocalDate data, List<String> chosenPlayers, String scheduleName,ScheduleType scheduleType) {
+    public CreateScheduleResult createOneDayShedule(LocalDate startDate, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType, ScheduleStatus status) {
        List<UserData> playersNotInMZ= new ArrayList<>();
         List<UserData> playersInMZ= new ArrayList<>();
                chosenPlayers.stream().forEach(
@@ -533,7 +585,7 @@ else return null;
             /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
             Round round;
 
-            round = new Round(1, data);
+            round = new Round(1, startDate);
 
             for (int i = 0; i < playersInMZ.size(); i++) {
                 if(i%2!=0)
@@ -543,7 +595,7 @@ else return null;
                 else
                 {
                     var tempMatch = new Match();
-                    tempMatch.setDateDB(data);
+                    tempMatch.setDateDB(startDate);
                     tempMatch.setUserData(playersInMZ.get(i));
                     tempMatch.setOpponentUserData(playersInMZ.get(i+1));
                     round.getMatches().add(tempMatch);
@@ -591,7 +643,7 @@ else return null;
         jaxbObjectToXML(terminarz,nazwa);
 */
 /////////////////////////////////////////////
-            Schedule schedule = new Schedule(rounds, scheduleName,scheduleType);
+            Schedule schedule = new Schedule(rounds, scheduleName,scheduleType,startDate,status);
 
           Schedule savedSchedule=  scheduleDAO.saveSchedule(schedule);
 
@@ -673,7 +725,7 @@ players.add(userService.getPauseObject());
     }
 
     @Override
-    public List<ScheduleNameDTO> getScheduleNames() {
+    public List<ScheduleNameDTO> getScheduleNamesOngoingOrFinished() {
         List<ScheduleNameDTO> scheduleNames=null;
         try{
           scheduleNames=  redisScheduleService.getScheduleNames();
@@ -686,7 +738,7 @@ players.add(userService.getPauseObject());
         if (scheduleNames.isEmpty())
         {
             System.out.println("from sql");
-            scheduleNames= scheduleDAO.getScheduleNames();
+            scheduleNames= scheduleDAO.getScheduleNamesOngoingOrFinished();
         redisScheduleService.setScheduleNames(scheduleNames);
 
         }
@@ -892,7 +944,7 @@ return null;
         }*/
     }
 
-    public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber, ScheduleType scheduleType) {
+    public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber, ScheduleType scheduleType, ScheduleStatus scheduleStatus) {
 if(signedPlayers!=null)
 {
   //  List<UserDataDTO> signedPlayersData= signedPlayers.stream().forEach(p-> userService.get);
@@ -921,7 +973,7 @@ if(signedPlayers!=null)
     if(playersNotInMZ.size()==0)
     {
 
-        return createSwissScheduleWithPlayerData(startDate,playersInMZ,scheduleName,roundsNumber,scheduleType);
+        return createSwissScheduleWithPlayerData(startDate,playersInMZ,scheduleName,roundsNumber,scheduleType,scheduleStatus);
     }
     else return null;
 
@@ -929,8 +981,8 @@ if(signedPlayers!=null)
 else return null;
 
     }
-        public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName,Integer roundsNumber, ScheduleType scheduleType) {
-       ScheduleNameDTO scheduleInDB=this.getScheduleNames().stream().filter(schedule->schedule.getName().equals(scheduleName)).findFirst().orElse(null);
+        public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName,Integer roundsNumber, ScheduleType scheduleType, ScheduleStatus scheduleStatus) {
+       ScheduleNameDTO scheduleInDB=this.getScheduleNamesOngoingOrFinished().stream().filter(schedule->schedule.getName().equals(scheduleName)).findFirst().orElse(null);
        if(scheduleInDB==null)
        {
            List<Round> rounds = new ArrayList<>();
@@ -1004,7 +1056,7 @@ else return null;
                }
 
 
-               Schedule schedule = new Schedule(rounds, scheduleName, scheduleType);
+               Schedule schedule = new Schedule(rounds, scheduleName, scheduleType,startDate,scheduleStatus);
 
                Schedule savedSchedule = scheduleDAO.saveSchedule(schedule);
 

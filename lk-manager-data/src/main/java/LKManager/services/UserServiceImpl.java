@@ -2,10 +2,14 @@ package LKManager.services;
 
 import LKManager.DAO_SQL.UserDAO;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
+import LKManager.model.UserMZ.LeagueParticipation;
+import LKManager.model.UserMZ.Role;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
+import LKManager.model.account.SignUpForm;
 import LKManager.services.RedisService.RedisUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+
 //@AllArgsConstructor
 public class UserServiceImpl implements UserService {
   private final   UserDAO userDAO;
@@ -23,13 +28,23 @@ public class UserServiceImpl implements UserService {
    private final RedisUserService redisUserService;
  /*   @Autowired
     MZCache mzCache;*/
-
+private final PasswordEncoder passwordEncoder;
 private final GsonService gsonService;
 
 
+    @Override
+    public UserData changeUserLeagueParticipation(Long userId, LeagueParticipation leagueParticipation) {
+      Optional<UserData> user= userDAO.findById(userId);
+       if(user.isPresent())
+       { UserData userToChange=user.get();
+           userToChange.setLeagueParticipation(leagueParticipation);
+           UserData changedUser=   userDAO.save(userToChange);
+           return changedUser;
+       }
+        return null;
+    }
 
-
-@Transactional
+    @Transactional
     private UserDataDTO saveUser(UserData playerMZ) {
         //dwustronny dostęp: user->team, team->user
         try{
@@ -40,7 +55,7 @@ private final GsonService gsonService;
             if(playerInDB.isPresent())
             {
                 UserData playerToUpdate= playerInDB.get();
-                playerToUpdate.setDeleted(false);
+            //    playerToUpdate.setRole(true);
 
                 this.userDAO.saveUser(playerToUpdate);
                 try{
@@ -80,7 +95,7 @@ private final GsonService gsonService;
 
     @Override
     @Transactional
-    public void deleteUser(String chosenUser, List<String> chosenUsers)
+    public void deactivateUser(String chosenUser, List<String> chosenUsers)
     {
 
 /*
@@ -165,7 +180,7 @@ private final GsonService gsonService;
                 }
                 else
                 {
-                    List<UserData>users=userDAO.findUsers_NotDeletedWithoutPause();
+                    List<UserData>users=userDAO.findUsers_ActiveWithoutPause();
 
 
 
@@ -176,14 +191,13 @@ private final GsonService gsonService;
                     {
                         //customdao nie usuwa tylko ustawia deleted na true
                     //    ( (CustomUserDAO) userDAO).delete(playerMZ);
-                       try {
-                           userDAO.deleteUserById(playerMZ.getUserId());
-                           redisUserService.deleteUser(playerMZ.getUserId());
-                       }
-                       catch (Exception e)
-                       {
-                           System.out.println("error while deleting");
-                       }
+
+                           userDAO.deactivateUserById(playerMZ.getUserId());
+                           redisUserService.deactivateUser(playerMZ.getUserId());
+
+
+
+
                     }
                     else
                     {
@@ -203,7 +217,7 @@ private final GsonService gsonService;
 //z checkboxow
             else   if(chosenUsers!= null)
             {
-                List<UserData>users=userDAO.findUsers_NotDeletedWithoutPause();
+                List<UserData>users=userDAO.findUsers_ActiveWithoutPause();
 
                 for (var item: chosenUsers
                 ) {
@@ -217,8 +231,8 @@ private final GsonService gsonService;
                     {
                         try {
                          //   ( (CustomUserDAO) userDAO).delete(userInDb);
-                             userDAO.deleteUserById(userInDb.get().getUserId());
-                             redisUserService.deleteUser(userInDb.get().getUserId());
+                             userDAO.deactivateUserById(userInDb.get().getUserId());
+                             redisUserService.deactivateUser(userInDb.get().getUserId());
                         } catch (Exception e) {
                             System.out.println("error while deleting");
                            //todo \/
@@ -234,7 +248,7 @@ if(user== null)
 }
 else { // jest taki user ale usunięty (to się może zdarzyć jak Redis będzie nieaktualny)
     //aktualizowanie redisa
-    redisUserService.deleteUser(user.getUserId());
+    redisUserService.deactivateUser(user.getUserId());
 }
                         //todo nie bylo takiego grajka
                         // tutaj nie powinno sie wydarzyc, bo przy dodawaniu sprawdzane jest czy
@@ -258,7 +272,24 @@ else { // jest taki user ale usunięty (to się może zdarzyć jak Redis będzie
 
 
     }
+@Override
+@Transactional
+public UserDataDTO activateUser(String username)
+{
+    try{
+        UserData user=userDAO.findByName(username);
+        user.setRole(Role.ACTIVATED_CLUB_USER);
+        UserData savedUeser= userDAO.saveUser(user);
+      return  redisUserService.addUserToRedis(savedUeser);
 
+    }
+catch (Exception e)
+{
+    return null;
+}
+
+
+}
  /*   @Override
     public List<UserData> findAllUsersFromCache() {
 
@@ -326,21 +357,21 @@ else
 */
 
     @Override
-    public List<UserDataDTO> findAllUsers(boolean deleted,boolean withPause){
+    public List<UserDataDTO> findAllUsers(boolean active,boolean withPause){
         System.out.println("Trying to find users in redis");
 
-        List<UserDataDTO> userDataDTO= redisUserService.getUsers(deleted,withPause);
+        List<UserDataDTO> userDataDTO= redisUserService.getUsers(active,withPause);
 
-        if(deleted==true)
+        if(active==false)
         {
             if (withPause==true)
             {
-                if(userDataDTO==null)
+                if(userDataDTO.isEmpty())
                 {
                     System.out.println("...not found. Trying in db");
                     //todo zrobic redirect ze nie polaczono z db
                     System.out.println("trying find users in db");
-                    List<UserData> users= userDAO.findUsers_DeletedWithPause();
+                    List<UserData> users= userDAO.findUsers_DeactivatedWithPause();
                     if(!users.isEmpty())
                     {
                         /** ****************************
@@ -350,7 +381,7 @@ else
                         System.out.println("found users in db");
                         System.out.println("updating redis findUsers_DeletedWithPause");
                         //    String userDataDTOString= redisService.AddAllUsers_NotDeletedWithoutPause(users);
-                        return   redisUserService.addAllUsers(users,UserData.class,deleted,withPause);
+                        return   redisUserService.addAllUsers(users,UserData.class,active,withPause);
                         //       return   gsonService.jsonToList(userDataDTOString,UserDataDTO.class);
 
                     }
@@ -369,12 +400,12 @@ else
             }
             else
             {
-                if(userDataDTO==null)
+                if(userDataDTO.isEmpty())
                 {
                     System.out.println("...not found. Trying in db");
                     //todo zrobic redirect ze nie polaczono z db
                     System.out.println("trying find users in db");
-                    List<UserData> users= userDAO.findUsers_DeletedWithoutPause();
+                    List<UserData> users= userDAO.findUsers_DeactivatedWithoutPause();
                     if(!users.isEmpty())
                     {
                         /** ****************************
@@ -384,7 +415,7 @@ else
                         System.out.println("found users in db");
                         System.out.println("updating redis findUsers_DeletedWithoutPause");
                         //    String userDataDTOString= redisService.AddAllUsers_NotDeletedWithoutPause(users);
-                        return   redisUserService.addAllUsers(users,UserData.class,deleted,withPause);
+                        return   redisUserService.addAllUsers(users,UserData.class,active,withPause);
                         //       return   gsonService.jsonToList(userDataDTOString,UserDataDTO.class);
 
                     }
@@ -410,12 +441,12 @@ else
 
                 List<UserDataDTO> userDataDTO=redisService.getUsers(false,true);*/
 
-                if(userDataDTO==null)
+                if(userDataDTO.isEmpty())
                 {
                     System.out.println("...not found. Trying in db");
                     //todo zrobic redirect ze nie polaczono z db
                     System.out.println("trying find users in db");
-                    List<UserData> users= userDAO.findUsers_NotDeletedWithPause();
+                    List<UserData> users= userDAO.findUsers_ActiveWithPause();
                     if(!users.isEmpty())
                     {
                         /** ****************************
@@ -425,7 +456,7 @@ else
                         System.out.println("found users in db");
                         System.out.println("updating redis findUsers_NotDeletedWithPause");
                         //    String userDataDTOString= redisService.AddAllUsers_NotDeletedWithoutPause(users);
-                      return   redisUserService.addAllUsers(users,UserData.class,false,true);
+                      return   redisUserService.addAllUsers(users,UserData.class,true,true);
                  //       return   gsonService.jsonToList(userDataDTOString,UserDataDTO.class);
 
                     }
@@ -450,12 +481,12 @@ else
                 System.out.println("Trying to find users in redis");
 
              //   List<UserDataDTO> userDataDTO=redisService.getUsers(false,false);
-                if(userDataDTO==null)
+                if(userDataDTO.isEmpty())
                 {
                     System.out.println("...not found. Trying in db");
                     //todo zrobic redirect ze nie polaczono z db
                     System.out.println("trying find users in db");
-                    List<UserData> users= userDAO.findUsers_NotDeletedWithoutPause();
+                    List<UserData> users= userDAO.findUsers_ActiveWithoutPause();
                     if(!users.isEmpty())
                     {
                         /** ****************************
@@ -464,7 +495,7 @@ else
                          */
                         System.out.println("found users in db");
                         System.out.println("updating redis Users_NotDeletedWithoutPause");
-                    return redisUserService.addAllUsers(users,UserData.class,false,false);
+                    return redisUserService.addAllUsers(users,UserData.class,true,false);
                     //    return   gsonService.jsonToList(userDataDTOString,UserDataDTO.class);
 
                     }
@@ -521,7 +552,8 @@ else
 
     @Override
 //@Transactional
-    public UserDataDTO addUser(String userToAdd) {
+    @Transactional
+    public UserDataDTO addUser(SignUpForm userToAdd) {
    /*     //czy jest o takim id w mz
         var playerMZ= mzUserService.findByUsernameINManagerzone(userToAdd);
         //    var gracze=lkUserService.wczytajGraczyZXML();
@@ -574,7 +606,7 @@ else
          */
 
         //czy jest o takim id w mz
-        UserData playerMZ = mzUserService.findByUsernameInManagerzone(userToAdd.trim());
+        UserData playerMZ = mzUserService.findByUsernameInManagerzone(userToAdd.getUsername().trim());
         //    var gracze=lkUserService.wczytajGraczyZXML();
         if (playerMZ != null) {
             Optional<UserData> userInDB = userDAO.findById(playerMZ.getUserId());
@@ -583,6 +615,9 @@ else
             if (userInDB.isEmpty()) { //there is no this user in the database
                 try {
                     playerMZ.getTeamlist().get(0).setUser(playerMZ);
+                    playerMZ.setEmail(userToAdd.getEmail());
+                    playerMZ.setRole(Role.UNACTIVATED_CLUB_USER);
+                 //   playerMZ.setPassword(this.generatePassword());
                     UserData addedUser = userDAO.saveUser(playerMZ);
                     System.out.println("added user to database");
                  //   redisService.addUserToUserLists(addedUser);
@@ -590,16 +625,21 @@ else
 
 
                 } catch (Exception e) {
-                    System.out.println("error in adding");
+                    System.out.println("error in user adding");
                     return null;
                 }
 
-            } else   if(userInDB.get().getDeleted()==true)
+            } else   if(userInDB.get().getRole()==Role.DEACTIVATED_USER)
                {
+                   //todo !!! w prod wersji to ma nie działać, tylko ma przekierowywać do taki gracz już istnieje zapomniales hasla(?)
+            //   bo  taki user już istnieje \/ to jest tylko póki istnieją "ręcznie" tworzeni userzy bez maila i hasła
+
                    try {
                        System.out.println("user was found deleted");
                        UserData playerToUpdate = userInDB.get();
-                       playerToUpdate.setDeleted(false);
+                       playerToUpdate.setRole(Role.UNACTIVATED_CLUB_USER);
+                       playerToUpdate.setPassword(userToAdd.getPassword());
+                       playerToUpdate.setEmail(userToAdd.getEmail());
                        //     playerMZ.getTeamlist().get(0).setUser(playerMZ);
                        UserData addedUser = userDAO.saveUser(playerToUpdate);
 
@@ -625,9 +665,10 @@ else
 
     }
 
+
     @Override
     public UserData getPauseObject() {
-        Optional<UserData> pauseUserData=  userDAO.findById(0);
+        Optional<UserData> pauseUserData=  userDAO.findById(0L);
         if(pauseUserData.isPresent())
         {
 
@@ -638,7 +679,7 @@ else
         else
         {
             UserData newPauseUserData = new UserData();
-            newPauseUserData.setUserId(0);
+            newPauseUserData.setUserId(0L);
             newPauseUserData.setUsername("pauza");
             Team tempTeam= new Team();
             tempTeam.setTeamName(" ");
@@ -669,7 +710,7 @@ else
     }
 
     @Override
-    public UserData getUserById(Integer userId) {
+    public UserData getUserById(Long userId) {
 
         //todo dodać tu pobieranie z redis jeśli jest w redis
        return userDAO.findById(userId).orElse(null);

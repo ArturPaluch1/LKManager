@@ -19,12 +19,12 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, CustomSchedu
     @Query("SELECT s FROM Schedule s " +
             "INNER JOIN Round r ON r.schedule = s.id " +
             "INNER JOIN Match m ON m.round = r.id " +
-            "WHERE r.schedule IN " +
+            "WHERE  (s.scheduleStatus=1 or s.scheduleStatus=2) and  r.schedule IN " +
             "(SELECT r2.schedule FROM Round r2 " +
             "INNER JOIN Match m2 ON m2.round = r2.id " +
             "WHERE m2.dateDB = (SELECT MAX(m3.dateDB) FROM Match m3))"
     )
-    Schedule getTheNewest();
+    Schedule getTheNewestOngoingOrFinished();
 
     @Query("SELECT distinct s FROM Schedule s left JOIN FETCH s.rounds r where s.id=r.schedule "
     )
@@ -42,10 +42,14 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, CustomSchedu
         "LEFT JOIN s.rounds r")*/
 
 
-    @Query("select new LKManager.model.RecordsAndDTO.ScheduleNameDTO(id, name) from Schedule ")
-    List<ScheduleNameDTO> getScheduleNames();
+    @Query("select new LKManager.model.RecordsAndDTO.ScheduleNameDTO(id, name) from Schedule s where s.scheduleStatus!=0")
+    List<ScheduleNameDTO> getScheduleNamesOngoingOrFinished();
     @Query("SELECT distinct s FROM Schedule s left JOIN FETCH s.rounds r where s.id=:scheduleId ")
     Schedule findByIdAndFetchMatchesEagerly(@Param("scheduleId") long scheduleId);
+
+
+
+
 
   /*  @Query("SELECT DISTINCT s FROM Schedule s " +
             "LEFT JOIN FETCH s.rounds r " +

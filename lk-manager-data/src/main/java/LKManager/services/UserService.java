@@ -5,7 +5,9 @@ package LKManager.services;
 //import LKManager.DAO.Exceptions.GetUsersUserDatabaseAccessFailureException;
 
 import LKManager.model.RecordsAndDTO.UserDataDTO;
+import LKManager.model.UserMZ.LeagueParticipation;
 import LKManager.model.UserMZ.UserData;
+import LKManager.model.account.SignUpForm;
 
 import java.util.List;
 public interface UserService {
@@ -17,10 +19,10 @@ public interface UserService {
      * Marks user entity or list of users with deleted mark. Updates Cache list
      * @param chosenUser
      * @param chosenUsers
-     * @throws DeleteUserUserDatabaseAccessFailureException
+     * @throws
      */
-    void deleteUser(String chosenUser, List<String> chosenUsers)  ;
-
+    void deactivateUser(String chosenUser, List<String> chosenUsers)  ;
+    UserDataDTO activateUser(String username);
   //  List<UserData>  findAllUsersFromCache();
 
 
@@ -34,7 +36,7 @@ public interface UserService {
     /**
      * Gets all users without deleted marker including pause entity. Trying firstly from Cache, if there is no Cache trying to get users from a database
      * @return List UserData
-     * @throws GetUsersUserDatabaseAccessFailureException
+     * @throws
      */
   //  List<UserDataDTO> findUsers_NotDeletedWithPause();
 
@@ -66,26 +68,28 @@ System.out.println("found users in redis");
 }
 */
 
-    List<UserDataDTO> findAllUsers(boolean deleted, boolean withPause);
+    List<UserDataDTO> findAllUsers(boolean active, boolean withPause);
 
     /**
      * Adds user to database and to Cache
      *
      * @param userToAdd player's username
      * @return player's UserData object
-     * @throws AddUserUserDatabaseAccessFailureException
+     * @throws
      */
-    UserDataDTO addUser(String userToAdd) ;
+    UserDataDTO addUser(SignUpForm userToAdd) ;
 
     UserData getPauseObject();
 
-    UserData getUserById(Integer userId);
+    UserData getUserById(Long userId);
     // UserData findUserById(String pauza);
 
 
     //UserDataDTO findUserById(Integer i);
 
     UserData getUserDataByUsername(String username);
+
+    UserData changeUserLeagueParticipation(Long userId, LeagueParticipation leagueParticipation);
     //to sie nigdy nie wykonuje bo zawsze dodawany jest tylko jeden gracz na raz
  /*  List< UserData> AddUsers(List<String> usersToAdd)throws AddUsersUserDatabaseAccessFailureException;*/
 

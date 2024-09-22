@@ -270,10 +270,12 @@ return tempRound;
 
              }
              System.out.println(changed);
-             if(changed==true)
+             if(changed)
              {
                  System.out.println("changed=true try save");
                  matchDAO.save(tempMatch);
+
+
                  System.out.println("saved");
              }
 
@@ -300,8 +302,9 @@ return tempRound;
          System.out.println("saved");
 
          redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(schedule.getId(), schedule.getName()));
+         ScheduleDTO updatedSchedule=   redisScheduleService.setSchedule(scheduleService.getSchedule_ById(schedule.getId()));
+ redisTableService.setTable(tableService.createTable(updatedSchedule));
 
-         redisScheduleService.setSchedule(scheduleService.getSchedule_ById(schedule.getId()));
 
 
 

@@ -53,7 +53,7 @@ public class UserData  implements Serializable{
     //(strategy = GenerationType.IDENTITY, generator = "native")
     @Id
     @Column(name = "user_id",  nullable = false, insertable = true, updatable = false)
-    private Integer userId=null;
+    private Long userId=null;
  /*   @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -75,16 +75,22 @@ private Match meczUser;*/
 */
 // @Column(name = "DELETED",columnDefinition = "TINYINT")
     //prod \/
-   @Column(name = "DELETED",columnDefinition = "BIT")
-   private boolean deleted ;//= false;
 
+    @Enumerated(EnumType.ORDINAL)
+     @Column(name = "role",columnDefinition = "TINYINT")
+  /* @Column(name = "active",columnDefinition = "BIT")*/
+   private Role role;//= false;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "password")
+    private String password;
     // getters and setters
-public boolean getDeleted()
+public Role getRole()
 {
-    return  this.deleted;
+    return  this.role;
 }
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
 
@@ -103,6 +109,17 @@ private long reliability;
     @Transient
     private String userImage;
 
+    public LeagueParticipation getLeagueParticipation() {
+        return leagueParticipation;
+    }
+
+    public void setLeagueParticipation(LeagueParticipation leagueParticipation) {
+        this.leagueParticipation = leagueParticipation;
+    }
+
+    @Column(name="league_participation", columnDefinition = "TINYINT")
+    @Enumerated(EnumType.ORDINAL)
+private LeagueParticipation leagueParticipation;
 
     public UserData getOpponentUser() {
         return opponentUser;
@@ -154,13 +171,16 @@ private List<Team> teamlist= new ArrayList();
         this.teamlist.add(team);
     }*/
 
-    public UserData(String username, Integer userId, String countryShortname, String userImage, List<Team> teamlist) {
+
+
+    public UserData(String username, Long userId, String countryShortname, String userImage, List<Team> teamlist, String email,String password) {
         this.username = username;
         this.userId = userId;
         this.countryShortname = countryShortname;
         this.userImage = userImage;
         this.teamlist = teamlist;
-
+this.email=email;
+this.password=password;
 
     }
 
@@ -175,7 +195,7 @@ private List<Team> teamlist= new ArrayList();
         this.username = username;
     }
 
-    public void setUserId(Integer setUserId) {
+    public void setUserId(Long setUserId) {
         this.userId = setUserId;
     }
 
@@ -192,7 +212,7 @@ private List<Team> teamlist= new ArrayList();
     }
 
     @XmlAttribute
-    public Integer getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
@@ -223,5 +243,30 @@ private List<Team> teamlist= new ArrayList();
                 ", userImage='" + userImage + '\'' +
                 ", teamlist=" + teamlist +
                 '}';
+    }
+
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public long getReliability() {
+        return reliability;
+    }
+
+    public void setReliability(long reliability) {
+        this.reliability = reliability;
     }
 }

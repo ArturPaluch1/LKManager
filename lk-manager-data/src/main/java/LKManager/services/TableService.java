@@ -11,4 +11,6 @@ public interface TableService {
 
     @Transactional
     Table createSwissScheduleTable(ScheduleDTO chosenschedule);
+
+    Table getTable(String chosenscheduleName);
 }

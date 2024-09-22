@@ -337,7 +337,7 @@ Cookie tempCookie= createNewCookie("chosenSchedule",cookie);
 
     private static Cookie createCookieFromTheLastSchedule(HttpServletResponse response, ScheduleDAO scheduleDAO) throws UnsupportedEncodingException {
     //   String wybranyTerminarz=null;
-        Schedule schedule = scheduleDAO.findLastById();
+        Schedule schedule = scheduleDAO.findLastOngoingOrFinishedById();
 
         Cookie tempCookie = null;
         if (schedule != null) {

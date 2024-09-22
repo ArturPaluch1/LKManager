@@ -30,7 +30,7 @@ private final TableService tableService;
 
         this.task = new TimerTask() {
 
-            @Override
+
             public void run() {
                 System.out.println("Update round matches task performed on: " + new Date()  + "\n" +"Thread's name: " + Thread.currentThread().getName());
 

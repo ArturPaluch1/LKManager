@@ -1,18 +1,19 @@
 package LKManager.DAO_SQL;
 
+import LKManager.model.UserMZ.Role;
 import LKManager.model.UserMZ.Team;
 import LKManager.model.UserMZ.UserData;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
@@ -23,10 +24,14 @@ public class CustomUserDAOImpl implements CustomUserDAO {
 
     @Autowired
     SessionFactory sessionFactory;
+
+    @PersistenceContext
+    private EntityManager entityManager;
    /* @Autowired
     MZCache mzCache;*/
-    @Autowired
-private final EntityManager entityManager;
+
+/*    @Autowired
+private final EntityManager entityManager;*/
 
     //  @Override
 
@@ -98,7 +103,7 @@ private final EntityManager entityManager;
    // List<UserData> gracze= new ArrayList<>();
 
         System.out.println("all user from  db");
-
+//todo to chyba nieużywane, isDeleted jest przestarzałe, najpierw było activated a teraz zamienione na role
         List<UserData> allQuery =null;
         Session s = sessionFactory.openSession();
         try {
@@ -189,28 +194,32 @@ if(user.getTeamlist().size()>1)
 
         System.out.println("+++"+user.getTeamlist().get(0).getUser());
 
-        Session s = sessionFactory.openSession();
-        Transaction tx = null;
+      //  Session s = sessionFactory.getCurrentSession();
+     //   Transaction tx = null;
         try{
-         tx=   s.beginTransaction();
-          s.saveOrUpdate(user);
-           tx.commit();
-
+      //   tx=  s.beginTransaction();
+       //   s.saveOrUpdate(user);
+      //     tx.commit();
+      Object u=      entityManager.merge(user);
+            int i=0;
+//sessionFactory.getCurrentSession().saveOrUpdate(user);
         }
         catch (Exception e)
         {
-            if (tx!=null) tx.rollback();
+         //   if (tx!=null) tx.rollback();
                e.printStackTrace();
             int i=0;
             System.out.println("db user error");
         }
+finally {
+       //     s.close();
+            //entityManager.persist(user);
+
+            return user;
+        }
 
 
 
-        s.close();
-      //entityManager.persist(user);
-
-        return user;
     }
 
 
@@ -275,7 +284,7 @@ s.getTransaction().commit();
 /**********************************/
 
             UserData userToDelete= s.get(UserData.class, id.intValue());
- userToDelete.setDeleted(true);
+ userToDelete.setRole(Role.DEACTIVATED_USER);
 
 /*******************************
 *       i potem usunąć Usera

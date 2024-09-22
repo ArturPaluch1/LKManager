@@ -3,6 +3,7 @@ package LKManager.services;
 import LKManager.LK.PlayerSummary;
 import LKManager.model.RecordsAndDTO.MatchDTO;
 import LKManager.model.RecordsAndDTO.ScheduleDTO;
+import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
 import LKManager.model.Table;
 import LKManager.services.Comparators.GraczPodsumowanieComparatorGoalDifference;
@@ -30,6 +31,32 @@ private final RedisTableService redisTableService;
 
     public TableServiceImpl(RedisTableService redisTableService) {
         this.redisTableService = redisTableService;
+    }
+
+
+    @Override
+    public Table getTable(String chosenscheduleName) {
+      Table  table= redisTableService.getTable(chosenscheduleName);
+        if (table==null)
+        {
+
+                //todo zrobić wyjątek jeśli nie ma terminarza o danej nazwie
+                List<ScheduleNameDTO> scheduleNameDTOList = scheduleService.getScheduleNamesOngoingOrFinished();
+                String finalChosenscheduleName = chosenscheduleName;
+               ScheduleNameDTO scheduleName =scheduleNameDTOList.stream().filter(s-> s.getName().equals(finalChosenscheduleName)).findFirst().orElse(null);
+           if(scheduleName== null )return null;//todo info ze nie ma takiego schedule
+           else
+            table= this.createTable( scheduleName.getId());
+
+              return  redisTableService.setTable(table);
+
+
+        }
+        else
+        {
+            return table;
+        }
+
     }
 
     @Override

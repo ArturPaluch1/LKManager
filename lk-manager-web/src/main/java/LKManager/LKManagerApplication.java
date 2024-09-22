@@ -2,14 +2,11 @@ package LKManager;
 
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.DAO_SQL.UserDAO;
-import LKManager.TimerTasks.RefreshSiteTimer;
-import LKManager.TimerTasks.RoundMatchesUpdateTimer;
-import LKManager.TimerTasks.RoundResultsUpdateTimer;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
-import LKManager.services.*;
 import LKManager.services.RedisService.RedisScheduleService;
 import LKManager.services.RedisService.RedisTableService;
 import LKManager.services.RedisService.RedisUserService;
+import LKManager.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
@@ -119,15 +116,16 @@ private final RoundService roundService;
 			}
 		};
 */
-		RefreshSiteTimer refreshSiteTimer= new RefreshSiteTimer();
+	/*	RefreshSiteTimer refreshSiteTimer= new RefreshSiteTimer();
 		refreshSiteTimer.schedule(refreshSiteTimer.getTask(),0,750000 );//by~12 minutes
+*/
+	//	RoundResultsUpdateTimer roundResultsUpdateTimer = new RoundResultsUpdateTimer(resultsService);
+	//	roundResultsUpdateTimer.schedule(roundResultsUpdateTimer.getTask(),0, 60 * 60 * 1000);//by a hour
+	//	roundResultsUpdateTimer.schedule(roundResultsUpdateTimer.getTask(),0, 60 *1000);
 
-		RoundResultsUpdateTimer roundResultsUpdateTimer = new RoundResultsUpdateTimer(resultsService);
-		roundResultsUpdateTimer.schedule(roundResultsUpdateTimer.getTask(),0, 60 * 60 * 1000);//by a hour
-
-		RoundMatchesUpdateTimer roundMatchesUpdateTimer= new RoundMatchesUpdateTimer(scheduleService,roundService,redisTableService,tableService,redisScheduleService);
+		/*RoundMatchesUpdateTimer roundMatchesUpdateTimer= new RoundMatchesUpdateTimer(scheduleService,roundService,redisTableService,tableService,redisScheduleService);
 		roundMatchesUpdateTimer.schedule(roundMatchesUpdateTimer.getTask(),0,60 * 60 * 1000);
-		//	timer.schedule(task,0,750000);
+	*/	//	timer.schedule(task,0,750000);
 		// \/ 12,5 minut
 	//	timer.schedule(task, 0, 750000);
 		//timer.schedule(task, Date.from(now.plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant()) );
@@ -170,16 +168,16 @@ private final RoundService roundService;
 	ApplicationRunner applicationRunner(Environment environment) {
 
 		return args -> {
-			List<UserDataDTO> usersNotDeletedWithPause=	userService.findAllUsers(false,true);//findUsers_NotDeletedWithPause();
-			List<UserDataDTO> usersNotDeletedWithoutPause=	userService.findAllUsers(false,false);//findUsers_NotDeletedWithoutPause();
+			List<UserDataDTO> usersActiveWithPause=	userService.findAllUsers(true,true);//findUsers_NotDeletedWithPause();
+			List<UserDataDTO> usersActiveWithoutPause=	userService.findAllUsers(true,false);//findUsers_NotDeletedWithoutPause();
 
-			List<UserDataDTO> usersDeletedWithPause=	userService.findAllUsers(true,true);//findUsers_NotDeletedWithPause();
-			List<UserDataDTO> usersDeletedWithoutPause=	userService.findAllUsers(true,false);
+		//	List<UserDataDTO> usersDeactivatedWithPause=	userService.findAllUsers(false,true);//findUsers_NotDeletedWithPause();
+		//	List<UserDataDTO> usersDeactivatedWithoutPause=	userService.findAllUsers(false,false);
 
 
 
-			System.out.println(	"\nusersNotDeletedWithPause\n"+ usersNotDeletedWithPause);
-			System.out.println("\n usersNotDeletedWithoutPause\n"	+ usersNotDeletedWithoutPause);
+			System.out.println(	"\nusersNotDeletedWithPause\n"+ usersActiveWithPause);
+			System.out.println("\n usersNotDeletedWithoutPause\n"	+ usersActiveWithoutPause);
 			/*
 			List<UserData> users=	userService.findUsers_NotDeletedWithPause();
 
