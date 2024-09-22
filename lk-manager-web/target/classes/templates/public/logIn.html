@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pl"
+
+      xmlns:th="http://www.w3.org/1999/xhtml">
+
+<!--      th:replace="~{public/fragments/layout :: layout (~{::body},'home')}"-->
+<!--xmlns:th="http://www.thymeleaf.org" >-->
+<head>
+    <meta charset="UTF-8">
+    <title>Log in</title>
+
+
+</head>
+<body>
+<div class="radial-gradient-bg">
+
+
+    <div th:replace="~{public/fragments/layout :: layout (template, menu)}"></div>
+    <div>
+        <form th:object="${logInForm}" method="post" th:action="@{/public/logIn}">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <div th:if="${errorMessage}">
+                <p style="color: red;" th:text="${errorMessage}"></p>
+            </div>
+            <label> Username: </label> <input th:field="*{username}">
+            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span><br>
+            <label> Password: </label> <input th:field="*{password}" type="password">
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span><br>
+
+            <button type="submit">Zaloguj</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

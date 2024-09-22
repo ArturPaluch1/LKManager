@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en"  xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body class="light">
+<div th:replace="~{public/navbar}"/>
+
+
+
+
+<!--
+<form th:object="${users}"  id="userForm" th:action="@{/admin/LK/users/deleteUser}"  method="post">
+
+-->
+
+<form th:object="${users}" th:action="@{/admin/LK/users/addUser}" method="post">
+
+
+    <input type ="text" name="chosenUser" />
+    <button type="submit" class="btn btn-primary" >Dodaj</button>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+
+    <br>
+
+</form>
+<form th:object="${users}" th:action="@{/admin/LK/users/deleteUser}" method="post">
+
+    <br>
+    <input type ="text" name="chosenUser" />
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+    <button type="submit" class="btn btn-primary"  >Usuń</button>
+
+<!--
+    <input type ="text" name="chosenUser" />
+
+
+
+    <button type="submit" class="btn btn-primary" formaction="/admin/LK/users/addUser">Dodaj</button>
+-->
+
+    <br>
+
+
+
+
+ <!--   <br>
+    <button type="submit" class="btn btn-primary"  >Usuń</button>
+
+    <input type ="text" name="chosenUser" />
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+
+    <button type="submit" class="btn btn-primary"  onclick="submitForm('@{/admin/LK/users/addUser}')" >Dodaj</button>
+    <script>
+function submitForm(action) {
+    let form = document.getElementById('userForm');
+    form.th:action = action;
+    form.submit();
+}
+</script>
+    <br>
+
+-->
+
+    <br>
+    <div class="table-responsive" th:if="${not #lists.isEmpty(users)}">
+        <table class="table table-hover">
+            <thead class="thead-inverse">
+           <th ></th>
+            <th >Gracz:</th>
+            <th >Drużyna:</th>
+
+            </thead>
+
+            <tbody>
+
+
+            <tr  th:each="user : ${users}">
+
+                    <td>
+                        <input type="checkbox" name="chosenUsers" th:value="${user.getUsername()}"/>
+                    </td>
+
+                    <td>
+                        <label th:text="${user.getUsername()}"></label>
+                    </td>
+                    <td>
+                        <label th:text="${user.getTeamName()}"></label>
+                    </td>
+
+</tr>
+            </tbody>
+
+
+
+        </table>
+
+
+    </div>
+</form>
+
+
+
+
+
+
+
+</body>
+</html>
+

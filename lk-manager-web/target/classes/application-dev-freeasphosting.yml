@@ -1,0 +1,81 @@
+
+
+
+spring:
+  # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
+  redis:
+    url: ${redisLocalhost_Url}
+    # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
+
+# SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
+      
+
+  mail:
+    host: smtp.office365.com
+    #host: smtp.interia.pl
+    port: 587
+    username: ${email-email}
+    password: ${email-password}
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
+  config:
+    import: optional:file:.env[.properties]
+  spring.jpa.show-sql: true
+
+  datasource:
+
+
+
+    url: jdbc:sqlserver://sql.bsite.net\MSSQL2016;encrypt=true;trustServerCertificate=true;
+
+    databaseName: ${databaseName-freeasphostingDEV}
+    username: ${dbUsername-freeasphostingDEV}
+    password: ${dbPassword-freeasphostingDEV}
+
+
+ #   url: jdbc:sqlserver://localhost\SQLEXPRESS;encrypt=true;trustServerCertificate=true;
+  #  databaseName: ${databaseName-freeasphosting}
+  #  username: ${dbUsername-freeasphosting}
+  #  password: ${dbPassword-freeasphosting}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    database: sql_server
+    show-sql: true
+    logging.level.org.hibernate.SQL : DEBUG
+    logging.level.org.springframework.web: DEBUG
+    #jpa:
+    # hibernate:
+    #   ddl-auto: validate
+    #  database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    #  database: mysql
+    # show-sql: true
+    #  logging.level.org.hibernate.SQL : DEBUG
+    #  logging.level.org.springframework.web: DEBUG
+
+
+
+
+
+    #org:
+    # hibernate:
+    #  dialect:
+    #   MySQLDialect:
+# SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
+
+
+
+
+
+

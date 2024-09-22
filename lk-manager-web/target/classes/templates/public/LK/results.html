@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pl"
+
+
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<!--th:replace="~{public/fragments/layout_public :: layout (~{::body},'home')}"-->
+<head>
+    <meta charset="UTF-8">
+
+
+
+</head>
+<body class="light">
+<div th:replace="~{public/navbar}"/>
+
+<div id="wyniki" >
+
+
+    <div style="float: right;">
+        <form th:action="@{/public/LK/results/changeSchedule}" method="get" >
+            <select  th:name="chosenSchedule"  onchange="this.form.submit()" >
+                <option value="" selected>--Wybierz terminarz--</option>
+                <option th:each="schedule : ${schedules}" th:value="${schedule.getName()}" th:text="${schedule.getName()}" />
+
+            </select>
+        </form>
+        <div>
+            <label>Wybrany terminarz: </label>
+            <label th:text="${chosenSchedule.getName()}"></label>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<div style="float: center;">
+
+    <div>
+        <table class="table table-striped" align="center" >
+            <thead>
+            <tr>
+
+                <th style="width: 150px">Runda </th>
+                <th style="width: 150px">Data </th>
+
+
+            </tr>
+
+
+
+            <tr>
+            </thead>
+            <tbody align="center">
+         <tr th:each="match : ${round}">
+                <td  id="round" th:text="${match.getNr()}" style="width: 150px"></td>
+             <td  id="matchDate" th:text="${match.getDate()}"style="width: 150px"></td>
+                <td>
+                    <form th:action="@{/public/LK/getRoundResults}" method="get">
+                        <select    class="form-control" id="dropDownList"  th:name="round" onchange="this.form.submit()" onsubmit="myFunction1()">
+                            <option selected>Zmień rundę</option>
+<!--                            <option  th:each="nr : ${roundNumbers}" th:value="${nr.getNr()}" th:text="round+' '+${nr.getNr()}  " ></option>-->
+                          <option  th:each="nr : ${chosenSchedule.getRounds()}" th:value="${nr.getNr()}" th:text="Runda+' '+${nr.getNr()}+' '+data+': '+${nr.getDate()}  " ></option>
+                        </select>
+                        <input hidden   th:name="chosenSchedule" th:value="${chosenSchedule.getName()}"></input>
+
+                    </form>
+
+
+                </td>
+                <td>
+                    <button id="bob"  onclick="copy()">Skopiuj</button>
+
+                </td>
+
+
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <div id="table" class="mycontainer"  align="center" >
+
+
+
+
+
+        <table  class="table table-striped"  border="1">
+            <thead align="justify" >
+            <tr id="naglowek" >
+
+
+                <th style="width: 200px" class="text-center">Drużyna 1 </th>
+                <th style="width: 150px" class="text-center">Gracz 1</th>
+                <th style="width: 25px"  class="text-right">  </th>
+                <th style="width: 5px"  class="text-center"> m1 </th>
+                <th style="width: 25px"  class="text-left">  </th>
+                <th style="width: 10px"  class="text-center">  </th>
+                <th style="width: 25px"  class="text-right">  </th>
+                <th style="width: 5px"  class="text-center"> m2 </th>
+                <th style="width: 25px"  class="text-left">  </th>
+                <th style="width: 200px" class="text-center">Gracz 2</th>
+                <th style="width: 150px" class="text-center">Drużyna 2</th>
+            <tr>
+            </thead>
+
+
+
+            <tbody  id="table-content" align="center" >
+
+
+            <tr th:each="match : ${round.getMatches()}"   >
+
+        <!--        <div th:if="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName()() )}">
+
+                <td th:text="${match.getUserDataDTO().getTeamName()().get(0).getTeamName()}" >userTeam</td>
+                </div>-->
+
+
+                <div th:if="${not #lists.isEmpty(match?.getUserDataDTO()?.getTeamName() )}">
+                    <td th:text="${match .getUserDataDTO().getTeamName()}"  ></td>
+                </div>
+                <div th:unless="${not #lists.isEmpty(match?.getUserDataDTO()?.getTeamName() )}">
+                    <td text=" " ></td>
+                </div>
+
+
+                <td th:text="${match.getUserDataDTO().getUsername()}" >Gracz 1</td>
+
+                <td  style="width: 25px"  th:text="${match.getUserMatchResult1()}" align="right" >
+
+
+
+                </td>
+
+                <td  align="center">:</td>
+
+
+                <td style="width: 25px"   th:text="${match.getOpponentMatchResult1()} "align="left">wynik1</td>
+
+                <td  > </td>
+                <td style="width: 25px"  th:text="${match .getUserMatchResult2()}" align="right">wynik2</td>
+                <td  >:</td>
+                <td style="width: 25px"  th:text="${match .getOpponentMatchResult2()}" align="left">wynik2</td>
+
+                <td th:text="${match.getOpponentUserDataDTO().getUsername()}">1</td>
+
+
+                <div th:if="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName() )}">
+                <td th:text="${match .getOpponentUserDataDTO().getTeamName()}"  ></td>
+                </div>
+                <div th:unless="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName() )}">
+                    <td text=" " ></td>
+                </div>
+            </tr>
+            </tbody>
+
+
+        </table>
+
+
+
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!--
+
+
+<script th:inline="javascript">
+
+
+
+
+
+
+
+</script>
+-->
+
+
+
+
+
+
+<script type="text/javascript" th:src="@{/js/results.js}" ></script>
+
+
+
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+
+spring:
+  config:
+    import: optional:file:.env[.properties]
+
+  spring.jpa.show-sql: false
+  url: ${dbUrl}
+  username: ${dbUsername}
+  password:  ${dbPassword}
+
+
+
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+      #database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+      database-platform: org.hibernate.dialect.MySQL8Dialect
+    database: mysql
+    show-sql: false
+    logging.level.org.hibernate.SQL : DEBUG
+    logging.level.org.springframework.web: DEBUG
+    #org:
+    # hibernate:
+    #  dialect:
+    #   MySQLDialect:

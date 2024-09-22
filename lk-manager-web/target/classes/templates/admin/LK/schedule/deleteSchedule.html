@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.w3.org/1999/xhtml"
+
+>
+<!--th:replace="~{admin/fragments/layout :: layout (~{::body},'home')}"-->
+<!--xmlns:form="http://www.springframework.org/tags/form"-->
+<head>
+  <meta charset="UTF-8">
+  <title>Usuwanie terminarza</title>
+</head>
+<body class="light">
+<div th:replace="~{public/navbar}"></div>
+
+<div style="float: left;">
+  <label>Wybierz terminarz do usunięcia</label>
+
+  <form th:action="@{/admin/LK/schedule/schedule/deleteSchedule}" method="post" >
+    <div style="float: left;">
+      <button onclick="this.form.submit()">usun</button>
+    </div>
+
+   <div style="float: right;">
+     <select  th:name="chosenSchedule"  >
+       <option value="" selected>--Wybierz terminarz--</option>
+       <option th:each="schedule : ${schedules}" th:value="${schedule.getName()}" th:text="${schedule.getName()}"  />
+       <!--   th:selected="${schedule==75}"></option>-->
+     </select>
+   </div>
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+
+  </form>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
