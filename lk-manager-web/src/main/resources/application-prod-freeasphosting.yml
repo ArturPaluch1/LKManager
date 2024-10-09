@@ -29,7 +29,7 @@ spring:
 
   application:
     server: ${applicationServer}
-
+    email: ${email-email}
 
   datasource:
 

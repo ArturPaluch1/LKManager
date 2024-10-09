@@ -1,6 +1,5 @@
 package LKManager.services;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,19 +10,20 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 
-public class EmailService {
 
+public class EmailService {
 
     private final String applicationServer;
 
     private final JavaMailSender mailSender;
    private final AccountService accountService;
-    private static final Dotenv dotenv = Dotenv.load();
-
-    public EmailService( @Value("${spring.application.server}")String applicationServer, JavaMailSender mailSender, AccountService accountService) {
+   // private static final Dotenv dotenv = Dotenv.load();
+private final String email;
+    public EmailService(@Value("${spring.application.server}")String applicationServer, JavaMailSender mailSender, AccountService accountService, @Value("${spring.application.email}")String email) {
         this.applicationServer = applicationServer;
         this.mailSender = mailSender;
         this.accountService = accountService;
+        this.email = email;
     }
 
     public boolean sendActivationEmail(String to, String activationLink) {
@@ -33,7 +33,8 @@ public class EmailService {
         message.setTo(to);
 
       //  message.setFrom("MZ_Activation@hotmail.com");
-        message.setFrom(dotenv.get("email-email"));
+      //  message.setFrom(dotenv.get("email-email"));
+        message.setFrom(email);
         message.setSubject("Aktywacja konta TM");
         message.setText("Kliknij w poniższy link, aby aktywować swoje konto: " + activationLink);
         try {
