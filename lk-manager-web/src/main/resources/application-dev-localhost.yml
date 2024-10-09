@@ -1,3 +1,6 @@
+
+
+
 spring.mail.host: smtp.poczta.onet.pl
 spring.mail.port: 465 #465
 
@@ -29,7 +32,7 @@ spring:
 
 # SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
 
-
+  applicationServer: ${applicationServer}
 
 
 

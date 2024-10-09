@@ -1,7 +1,7 @@
 package LKManager.services;
 
 import io.github.cdimascio.dotenv.Dotenv;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -10,13 +10,21 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Service
-@AllArgsConstructor
+
 public class EmailService {
 
+
+    private final String applicationServer;
 
     private final JavaMailSender mailSender;
    private final AccountService accountService;
     private static final Dotenv dotenv = Dotenv.load();
+
+    public EmailService( @Value("${applicationServer}")String applicationServer, JavaMailSender mailSender, AccountService accountService) {
+        this.applicationServer = applicationServer;
+        this.mailSender = mailSender;
+        this.accountService = accountService;
+    }
 
     public boolean sendActivationEmail(String to, String activationLink) {
 
@@ -42,11 +50,14 @@ public class EmailService {
         String token = accountService.generateActivationToken(userId.toString());
 
 // Kodowanie wartości URL
-        String activationLink = "http://localhost:8080/confirmEmail?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8)
+    /*    String activationLink = "http://localhost:8080/confirmEmail?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8)
+                + "&email=" + URLEncoder.encode(email, StandardCharsets.UTF_8);
+*/
+        String activationLink = applicationServer+"/confirmEmail?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8)
                 + "&email=" + URLEncoder.encode(email, StandardCharsets.UTF_8);
 
-
-       return( this.sendActivationEmail( email, activationLink))==true?true:false;
+        boolean result= this.sendActivationEmail( email, activationLink);
+       return result;
     }
 
 }
