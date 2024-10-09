@@ -20,7 +20,7 @@ public class EmailService {
    private final AccountService accountService;
     private static final Dotenv dotenv = Dotenv.load();
 
-    public EmailService( @Value("${applicationServer}")String applicationServer, JavaMailSender mailSender, AccountService accountService) {
+    public EmailService( @Value("${spring.application.server}")String applicationServer, JavaMailSender mailSender, AccountService accountService) {
         this.applicationServer = applicationServer;
         this.mailSender = mailSender;
         this.accountService = accountService;
