@@ -23,10 +23,7 @@ import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 @SpringBootApplication
@@ -183,24 +180,7 @@ private final RoundDAO roundDAO;
 	@Bean
 	ApplicationRunner applicationRunner(Environment environment) throws NoSuchAlgorithmException {
 
-		// Generowanie klucza AES (256-bitowego)
-		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-		keyGen.init(256); // 128, 192, lub 256 bitów
-		SecretKey secretKey = keyGen.generateKey();
 
-		// Konwertowanie klucza do Base64, aby zapisać go jako tekst
-		String encodedKey = Base64.getEncoder().encodeToString(secretKey.getEncoded());
-
-		System.out.println("AES Secret Key: " + encodedKey);
-// Generowanie klucza AES (256-bitowego)
-		KeyGenerator keyGen2 = KeyGenerator.getInstance("AES");
-		keyGen2.init(256); // 128, 192, lub 256 bitów
-		SecretKey secretKey2 = keyGen2.generateKey();
-
-		// Konwertowanie klucza do Base64, aby zapisać go jako tekst
-		String encodedKey2 = Base64.getEncoder().encodeToString(secretKey2.getEncoded());
-
-		System.out.println("AES Secret Key: " + encodedKey2);
 
 
 		return args -> {
