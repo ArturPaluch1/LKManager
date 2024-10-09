@@ -1,8 +1,10 @@
 package LKManager.DAO_SQL;
 
-import LKManager.model.UserMZ.Role;
+import LKManager.model.RecordsAndDTO.UserMzDTO;
+import LKManager.model.account.User;
+import LKManager.model.UserMZ.MZUserData;
+import LKManager.model.account.Role;
 import LKManager.model.UserMZ.Team;
-import LKManager.model.UserMZ.UserData;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
@@ -77,7 +79,7 @@ private final EntityManager entityManager;*/
     }*/
 
     @Transactional
-    private List<UserData> findAll(boolean isDeleted) {
+    private List<MZUserData> findAll(boolean isDeleted) {
 
 
     //   Team team = new Team();
@@ -104,7 +106,7 @@ private final EntityManager entityManager;*/
 
         System.out.println("all user from  db");
 //todo to chyba nieużywane, isDeleted jest przestarzałe, najpierw było activated a teraz zamienione na role
-        List<UserData> allQuery =null;
+        List<MZUserData> allQuery =null;
         Session s = sessionFactory.openSession();
         try {
 
@@ -147,18 +149,18 @@ private final EntityManager entityManager;*/
 
   //  @Override
     @Transactional
-    public UserData findByTeamId(int id)// throws IOException, ParserConfigurationException, SAXException, JAXBException
+    public MZUserData findMZUserByTeamId(int id)// throws IOException, ParserConfigurationException, SAXException, JAXBException
     {
        Session s= sessionFactory.openSession();
         Team team = new Team();
-        UserData user= null;
+        MZUserData user= null;
        try{
      /*      s.beginTransaction();
             team= s.get(Team.class,id);
 
            s.getTransaction().commit();
         */
-        user=   s.get(UserData.class, team.getUser().getUserId());
+        user=   s.get(MZUserData.class, team.getUser().getMZuser_id());
            s.getTransaction().commit();
        }
        catch (Exception e)
@@ -178,12 +180,12 @@ private final EntityManager entityManager;*/
 
   @Override
     @Transactional
-    public UserData saveUser(UserData user) {
+    public User saveUser(User user) {
 
 
 
-user.getTeamlist().get(0).setUser(user);
-//user.getTeamlist().get(1).setUser(user);
+/*user.getTeamlist().get(0).setUser(user);
+
         //usuwanie hokeja
 if(user.getTeamlist().size()>1)
     user.getTeamlist().remove(1);
@@ -194,19 +196,15 @@ if(user.getTeamlist().size()>1)
 
         System.out.println("+++"+user.getTeamlist().get(0).getUser());
 
-      //  Session s = sessionFactory.getCurrentSession();
-     //   Transaction tx = null;
+
         try{
-      //   tx=  s.beginTransaction();
-       //   s.saveOrUpdate(user);
-      //     tx.commit();
-      Object u=      entityManager.merge(user);
-            int i=0;
-//sessionFactory.getCurrentSession().saveOrUpdate(user);
+
+        entityManager.merge(user);
+
+
         }
         catch (Exception e)
         {
-         //   if (tx!=null) tx.rollback();
                e.printStackTrace();
             int i=0;
             System.out.println("db user error");
@@ -218,21 +216,34 @@ finally {
             return user;
         }
 
+*/
+
+          entityManager.persist(user);
+
+
+
+
+
+          return user;
 
 
     }
 
-
+    @Override
+    public UserMzDTO saveMZUser(MZUserData mzUser) {
+       MZUserData result= entityManager.merge(mzUser);
+        return new UserMzDTO(result.getMZuser_id(),result.getUsername(),result.getTeamlist().get(0).getTeamId(),result.getTeamlist().get(0).getTeamName());
+    }
 
     @Override
-    public void delete(UserData object) {
+    public void deleteUser(User object) {
 
 
 //var t=findByTeamId(object.getTeamlist().get(0).getTeamId());
 
 
 
-    deleteUser(object.getUserId().longValue());
+    deleteUser(object.getId().longValue());
 
     }
 
@@ -240,7 +251,7 @@ finally {
 
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteUserById(Long id) {
   //      Integer id1=1;
         deleteUser(id);
     }
@@ -283,7 +294,7 @@ s.getTransaction().commit();
 */
 /**********************************/
 
-            UserData userToDelete= s.get(UserData.class, id.intValue());
+            User userToDelete= s.get(User.class, id.intValue());
  userToDelete.setRole(Role.DEACTIVATED_USER);
 
 /*******************************

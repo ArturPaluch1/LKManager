@@ -10,33 +10,44 @@
   <meta charset="UTF-8">
   <title>Usuwanie terminarza</title>
 </head>
+
 <body class="light">
 <div th:replace="~{public/navbar}"></div>
+<br>
+<div class="container">
 
-<div style="float: left;">
-  <label>Wybierz terminarz do usunięcia</label>
-
-  <form th:action="@{/admin/LK/schedule/schedule/deleteSchedule}" method="post" >
-    <div style="float: left;">
-      <button onclick="this.form.submit()">usun</button>
-    </div>
-
-   <div style="float: right;">
-     <select  th:name="chosenSchedule"  >
-       <option value="" selected>--Wybierz terminarz--</option>
-       <option th:each="schedule : ${schedules}" th:value="${schedule.getName()}" th:text="${schedule.getName()}"  />
-       <!--   th:selected="${schedule==75}"></option>-->
-     </select>
-   </div>
-    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
-
-  </form>
-
-
+    <div class="row  justify-content-between">
+        <form th:action="@{/admin/LK/schedule/schedule/deleteSchedule}" method="post" >
+            <div class="row  justify-content-between">
+<div class="col-1 w-25">
+    <label  class="form-label m-1 fw-bold">Wybierz terminarz do usunięcia</label>
+    <select  th:name="chosenSchedule"  >
+        <option value="" selected>--Wybierz terminarz--</option>
+        <option th:each="schedule : ${schedules}" th:value="${schedule.getName()}" th:text="${schedule.getName()}"  />
+        <!--   th:selected="${schedule==75}"></option>-->
+    </select>
 </div>
 
 
+
+<div class="col-4 w-75  ">
+    <button class="btn btn-primary m-1 w-25 align-baseline" onclick="this.form.submit()">Usuń</button>
+</div>
+
+
+
+
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+            </div>
+            <br>
+
+
+
+        </form>
+
+</div>
+</div>
 
 
 

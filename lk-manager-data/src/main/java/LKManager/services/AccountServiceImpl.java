@@ -1,6 +1,6 @@
 package LKManager.services;
 
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.model.account.SignUpForm;
 import LKManager.services.RedisService.RedisUserService;
 import lombok.Data;
@@ -16,8 +16,8 @@ public class AccountServiceImpl implements AccountService{
    private final PasswordEncoder passwordEncoder;
 private final RedisUserService redisUserService;
     @Override
-    public UserData createAccount(SignUpForm signUpForm) {
-        UserData user = userService.getUserDataByUsername(signUpForm.getUsername());
+    public MZUserData createAccount(SignUpForm signUpForm) {
+        MZUserData user = userService.getMZUserDataByUsername(signUpForm.getUsername());
         if (user == null) {
 
             userService.addUser(signUpForm);

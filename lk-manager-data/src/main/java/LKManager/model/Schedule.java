@@ -1,6 +1,7 @@
 package LKManager.model;
 
 import LKManager.model.MatchesMz.MatchTeam;
+import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.RecordsAndDTO.ScheduleType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +25,9 @@ import java.util.List;
 @XmlRootElement(name = "terminarz")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @XmlSeeAlso({Round.class, MatchTeam.class})
-public class Schedule implements Serializable {
+public class Schedule implements Serializable  {
+
+
 
 
     @Id
@@ -45,6 +48,9 @@ private ScheduleStatus scheduleStatus;
 
     @Column(name = "dataStartu")
 private LocalDate startDate;
+    @Column(name = "dataKonca")
+    private LocalDate endDate;
+
     //  @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     //@Fetch(FetchMode.JOIN)
 
@@ -80,6 +86,16 @@ private LocalDate startDate;
         this.name=scheduleName;
 
     }
+
+    public Schedule(List<Round> rounds, String scheduleName,LocalDate startDate,LocalDate endDate, ScheduleType scheduleType,  ScheduleStatus status ) {
+        this.rounds=rounds;
+        this.startDate=startDate;
+        this.scheduleStatus=status;
+        this.scheduleType=scheduleType;
+        this.name=scheduleName;
+        this.endDate=endDate;
+    }
+
     //  @XmlElementWrapper(name="terminarz")
     @XmlElement(name = "Runda")
     public List<Round> getRounds() {
@@ -98,5 +114,10 @@ private LocalDate startDate;
     @XmlAttribute(name = "nazwa")
     public String getName() {
         return name;
+    }
+
+
+    public int compareTo(ScheduleNameDTO o) {
+        return this.name.compareTo(o.getName());
     }
 }

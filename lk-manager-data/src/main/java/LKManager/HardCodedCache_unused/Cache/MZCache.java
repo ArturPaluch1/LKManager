@@ -7,7 +7,7 @@ import LKManager.model.MatchesMz.Match;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
 import LKManager.model.Table;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +28,7 @@ public class MZCache {
   //  private final ScheduleDAO customScheduleDAOimpl;
     private final ScheduleDAO scheduleDAO;
     private Table table;
-    private List<UserData> users;
+    private List<MZUserData> users;
   //  private Schedule lastSchedule;
     private List<Schedule> schedules;
     private List<Match> matches;
@@ -126,14 +126,14 @@ public class MZCache {
         this.schedules.add(schedule);
     }
 
-    public void addUser(UserData user) {
+    public void addUser(MZUserData user) {
 
         this.users.add(user);
     }
 //setters
 
 
-    public void setUsers(List<UserData> users) {
+    public void setUsers(List<MZUserData> users) {
         this.users = users;
     }
 

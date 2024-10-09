@@ -48,7 +48,7 @@
       <!-- JavaScript Bundle with Popper -->
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
       <!--  <link rel="stylesheet" th:href="@{/css/mystyle.css}" />-->
-
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
       <link rel="stylesheet"  th:href="@{/css/mystyle.css}" />
 
@@ -86,39 +86,32 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="nav navbar-nav navbar-left    " >
-                      <!--  <ul class="navbar-nav ml-auto"       >-->
-                            <li th:fragment="menuItem (path,active,title,glyph,text)" class="active" th:class="${active==menu ? 'active' : ''}"  >
-                                <a th:href="@{__${path}__}" th:title="${title}">
-                                    <span th:class="'glyphicon  glyphicon-'+${glyph}" class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                                    <span th:text="${text}" >Template</span>
+                            <li th:replace="public/fragments/menuitem ::menuItem ('/public/index','home','home','fa-house','')"  ></li>
 
-                                </a>
 
-                            </li>
-
-                            <li th:replace="::menuItem ('/public/LK/table','table','table','','Tabela')"  >
+                            <li th:replace="public/fragments/menuitem::menuItem ('/public/LK/table','table','table','','Tabela')"  >
                              <!--   <span class="glyphicon glyphicon-th-list" aria-hidden="true" ></span>
                                 <span></span>-->
                             </li>
 
                             <li
-                                    th:replace="::menuItem ('/admin/LK/schedule/schedule','schedule','schedule','','Terminarz') "
+                                    th:replace="public/fragments/menuitem::menuItem ('/admin/LK/schedule/schedule','schedule','schedule','','Terminarz') "
                             >
                              <span  class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                             <span></span>
 
                             </li>
-                            <li th:replace="::menuItem ('/admin/LK/results','results','results','','Wyniki')">
+                            <li th:replace="public/fragments/menuitem::menuItem ('/admin/LK/results','results','results','','Wyniki')">
                                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                                 <span></span>
                             </li>
-                            <li th:replace="::menuItem ('/admin/temp','temp','temp','','temp')">
+                            <li th:replace="public/fragments/menuitem::menuItem ('/admin/temp','temp','temp','','temp')">
                                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                                 <span>temp</span>
                             </li>
 
                             <li
-                                    th:replace="::menuItem ('/admin/LK/users','users','users','','gracze') "
+                                    th:replace="public/fragments/menuitem::menuItem ('/admin/LK/users','users','users','','gracze') "
                             >
 
                        <!--     <li th:replace="::menuItem ('','logIn','logIn','','wyloguj się') "
@@ -126,20 +119,7 @@
 
                                 <!--                                    th:replace="::menuItem ('/logout','logIn','logIn','','wyloguj się') "
                                                             hidden="true"> -->
-                                <li>
-                            <form id="logoutForm" th:action="@{/logout}" method="post">
-                            </form>
 
-                            <a href="#" th:title="logIn" id="submitLink" onclick="logout()">
-                                <span  class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-                                <span  >Wyloguj</span>
-
-
-                                 <!--   <button type="submit">Wyloguj się</button>-->
-
-                            </a>
-
-                            </li>
                         <!--    <li
                                 th:replace="::menuItem ('/public/signUp','signUp','signUp','','załóż konto') "
                             > </li>-->
@@ -148,8 +128,22 @@
 <!--                                <span>Error</span>-->
 <!--                            </li>-->
                             <li
-                                    th:replace="::menuItem ('/user/settings','userSettings','userSettings','','Ustawienia konta') "
+                                    th:replace="public/fragments/menuitem::menuItem ('/user/settings','userSettings','userSettings','fa-gear',' Ustawienia konta') "
                             > </li>
+                            <li>
+                                <form id="logoutForm" th:action="@{/logout}" method="post">
+                                </form>
+
+                                <a href="#" th:title="logIn" id="submitLink" onclick="logout()">
+
+                                    <span  >Wyloguj</span>
+
+
+                                    <!--   <button type="submit">Wyloguj się</button>-->
+
+                                </a>
+
+                            </li>
                         </ul>
                     </div>
 
@@ -159,6 +153,7 @@
 
 
             </nav>
+    <br>
 </div>
 </div>
 

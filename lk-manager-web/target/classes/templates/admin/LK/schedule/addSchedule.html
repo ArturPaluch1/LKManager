@@ -57,20 +57,20 @@
             <div class="p-3 mb-2 "style="float:left; margin-right: 5px;"   >
 
                 <br>
-                <label >Data rozpoczęcia:</label>
-                <label id="labelData"  ></label><br>
+                <label class="form-label m-1"  >Data rozpoczęcia:</label>
+                <label  class="form-label m-1" id="labelData"  ></label><br>
                 <input type ="text" id="inputData" class="notDisplay" th:field="*{date}" />
                 <br>
-                <label for="fname">Nazwa:</label><br>
+                <label  class="form-label m-1" for="fname">Nazwa:</label><br>
                 <input type="text" id="fname" name="fname" th:field="*{name}" ><br>
                 <br>
                 <div hidden="true" id="roundsNumber">
-                    <label for="roundsNumber" >Liczba rund:</label><br>
+                    <label  class="form-label m-1" for="roundsNumber" >Liczba rund:</label><br>
                     <input type="text"  name="roundsNumber" th:field="*{roundsNumber}" >
                 </div>
 
                 <br>
-                <button type="submit" class="btn btn-primary" >Utwórz terminarz</button>
+                <button type="submit"  class="btn btn-primary m-1"  >Utwórz terminarz</button>
                 <br>
 
                 <!--<input id="bob1"  name="schedule" th:value="${schedule.lista}">-->
@@ -83,13 +83,13 @@
 
             <div class="p-3 mb-2 "style="float:left; margin-left: 5px;">
                 <input type="radio" id="single" value="oneDaySchedule" name="rodzajTerminarza" checked onchange="scheduleChange(value)" th:field="*{scheduleType}" >
-                <label for="single">Terminarz jednodniowy</label>
+                <label  class="form-label m-1" for="single">Terminarz jednodniowy</label>
                 <br>
                 <input type="radio" id="multi" value="standardSchedule" name="rodzajTerminarza" onchange="scheduleChange(value)" th:field="*{scheduleType}">
-                <label for="multi">Terminarz wielodniowy</label>
+                <label  class="form-label m-1" for="multi">Terminarz wielodniowy</label>
                 <br>
                 <input type="radio" id="swiss" value="swissSchedule" name="rodzajTerminarza" onchange="scheduleChange(value)" th:field="*{scheduleType}">
-                <label for="multi">Terminarz w systemie szwajcarskim</label>
+                <label  class="form-label m-1" for="multi">Terminarz w systemie szwajcarskim</label>
                 <br>
 
 
@@ -100,21 +100,21 @@
 
                 <div   id="singleSchedule">
                     <br>        <br>
-                    <label onclick="add()" style="background-color: lightgray;border: 1px solid black; padding-top: 2px;padding-right: 2px; padding-bottom: 2px; padding-left: 2px;" >dodaj mecz</label>
-                    <label onclick="undo()" style="background-color: lightgray;border: 1px solid black;padding-top: 2px; padding-right: 2px; padding-bottom: 2px;padding-left: 2px;" >cofnij</label>
-                    <label onclick="clearAll()" style="background-color: lightgray;border: 1px solid black;padding-top: 2px; padding-right: 2px; padding-bottom: 2px;padding-left: 2px;" >wyczyść</label>
+                    <button onclick="add()"  class="btn btn-primary m-1"  >dodaj mecz</button>
+                    <button onclick="undo()"  class="btn btn-primary m-1" >cofnij</button>
+                    <button onclick="clearAll()"  class="btn btn-primary m-1" >wyczyść</button>
                     <br>        <br>
                     <form th:action="@{/wyniki}" method="get" >
                         <!-- th:onchange="bob(value,[[${gracze}]])"-->
                         <select  th:name="wybranyTerminarz"  id="selection1" >
                             <option value="" selected>--Wybierz gracza--</option>
-                            <option th:each="player : ${players}" th:value="${player.getUsername()}" th:text="${player.getUsername()}" />
+                            <option th:each="player : ${players}" th:value="${player.MZUsername}" th:text="${player.MZUsername}" />
 
                         </select>
                         <!--  onchange="sam(value)"-->
                         <select  th:name="wybranyTerminarz"  id="selection2">
                             <option value="" selected>--Wybierz gracza--</option>
-                            <option th:each="player : ${players}" th:value="${player.getUsername()}" th:text="${player.getUsername()}" />
+                            <option th:each="player : ${players}" th:value="${player.MZUsername}" th:text="${player.MZUsername}" />
 
                         </select>
 
@@ -147,7 +147,7 @@
 
                 </div>
                 <div  id="multiSchedule" hidden>
-                    <label >Gracze:</label><br>
+                    <label class="form-label m-1"  >Gracze:</label><br>
                     <div class="table-responsive" th:if="${not #lists.isEmpty(schedule)}">
                         <table class="table table-hover" id="options-table">
                             <!--       <thead class="thead-inverse">
@@ -164,8 +164,8 @@
                             <tr th:each="item : ${players}"   >
                                 <td  draggable="true"  class="draggable">
 
-                                    <input type="checkbox" name="chosenPlayers" th:value="${item.getUsername()}"/>
-                                    <label th:text="${item.getUsername()}"></label>
+                                    <input type="checkbox" name="chosenPlayers" th:value="${item.MZUsername}"/>
+                                    <label  class="form-label m-1" th:text="${item.MZUsername}"></label>
 
 
                                 </td>

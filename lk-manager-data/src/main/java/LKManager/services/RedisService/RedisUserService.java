@@ -2,8 +2,9 @@ package LKManager.services.RedisService;
 
 import LKManager.DAO_SQL.UserDAO;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
-import LKManager.model.UserMZ.Role;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.account.User;
+import LKManager.model.account.Role;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.services.Adapters.UserAdapter;
 import LKManager.services.GsonService;
 import lombok.Data;
@@ -28,12 +29,12 @@ public class RedisUserService {
    private final ListOperations<String, String> listOperations;
     private final RedisTemplate<String, String > redisListTemplate;
 
-    private final UserDAO userDAO;
-    public RedisUserService(RedisTemplate<String, Object> redisTemplate, GsonService gsonService, RedisTemplate<String, String> redisListTemplate, UserDAO userDAO) {
+    private final UserDAO UserDAO;
+    public RedisUserService(RedisTemplate<String, Object> redisTemplate, GsonService gsonService, RedisTemplate<String, String> redisListTemplate, UserDAO UserDAO) {
         this.redisTemplate = redisTemplate;
         this.gsonService = gsonService;
         this.redisListTemplate = redisListTemplate;
-        this.userDAO = userDAO;
+        this.UserDAO = UserDAO;
         this.valueOperations=	this.getRedisTemplate().opsForValue();
         this.listOperations = this.getRedisListTemplate().opsForList();
 
@@ -52,14 +53,14 @@ public boolean setActivationToken(String token, String username )
         return false;
     }
 }
-public String getActivationTokenUsername(String token)
+public Long getActivationTokenUsername(String token)
 {
     try{
 
 
         String jsonUser=  (String) valueOperations.get(token);
         redisTemplate.delete(token);
-        return gsonService.jsonToObject(jsonUser,String.class);
+        return gsonService.jsonToObject(jsonUser,Long.class);
     }
     catch (Exception e)
     {
@@ -71,10 +72,10 @@ public String getActivationTokenUsername(String token)
 
         List<String> usersJson;
         List<UserDataDTO> usersDTO;
-        if(userType.equals(UserData.class))
+        if(userType.equals(User.class))
         {
 
-            usersDTO=users.stream().map(user->UserAdapter.convertUserDataToUserDataDTO((UserData)user )).collect(Collectors.toList());
+            usersDTO=users.stream().map(user->UserAdapter.convertUserToUserDataDTO((User) user )).collect(Collectors.toList());
 
         /*    usersDTO=users.stream().map( user ->
              new UserDataDTO(UserAdapter.adapt((UserData) user)).collect(Collectors.toList());
@@ -232,29 +233,31 @@ public String getActivationTokenUsername(String token)
 
 
 //todo to chjyba usunąć, bo lepiej chyba pobrać z redis całą listę i wyszukać niż zapisywać dodatkowo w redis każdego usera oddzielnie
-    public UserDataDTO addUserToRedis(Object userData )
+    public UserDataDTO addUserToRedis(Object user )
     {
-        String userJson;
-        if (userData instanceof UserData) {
 
-        userJson  = mapUserDataToJsonString(UserAdapter.convertUserDataToUserDataDTO((UserData) userData));
-     valueOperations.set("user:" + ((UserData)userData).getUserId(), userJson);
-            redisTemplate.expire("user:" + ((UserData)userData).getUserId(),1, TimeUnit.DAYS);
+       String userJson;
+        if (user instanceof User) {
+
+        userJson  = mapUserToJsonString(UserAdapter.convertUserToUserDataDTO((User) user));
+     valueOperations.set("user:" + ((User)user).getUsername(), userJson);
+            redisTemplate.expire("user:" + ((User)user).getUsername(),1, TimeUnit.DAYS);
 
             System.out.println("addeduser to redis");
-            this.addUserToUserLists((UserData) userData);
+            this.addUserToUserLists((User) user);
 
 
-            return this.getUserById(((UserData) userData).getUserId());
-        } else if (userData instanceof UserDataDTO) {
-            userJson  = mapUserDataToJsonString( userData);
-            valueOperations.set("user:" + ((UserDataDTO)userData).getUserId(), userJson);
-            redisTemplate.expire("user:" + ((UserDataDTO)userData).getUserId(),1, TimeUnit.DAYS);
+            return this.getUserByUsername(((User) user).getUsername());
+        }
+        else if (user instanceof UserDataDTO) {
+            userJson  = mapUserToJsonString( user);
+            valueOperations.set("user:" + ((UserDataDTO)user).getUserId(), userJson);
+            redisTemplate.expire("user:" + ((UserDataDTO)user).getUsername(),1, TimeUnit.DAYS);
             System.out.println("addeduser to redis");
-            this.addUserToUserLists(userData);
+            this.addUserToUserLists((UserDataDTO)user);
 
 
-            return this.getUserById(((UserDataDTO) userData).getUserId());
+            return this.getUserByUsername(((UserDataDTO) user).getUsername());
         } else {
 return null;
         }
@@ -266,33 +269,32 @@ return null;
 
 
 
-
     }
 
-    private UserDataDTO getUserById(Long userId) {
-      String jsonUser=  (String) valueOperations.get("user:"+userId);
-        redisTemplate.expire("user:"+userId,2, TimeUnit.DAYS);
+    private UserDataDTO getUserByUsername(String username) {
+      String jsonUser=  (String) valueOperations.get("user:"+username);
+        redisTemplate.expire("user:"+username,2, TimeUnit.DAYS);
         return gsonService.jsonToObject(jsonUser,UserDataDTO.class);
     }
 
-    public UserData DeleteUserFromRedis()
+    public MZUserData DeleteUserFromRedis()
     {
         return null;
     }
 
 
-    private List<String> mapListUserDataToJsonString(List<UserData> users) {
+/*    private List<String> mapListUserDataToJsonString(List<MZUserData> users) {
 
-        List<UserDataDTO> usersDTO = users.stream().map(UserAdapter::convertUserDataToUserDataDTO).collect(Collectors.toList());
+        List<UserDataDTO> usersDTO = users.stream().map(UserAdapter::convertMZUserDataToUserMzDTO).collect(Collectors.toList());
 
 
         return gsonService.listToJson(usersDTO);
-    }
-    private String mapUserDataToJsonString(Object user) {
-        if (user instanceof UserData) {
+    }*/
+    private String mapUserToJsonString(Object user) {
+        if (user instanceof MZUserData) {
 
 
-            return gsonService.objectToJson(UserAdapter.convertUserDataToUserDataDTO((UserData) user));
+            return gsonService.objectToJson(UserAdapter.convertMZUserDataToUserMzDTO((MZUserData) user));
         } else if (user instanceof UserDataDTO) {
             return gsonService.objectToJson(user);
         } else {
@@ -317,23 +319,23 @@ return null;
      */
     @Transactional
     private List<UserDataDTO> addUserToUserLists(Object userToAdd) {
-if(userToAdd instanceof UserData)
+if(userToAdd instanceof User)
 {
-    UserData userDataToadd=(UserData) userToAdd;
+    User MZUserDataToadd =(User) userToAdd;
     String usersJson;
 
-    if(userDataToadd.getRole()!=Role.DEACTIVATED_USER)
+    if(MZUserDataToadd.getRole()!=Role.DEACTIVATED_USER)
     {
 
         List<UserDataDTO> usersActiveWithPause=this.getUsers(true,true);
-        usersActiveWithPause.add(UserAdapter.convertUserDataToUserDataDTO(userDataToadd));
+        usersActiveWithPause.add(UserAdapter.convertUserToUserDataDTO(MZUserDataToadd));
         this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
 
     //    usersJson = gsonService.listToJson(usersDeletedWithPause);
   //      valueOperations.set("usersDeletedWithPause",usersJson);
 
         List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
-        usersActiveWithoutPause.add(UserAdapter.convertUserDataToUserDataDTO(userDataToadd));
+        usersActiveWithoutPause.add(UserAdapter.convertUserToUserDataDTO(MZUserDataToadd));
         this.addAllUsers(usersActiveWithoutPause,UserDataDTO.class,true,false);
 
    //     usersJson = gsonService.listToJson(usersDeletedWithoutPause);
@@ -342,14 +344,14 @@ if(userToAdd instanceof UserData)
     }
     else {
         List<UserDataDTO>    usersDeactivatedWithPause=   this.getUsers(false,true);
-        usersDeactivatedWithPause.add(UserAdapter.convertUserDataToUserDataDTO(userDataToadd));
+        usersDeactivatedWithPause.add(UserAdapter.convertUserToUserDataDTO(MZUserDataToadd));
    // this.addAllUsers(usersNotDeletedWithPause,UserDataDTO.class,false,true);
    //     usersJson = gsonService.listToJson(usersNotDeletedWithPause);
 //valueOperations.set("usersNotDeletedWithPause",usersJson);
         this.addAllUsers(usersDeactivatedWithPause,UserDataDTO.class,false,true);
 
         List<UserDataDTO>    usersDeactivatedWithoutPause  =  this.getUsers(false,false);
-        usersDeactivatedWithoutPause.add(UserAdapter.convertUserDataToUserDataDTO(userDataToadd));
+        usersDeactivatedWithoutPause.add(UserAdapter.convertUserToUserDataDTO(MZUserDataToadd));
 
       //  this.addAllUsers(usersNotDeletedWithoutPause,UserDataDTO.class,false,false);
    //     usersJson = gsonService.listToJson(usersNotDeletedWithoutPause);
@@ -397,21 +399,42 @@ else return null;
 
 
 
+
+
     }
 
-    public UserDataDTO updateUserInRedis(Object userToEdit) {
-        if (userToEdit instanceof UserData) {
+    public UserDataDTO updateUserInRedis(User userToEdit) {
+
+
+
+
+            //   UserDataDTO userInRedis=  this.findUserById(((UserData)userToEdit).getUserId());
+            UserDataDTO   userInRedis=this.findUserById(( userToEdit.getId()));
+            if(userInRedis==null)
+            {
+                userInRedis=this.addUserToRedis(userToEdit);
+            }
+            // UserDataDTO userToEditDTO=    UserAdapter.adapt((UserData) userToEdit);
+            userInRedis.setRole(( userToEdit).getRole());
+            userInRedis.setTeamName( userToEdit.getMzUser().getTeamlist().get(0).getTeamName());
+
+            this.saveOrUpdateUserInUserLists(userToEdit);
+            return   this.addUserToRedis(userInRedis);
+
+
+
+  /*      if (userToEdit instanceof MZUserData) {
 
 
          //   UserDataDTO userInRedis=  this.findUserById(((UserData)userToEdit).getUserId());
-            UserDataDTO   userInRedis=this.findUserById((((UserData) userToEdit).getUserId()));
+            UserDataDTO   userInRedis=this.findUserById((((MZUserData) userToEdit).getMZuser_id()));
             if(userInRedis==null)
             {
-                userInRedis=this.addUserToRedis((UserData)userToEdit);
+                userInRedis=this.addUserToRedis((MZUserData)userToEdit);
             }
                // UserDataDTO userToEditDTO=    UserAdapter.adapt((UserData) userToEdit);
-                userInRedis.setRole(((UserData) userToEdit).getRole());
-                userInRedis.setTeamName(((UserData) userToEdit).getTeamlist().get(0).getTeamName());
+                userInRedis.setRole(((MZUserData) userToEdit).getRole());
+                userInRedis.setTeamName(((MZUserData) userToEdit).getTeamlist().get(0).getTeamName());
 
             this.editUserInUserLists(userToEdit);
           return   this.addUserToRedis(userInRedis);
@@ -421,7 +444,7 @@ else return null;
             UserDataDTO   userInRedis=this.findUserById((((UserDataDTO) userToEdit).getUserId()));
             if(userInRedis==null)
             {
-                userInRedis=this.addUserToRedis((UserData)userToEdit);
+                userInRedis=this.addUserToRedis((MZUserData)userToEdit);
             }
             userInRedis.setRole(((UserDataDTO) userToEdit).getRole());
             userInRedis.setTeamName(((UserDataDTO) userToEdit).getTeamName());
@@ -431,42 +454,92 @@ else return null;
         } else {
             return null;
         }
-
+*/
 
     }
 
-    public List<UserDataDTO> editUserInUserLists(Object editedUser) {
-        if (editedUser instanceof UserData) {
-            if(((UserData)editedUser).getRole()!=Role.DEACTIVATED_USER
+    public List<UserDataDTO> saveOrUpdateUserInUserLists(Object editedUser) {
+
+
+
+        if (editedUser instanceof User) {
+            if(((User)editedUser).getRole()!=Role.DEACTIVATED_USER
             )
             {
+
+
+
+
+
+
                 List<UserDataDTO> usersActiveWithPause=this.getUsers(true,true);
-                UserDataDTO  userInRedis= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((UserData) editedUser).getUserId())).findFirst().orElse(null);
-              //  UserDataDTO  userInRedis= usersActiveWithPause.get(((UserData) editedUser).getUserId());
-                userInRedis.setRole(((UserData) editedUser).getRole());
-                userInRedis.setTeamName(((UserData) editedUser).getTeamlist().get(0).getTeamName());
+                UserDataDTO  userInActiveWithPause= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
+                UserDataDTO  userInActiveWithoutPause= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+
+                if(userInActiveWithPause==null||userInActiveWithoutPause==null)
+                {
+                    this.addUserToUserLists(editedUser);
+
+                    //todo te 2 linijki nie wiem czy potrzebne , sprawdzic jeszcze raz
+                  usersActiveWithPause=this.getUsers(true,true);
+                    usersActiveWithoutPause   =    this.getUsers(true,false);
+
+
+                    System.out.println("saveOrUpdateUserInUserLists - "+((User) editedUser).getUsername());
+
+                    userInActiveWithPause= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                    userInActiveWithoutPause= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+
+                }
+
+                //  UserDataDTO  userInRedis= usersActiveWithPause.get(((UserData) editedUser).getUserId());
+                userInActiveWithPause.setRole(((User) editedUser).getRole());
+                userInActiveWithPause.setReliability(((User) editedUser).getReliability());
+                userInActiveWithPause.setLeagueParticipation(((User) editedUser).getLeagueParticipation());
+         //       userInActiveWithPause.setTeamName(((User) editedUser).getMzUser().getTeamlist().get(0).getTeamName());
                 this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
 
-                List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
-                UserDataDTO  userInRedis1= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((UserData) editedUser).getUserId())).findFirst().orElse(null);
-            //    UserDataDTO  userInRedis1= usersActiveWithoutPause.get(((UserData) editedUser).getUserId());
-                userInRedis1.setRole(((UserData) editedUser).getRole());
-                userInRedis1.setTeamName(((UserData) editedUser).getTeamlist().get(0).getTeamName());
+
+             
+                //    UserDataDTO  userInRedis1= usersActiveWithoutPause.get(((UserData) editedUser).getUserId());
+                userInActiveWithoutPause.setRole(((User) editedUser).getRole());
+                userInActiveWithoutPause.setReliability(((User) editedUser).getReliability());
+                userInActiveWithoutPause.setLeagueParticipation(((User) editedUser).getLeagueParticipation());
+           //     userInActiveWithoutPause.setTeamName(((User) editedUser).getMzUser().getTeamlist().get(0).getTeamName());
                 return        this.addAllUsers(usersActiveWithoutPause,UserDataDTO.class,true,false);
             }
             else {
+
                 List<UserDataDTO>    usersDeactivatedWithPause=   this.getUsers(false,true);
-                UserDataDTO  userInRedis= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((UserData) editedUser).getUserId())).findFirst().orElse(null);
+                UserDataDTO  userInactiveWithPause= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                List<UserDataDTO>    usersDeactivatedWithoutPause  =  this.getUsers(false,false);
+                UserDataDTO  userInactiveWithoutPause= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+
+                if(userInactiveWithPause==null||userInactiveWithoutPause==null)
+                {
+                    this.addUserToUserLists(editedUser);
+                    userInactiveWithPause= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                    userInactiveWithoutPause= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+
+                }
+                
+                
+         
           //      UserDataDTO  userInRedis= usersDeactivatedWithPause.get(((UserData) editedUser).getUserId());
-                userInRedis.setRole(((UserData) editedUser).getRole());
-                userInRedis.setTeamName(((UserData) editedUser).getTeamlist().get(0).getTeamName());
+                userInactiveWithPause.setRole(((User) editedUser).getRole());
+                userInactiveWithPause.setReliability(((User) editedUser).getReliability());
+                userInactiveWithPause.setLeagueParticipation(((User) editedUser).getLeagueParticipation());
+        //        userInactiveWithPause.setTeamName(((User) editedUser).getMzUser().getTeamlist().get(0).getTeamName());
                 this.addAllUsers(usersDeactivatedWithPause,UserDataDTO.class,false,true);
 
-                List<UserDataDTO>    usersDeactivatedWithoutPause  =  this.getUsers(false,false);
-                UserDataDTO  userInRedis1= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((UserData) editedUser).getUserId())).findFirst().orElse(null);
+               
+         
             //    UserDataDTO  userInRedis1= usersDeactivatedWithoutPause.get(((UserData) editedUser).getUserId());
-                userInRedis1.setRole(((UserData) editedUser).getRole());
-                userInRedis1.setTeamName(((UserData) editedUser).getTeamlist().get(0).getTeamName());
+                userInactiveWithoutPause.setLeagueParticipation(((User) editedUser).getLeagueParticipation());
+                userInactiveWithoutPause.setRole(((User) editedUser).getRole());
+                userInactiveWithoutPause.setReliability(((User) editedUser).getReliability());
+           //     userInactiveWithoutPause.setTeamName(((User) editedUser).getMzUser().getTeamlist().get(0).getTeamName());
                 return     this.addAllUsers(usersDeactivatedWithoutPause,UserDataDTO.class,false,false);
 
             }
@@ -478,33 +551,59 @@ else return null;
             )
             {
                 List<UserDataDTO> usersActiveWithPause=this.getUsers(true,true);
-                UserDataDTO  userInRedis= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((UserData) editedUser).getUserId())).findFirst().orElse(null);
-          //      UserDataDTO  userInRedis= usersActiveWithPause.get(((UserDataDTO) editedUser).getUserId());
-                userInRedis.setRole(((UserDataDTO) editedUser).getRole());
-                userInRedis.setTeamName(((UserDataDTO) editedUser).getTeamName());
+                UserDataDTO  userInActiveWithPause= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
+                UserDataDTO  userInActiveWithoutPause= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+
+                if(userInActiveWithPause==null||userInActiveWithoutPause==null)
+                {
+                    this.addUserToUserLists(editedUser);
+                    userInActiveWithPause= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                    userInActiveWithoutPause= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+
+                }
+
+                  //      UserDataDTO  userInRedis= usersActiveWithPause.get(((UserDataDTO) editedUser).getUserId());
+                userInActiveWithPause.setRole(((UserDataDTO) editedUser).getRole());
+                userInActiveWithPause.setReliability(((UserDataDTO) editedUser).getReliability());
+                userInActiveWithPause.setLeagueParticipation(((UserDataDTO) editedUser).getLeagueParticipation());
+           //     userInActiveWithPause.setTeamName(((UserDataDTO) editedUser).getTeamName());
                 this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
 
-                List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
-                UserDataDTO  userInRedis1= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((UserData) editedUser).getUserId())).findFirst().orElse(null);
-           //     UserDataDTO  userInRedis1= usersActiveWithoutPause.get(((UserDataDTO) editedUser).getUserId());
-                userInRedis1.setRole(((UserDataDTO) editedUser).getRole());
-                userInRedis1.setTeamName(((UserDataDTO) editedUser).getTeamName());
+                 //     UserDataDTO  userInRedis1= usersActiveWithoutPause.get(((UserDataDTO) editedUser).getUserId());
+                userInActiveWithoutPause.setRole(((UserDataDTO) editedUser).getRole());
+                userInActiveWithoutPause.setReliability(((UserDataDTO) editedUser).getReliability());
+                userInActiveWithoutPause.setLeagueParticipation(((UserDataDTO) editedUser).getLeagueParticipation());
+        //        userInActiveWithoutPause.setTeamName(((UserDataDTO) editedUser).getTeamName());
                 return    this.addAllUsers(usersActiveWithoutPause,UserDataDTO.class,true,false);
 
             }
             else {
                 List<UserDataDTO>    usersDeactivatedWithPause=   this.getUsers(false,true);
-                UserDataDTO  userInRedis= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((UserData) editedUser).getUserId())).findFirst().orElse(null);
-          //      UserDataDTO  userInRedis= usersDeactivatedWithPause.get(((UserDataDTO) editedUser).getUserId());
-                userInRedis.setRole(((UserDataDTO) editedUser).getRole());
-                userInRedis.setTeamName(((UserDataDTO) editedUser).getTeamName());
+                UserDataDTO  userInactiveWithPause= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                List<UserDataDTO>    usersDeactivatedWithoutPause  =  this.getUsers(false,false);
+                UserDataDTO  userInactiveWithoutPause= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+
+                if(userInactiveWithPause==null||userInactiveWithoutPause==null)
+                {
+                    this.addUserToUserLists(editedUser);
+                    userInactiveWithPause= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                    userInactiveWithoutPause= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+
+                }
+
+             //      UserDataDTO  userInRedis= usersDeactivatedWithPause.get(((UserDataDTO) editedUser).getUserId());
+                userInactiveWithPause.setRole(((UserDataDTO) editedUser).getRole());
+                userInactiveWithPause.setReliability(((UserDataDTO) editedUser).getReliability());
+                userInactiveWithPause.setLeagueParticipation(((UserDataDTO) editedUser).getLeagueParticipation());
+           //     userInactiveWithPause.setTeamName(((UserDataDTO) editedUser).getTeamName());
                 this.addAllUsers(usersDeactivatedWithPause,UserDataDTO.class,false,true);
 
-                List<UserDataDTO>    usersDeactivatedWithoutPause  =  this.getUsers(false,false);
-                UserDataDTO  userInRedis1= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((UserData) editedUser).getUserId())).findFirst().orElse(null);
-             //   UserDataDTO  userInRedis1= usersDeactivatedWithoutPause.get(((UserDataDTO) editedUser).getUserId());
-                userInRedis1.setRole(((UserDataDTO) editedUser).getRole());
-                userInRedis1.setTeamName(((UserDataDTO) editedUser).getTeamName());
+              //   UserDataDTO  userInRedis1= usersDeactivatedWithoutPause.get(((UserDataDTO) editedUser).getUserId());
+                userInactiveWithoutPause.setRole(((UserDataDTO) editedUser).getRole());
+                userInactiveWithoutPause.setReliability(((UserDataDTO) editedUser).getReliability());
+                userInactiveWithoutPause.setLeagueParticipation(((UserDataDTO) editedUser).getLeagueParticipation());
+         //       userInactiveWithoutPause.setTeamName(((UserDataDTO) editedUser).getTeamName());
                 return   this.addAllUsers(usersDeactivatedWithoutPause,UserDataDTO.class,false,false);
 
             }
@@ -530,7 +629,7 @@ else return null;
         if (user == null) return null;
 
 
-        else
+        else //usuwanie z aktywnych
         {
             List<UserDataDTO> listOfActiveWithPause=  this.getUsers(true,true).stream().filter(u->!u.getUserId().equals(userId)).collect(Collectors.toList());
             this.addAllUsers(listOfActiveWithPause,UserDataDTO.class,true,true);
@@ -541,7 +640,7 @@ else return null;
         }
 
 
-
+//todo to usunąć jeśli nie zapisuje pojedynczych userów
        return addUserToRedis(user);
 
 
@@ -563,7 +662,7 @@ else return null;
         if(user==null)//nie ma tego usera dodanego do graczy w redis  -> może był usunięty w sql ale nie w redis? np z poziomy mssql?
         {
                 //todo nie wiem co :P
-             Optional<UserData> userInDB=   userDAO.findById(userId);
+             Optional<User> userInDB=   UserDAO.findById(userId);
              if(userInDB.isEmpty())//nie ma też w bd
              {
                  return null;
@@ -574,10 +673,10 @@ else return null;
                  /**   todo  addUserToRedis(user.getUserId());
                   *      /\ to jak wcześniej. Zamiast dodawać encję usera jest dodaany do list
                   **/
-                UserData changedUser= userInDB.get();
+                User changedUser= userInDB.get();
                      changedUser   .setRole(Role.DEACTIVATED_USER);
                   addUserToUserLists(changedUser);
-                 user=UserAdapter.convertUserDataToUserDataDTO(changedUser);
+                 user=UserAdapter.convertUserToUserDataDTO(changedUser);
               //  addUserToRedis(user.getUserId());
 
 

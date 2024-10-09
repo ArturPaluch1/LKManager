@@ -1,7 +1,7 @@
 package LKManager.DAO_SQL;
 
 import LKManager.model.Schedule;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.services.MZUserService;
 import LKManager.services.MatchService;
 import org.springframework.data.jpa.repository.Query;
@@ -37,7 +37,7 @@ public interface CustomScheduleDAO {
      boolean deleteByName(String objectName);
 
 
-     List<UserData> findAllParticipantsOfSchedule(String ScheduleName);
+     List<MZUserData> findAllParticipantsOfSchedule(String ScheduleName);
 
     void refresh(Schedule schedule);
 }

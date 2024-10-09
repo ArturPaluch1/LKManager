@@ -64,7 +64,7 @@ private final RedisTableService redisTableService;
 
        Table table = null;
        //todo dodać że jeśli==null error że wybierz terminarz
-if(!chosenscheduleName.equals(null))
+if(chosenscheduleName!=null)
 {
 
 
@@ -93,6 +93,8 @@ if(table!=null)
 else
 {
     model.addAttribute("chosenSchedule",chosenscheduleName);
+    model.addAttribute("schedules",scheduleService.getScheduleNamesOngoingOrFinished());
+
     //todo zaminic \/ cache na redis
    // model.addAttribute("schedules",mzCache.getSchedules());
     return "public/LK/table";

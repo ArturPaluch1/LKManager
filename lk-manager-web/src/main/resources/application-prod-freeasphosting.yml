@@ -1,4 +1,16 @@
+spring.mail.host: smtp.poczta.onet.pl
+spring.mail.port: 465 #465
 
+protocol: smtps
+spring.mail.username: ${email-email}
+spring.mail.password: ${email-password}
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: false
+spring.mail.properties.mail.smtp.starttls.required: false
+
+spring.mail.properties.mail.smtp.auth.mechanisms: LOGIN
+spring.mail.properties.mail.smtp.ssl.enable: true
+spring.mail.properties.mail.debug: true
 
 
 spring:

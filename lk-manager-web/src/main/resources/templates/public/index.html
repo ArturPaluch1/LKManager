@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="pl" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:height="http://www.w3.org/1999/xhtml"
-      xmlns:width="http://www.w3.org/1999/xhtml">
+      xmlns:width="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
      <!-- th:replace = "~{public/fragments/layout_public :: layout (~{::body},'home')}"-->
 
 
@@ -12,5 +12,40 @@
 </head>
 <body >
 <div th:replace="~{public/navbar}" />
+<div class="container">
+   <!-- <div class="row justify-content-between" >-->
+        <div class="row align-self-stretch" >
+<div id="LK" class="col-1 w-50">
+<h3>Terminy LK</h3>
+    <p>Klan <b>gości</b>  ma podać skład <b>do godz. 06:00 w niedzielę</b> poprzedzającą daną kolejkę.</p>
+    <p>Klan <b>gospodarzy</b> ma dobrać i podać pary<b> do 23:59 w poniedziałek</b> poprzedzający daną kolejkę.</p>
+    <br>
+    <p> <b>Zaplanowanie meczów</b> jest obowiązkiem obustronnym. Mecze powinny być zaplanowane najpóźniej <b>do środy, do godz. 23.59.</b></p>
+    <p> Walkowery można <b>zgłaszać do godz. 20:00 w czwartek </b>poprzedzający daną kolejkę. W temacie <b>"Tabele, wyniki, pary i składy"</b> właściwym dla ligi której on dotyczy.</p>
+   <br>
+    <p><b>Dodatkowe info o walkowerach:</b></p>
+    <p> Wnioski o walkower może składać kapitan, zastępca, osoba upoważniona lub sam zainteresowany.
+    <p> Wnioski o walkower powinny zostać rozpatrzone przez organizatora do czwartku, do godz. 21:00. Jeśli do tego czasu wniosek nie zostanie rozpatrzony, gracz na rzecz którego zgłoszono wniosek może zaplanować mecz towarzyski na piątek bez jakichkolwiek późniejszych negatywnych konsekwencji.</p>
+
+</div>
+<div id="links" class="col-1 w-50">
+    <h3>Przydatne linki</h3>
+<div class="row">
+    <p class="col">Forum Ligi Klanów: </p>     <a href="https://www.managerzone.com.pl/viewforum.php?f=23&sid=69a14265b29a0048ed136008e81ea464" class="link-tooltip col" title="https://www.managerzone.com.pl/viewforum.php?f=23&sid=69a14265b29a0048ed136008e81ea464">
+    https://www.managerzone.com.pl/viewforum.php?f=23&sid=69a14265b29a0048ed136008e81ea464
+</a>
+</div>
+
+    <div class="row">
+    <p class="col">MZSpy:  </p><a href=" http://www.mzspy.com.pl/LK.aspx"  class="col">http://www.mzspy.com.pl/LK.aspx</a>
+    </div>
+        <div class="row">
+    <p class="col">MZlive: </p><a href=" https://mzlive.eu/leagues/" class="col">https://mzlive.eu/leagues/</a>
+        </div>
+
+</div>
+
+    </div>
+</div>
 </body>
 </html>

@@ -1,23 +1,19 @@
 package LKManager.user;
 
-import LKManager.model.CustomUserDetails;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
 import LKManager.model.Schedule;
 import LKManager.model.ScheduleStatus;
 import LKManager.model.UserMZ.LeagueParticipation;
-import LKManager.services.Adapters.UserAdapter;
-import LKManager.services.ScheduleService;
-import LKManager.services.UserService;
-import LKManager.services.UserSettingsService;
-import lombok.AllArgsConstructor;
+import LKManager.model.account.User;
+import LKManager.model.account.UserSettingsFormModel;
+import LKManager.services.*;
 import lombok.Data;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @Data
@@ -26,37 +22,53 @@ public class userSettingsController {
 private  final UserService userService;
 private final UserSettingsService userSettingsService;
 private final ScheduleService scheduleService;
-
+private  final MZUserService mzUserService;
+private final EmailService emailService;
+private final AccountService accountService;
     @GetMapping("/user/settings")
-public String getSettings( Model model) throws IOException {
-
+public String getSettings( Model model) throws Exception {
+//todo to przenieść do jakiegoś serwisu?
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    CustomUserDetails customUserDetails = (CustomUserDetails)authentication.getPrincipal();  // Pobiera nazwę użytkownika (username)
+    User customUserDetails = (User)authentication.getPrincipal();  // Pobiera nazwę użytkownika (username)
 
 
-UserDataDTO userDataDTO= UserAdapter.convertUserDataToUserDataDTO( userService.getUserById(customUserDetails.getId()));
+UserDataDTO userDataDTO=  userService.getUserById(customUserDetails.getId());
 Schedule upcomingSchedule=scheduleService.getSchedules().stream().filter(s->s.getScheduleStatus().equals(ScheduleStatus.PLANNED)).findFirst().orElse(null);
+String userEmail=userService.getUsersEmail(customUserDetails.getId());
+
 //todo temp\/
 
-TMcity tMcity= new TMcity(0L,"Adminowo");
+UserSettingsFormModel.TMcity tMcity= new UserSettingsFormModel.TMcity(0L,"Adminowo");
   //  TMcity tMcity= new TMcity(0L,null);
-MainModel mainModel= new MainModel(userDataDTO,tMcity,upcomingSchedule);
+UserSettingsFormModel mainModel= new UserSettingsFormModel(userDataDTO,userEmail,tMcity,upcomingSchedule);
 model.addAttribute("model",mainModel);
 
 
 
     return "/user/settings/userSettings";
 }
+    @PostMapping("/userSettings/setMZUsername")
+    public String setMZUsername(Model model, @ModelAttribute("model") UserSettingsFormModel formModel , @RequestParam("username") String username)
+        {
 
-    @PostMapping("/userSettings/subscribeLeague")
-    public String subscribeLeague(Model model, @ModelAttribute("model") MainModel formModel , @RequestParam("checkboxLeagueParticipation") String checkboxLeagueParticipation) {
+userService.setMZUser(formModel.getUser().getUsername(),username);
+    //    User userInDB= userService.getUserById(formModel.user.getUserId());
+
+            userService.getMZUserDataByUsername(username);
+
+          //  model.addAttribute("message", "You have successfully joined the league!");
+            return"redirect:/user/settings";
+        }
+
+        @PostMapping("/userSettings/subscribeLeague")
+    public String subscribeLeague(Model model, @ModelAttribute("model") UserSettingsFormModel formModel , @RequestParam("checkboxLeagueParticipation") String checkboxLeagueParticipation) {
         boolean success= false;
         if(checkboxLeagueParticipation.equals("on,SUBBED"))
         {
-            success=userSettingsService.subscribeLeague(formModel.getUser().getUserId(),LeagueParticipation.SUBBED);
+            success=userSettingsService.subscribeLeague(formModel,LeagueParticipation.SUBBED);
         }
    else {
-            success=userSettingsService.subscribeLeague(formModel.getUser().getUserId(),LeagueParticipation.UNSIGNED);
+            success=userSettingsService.subscribeLeague(formModel,LeagueParticipation.UNSIGNED);
 
         }
         if (success) {
@@ -67,12 +79,12 @@ model.addAttribute("model",mainModel);
         return"redirect:/user/settings";
     }
 @PostMapping("/userSettings/joinLeague")
-public String joinLeague(Model model, @ModelAttribute("model") MainModel formModel )
+public String joinLeague(Model model, @ModelAttribute("model") UserSettingsFormModel userFormModel )
 {
 //scheduleService.planSchedule(LocalDate.now(),"blabla", ScheduleType.standardSchedule);
     boolean success= false;
 
-            success=userSettingsService.joinLeague(formModel.getUser().getUserId());
+            success=userSettingsService.joinLeague(userFormModel);
 
 
 
@@ -99,9 +111,9 @@ public  String changeSubscriptionLeagueOption(Model model, @ModelAttribute("mode
     return"redirect:/user/settings";
 }*/
 @PostMapping("/userSettings/leaveLeague")
-public String leaveLeague(Model model, @ModelAttribute("model") MainModel formModel)
+public String leaveLeague(Model model, @ModelAttribute("model") UserSettingsFormModel formModel)
 {
-    boolean success=userSettingsService.leaveLeague(formModel.getUser().getUserId());
+    boolean success=userSettingsService.leaveLeague(formModel);
 
     if (success) {
         model.addAttribute("message", "You have successfully leaved the league!");
@@ -121,38 +133,55 @@ public String leaveLeague()
     return "";
 }
 
-    public String changeEmail()
-    {
-        return "";
+
+        @PostMapping(value = "/setEmail")
+        public String setEmail(@ModelAttribute("model") UserSettingsFormModel formModel,RedirectAttributes redirectAttributes ) {
+
+
+          try {
+              //String activationLink = "http://localhost:8080/confirmEmail?token=" + accountService.generateActivationToken(formModel.getUser().getUserId().toString()) + "&email=" + formModel.getUser().getEmail();
+
+              Long userId = formModel.getUser().getUserId();
+              String email = formModel.getUserEmail();
+
+                 if( emailService.sendEmail(userId, email)==false)
+                 {
+                     redirectAttributes.addFlashAttribute("emailMessage", "Podałeś błędny mail");
+                     return"redirect:/user/settings";
+                 }
+
+
+
+
+
+
+              redirectAttributes.addFlashAttribute("emailMessage", "Do dokończenia aktywacji wejdź w link w mailu.");
+          }
+          catch (Exception e)
+          {
+              redirectAttributes.addFlashAttribute("emailMessage", "Błąd w ustawianiu maila.");
+          }
+           finally {
+              return"redirect:/user/settings";
+
+          }
+    /*
+        String username= redisUserService.getActivationTokenUsername(token);
+        UserDataDTO activatedUser=userService.activateUser(username);
+
+        if (activatedUser!=null) {
+            return "Konto zostało aktywowane pomyślnie!";
+        } else {
+            return "Nieprawidłowy lub wygasły token.";
+        }*/
     }
-
-
-
-
-
-
-
-
-
-
 
 
 
 
     //todo temp\/
-@Data
-@AllArgsConstructor
-public class TMcity{
-     private     Long Id;
-        private String name;
-}
-@Data
-@AllArgsConstructor
-    public class MainModel {
-        private UserDataDTO user;
-        private TMcity tmCity;
-        private Schedule upcomingSchedule;
-    }
+
+
 
 
 

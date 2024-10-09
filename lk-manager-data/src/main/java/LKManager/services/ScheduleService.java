@@ -1,21 +1,21 @@
 package LKManager.services;
 
-import LKManager.model.LeagueParticipants;
+import LKManager.model.*;
 import LKManager.model.RecordsAndDTO.*;
-import LKManager.model.Schedule;
-import LKManager.model.ScheduleStatus;
-import LKManager.model.Table;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.time.LocalDate;
 import java.util.List;
-
+@Transactional
 public interface ScheduleService {
 
     CreateScheduleResult createMultiDaySchedule(LocalDate data, List<String> grajki, String nazwa , ScheduleType scheduleType, ScheduleStatus scheduleStatus) throws DatatypeConfigurationException;
 
+
+
+    CreateScheduleResult updatePlannedSchedule(Schedule schedule, List<LeagueParticipants> chosenPlayers) throws DatatypeConfigurationException, DatatypeConfigurationException;
 
     @Transactional
     CreateScheduleResult createOneDayShedule(LocalDate data, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType, ScheduleStatus status);
@@ -45,9 +45,9 @@ public interface ScheduleService {
     public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber , ScheduleType scheduleType, ScheduleStatus scheduleStatus);
   //  public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName, Integer roundsNumber , ScheduleType scheduleType, ScheduleStatus scheduleStatus) ;
     public void calculateNextRoundOfSwissSchedule(ScheduleDTO schedule, Table table);
+   // public CreateScheduleResult planSchedule(LocalDate startDate, LocalDate endDate, String scheduleName, ScheduleType scheduleType);
+    public CreateScheduleResult planSchedule(LocalDate startDate,  String scheduleName, ScheduleType scheduleType);
+  //  boolean addLeagueParticipant(User  user);
+//public List<LeagueParticipants> getLeagueParticipants();
 
-    public CreateScheduleResult planSchedule(LocalDate startDate, String scheduleName, ScheduleType scheduleType);
-    boolean addLeagueParticipant( Long userId);
-public List<LeagueParticipants> getLeagueParticipants();
-    boolean removeLeagueParticipant(Long userId);
 }

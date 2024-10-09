@@ -1,10 +1,7 @@
 package LKManager.services;
 
 import LKManager.LK.PlayerSummary;
-import LKManager.model.RecordsAndDTO.MatchDTO;
-import LKManager.model.RecordsAndDTO.ScheduleDTO;
-import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
-import LKManager.model.RecordsAndDTO.UserDataDTO;
+import LKManager.model.RecordsAndDTO.*;
 import LKManager.model.Table;
 import LKManager.services.Comparators.GraczPodsumowanieComparatorGoalDifference;
 import LKManager.services.Comparators.GraczPodsumowanieComparatorGoalLost;
@@ -251,16 +248,16 @@ redisTableService.setTable(table);
     //    Table table = new Table();
         List<PlayerSummary> playerSummaries= new ArrayList<>();
 
-        List<UserDataDTO> users=new  ArrayList<>();
+        List<UserMzDTO> users=new  ArrayList<>();
 
         for (var item: matches
         ) {
 
-            users.add(item.getUserDataDTO());
-            users.add(item.getOpponentUserDataDTO());
+            users.add(item.getUserUserMzDTO());
+            users.add(item.getOpponentUserMzDTO());
         }
-        List<UserDataDTO> distinctUsers = users.stream()
-                .collect(Collectors.toMap(UserDataDTO::getUsername, Function.identity(), (existing, replacement) -> existing))
+        List<UserMzDTO> distinctUsers = users.stream()
+                .collect(Collectors.toMap(UserMzDTO::getMZUsername, Function.identity(), (existing, replacement) -> existing))
                 .values().stream().toList();
 
 // \/nie dzała jeśli obiekty mają te same property ale są innym obiektem
@@ -277,7 +274,7 @@ redisTableService.setTable(table);
         if(distinctUsers.size()!=0 && matches.size()!=0)
         {
             distinctUsers.forEach(a->{
-                if(!a.getUsername().equals("pauza"))
+                if(!a.getMZUsername().equals("pauza"))
                 {
                     var tempGracz= new PlayerSummary();
                     tempGracz.setPlayer(a);
@@ -297,9 +294,9 @@ redisTableService.setTable(table);
                         filter(a->a.getPlayer().getUserId().equals(match.getOpponentUserDataDTO().getUserId())).findFirst().orElse(null);
 */
                 var   user = playerSummaries.stream().
-                        filter(a->a.getPlayer().getUserId().equals(match.getUserDataDTO().getUserId())).findFirst().orElse(null);
+                        filter(a->a.getPlayer().getMZuserId().equals(match.getUserUserMzDTO().getMZuserId())).findFirst().orElse(null);
                 var   userOp = playerSummaries.stream().
-                        filter(a->a.getPlayer().getUserId().equals(match.getOpponentUserDataDTO().getUserId())).findFirst().orElse(null);
+                        filter(a->a.getPlayer().getMZuserId().equals(match.getOpponentUserMzDTO().getMZuserId())).findFirst().orElse(null);
 
                 checkResult(match,user,userOp);
 
@@ -382,16 +379,16 @@ redisTableService.setTable(table);
         //    Table table = new Table();
         List<PlayerSummary> playerSummaries= new ArrayList<>();
 
-        List<UserDataDTO> users=new  ArrayList<>();
+        List<UserMzDTO> users=new  ArrayList<>();
 
         for (var item: matches
         ) {
 
-            users.add(item.getUserDataDTO());
-            users.add(item.getOpponentUserDataDTO());
+            users.add(item.getUserUserMzDTO());
+            users.add(item.getOpponentUserMzDTO());
         }
-        List<UserDataDTO> distinctUsers = users.stream()
-                .collect(Collectors.toMap(UserDataDTO::getUsername, Function.identity(), (existing, replacement) -> existing))
+        List<UserMzDTO> distinctUsers = users.stream()
+                .collect(Collectors.toMap(UserMzDTO::getMZUsername, Function.identity(), (existing, replacement) -> existing))
                 .values().stream().toList();
 
 // \/nie dzała jeśli obiekty mają te same property ale są innym obiektem
@@ -408,7 +405,7 @@ redisTableService.setTable(table);
         if(distinctUsers.size()!=0 && matches.size()!=0)
         {
             distinctUsers.forEach(a->{
-                if(!a.getUsername().equals("pauza"))
+                if(!a.getMZUsername().equals("pauza"))
                 {
                     var tempGracz= new PlayerSummary();
                     tempGracz.setPlayer(a);
@@ -428,9 +425,9 @@ redisTableService.setTable(table);
                         filter(a->a.getPlayer().getUserId().equals(match.getOpponentUserDataDTO().getUserId())).findFirst().orElse(null);
 */
                 var   user = playerSummaries.stream().
-                        filter(a->a.getPlayer().getUserId().equals(match.getUserDataDTO().getUserId())).findFirst().orElse(null);
+                        filter(a->a.getPlayer().getMZuserId().equals(match.getUserUserMzDTO().getMZuserId())).findFirst().orElse(null);
                 var   userOp = playerSummaries.stream().
-                        filter(a->a.getPlayer().getUserId().equals(match.getOpponentUserDataDTO().getUserId())).findFirst().orElse(null);
+                        filter(a->a.getPlayer().getMZuserId().equals(match.getOpponentUserMzDTO().getMZuserId())).findFirst().orElse(null);
 
                 checkSwissResult(match,user,userOp);
 

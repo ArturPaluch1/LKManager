@@ -303,8 +303,14 @@ else
             //nie ma cookie
             else
             {//tworzenie cookie
-                return  decodeCookie(createCookieFromTheLastSchedule(response, scheduleDAO).getValue());
 
+             Cookie cookie=   createCookieFromTheLastSchedule(response, scheduleDAO);
+
+              if(cookie!=null) {
+                  String stringFromCookie =cookie.getValue();
+                  return  decodeCookie(stringFromCookie);
+              }
+else return null;
 
             }
 

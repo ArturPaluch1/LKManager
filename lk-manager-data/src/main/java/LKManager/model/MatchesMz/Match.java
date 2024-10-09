@@ -1,7 +1,7 @@
 package LKManager.model.MatchesMz;
 
 import LKManager.model.Round;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -68,19 +68,19 @@ public class Match implements Serializable {
   //  @Fetch(FetchMode.JOIN)
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "przeciwnik")//, referencedColumnName= "user_id")//, updatable = false, insertable = false)
-    private UserData opponentUserData;
+    private MZUserData opponentMZUserData;
 
     // @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
    // @Fetch(FetchMode.JOIN)
     @OneToOne(cascade = {CascadeType.REFRESH, CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "gracz")//, referencedColumnName= "user_id")//, updatable = false, insertable = false)
-    private UserData userData;
+    private MZUserData MZUserData;
     /* public XMLGregorianCalendar getDate() {
                 return date;
             }*/
 
 
-    public Match(Round round, Long id, String date, String status, String type, String typeName, int typeId, UserData userData) {
+    public Match(Round round, Long id, String date, String status, String type, String typeName, int typeId, MZUserData MZUserData) {
         this.round = round;
         this.id = id;
         this.date = date;
@@ -88,7 +88,7 @@ public class Match implements Serializable {
         this.type = type;
         this.typeName = typeName;
         this.typeId = typeId;
-        this.userData = userData;
+        this.MZUserData = MZUserData;
 
     }
 
@@ -246,12 +246,12 @@ dateDB=date;
         return opponentUserData;
     }*/
     @XmlElement
-    public UserData getOpponentUserData() {
-        return opponentUserData;
+    public MZUserData getOpponentMZUserData() {
+        return opponentMZUserData;
     }
 
-    public void setOpponentUserData(UserData opponentUserData) {
-        this.opponentUserData = opponentUserData;
+    public void setOpponentMZUserData(MZUserData opponentMZUserData) {
+        this.opponentMZUserData = opponentMZUserData;
     }
 
 /*
@@ -261,11 +261,11 @@ dateDB=date;
 */
 
     @XmlElement
-    public UserData getUserData() {
-        return userData;
+    public MZUserData getMZUserData() {
+        return MZUserData;
     }
 
-    public void setUserData(UserData userData) {
-        this.userData = userData;
+    public void setMZUserData(MZUserData MZUserData) {
+        this.MZUserData = MZUserData;
     }
 }

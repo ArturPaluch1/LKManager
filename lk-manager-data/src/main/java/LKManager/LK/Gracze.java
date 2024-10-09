@@ -1,7 +1,7 @@
 package LKManager.LK;
 
 import LKManager.model.UserMZ.Team;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
@@ -12,22 +12,22 @@ import java.util.List;
 
     @XmlRootElement(name="Gracze")
     @XmlAccessorType(XmlAccessType.PROPERTY)
-    @XmlSeeAlso({UserData.class, Team.class})
+    @XmlSeeAlso({MZUserData.class, Team.class})
     public class Gracze   implements Serializable {
-        List<UserData> gracze = new ArrayList<>();
+        List<MZUserData> gracze = new ArrayList<>();
 
         public Gracze() {
         }
 
-        public Gracze(List<UserData> gracze) {
+        public Gracze(List<MZUserData> gracze) {
             this.gracze = gracze;
         }
         @XmlElement(name = "UserData")
-        public List<UserData> getGracze() {
+        public List<MZUserData> getGracze() {
             return gracze;
         }
 
-        public void setGracze(List<UserData> gracze) {
+        public void setGracze(List<MZUserData> gracze) {
             this.gracze = gracze;
         }
     }

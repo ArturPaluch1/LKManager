@@ -1,8 +1,8 @@
 package LKManager.DAO_SQL;
 
-import LKManager.model.Schedule;
 import LKManager.model.MatchesMz.Match;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.Schedule;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.services.MZUserService;
 import LKManager.services.MatchService;
 import org.hibernate.Session;
@@ -33,13 +33,16 @@ public  class CustomScheduleDAOImpl implements CustomScheduleDAO{
 
     private final EntityManager entityManager;
 
-    @Autowired
-    public CustomScheduleDAOImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-    }
 
     @Autowired
-    private SessionFactory sessionFactory;
+    public CustomScheduleDAOImpl(EntityManager entityManager,  SessionFactory sessionFactory) {
+        this.entityManager = entityManager;
+
+        this.sessionFactory = sessionFactory;
+    }
+
+
+    private final SessionFactory sessionFactory;
 
 
     public void refresh(Schedule schedule) {
@@ -139,18 +142,19 @@ return allQuery.stream().toList();
 
   //  @Transactional
     @Override
+    @Transactional
     public Schedule saveSchedule(Schedule schedule) {
 
 
 
-        try {
+     /*   try(Session s = sessionFactory.openSession()){
+
+            s.beginTransaction();
+*/
 
 
-
-
-
-
-            schedule.getRounds().forEach(a->
+try{
+          /*  schedule.getRounds().forEach(a->
             {
                 a.setSchedule(schedule);
                 a.getMatches().forEach(b->
@@ -158,64 +162,47 @@ return allQuery.stream().toList();
                     b.setRound(a);
 
                 });
+            });*/
+    if(schedule.getRounds().size()!=0)
+    {
+        schedule.getRounds().forEach(round -> {
+            round.setSchedule(schedule); // Ustawienie Schedule w Round
+            round.getMatches().forEach(match -> {
+                match.setRound(round); // Ustawienie Round w Match
             });
+        });
+    }
+
+    System.out.println("opening session");
+         sessionFactory.openSession().saveOrUpdate(schedule);
+
+    } catch (Exception e) {
+        System.out.println("Błąd aktualizacji terminarza: " + e.getMessage());
+        e.printStackTrace();
+    }
+finally {
+    System.out.println("finally");
+    //sessionFactory.getCurrentSession().close();
+}
 
 
 
+    /*        s.saveOrUpdate(schedule);
+
+s.getTransaction().commit();*/
 
 
-
-
-
-
-        Session s =sessionFactory.openSession();
- //    try {
-
-s.beginTransaction();
-
-
-
-
-         schedule.getRounds().forEach(a->
-         {
-             a.setSchedule(schedule);
-             a.getMatches().forEach(b->
-             {
-                 b.setRound(a);
-
-             });
-         });
-
-            s.saveOrUpdate(schedule);
-
-s.getTransaction().commit();
-
-
+/*
 
 
         }
 
         catch (Exception e) {
-
-            System.out.println("db update terminarz error");
-        } finally {
-
+            System.out.println("Błąd aktualizacji terminarza: " + e.getMessage());
+            e.printStackTrace();
         }
-
-/*
-try {  s = sessionFactory.getCurrentSession();
-}
-  catch (Exception e)
-  {
-       s   = sessionFactory.openSession();
-
-  }
-finally {
-
-    s.saveOrUpdate(schedule);
-    s.close();
-}
 */
+
 
 
         return schedule;
@@ -370,15 +357,15 @@ return true;
 
 
                       //sprawdzanie czy  gospodarzem jest apuza
-                      if (!(match.getUserData().getUsername().equals("pauza") || match.getUserData().getUsername().equals("pauza"))) {
+                      if (!(match.getMZUserData().getUsername().equals("pauza") || match.getMZUserData().getUsername().equals("pauza"))) {
 
 
 
 
 
-                          var user = match.getUserData();
+                          var user = match.getMZUserData();
                           var userTeamId = user.getTeamlist().get(0).getTeamId();
-                          var oponent = match.getOpponentUserData();
+                          var oponent = match.getOpponentMZUserData();
                           var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
 
                           var played = matchService.findPlayedByUser(user);
@@ -413,10 +400,10 @@ return true;
 
 
                               //tutaj user ma id =0 oponent 1
-                              if (user1.getUserId().equals(user.getUserId()))
+                              if (user1.getMZuser_id().equals(user.getMZuser_id()))
                               {
                                   //sprawdzanie czy prawidlowy przeciwnik
-                                  if (playedMzMatch.getTeamlist().get(1).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                  if (playedMzMatch.getTeamlist().get(1).getTeamId() == match.getOpponentMZUserData().getTeamlist().get(0).getTeamId()) {
                                       //aktualizacja
                                       //  mecz.setMatchResult1("1");
                                       match.setUserMatchResult1(playedMzMatch.getTeamlist().get(0).getGoals());
@@ -426,9 +413,9 @@ return true;
 
                               }
                               //tutaj user ma id 1  oponent =0
-                              else if (user2.getUserId().equals(user.getUserId())) {
+                              else if (user2.getMZuser_id().equals(user.getMZuser_id())) {
                                   //sprawdzanie czy prawidlowy przeciwnik
-                                  if (playedMzMatch.getTeamlist().get(0).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                  if (playedMzMatch.getTeamlist().get(0).getTeamId() == match.getOpponentMZUserData().getTeamlist().get(0).getTeamId()) {
                                       //aktualizacja
                                       //  mecz.setMatchResult1("1");
                                       match.setUserMatchResult2(playedMzMatch.getTeamlist().get(1).getGoals());
@@ -502,10 +489,10 @@ return true;
     }
 
 
-  public List<UserData>  findAllParticipantsOfSchedule(String scheduleName)
+  public List<MZUserData>  findAllParticipantsOfSchedule(String scheduleName)
     {
         Session session = sessionFactory.openSession();
-        List<UserData>users= null;
+        List<MZUserData>users= null;
         try
         {
             System.out.println("all participants:"+scheduleName);
@@ -519,7 +506,7 @@ return true;
                             " inner join Schedule s on r.schedule=s.id " +
                             "   where (s.name=:ScheduleName and r.nr=1)");
             querryUser.setParameter("ScheduleName",scheduleName );
-             users= (ArrayList<UserData>) querryUser.getResultList();
+             users= (ArrayList<MZUserData>) querryUser.getResultList();
 
            Query querryOpponent= session.createQuery(
                     "select u from  UserData u " +
@@ -529,7 +516,7 @@ return true;
                             " inner join Schedule s on r.schedule=s.id " +
                             "   where (s.name=:ScheduleName and r.nr=1)");
             querryOpponent.setParameter("ScheduleName",scheduleName );
-            ArrayList<UserData> resultOpponent= (ArrayList<UserData>) querryOpponent.getResultList();
+            ArrayList<MZUserData> resultOpponent= (ArrayList<MZUserData>) querryOpponent.getResultList();
           //  users.add(result.getUser());
            users.addAll(resultOpponent);
          //  users.addAll(resultUser);
@@ -627,10 +614,17 @@ return true;
 
 
             String hql = " from Schedule s where  s.startDate=" +
-                    "(select max(s.startDate) from Schedule s where  s.scheduleStatus!=0)";
+                    "(select max(s2.startDate) from Schedule s2 where  s2.scheduleStatus!=0)";
 
             Query query = s.createQuery(hql);
-             schedule2 = (Schedule) query.getSingleResult();
+            List<Schedule> results = query.getResultList();
+            if (results.isEmpty()) {
+                return null;
+            }
+             schedule2 = results.get(0);
+             if(schedule2==null)
+                 return null;
+
             s.getTransaction().commit();
 
 

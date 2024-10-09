@@ -1,4 +1,4 @@
-package LKManager.model.UserMZ;
+package LKManager.model.account;
 
 public enum Role {
     DEACTIVATED_USER,

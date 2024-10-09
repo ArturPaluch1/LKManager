@@ -1,11 +1,11 @@
 package LKManager.services;
 
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.model.account.SignUpForm;
 
 public interface AccountService {
 
-    UserData createAccount(SignUpForm signUpForm);
+    MZUserData createAccount(SignUpForm signUpForm);
 
     /*   private String generatePassword()
            {

@@ -1,7 +1,11 @@
 package LKManager.services;
 
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 
-public interface MZUserService extends CrudService<UserData,Long> {
-     UserData findByUsernameInManagerzone(String username) ;
+import java.net.MalformedURLException;
+
+public interface MZUserService extends CrudService<MZUserData,Long> {
+     MZUserData findByUsernameInManagerzone(String username) ;
+
+     MZUserData getMZUserDataById(Long player) throws MalformedURLException;
 }

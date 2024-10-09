@@ -10,22 +10,22 @@ import java.io.Serializable;
 @AllArgsConstructor
 @XmlRootElement(name = "ManagerZone_UserData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlSeeAlso({UserData.class, Team.class})
+@XmlSeeAlso({MZUserData.class, Team.class})
 public class ManagerZone_UserData  implements Serializable  {
 
 
-private  UserData UserData;
+private MZUserData MZUserData;
 
 
 
 
     @XmlElement(name = "UserData")
-    public UserData getUserData() {
-        return UserData;
+    public MZUserData getMZUserData() {
+        return MZUserData;
     }
 
-    public void setUserData(UserData userData) {
-        this.UserData = userData;
+    public void setMZUserData(MZUserData MZUserData) {
+        this.MZUserData = MZUserData;
     }
 
 
@@ -38,7 +38,7 @@ private  UserData UserData;
     @Override
     public String toString() {
         return "ManagerZone_UserData{" +
-                "userData=" + UserData + '}';
+                "userData=" + MZUserData + '}';
     }
 }
 

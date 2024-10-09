@@ -10,10 +10,12 @@
 
 </head>
 <body>
+<div class="container">
+    <div class="row">
+<div th:replace="~{public/navbar}"></div>
 
-<div th:replace="~{public/navbar}"/>
 <div style="float:left">
-    <button id="bob"  onclick="myFunction()">Skopiuj</button>
+    <button id="bob"  class="btn btn-primary m-1"  onclick="myFunction()">Skopiuj</button>
 </div>
 
 
@@ -28,8 +30,8 @@
         </select>
     </form>
     <div>
-        <label>Wybrany terminarz: </label>
-        <label th:text="${chosenSchedule}"></label>
+        <label class="form-label m-1" >Wybrany terminarz: </label>
+        <label class="form-label m-1"  th:text="${chosenSchedule}"></label>
     </div>
 
 </div>
@@ -56,7 +58,7 @@
     <tr th:each="item : ${table}" >
         <td  class="counterCell" th:text="${table.indexOf(item)+1}"></td>
         <td th:text="${item. getPlayer().getTeamName()}" >Drużyna</td>
-        <td th:text="${item. getPlayer().getUsername()}" >user</td>
+        <td th:text="${item. getPlayer().MZUsername}" >user</td>
         <td th:text="${item.getTotalPoints()} ">Punkty</td>
         <td th:text="${item. getDifference()}" >Różnica</td>
         <td th:text="${item. getGoalsScored()}" >Strzelone</td>
@@ -68,6 +70,9 @@
 
 </table>
 
+
+</div>
+</div>
 
 <script>
 /*

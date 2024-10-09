@@ -64,7 +64,7 @@
                     </form>
                 </td>
                 <td>
-                    <button id="bob"  onclick="myFunction()">Skopiuj</button>
+                    <button id="bob"  class="btn btn-primary m-1"  onclick="myFunction()">Skopiuj</button>
                 </td>
 
             </tr>
@@ -223,19 +223,19 @@ console.log(  tempstring);
     <form th:object="${schedule}" th:action="@{/schedule/}" method="post">
         <div style="float:left">
             <br>
-            <button type="submit" class="btn btn-primary">Stwórz</button>
+            <button type="submit"  class="btn btn-primary m-1" >Stwórz</button>
             <br>
             <br/>
-            <label >Data rozpoczęcia:</label>
-            <label id="labelData"  ></label><br>
+            <label class="form-label m-1" >Data rozpoczęcia:</label>
+            <label class="form-label m-1" id="labelData"  ></label><br>
             <input type ="text" id="inputData" class="notDisplay" th:field="*{data}" />
             <br>
-            <label for="fname">Nazwa:</label><br>
+            <label class="form-label m-1" for="fname">Nazwa:</label><br>
             <input type="text" id="fname" name="fname" th:field="*{nazwa}"><br>
 
         </div>
         <div style="float:right">
-            <label >Gracze:</label><br>
+            <label class="form-label m-1" >Gracze:</label><br>
             <div class="table-responsive" th:if="${not #lists.isEmpty(schedule)}">
                 <table class="table table-hover">
                     <thead class="thead-inverse">
@@ -250,7 +250,7 @@ console.log(  tempstring);
 
                     <th:block th:each="item : ${gracze}">
                         <input type="checkbox" name="wybraniGracze" th:value="${item.getUsername()}"/>
-                        <label th:text="${item.getUsername()}"></label>
+                        <label class="form-label m-1" th:text="${item.getUsername()}"></label>
                         <br>
                     </th:block>
                 </table>

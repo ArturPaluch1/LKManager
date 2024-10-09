@@ -2,7 +2,7 @@ package LKManager.services;
 
 import LKManager.model.MatchesMz.Matches;
 import LKManager.model.UserMZ.ManagerZone_UserData;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -24,12 +24,15 @@ public  class URLs {
         };
     }
 
-    public static URL MakeUserURL(String username) throws MalformedURLException {
+    public static URL MakeUserURLwithUsername(String username) throws MalformedURLException {
         return new URL( "http://www.managerzone.com/xml/manager_data.php?sport_id=1&username="+username);
 
     }
+    public static URL MakeUserURLwithId(Long playerId) throws MalformedURLException {
+        return new URL( "http://www.managerzone.com/xml/manager_data.php?sport_id=1&user_id="+playerId);
 
-    public static URL MakeUserURL(int idTeam) throws MalformedURLException {
+    }
+    public static URL MakeUserURLwithTeamId(int idTeam) throws MalformedURLException {
         return new URL( "http://www.managerzone.com/xml/manager_data.php?sport_id=1&team_id="+idTeam);
 
     }
@@ -38,7 +41,7 @@ public  class URLs {
         return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ userId +"&match_status=1&limit=100");
 
     }
-    public static URL MakePlayedMatchesURL(UserData user) throws IOException, ParserConfigurationException, JAXBException, SAXException {
+    public static URL MakePlayedMatchesURL(MZUserData user) throws IOException, ParserConfigurationException, JAXBException, SAXException {
 URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ user.getTeamlist().get(0).getTeamId().toString()+"&match_status=1&limit=100");
         return przed;
 
@@ -48,6 +51,9 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
         return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ userId +"&match_status=2&limit=100");
 
     }
+
+
+
     public  URL MakeOngoingMatchesURL(String username) throws IOException, ParserConfigurationException, JAXBException, SAXException {
 
         return new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=1&team_id="+ MZUserService.findByUsernameInManagerzone(username).getTeamlist().get(0).getTeamId().toString()+"&match_status=2&limit=100");
@@ -55,7 +61,7 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
     }
 
 
-    public static UserData URLtoUserData(URL url) throws JAXBException {
+    public static MZUserData URLtoUserData(URL url) throws JAXBException {
         JAXBContext jaxbContext;
 
         jaxbContext = JAXBContext.newInstance (ManagerZone_UserData.class);
@@ -66,7 +72,7 @@ URL przed =new URL( "http://www.managerzone.com/xml/team_matchlist.php?sport_id=
 
 try{
     ManagerZone_UserData user = (ManagerZone_UserData) jaxbUnmarshaller.unmarshal( url);
-    return user.getUserData();
+    return user.getMZUserData();
 }
 catch(Exception e)
         {

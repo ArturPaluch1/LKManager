@@ -47,7 +47,8 @@ public String showUsers(Model model, RedirectAttributes attributes )
 ***************************************************/
     List<UserDataDTO>users=null;
 try{
-    users=userService.findAllUsers(true,false);
+    users=userService.findAllMZUsers(true,false);
+
    // users=userService.findUsers_NotDeletedWithoutPause();
 }
 catch (Exception e)

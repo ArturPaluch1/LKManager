@@ -2,7 +2,7 @@ package LKManager.model;
 
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.RecordsAndDTO.RoundDTO;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -22,7 +22,7 @@ import java.util.List;
 @Setter
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@XmlSeeAlso({Match.class, UserData.class})
+@XmlSeeAlso({Match.class, MZUserData.class})
 
 public class Round implements Serializable {
 

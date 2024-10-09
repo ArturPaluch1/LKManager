@@ -11,35 +11,91 @@
 </head>
 <body>
 <div th:replace="~{public/navbar}"/>
-<div class="container-lg my-1 " th:object="${model}" >
 
+
+
+<div class="container-lg my-1 " th:object="${model}" >
+    <div th:if="${message}" class="alert alert-warning w-25 justify-content-center"  role="alert">
+        <span th:text="${message}"></span>
+    </div>
 
     <div class="row">
         <b>Konto:</b>
 
-        <label class="col-md-2">Nazwa konta</label><label class="col-md-3"> username here</label><label
+        <label class="form-label m-1 col-md-2 ">Nazwa konta</label><label class="form-label m-1 col-md-3" th:text="${model.user.username}"> username here</label><label
             class="col-md-4"></label>
     </div>
 
     <div class="row">
+<form method="post" th:action="@{/userSettings/setMZUsername}">
+    <div th:if="${ #strings.isEmpty(model.user.MZUsername)}">
+        <label class="form-label m-1 col-md-2" >Nick MZ</label>
 
-        <label class="col-md-2">Nick MZ</label><label class="col-md-3" th:text="${model.user.username}"> MZusername
-        here</label>
 
-        <button class="col-md-2 my-1" th:if="${ #strings.isEmpty(model.user.username)}">Przypisz</button>
+    <input  class="col-md-3 m-1"  name="username" >
+        <button   class="btn btn-primary m-1 col-md-1"   th:if="${ #strings.isEmpty(model.user.MZUsername)}" >Ustaw</button>
+        <span >Aby dołączyć do ligi musisz podać username twojego konta w MZ</span>
+    </div>
+
+    <div th:if="${not #strings.isEmpty(model.user.MZUsername)}" >
+        <label class="form-label m-1 col-md-2" >Nick MZ</label>
+        <label class="form-label m-1 col-md-3" th:text="${model.user.MZUsername}"> MZUsername
+            here</label>
+    </div>
+
+</form>
+
+
         <br>
     </div>
     <div class="row">
-        <label class="col-md-2">Email</label><label class="col-md-3" th:text="${model.user.email}"> email here</label>
-        <button class="col-md-2 my-1" th:if="${not #strings.isEmpty(model.user.email)}">Zmień</button>
-        <button class="col-md-2 my-1" th:if="${ #strings.isEmpty(model.user.email)}">Aktywuj</button>
+        <form  method="post" th:action="@{/setEmail}" th:object="${model}">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+
+            <!-- email not null-->
+            <div th:if="${emailMessage}" class="alert alert-info">
+                <span th:text="${emailMessage}"></span>
+            </div>
+            <div th:if="${model.userEmail==null}"  >
+                <span  class="bg-warning" >Nie masz ustawionego maila. Jeśli zapomnisz hasła, nie będziesz miał opcji przypomnienia.</span>
+            </div>
+<div  th:if="${ model.userEmail!=null }" id="email">
+    <label class="form-label m-1 col-md-2">Email</label>
+    <label class="form-label m-1 col-md-3" th:text="${model.userEmail}"> email here</label>
+
+    <button class="btn btn-primary m-1 col-md-1 my-1" th:if="${not #strings.isEmpty(model.userEmail)}" type="button" onclick="changeEmail()">Zmień</button>
+    <!-- changing email-->
+    <!-- email is null-->
+
+</div>
+            <div   id="actualizationForm"  th:if="${ model.userEmail!=null}" style="display: none;">
+                <label class="form-label m-1 col-md-2">Email</label>
+                <input class="form-label m-1 col-md-2" type="email" th:field="*{userEmail}" >
+                <button class="btn btn-primary m-1 col-md-2 my-1" th:if="${not #strings.isEmpty(model.userEmail)}" >Aktualizuj</button>
+                <button class="btn btn-primary m-1 col-md-2 my-1" th:if="${not #strings.isEmpty(model.userEmail)}" type="button" onclick="cancel()">Anuluj</button>
+            </div>
+            <div   th:if="${ model.userEmail==null }">
+                <label class="form-label m-1 col-md-2">Email</label>
+                <input class="col-md-3" type="email" th:field="*{userEmail}"  >
+                <button class="col-md-1 my-1  btn btn-primary m-1"  th:if="${#strings.isEmpty(model.userEmail)}">Ustaw</button>
+
+            </div>
+
+
+
+
+
+        </form>
         <br>
     </div>
 </div>
 
 </div>
 <br>
-<div class="container-lg my-1 ">
+<div class="container-lg my-1 "  th:if="${ model.user.role!=T(LKManager.model.account.Role).DEACTIVATED_USER and
+  model.user.role!=T(LKManager.model.account.Role).UNACTIVATED_CLUB_USER
+ }">
     <div class="row">
         <b> Rozgrywki:</b>
     </div>
@@ -76,39 +132,45 @@
         <p th:text="${error}"></p>
     </div>
     <div class="row" name="league_title">
-        <label class="col-md-1 my-1 "  ></label>
-        <label class="col-md-2 my-1 bold-label" th:text="'Następny sezon: '+${model.upcomingSchedule.name}" >Następny sezon:nr tutaj z th dodawać nr</label>
+        <label class="form-label m-1 col-md-1 my-1 "  ></label>
 
-        <label class="col-md-1 my-1 bold-label"  >Data startu</label>
+<span   th:if="${model.upcomingSchedule}!=null" class="col-md-2 my-1 bold-label"   th:utext="'Następny sezon: <br>'+ ${model.upcomingSchedule.name}"></span>
+<span   th:if="${model.upcomingSchedule}==null" class="col-md-2 my-1 bold-label"   th:utext="'Następny sezon: <br>'"></span>
 
-        <label class="col-md-3 my-1 bold-label"  >Udział w lidze do odwołania</label>
+        <label class="col-md-2 my-1 bold-label form-label m-1"  >Data startu</label>
+
+        <label class="col-md-3 my-1 bold-label form-label m-1"  >Udział w lidze do odwołania</label>
     </div>
 
     <div class="row" name="league_content">
-    <label class="col-md-1 my-1 bold-label" >Liga</label>
-        <label class="col-md-2 my-1"  th:if="${(model.user.leagueParticipation == null) or model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).UNSIGNED}">Nie zapisany</label>
-        <label class="col-md-2 my-1"  th:if="${model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SIGNED}">Zapisany</label>
-        <label class="col-md-2 my-1"  th:if="${model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SUBBED}">Zapisany do odwołania</label>
-      <label class="col-md-1 my-1" th:text="${model.upcomingSchedule.startDate}"> data</label>
+    <label class="col-md-1 my-1 bold-label form-label m-1" >Liga</label>
+        <label class="form-label m-1 col-md-2 my-1"   th:if="${ model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).UNSIGNED}">Nie zapisany</label>
+        <label class="form-label m-1 col-md-2 my-1"  th:if="${model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SIGNED}">Zapisany</label>
+        <label class="form-label m-1 col-md-2 my-1"  th:if="${model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SUBBED}">Zapisany do odwołania</label>
+      <label class="form-label m-1 col-md-2 my-1"  th:if="${model.upcomingSchedule}!=null" th:text="${model.upcomingSchedule.startDate}"> data</label>
 
       <!--  <label class="col-md-1 my-1"></label>-->
-        <form class="col-md-3 my-1 " method="post" th:action="@{/userSettings/subscribeLeague}">
-            <input type="checkbox"
-                   th:checked="${model.user.leagueParticipation == T(LKManager.model.UserMZ.LeagueParticipation).SUBBED}"
-                   name="checkboxLeagueParticipation"
 
-                   onchange="document.getElementById('checkboxLeagueParticipation').value = this.checked ? 'SUBBED' : 'UNSIGNED'; this.form.submit();">
+        <div th:class="${model.upcomingSchedule != null} ? 'col-md-3 my-1' : 'col-md-5 my-1'">
+                <form  method="post" th:action="@{/userSettings/subscribeLeague}">
+                <input type="checkbox" th:if="${model.upcomingSchedule}!=null"
+                       th:checked="${model.user.leagueParticipation == T(LKManager.model.UserMZ.LeagueParticipation).SUBBED}"
+                       name="checkboxLeagueParticipation"
 
-            <!-- Ukryte pole, które będzie służyć jako wskaźnik stanu checkboxa -->
-            <input type="hidden" id="checkboxLeagueParticipation" name="checkboxLeagueParticipation" th:value="${model.user.leagueParticipation}">
-        </form>
+                       onchange="document.getElementById('checkboxLeagueParticipation').value = this.checked ? 'SUBBED' : 'UNSIGNED'; this.form.submit();">
+
+
+                <input type="hidden" id="checkboxLeagueParticipation" name="checkboxLeagueParticipation" th:value="${model.user.leagueParticipation}">
+                </form>
+            </div>
+
 
        <form class="col-md-2 my-1" th:action="@{/userSettings/joinLeague}" method="post" th:if="${model.user.leagueParticipation == null or model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).UNSIGNED  }">
 
-        <button   type="submit">Zapisz się</button>
+        <button   class="btn btn-primary m-1"  type="submit">Zapisz się</button>
        </form>
         <form class="col-md-2 my-1"  th:action="@{/userSettings/leaveLeague}" method="post"  th:if="${ model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SIGNED or model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SUBBED}">
-        <button  >Wypisz się</button>
+        <button class="btn btn-primary m-1"  >Wypisz się</button>
         </form>
     </div>
     <br>
@@ -124,6 +186,27 @@
 
 </div>
 
+<script type="text/javascript" th:inline="javascript" >
+function changeEmail() {
+console.log('hiddendiv')
+  let hiddendiv = document.getElementById("actualizationForm")
+  hiddendiv.style.display = "block";
+let emaildiv=document.getElementById("email")
+ emaildiv.style.display = "none";
+  console.log(hiddendiv)
+}
 
+
+
+function cancel() {
+  let hiddendiv = document.getElementById("actualizationForm")
+    hiddendiv.style.display = "none";
+
+let emaildiv=document.getElementById("email")
+   emaildiv.style.display = "block";
+  //console.log(hiddendiv)
+}
+
+</script>
 </body>
 </html>

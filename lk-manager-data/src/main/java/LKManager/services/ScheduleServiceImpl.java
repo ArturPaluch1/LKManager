@@ -8,11 +8,12 @@ import LKManager.LK.PlayerSummary;
 import LKManager.model.*;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.RecordsAndDTO.*;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.services.Adapters.MatchAdapter;
 import LKManager.services.Adapters.ScheduleAdapter;
 import LKManager.services.Adapters.UserAdapter;
-import LKManager.services.Comparators.UserDataDTOReliabilityComparator;
+import LKManager.services.Comparators.AlphanumericComparator;
+import LKManager.services.Comparators.UserMzDTOReliabilityComparator;
 import LKManager.services.RedisService.RedisScheduleService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,7 @@ import javax.xml.datatype.Duration;
 import java.io.File;
 import java.sql.SQLSyntaxErrorException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,7 +50,7 @@ private final ScheduleDAO scheduleDAO;
     private final RoundDAO roundDAO;
 private final UserService userService;
    // @Autowired
-private final UserDAO userDAO;
+private final UserDAO UserDAO;
 /*    @Autowired
 private final MZCache mzCache;
 */
@@ -69,41 +67,28 @@ private final RoundService roundService;
 //////////
 
 
-    @Override
-    public boolean addLeagueParticipant(Long userId) {
-        LeagueParticipants participant = new LeagueParticipants(userId);
+/*    @Override
+    public boolean addLeagueParticipant(UserDataDTO userDTO) {
+       User user= userService.getUserById(userDTO.getUserId());
+      leagueParticipantsDAO.addUser(new LeagueParticipants(user));
+        LeagueParticipants participant = new LeagueParticipants(user);
 
         LeagueParticipants savedParticipant= leagueParticipantsDAO.save(participant);
 
         if(savedParticipant==null)return false;//error
         else return true;//success
 
-    }
-
-    @Override
-    @Transactional
-    public boolean removeLeagueParticipant(Long userId) {
-       // LeagueParticipants participant =leagueParticipantsDAO.findById(userId).orElse(null);
-
-     try {
-         leagueParticipantsDAO.deleteById(userId);
-         return true;//success
-     }
-     catch(Exception e)
-     {
-         return false;//error
-     }
+    }*/
 
 
-    }
 
-    @Override
+/*    @Override
     public List<LeagueParticipants> getLeagueParticipants() {
 
 
 
         return  leagueParticipantsDAO.findAll();
-    }
+    }*/
 
     public Schedule findByIdWithRoundsMatchesUsersAndTeams(long scheduleId)
     {
@@ -351,7 +336,7 @@ else return null;
 
     }*/
 
-
+@Transactional
     public CreateScheduleResult planSchedule(LocalDate startDate, String scheduleName, ScheduleType scheduleType)
     {
         Schedule schedule = new Schedule( scheduleName,scheduleType,startDate,ScheduleStatus.PLANNED);
@@ -360,7 +345,8 @@ else return null;
 
 schedule.setScheduleStatus(ScheduleStatus.PLANNED);
         Schedule   savedSchedule=    scheduleDAO.saveSchedule(schedule);
-        redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
+        //nie dodawane do redis bo planned. Dodawane dopiero ongoning
+     //   redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
 return new CreateScheduleResult(savedSchedule,null);
     }
 
@@ -368,11 +354,11 @@ return new CreateScheduleResult(savedSchedule,null);
     @Override
     @Transactional
     public CreateScheduleResult createMultiDaySchedule(LocalDate startDate, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType, ScheduleStatus scheduleStatus) throws DatatypeConfigurationException, DatatypeConfigurationException {
-        List<UserData> playersNotInMZ= new ArrayList<>();
-        List<UserData> playersForSchedule= new ArrayList<>();
+        List<MZUserData> playersNotInMZ= new ArrayList<>();
+        List<MZUserData> playersForSchedule= new ArrayList<>();
         chosenPlayers.stream().forEach(
                 player-> {
-                    UserData foundPlayer= mzUserService.findByUsernameInManagerzone(player);
+                    MZUserData foundPlayer= mzUserService.findByUsernameInManagerzone(player);
                     if(foundPlayer==null)
                         playersNotInMZ.add(foundPlayer);
                     else playersForSchedule.add(foundPlayer);
@@ -411,8 +397,8 @@ return new CreateScheduleResult(savedSchedule,null);
             /////////////////podzial grajkow na pol  /////////////////
 
 
-            List<UserData> playersA = playersForSchedule.subList(0, (playersForSchedule.size()) / 2);
-            List<UserData> playersB = playersForSchedule.subList(playersForSchedule.size() / 2, playersForSchedule.size());
+            List<MZUserData> playersA = playersForSchedule.subList(0, (playersForSchedule.size()) / 2);
+            List<MZUserData> playersB = playersForSchedule.subList(playersForSchedule.size() / 2, playersForSchedule.size());
             ListsOfPlayers listsOfPlayers = new ListsOfPlayers(playersA, playersB);
 
 
@@ -444,8 +430,8 @@ return new CreateScheduleResult(savedSchedule,null);
                         var tempMatch = new Match();
 
 
-                        tempMatch.setUserData(listsOfPlayers.getPlayersA().get(i));
-                        tempMatch.setOpponentUserData(listsOfPlayers.getPlayersB().get(i));
+                        tempMatch.setMZUserData(listsOfPlayers.getPlayersA().get(i));
+                        tempMatch.setOpponentMZUserData(listsOfPlayers.getPlayersB().get(i));
                         tempMatch.setDateDB(startDate.plusDays(7L * (j - 1)));
 
                         round.getMatches().add(tempMatch);
@@ -465,7 +451,8 @@ return new CreateScheduleResult(savedSchedule,null);
             }
 
             /////////////// zapis termnarza do xml    //////////////////////
-            Schedule schedule = new Schedule(rounds,scheduleName,scheduleType,startDate,scheduleStatus );
+            Optional<Round> lastRound=  rounds.stream().max(Comparator.comparing(Round::getNr));
+            Schedule schedule = new Schedule(rounds, scheduleName,startDate,lastRound.get().getDate(),scheduleType,scheduleStatus);
 
             //       jaxbObjectToXML(terminarz,nazwa);
 
@@ -547,22 +534,218 @@ return new CreateScheduleResult(savedSchedule,null);
     }
 
 
+    @Override
+    @Transactional
+    public CreateScheduleResult updatePlannedSchedule(Schedule schedule, List<LeagueParticipants> chosenPlayers) throws DatatypeConfigurationException, DatatypeConfigurationException {
+
+
+
+
+
+        List<MZUserData> playersNotInMZ= new ArrayList<>();
+        List<MZUserData> playersForSchedule= new ArrayList<>();
+
+      chosenPlayers= chosenPlayers.stream().collect(Collectors.toMap( u->u.getUser().getMzUser().getMZuser_id() , u->u,(e,r)->e)).values().stream().toList();
+        chosenPlayers.stream().forEach(
+                player-> {
+                    MZUserData foundPlayer= null;
+                    //todo to chyba można uprościć - metody się powtarzają
+                    //todo tutaj jak nie będzie w mz będzie błąd/nie zrobi się terminarz, trzeba to poprawić
+                    foundPlayer = mzUserService.findByUsernameInManagerzone(player.getUser().getMzUser().getUsername());
+                    if(foundPlayer==null)
+                        playersNotInMZ.add(foundPlayer);
+                    else playersForSchedule.add(foundPlayer);
+
+                }
+        );
+        if(!playersNotInMZ.isEmpty())
+        {
+            return new CreateScheduleResult(null,playersNotInMZ);
+        }
+        else {
+
+            // List<UserData> players = userDAO.findUsers_NotDeletedWithPause();
+
+/*
+        List<UserData> chosenPlayersUserData = new ArrayList<>();
+        for (var player : players
+        ) {
+            for (int i = 0; i < chosenPlayers.size(); i++
+            ) {
+                if (player.getUsername().equals(chosenPlayers.get(i))) {
+                    chosenPlayersUserData.add(player);
+                    i = 0;
+                    break;
+                }
+            }
+        }
+
+
+*/
+
+
+
+            ////////////////////////////////////////////////////////
+            AddPauseForParity(playersForSchedule);
+            /////////////////podzial grajkow na pol  /////////////////
+
+
+            List<MZUserData> playersA = playersForSchedule.subList(0, (playersForSchedule.size()) / 2);
+            List<MZUserData> playersB = playersForSchedule.subList(playersForSchedule.size() / 2, playersForSchedule.size());
+            ListsOfPlayers listsOfPlayers = new ListsOfPlayers(playersA, playersB);
+
+
+            Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
+
+
+            List<Round> rounds = new ArrayList<>();
+
+/////////tworzenie terminarza/////////////////
+            for (int j = 1; j < playersForSchedule.size(); j++) {
+                /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
+                Round round;
+                if (j != 1) {
+                    round = new Round(j, rounds.get((rounds.size()-1)).getDate().plusDays(7L));
+                } else {
+                    round = new Round(j, schedule.getStartDate());
+                }
+                //////////ustalanie par /////////////////////////////
+
+
+                  /*  var para = listyGrajkow.getGrajkiA().get(i).getUsername() + " - " + listyGrajkow.getGrajkiB().get(i).getUsername();
+                    System.out.println(para);*/
+
+
+                for (int i = 0; i < playersA.size(); i++) {
+
+
+
+                    var tempMatch = new Match();
+
+
+                    tempMatch.setMZUserData(listsOfPlayers.getPlayersA().get(i));
+                    tempMatch.setOpponentMZUserData(listsOfPlayers.getPlayersB().get(i));
+                    tempMatch.setDateDB(schedule.getStartDate().plusDays(7L * (j - 1)));
+
+                    round.getMatches().add(tempMatch);
+
+                }
+
+
+
+
+
+                round.setPlayed(false);
+                rounds.add(round);
+                listsOfPlayers.shiftLists();
+                System.out.println("=======" + round.getNr() + " === " + round.getDate());
+
+
+            }
+
+            /////////////// zapis termnarza do xml    //////////////////////
+            Optional<Round> lastRound=  rounds.stream().max(Comparator.comparing(Round::getNr));
+if(lastRound.isEmpty()) //pierwsza runda
+{
+    schedule.setEndDate(schedule.getStartDate());
+}
+else
+{
+    schedule.setEndDate(lastRound.get().getDate());
+}
+
+            schedule.setRounds(rounds);
+            schedule.setScheduleStatus(ScheduleStatus.ONGOING);
+
+
+
+            Schedule   savedSchedule=    scheduleDAO.saveSchedule(schedule);
+            ScheduleDTO result = redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
+            System.out.println("saved in redis");
+            return new CreateScheduleResult(schedule,playersNotInMZ);
+            /*
+/////////////////podzial grajkow na pol  /////////////////
+
+
+
+            var grajkiA = playersForSchedule.subList(0, (playersForSchedule.size()) / 2);
+            var grajkiB = playersForSchedule.subList(playersForSchedule.size() / 2, playersForSchedule.size());
+
+
+            Duration d = DatatypeFactory.newInstance().newDuration(true, 0, 0, 7, 0, 0, 0);
+            ListyGrajkow listyGrajkow = new ListyGrajkow(grajkiA, grajkiB);
+
+            List<Round> calyTerminarz = new ArrayList<>();
+
+/////////tworzenie terminarza/////////////////
+            for (int j = 1; j < playersForSchedule.size(); j++) {
+                /////ustalanie dat i id kolejnych rund /////////////////////////////////////////
+                Round round;
+                if (j != 1) {
+
+                    round = new Round(j, calyTerminarz.get((calyTerminarz.size()-1)).getDate().plusDays(7L));
+                } else {
+                    round = new Round(j, data);
+                }
+
+                //////////ustalanie par /////////////////////////////
+                for (int i = 0; i < grajkiA.size(); i++) {
+
+                    var para = listyGrajkow.getGrajkiA().get(i).getUsername() + " - " + listyGrajkow.getGrajkiB().get(i).getUsername();
+                    System.out.println(para);
+
+                    var tempMatch = new Match();
+                    tempMatch.setUserData(listyGrajkow.getGrajkiA().get(i));
+                    tempMatch.setOpponentUserData(listyGrajkow.getGrajkiB().get(i));
+                    tempMatch.setDateDB(data.plusDays(7L *(j-1)));
+
+                    round.getMatches().add(tempMatch);
+
+                }
+
+                round.setPlayed(false);
+                calyTerminarz.add(round);
+                System.out.println("=======" + round.getNr() + " === " + round.getDate());
+                listyGrajkow.przesunListy();
+
+            }
+
+            /////////////// zapis termnarza do xml    //////////////////////
+            Schedule schedule = new Schedule(calyTerminarz);
+
+            //       jaxbObjectToXML(terminarz,nazwa);
+
+/////////////////////////////////////////////
+// zapis  sql
+            schedule.setName(nazwa);
+
+            scheduleDAO.save(schedule);
+
+
+            return schedule;
+            */
+
+
+        }
+
+
+//////////////
+    }
 
     @Override
     @Transactional
     public CreateScheduleResult createOneDayShedule(LocalDate startDate, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType, ScheduleStatus status) {
-       List<UserData> playersNotInMZ= new ArrayList<>();
-        List<UserData> playersInMZ= new ArrayList<>();
+        List<MZUserData> playersNotInMZ= new ArrayList<>();
+        List<MZUserData> playersInMZ= new ArrayList<>();
                chosenPlayers.stream().forEach(
                 player-> {
                     if(player.equals("pauza"))
                     {
-                        playersInMZ.add(userService.getPauseObject());
+                        playersInMZ.add(userService.getPauseObject().getMzUser());
                     }
                     else
                     {
-                        //UserData foundPlayer= mzUserService.findByUsernameInManagerzone(player);
-                        UserData foundPlayer= userService.getUserDataByUsername(player);
+                       MZUserData  foundPlayer= mzUserService.findByUsernameInManagerzone(player);
 
                         if(foundPlayer==null)
                             playersNotInMZ.add(foundPlayer);
@@ -596,8 +779,8 @@ return new CreateScheduleResult(savedSchedule,null);
                 {
                     var tempMatch = new Match();
                     tempMatch.setDateDB(startDate);
-                    tempMatch.setUserData(playersInMZ.get(i));
-                    tempMatch.setOpponentUserData(playersInMZ.get(i+1));
+                    tempMatch.setMZUserData(playersInMZ.get(i));
+                    tempMatch.setOpponentMZUserData(playersInMZ.get(i+1));
                     round.getMatches().add(tempMatch);
                 }
 
@@ -643,7 +826,9 @@ return new CreateScheduleResult(savedSchedule,null);
         jaxbObjectToXML(terminarz,nazwa);
 */
 /////////////////////////////////////////////
-            Schedule schedule = new Schedule(rounds, scheduleName,scheduleType,startDate,status);
+
+
+            Schedule schedule = new Schedule(rounds, scheduleName,startDate,startDate,scheduleType,status);
 
           Schedule savedSchedule=  scheduleDAO.saveSchedule(schedule);
 
@@ -693,9 +878,9 @@ return new CreateScheduleResult(savedSchedule,null);
 
 
 
-    protected void AddPauseForParity(List<UserData> players) {
+    protected void AddPauseForParity(List<MZUserData> players) {
         if (players.size() % 2 != 0)
-players.add(userService.getPauseObject());
+players.add(userService.getPauseObject().getMzUser());
 
 
 
@@ -715,8 +900,9 @@ players.add(userService.getPauseObject());
     @Transactional
     public boolean updateSchedule(Schedule schedule) {
 
-        Schedule savedSchedule=  scheduleDAO.saveSchedule(schedule);
-
+        System.out.println("sch status- "+schedule.getScheduleStatus());
+   //     Schedule savedSchedule=  scheduleDAO.saveSchedule(schedule);
+        Schedule savedSchedule=  scheduleDAO.save(schedule);
 
         redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
 
@@ -739,10 +925,10 @@ players.add(userService.getPauseObject());
         {
             System.out.println("from sql");
             scheduleNames= scheduleDAO.getScheduleNamesOngoingOrFinished();
-        redisScheduleService.setScheduleNames(scheduleNames);
+       if(scheduleNames.size()!=0) redisScheduleService.setScheduleNames(scheduleNames);
 
         }
-        return scheduleNames;
+        return scheduleNames.stream().sorted(Comparator.comparing(ScheduleNameDTO::getName,new AlphanumericComparator()).reversed()).collect(Collectors.toList());
     }
 
 
@@ -812,38 +998,38 @@ players.add(userService.getPauseObject());
 
 
     class ListsOfPlayers {
-        private List<UserData> playersShiftedA;
-        private List<UserData> playersShiftedB;
-        private List<UserData> playersA;
-        private List<UserData> playersB;
+        private List<MZUserData> playersShiftedA;
+        private List<MZUserData> playersShiftedB;
+        private List<MZUserData> playersA;
+        private List<MZUserData> playersB;
 
-        public List<UserData> getPlayersShiftedA() {
+        public List<MZUserData> getPlayersShiftedA() {
             return playersShiftedA;
         }
 
-        public void setPlayersShiftedA(List<UserData> playersShiftedA) {
+        public void setPlayersShiftedA(List<MZUserData> playersShiftedA) {
             this.playersShiftedA = playersShiftedA;
         }
 
-        public List<UserData> getPlayersShiftedB() {
+        public List<MZUserData> getPlayersShiftedB() {
             return playersShiftedB;
         }
 
-        public void setPlayersShiftedB(List<UserData> playersShiftedB) {
+        public void setPlayersShiftedB(List<MZUserData> playersShiftedB) {
             this.playersShiftedB = playersShiftedB;
         }
 
-        public List<UserData> getPlayersA() {
+        public List<MZUserData> getPlayersA() {
             return playersA;
         }
 
 
-        public List<UserData> getPlayersB() {
+        public List<MZUserData> getPlayersB() {
             return playersB;
         }
 
 
-        public ListsOfPlayers(List<UserData> playersA, List<UserData> playersB) {
+        public ListsOfPlayers(List<MZUserData> playersA, List<MZUserData> playersB) {
             this.playersA = playersA;
             this.playersB = playersB;
             playersShiftedA = new ArrayList<>();
@@ -852,8 +1038,8 @@ players.add(userService.getPauseObject());
 
         public void shiftLists() {
             //przesuwanie
-            List<UserData> playersShiftedA = new ArrayList<>();
-            List<UserData> playersShiftedB = new ArrayList<>();
+            List<MZUserData> playersShiftedA = new ArrayList<>();
+            List<MZUserData> playersShiftedB = new ArrayList<>();
 
             //A
             for (int i = 0; i < playersA.size(); i++) {
@@ -926,7 +1112,7 @@ return null;
     }
 */
 
-    public RoundDTO createPairingsForNextRound(List<UserDAO> players, int roundNr, List<RoundDAO> rounds,LocalDate startDate)
+    public RoundDTO createPairingsForNextRound(List<UserDAO> players, int roundNr, List<RoundDAO> rounds, LocalDate startDate)
     {
 return null;
     }
@@ -950,17 +1136,17 @@ if(signedPlayers!=null)
   //  List<UserDataDTO> signedPlayersData= signedPlayers.stream().forEach(p-> userService.get);
 
 
-    List<UserDataDTO> playersInMZ= new ArrayList<>();
-    List<UserDataDTO> playersNotInMZ= new ArrayList<>();
+    List<UserMzDTO> playersInMZ= new ArrayList<>();
+    List<UserMzDTO> playersNotInMZ= new ArrayList<>();
     signedPlayers.stream().forEach(
             player-> {
                 if(player.equals("pauza"))
                 {
-                    playersInMZ.add(UserAdapter.convertUserDataToUserDataDTO(userService.getPauseObject()));
+                    playersInMZ.add(UserAdapter.convertMZUserDataToUserMzDTO(userService.getPauseObject().getMzUser()));
                 }
                 else
                 {
-                    UserDataDTO foundPlayer= UserAdapter.convertUserDataToUserDataDTO(userService.getUserDataByUsername(player));
+                    UserMzDTO foundPlayer= UserAdapter.convertMZUserDataToUserMzDTO(userService.getMZUserDataByUsername(player));
                     if(foundPlayer==null)
                         playersNotInMZ.add(foundPlayer);
                     else playersInMZ.add(foundPlayer);
@@ -981,36 +1167,36 @@ if(signedPlayers!=null)
 else return null;
 
     }
-        public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName,Integer roundsNumber, ScheduleType scheduleType, ScheduleStatus scheduleStatus) {
+        public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserMzDTO> signedPlayers, String scheduleName,Integer roundsNumber, ScheduleType scheduleType, ScheduleStatus scheduleStatus) {
        ScheduleNameDTO scheduleInDB=this.getScheduleNamesOngoingOrFinished().stream().filter(schedule->schedule.getName().equals(scheduleName)).findFirst().orElse(null);
        if(scheduleInDB==null)
        {
            List<Round> rounds = new ArrayList<>();
 
-           List<UserData> playersInMZ = new ArrayList<>();
-           List<UserData> playersNotInMZ = new ArrayList<>();
+           List<MZUserData> playersInMZ = new ArrayList<>();
+           List<MZUserData> playersNotInMZ = new ArrayList<>();
 
 
 
            if(signedPlayers.size()%2!=0)
            {
-               signedPlayers.add(UserAdapter.convertUserDataToUserDataDTO( userService.getPauseObject()));
+               signedPlayers.add(UserAdapter.convertMZUserDataToUserMzDTO( userService.getPauseObject().getMzUser()));
            }
 
 
 
 
 
-           Collections.sort(signedPlayers, new UserDataDTOReliabilityComparator());
+           Collections.sort(signedPlayers, new UserMzDTOReliabilityComparator(userService));
 
            //todo tutaj wziac pod uwage regularnosc
            signedPlayers.stream().forEach(
                    player -> {
-                       if (player.getUserId() == 0) {
-                           playersInMZ.add(userService.getPauseObject());
+                       if (player.getMZuserId()== 0) {
+                           playersInMZ.add(userService.getPauseObject().getMzUser());
                        } else {
                            // UserData foundPlayer = mzUserService.findByUsernameInManagerzone(player.getUsername());
-                           UserData foundPlayer = userService.getUserDataByUsername(player.getUsername());
+                           MZUserData foundPlayer = userService.getMZUserDataByUsername(player.getMZUsername());
                            if (foundPlayer == null)
                                playersNotInMZ.add(foundPlayer);
                            else playersInMZ.add(foundPlayer);
@@ -1038,8 +1224,8 @@ else return null;
                            } else {
                                var tempMatch = new Match();
                                tempMatch.setDateDB(startDate);
-                               tempMatch.setUserData(playersInMZ.get(i));
-                               tempMatch.setOpponentUserData(playersInMZ.get(i + 1));
+                               tempMatch.setMZUserData(playersInMZ.get(i));
+                               tempMatch.setOpponentMZUserData(playersInMZ.get(i + 1));
                                tempMatch.setRound(round);
                                round.getMatches().add(tempMatch);
                            }
@@ -1055,8 +1241,9 @@ else return null;
 
                }
 
-
-               Schedule schedule = new Schedule(rounds, scheduleName, scheduleType,startDate,scheduleStatus);
+               Optional<Round> lastRound=  rounds.stream().max(Comparator.comparing(Round::getNr));
+               Schedule schedule = new Schedule(rounds, scheduleName,startDate,lastRound.get().getDate(),scheduleType,scheduleStatus);
+              // Schedule schedule = new Schedule(rounds, scheduleName, scheduleType,startDate,scheduleStatus);
 
                Schedule savedSchedule = scheduleDAO.saveSchedule(schedule);
 
@@ -1112,30 +1299,30 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
             //  round.setPlayed(false);
 
 
-            List<UserDataDTO> usersHadPause = schedule.getRounds().stream().flatMap(r -> r.getMatches().stream()).
+            List<UserMzDTO> usersHadPause = schedule.getRounds().stream().flatMap(r -> r.getMatches().stream()).
                     filter(
                             matchDTO ->
                             {
-                                if (matchDTO.getUserDataDTO().getUserId() == 0)//id pauzy /wolnego losu
+                                if (matchDTO.getUserUserMzDTO().getMZuserId() == 0)//id pauzy /wolnego losu
                                 {
                                     return true;
 
-                                } else if (matchDTO.getOpponentUserDataDTO().getUserId() == 0) {
+                                } else if (matchDTO.getOpponentUserMzDTO().getMZuserId() == 0) {
                                     return true;
                                 } else return false;
                             }
                     ).map(matchDTO -> {
-                        if (matchDTO.getUserDataDTO().getUserId() == 0) {
-                            return matchDTO.getOpponentUserDataDTO(); // zwraca przeciwnika, jeśli użytkownik miał pauzę / wolny los
+                        if (matchDTO.getUserUserMzDTO().getMZuserId() == 0) {
+                            return matchDTO.getOpponentUserMzDTO(); // zwraca przeciwnika, jeśli użytkownik miał pauzę / wolny los
                         } else {
-                            return matchDTO.getUserDataDTO(); // zwraca użytkownika, jeśli przeciwnik miał pauzę / wolny los
+                            return matchDTO.getUserUserMzDTO(); // zwraca użytkownika, jeśli przeciwnik miał pauzę / wolny los
                         }
                     })
                     .collect(Collectors.toList());
 
             /*SwissTable  swissTable= new SwissTable();*/
 
-            List<UserData> allParticipants = scheduleDAO.findAllParticipantsOfSchedule(schedule.getName());
+            List<MZUserData> allParticipants = scheduleDAO.findAllParticipantsOfSchedule(schedule.getName());
 
             List<PlayerSummary> availablePlayers = allParticipants.stream()
                     .map(PlayerSummary::new)
@@ -1159,18 +1346,18 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
                 if (playerWithMinPoints != null) {
                     playerWithMinPoints.isWolnyLos();// = true;
 
-                    UserData pauseObject = userService.getPauseObject();
+                    MZUserData pauseObject = userService.getPauseObject().getMzUser();
 
                     var tempMatch = new Match();
                     tempMatch.setDateDB(startDate);
-                    tempMatch.setUserData(userService.getUserById(playerWithMinPoints.getPlayer().getUserId()));
-                    tempMatch.setOpponentUserData(pauseObject);
+                    tempMatch.setMZUserData(userService.getMZUserById(playerWithMinPoints.getPlayer().getMZuserId()));
+                    tempMatch.setOpponentMZUserData(pauseObject);
                     round.getMatches().add(tempMatch);
 
 
                     round.getMatches().add(tempMatch);
 
-                    System.out.println("wolny los dostał: " + playerWithMinPoints.getPlayer().getUsername());
+                    System.out.println("wolny los dostał: " + playerWithMinPoints.getPlayer().getMZUsername());
                     sp.remove(playerWithMinPoints);
                 }
             }
@@ -1201,7 +1388,7 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
                 PlayerSummary player1 = availablePlayers.get(i);
                 PlayerSummary player2= findOpponent(player1, availablePlayers, schedule.getRounds());//= availablePlayers.get(i+1);
 
-                var tmp1=player1.getPlayer().getUsername();
+                var tmp1=player1.getPlayer().getMZUsername();
                 //   var tmp2=player2.player.getUsername();
 
                 // Sprawdzenie czy gracze nie grali ze sobą wcześniej
@@ -1209,9 +1396,9 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
                 //   player2
 
                 if (player2 == null) {
-                    System.out.println(player1.getPlayer().getUsername());
-                    System.out.println(availablePlayers.get(i).getPlayer().getUsername());
-                    System.out.println(availablePlayers.get(i + 1).getPlayer().getUsername());
+                    System.out.println(player1.getPlayer().getMZUsername());
+                    System.out.println(availablePlayers.get(i).getPlayer().getMZUsername());
+                    System.out.println(availablePlayers.get(i + 1).getPlayer().getMZUsername());
                     // System.out.println(player2.name);
                     player1 = availablePlayers.get(i);
                     player2 = availablePlayers.get(i + 1);
@@ -1219,20 +1406,20 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
                     int lastIndex = round.getMatches().size() - 1;
                     for (int j = lastIndex; j >= 0; j--) {
                         //player1 -> nowy player1
-                        PlayerSummary tempPlayer1n1 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer1n1 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getMZUserData()))), schedule.getRounds());
                         //player1 -> nowy player2
-                        PlayerSummary tempPlayer1n2 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getOpponentUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer1n2 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getOpponentMZUserData()))), schedule.getRounds());
 
-                        PlayerSummary tempPlayer2n1 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getUserData()))), schedule.getRounds());
-                        PlayerSummary tempPlayer2n2 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getOpponentUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer2n1 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getMZUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer2n2 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getOpponentMZUserData()))), schedule.getRounds());
 
 
                         if (tempPlayer1n1 != null && tempPlayer2n2 != null) {
                             //wcześniejsza para //todo to zamienic tak jak niżej ? \/
-                            System.out.println("zamiana1 " + player1.getPlayer().getUsername() + " " + tempPlayer1n1.getPlayer().getUsername() + " / " + player2.getPlayer().getUsername() + " " + tempPlayer2n2.getPlayer().getUsername());
+                            System.out.println("zamiana1 " + player1.getPlayer().getMZUsername() + " " + tempPlayer1n1.getPlayer().getMZUsername() + " / " + player2.getPlayer().getMZUsername() + " " + tempPlayer2n2.getPlayer().getMZUsername());
 
-                            round.getMatches().get(j).setUserData(userService.getUserById(player1.getPlayer().getUserId()));
-                            round.getMatches().get(j).setOpponentUserData(userService.getUserById(tempPlayer1n1.getPlayer().getUserId()));
+                            round.getMatches().get(j).setMZUserData(userService.getMZUserById(player1.getPlayer().getMZuserId()));
+                            round.getMatches().get(j).setOpponentMZUserData(userService.getMZUserById(tempPlayer1n1.getPlayer().getMZuserId()));
                             //ost para
                             //  round.matches.get(lastIndex).setPlayer1(player2);
                             //    round.matches.get(lastIndex).setPlayer2(tempPlayer2n2);
@@ -1248,8 +1435,8 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
                         } else if (tempPlayer1n2 != null && tempPlayer2n1 != null) {
 //wcześniejsza para
                             PlayerSummary finalPlayer = player1;
-                            round.getMatches().get(j).setUserData(userService.getUserById(player1.getPlayer().getUserId()));
-                            round.getMatches().get(j).setOpponentUserData(userService.getUserById(tempPlayer1n2.getPlayer().getUserId()));
+                            round.getMatches().get(j).setMZUserData(userService.getMZUserById(player1.getPlayer().getMZuserId()));
+                            round.getMatches().get(j).setOpponentMZUserData(userService.getMZUserById(tempPlayer1n2.getPlayer().getMZuserId()));
 
                             //       round.getMatches().get(j).setUserData(allParticipants.stream().filter(u -> u.getUserId() == finalPlayer.player.getUserId()).findFirst().orElse(null));
                             //       round.getMatches().get(j).setOpponentUserData(allParticipants.stream().filter(u -> u.getUserId() == tempPlayer1n2.player.getUserId()).findFirst().orElse(null));
@@ -1275,10 +1462,10 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
                 Match match = new Match();
                 match.setDateDB(startDate);
                 PlayerSummary finalPlayer1 = player1;
-                match.setUserData(allParticipants.stream().filter(u -> u.getUserId().equals(finalPlayer1.getPlayer().getUserId())).findFirst().orElse(null));
+                match.setMZUserData(allParticipants.stream().filter(u -> u.getMZuser_id().equals(finalPlayer1.getPlayer().getMZuserId())).findFirst().orElse(null));
                 PlayerSummary finalPlayer2 = player2;
 
-                match.setOpponentUserData(allParticipants.stream().filter(u -> u.getUserId().equals(finalPlayer2.getPlayer().getUserId())).findFirst().orElse(null));
+                match.setOpponentMZUserData(allParticipants.stream().filter(u -> u.getMZuser_id().equals(finalPlayer2.getPlayer().getMZuserId())).findFirst().orElse(null));
                 match.setRound(round);
 
                 round.getMatches().add(match);
@@ -1376,18 +1563,18 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
         for (RoundDTO round:rounds
         ) {
             for (MatchDTO match : round.getMatches()) {
-             var u1=  match.getUserDataDTO().getUserId();
-                 var u2=    player1.getPlayer().getUserId() ;
+             var u1=  match.getUserUserMzDTO().getMZuserId();
+                 var u2=    player1.getPlayer().getMZuserId() ;
 boolean warunek1=u1==u2;
-          var o1=  match.getOpponentUserDataDTO().getUserId() ;
-         var o2=   player2.getPlayer().getUserId();
+          var o1=  match.getOpponentUserMzDTO().getMZuserId() ;
+         var o2=   player2.getPlayer().getMZuserId();
                 boolean warunek2=o1==o2;
 
 
 
 
-                    if ((match.getUserDataDTO().getUserId().equals(player1.getPlayer().getUserId()) && match.getOpponentUserDataDTO().getUserId().equals(player2.getPlayer().getUserId())) ||
-                        (match.getUserDataDTO().getUserId().equals(player2.getPlayer().getUserId()) && match.getOpponentUserDataDTO().getUserId().equals(player1.getPlayer().getUserId()))) {
+                    if ((match.getUserUserMzDTO().getMZUsername().equals(player1.getPlayer().getMZuserId()) && match.getOpponentUserMzDTO().getMZuserId().equals(player2.getPlayer().getMZUsername())) ||
+                        (match.getUserUserMzDTO().getMZUsername().equals(player2.getPlayer().getMZuserId()) && match.getOpponentUserMzDTO().getMZuserId().equals(player1.getPlayer().getMZuserId()))) {
                     return true;
                 }
             }

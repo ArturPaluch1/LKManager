@@ -13,8 +13,8 @@ public class MatchDTO {
     private Byte userMatchResult2;
     private Byte opponentMatchResult1;
     private Byte opponentMatchResult2;
-    private UserDataDTO opponentUserDataDTO;
-    private UserDataDTO userDataDTO;
+    private UserMzDTO opponentUserMzDTO;
+    private UserMzDTO userUserMzDTO;
 
 
 }

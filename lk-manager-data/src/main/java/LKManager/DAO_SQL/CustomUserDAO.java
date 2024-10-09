@@ -1,6 +1,9 @@
 package LKManager.DAO_SQL;
 
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.RecordsAndDTO.UserMzDTO;
+import LKManager.model.account.User;
+import LKManager.model.UserMZ.MZUserData;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -8,12 +11,12 @@ public interface CustomUserDAO  {
 
 
     //@Transactional
-    UserData findByTeamId(int id) ;//throws IOException, ParserConfigurationException, SAXException, JAXBException;
+    MZUserData findMZUserByTeamId(int id) ;//throws IOException, ParserConfigurationException, SAXException, JAXBException;
 
 
-    UserData saveUser(UserData user);
+    UserMzDTO saveMZUser(MZUserData mzUser);
 
-
+    User saveUser(User user);
    //  List<UserData> findAll(boolean isDeleted);
 
 
@@ -33,10 +36,9 @@ public interface CustomUserDAO  {
 */
 
 
-     void delete(UserData object) ;
+     void deleteUser(User object) ;
 
-    void deleteById(Long id);
+    void deleteUserById(Long id);
 
 
-
-}
+   }

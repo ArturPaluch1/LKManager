@@ -1,7 +1,7 @@
 package LKManager.services;
 
 import LKManager.LK.Gracze;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -26,55 +26,55 @@ private final MZUserService mzUserService;
     }
 
     @Override
-    public UserData dodajGraczaDoXML(UserData gracz) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+    public MZUserData dodajGraczaDoXML(MZUserData gracz) throws JAXBException, IOException, ParserConfigurationException, SAXException {
       //sprawdzenie czy juz był dodany
 
 
         var grajek= mzUserService.findByUsernameInManagerzone(gracz.getUsername());
 
-        UserData user = new UserData();
+        MZUserData user = new MZUserData();
         user.setUsername(gracz.getUsername());
         user.setTeamlist(gracz.getTeamlist());
-        user.setUserId(grajek.getUserId());
+        user.setMZuser_id(grajek.getMZuser_id());
         user.getTeamlist().get(0).setTeamName(grajek.getTeamlist().get(0).getTeamName());
         user.getTeamlist().get(0).setTeamId(grajek.getTeamlist().get(0).getTeamId());
 
-        List<UserData> obecniGracze= wczytajGraczyZXML();
+        List<MZUserData> obecniGracze= wczytajGraczyZXML();
         if(obecniGracze==null)
         {
-            obecniGracze= new ArrayList<UserData>();
+            obecniGracze= new ArrayList<MZUserData>();
         }
         obecniGracze.add(user);
         zapiszDoXML(obecniGracze);
         return user;
     }
 
-    public UserData dodajGraczaDoXML(String gracz) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+    public MZUserData dodajGraczaDoXML(String gracz) throws JAXBException, IOException, ParserConfigurationException, SAXException {
         //sprawdzenie czy juz był dodany
 
 
         var grajek= mzUserService.findByUsernameInManagerzone(gracz);
 
-        UserData user = new UserData();
+        MZUserData user = new MZUserData();
         user.setUsername(gracz);
         //user.setTeamlist();
-        user.setUserId(grajek.getUserId());
+        user.setMZuser_id(grajek.getMZuser_id());
         user.getTeamlist().get(0).setTeamName(grajek.getTeamlist().get(0).getTeamName());
         user.getTeamlist().get(0).setTeamId(grajek.getTeamlist().get(0).getTeamId());
 
-        List<UserData> obecniGracze= wczytajGraczyZXML();
+        List<MZUserData> obecniGracze= wczytajGraczyZXML();
         if(obecniGracze==null)
         {
-            obecniGracze= new ArrayList<UserData>();
+            obecniGracze= new ArrayList<MZUserData>();
         }
         obecniGracze.add(user);
         zapiszDoXML(obecniGracze);
         return user;
     }
     @Override
-    public boolean usunGraczaZXML(UserData gracz) throws JAXBException, ParserConfigurationException, IOException, SAXException {
+    public boolean usunGraczaZXML(MZUserData gracz) throws JAXBException, ParserConfigurationException, IOException, SAXException {
         var gracze =wczytajGraczyZXML();
-      var grajek=  gracze.stream().filter(a->a.getUserId().equals(gracz.getUserId())).collect(Collectors.toList());
+      var grajek=  gracze.stream().filter(a->a.getMZuser_id().equals(gracz.getMZuser_id())).collect(Collectors.toList());
         gracze.remove(grajek.get(0));
         zapiszDoXML(gracze);
 
@@ -86,7 +86,7 @@ private final MZUserService mzUserService;
        if(graczMZ!= null)
        {
            var gracze =wczytajGraczyZXML();
-           var grajek=  gracze.stream().filter(a->a.getUserId().equals(graczMZ.getUserId())).collect(Collectors.toList());
+           var grajek=  gracze.stream().filter(a->a.getMZuser_id().equals(graczMZ.getMZuser_id())).collect(Collectors.toList());
            gracze.remove(grajek.get(0));
            zapiszDoXML(gracze);
            // gracze.stream().
@@ -99,8 +99,8 @@ private final MZUserService mzUserService;
 
     }
     @Override
-    public List<UserData> zapiszGraczyDoXML(List<String>gracze) throws JAXBException, IOException, ParserConfigurationException, SAXException {
-        List<UserData> listaGraczy= new ArrayList<>();
+    public List<MZUserData> zapiszGraczyDoXML(List<String>gracze) throws JAXBException, IOException, ParserConfigurationException, SAXException {
+        List<MZUserData> listaGraczy= new ArrayList<>();
         for (var nick: gracze
         ) {
             var grajek= mzUserService.findByUsernameInManagerzone(nick);
@@ -111,10 +111,10 @@ if(grajek== null)
 }
 else
 {
-    UserData user = new UserData();
+    MZUserData user = new MZUserData();
     user.setUsername(nick);
     user.setTeamlist(grajek.getTeamlist());
-    user.setUserId(grajek.getUserId());
+    user.setMZuser_id(grajek.getMZuser_id());
     user.getTeamlist().get(0).setTeamName(grajek.getTeamlist().get(0).getTeamName());
     user.getTeamlist().get(0).setTeamId(grajek.getTeamlist().get(0).getTeamId());
     listaGraczy.add(user);
@@ -122,10 +122,10 @@ else
 
         }
 
-        List<UserData> obecniGracze= wczytajGraczyZXML();
+        List<MZUserData> obecniGracze= wczytajGraczyZXML();
         if(obecniGracze==null)
         {
-            obecniGracze= new ArrayList<UserData>();
+            obecniGracze= new ArrayList<MZUserData>();
         }
         obecniGracze.addAll(listaGraczy);
         zapiszDoXML(obecniGracze);
@@ -133,26 +133,26 @@ else
     }
 
     @Override
-    public List<UserData> wczytajGraczyZXML() {
+    public List<MZUserData> wczytajGraczyZXML() {
 
 
         return jaxbXMLToObject("gracze.xml");
     }
 
     @Override
-    public List<UserData> wczytajGraczy() {
+    public List<MZUserData> wczytajGraczy() {
 
 
 
         return null;
     }
 
-    public void zapiszDoXML(  List<UserData> gracze) throws ParserConfigurationException, IOException, SAXException, JAXBException {
+    public void zapiszDoXML(  List<MZUserData> gracze) throws ParserConfigurationException, IOException, SAXException, JAXBException {
 
         jaxbObjectToXML(gracze);
     }
 
-    private List<UserData> jaxbXMLToObject(String skladPath) {
+    private List<MZUserData> jaxbXMLToObject(String skladPath) {
         Gracze gracze= null;
         try {
             JAXBContext ctx = JAXBContext.newInstance(Gracze.class);
@@ -181,7 +181,7 @@ else
 
 
     }
-    private void jaxbObjectToXML(List<UserData>  gracze) {
+    private void jaxbObjectToXML(List<MZUserData>  gracze) {
 
         try {
             //Create JAXB Context

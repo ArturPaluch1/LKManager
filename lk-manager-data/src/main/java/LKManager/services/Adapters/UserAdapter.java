@@ -1,21 +1,52 @@
 package LKManager.services.Adapters;
 
 import LKManager.model.RecordsAndDTO.UserDataDTO;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.RecordsAndDTO.UserMzDTO;
+import LKManager.model.account.User;
+import LKManager.model.UserMZ.MZUserData;
 
 public class UserAdapter {
-    public static UserDataDTO convertUserDataToUserDataDTO(UserData userData)
+
+    public static UserDataDTO convertUserToUserDataDTO(User user)
     {
-        if(userData==null)
-        {
-            boolean temp=false;
-        }
         Integer teamId;
         String teamName;
-        if(userData.getTeamlist().size()!=0)//pause do not have a team
+
+        if(user.getMzUser()!=null)
         {
-            teamId=userData.getTeamlist().get(0).getTeamId();
-            teamName=userData.getTeamlist().get(0).getTeamName();
+            if(user.getMzUser().getTeamlist().size()!=0)//pause do not have a team
+            {
+                teamId= user.getMzUser().getTeamlist().get(0).getTeamId();
+                teamName= user.getMzUser().getTeamlist().get(0).getTeamName();
+
+            }
+
+            else  {
+                teamId=null;
+                teamName=null;
+            }
+        }
+
+
+        UserDataDTO userDTO = new UserDataDTO(user);
+
+
+
+        return userDTO;
+    }
+    public static UserMzDTO convertMZUserDataToUserMzDTO(MZUserData MZUserData)
+    {
+        Integer teamId;
+        String teamName;
+
+if(MZUserData==null)
+{
+return null;
+}
+      else  if(MZUserData.getTeamlist().size()!=0)//pause do not have a team
+        {
+            teamId= MZUserData.getTeamlist().get(0).getTeamId();
+            teamName= MZUserData.getTeamlist().get(0).getTeamName();
 
         }
 
@@ -24,10 +55,10 @@ public class UserAdapter {
             teamName=null;
         }
 
-        UserDataDTO userDTO = new UserDataDTO(userData.getUserId(),userData.getUsername(),teamId,teamName, userData.getEmail(), userData.getReliability(), userData.getRole(),userData.getLeagueParticipation());
+        UserMzDTO userDTO = new UserMzDTO(MZUserData.getMZuser_id(), MZUserData.getUsername(),teamId,teamName);
 
 
-        userDTO.setRole(userData.getRole());
+
         return userDTO;
     }
 

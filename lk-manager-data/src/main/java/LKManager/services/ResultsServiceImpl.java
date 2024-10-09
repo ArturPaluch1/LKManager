@@ -9,7 +9,7 @@ import LKManager.model.RecordsAndDTO.ScheduleDTO;
 import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.services.Adapters.ScheduleAdapter;
 import LKManager.services.RedisService.RedisScheduleService;
 import LKManager.services.RedisService.RedisTableService;
@@ -64,7 +64,7 @@ private final UserService userService;
            if(round!=null)
            {
                //updatuj tylko które nie były rozegrane
-               if(round.getMatches().get(0).getOpponentUserData()!=null)
+               if(round.getMatches().get(0).getOpponentMZUserData()!=null)
                {
                    for (var match:round.getMatches()
                    ) {
@@ -354,15 +354,15 @@ return tempRound;
             ) {
 
                 //sprawdzanie czy  gospodarzem jest apuza
-                if (!(mecz.getUserData().getUsername().equals("pauza") || mecz.getOpponentUserData().getUsername().equals("pauza"))) {
+                if (!(mecz.getMZUserData().getUsername().equals("pauza") || mecz.getOpponentMZUserData().getUsername().equals("pauza"))) {
 
 
 
 
 
-                    UserData user = mecz.getUserData();
+                    MZUserData user = mecz.getMZUserData();
                     var userTeamId = user.getTeamlist().get(0).getTeamId();
-                    var oponent = mecz.getOpponentUserData();
+                    var oponent = mecz.getOpponentMZUserData();
                     var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
 
                     var rozegrane = matchService.findPlayedByUser(user);
@@ -380,7 +380,7 @@ return tempRound;
                             //tutaj user ma id =0 oponent 1
                             if (rozegranyMecz.getTeamlist().get(0).getTeamId() == userTeamId) {
                                 //sprawdzanie czy prawidlowy przeciwnik
-                                if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                if (rozegranyMecz.getTeamlist().get(1).getTeamId() == mecz.getOpponentMZUserData().getTeamlist().get(0).getTeamId()) {
                                     //aktualizacja
                                     //  mecz.setMatchResult1("1");
 
@@ -390,10 +390,12 @@ return tempRound;
                                     {
                                         mecz.setUserMatchResult1(rozegranyMecz.getTeamlist().get(0).getGoals());
                                         mecz.setOpponentMatchResult1(rozegranyMecz.getTeamlist().get(1).getGoals());
-                                      long userReliability=  mecz.getUserData().getReliability();
-                                        long opponentReliability=   mecz.getOpponentUserData().getReliability();
-                                        mecz.getUserData().setReliability(userReliability+=3);
-                                        mecz.getOpponentUserData().setReliability(opponentReliability+=3);
+
+                                        //todo przerobić na zmiane dla klasy User
+                                   /*   long userReliability=  mecz.getMZUserData().getReliability();
+                                        long opponentReliability=   mecz.getOpponentMZUserData().getReliability();
+                                        mecz.getMZUserData().setReliability(userReliability+=3);
+                                        mecz.getOpponentMZUserData().setReliability(opponentReliability+=3);*/
                                     }
 
                                 }
@@ -403,17 +405,18 @@ return tempRound;
                             //tutaj user ma id 1  oponent =0
                             else if (rozegranyMecz.getTeamlist().get(1).getTeamId() == userTeamId) {
                                 //sprawdzanie czy prawidlowy przeciwnik
-                                if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                if (rozegranyMecz.getTeamlist().get(0).getTeamId() == mecz.getOpponentMZUserData().getTeamlist().get(0).getTeamId()) {
                                     //aktualizacja
                                     //  mecz.setMatchResult1("1");
                                     if(mecz.getUserMatchResult2()==null &&mecz.getOpponentMatchResult2()==null) {
                                         mecz.setUserMatchResult2(rozegranyMecz.getTeamlist().get(1).getGoals());
                                         mecz.setOpponentMatchResult2(rozegranyMecz.getTeamlist().get(0).getGoals());
-
-                                        long userReliability=  mecz.getUserData().getReliability();
-                                        long opponentReliability=   mecz.getOpponentUserData().getReliability();
-                                        mecz.getUserData().setReliability(userReliability+=3);
-                                        mecz.getOpponentUserData().setReliability(opponentReliability+=3);
+                                        //todo przerobić na zmiane dla klasy User
+                                       /* long userReliability=  mecz.getMZUserData().getReliability();
+                                        long opponentReliability=   mecz.getOpponentMZUserData().getReliability();
+                                        mecz.getMZUserData().setReliability(userReliability+=3);
+                                        mecz.getOpponentMZUserData().setReliability(opponentReliability+=3);
+                                    */
                                     }
                                 }
 

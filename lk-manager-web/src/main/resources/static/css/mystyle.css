@@ -9,3 +9,18 @@
   float:left;
 }
 
+
+.link-tooltip {
+    display: inline-block;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    color: blue;
+    text-decoration: none;
+}
+
+.link-tooltip:hover {
+    text-decoration: underline;
+}

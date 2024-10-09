@@ -4,7 +4,8 @@ public enum ScheduleType{
 
     standardSchedule,
     swissSchedule ,
-    oneDaySchedule ;
+    oneDaySchedule
+
 }
 
 /*    private byte value;

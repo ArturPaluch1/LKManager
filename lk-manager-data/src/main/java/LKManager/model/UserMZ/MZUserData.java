@@ -1,13 +1,8 @@
 package LKManager.model.UserMZ;
 
 
+import LKManager.model.account.User;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
-import org.hibernate.annotations.SQLDelete;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -16,16 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="users", schema="lkm_dev")
-@Getter @Setter
-//@Where(clause = "DELETED = 0")
-@FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
-@Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id=?")
+@Table(name="MZusers", schema="lkm_dev")
 @XmlRootElement(name = "UserData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @AllArgsConstructor
-public class UserData  implements Serializable{
+public class MZUserData implements Serializable{
 
 
 
@@ -51,10 +41,30 @@ public class UserData  implements Serializable{
   /*  @GeneratedValue(strategy = GenerationType.AUTO)
 @GenericGenerator(name = "user_id", strategy = "user_id")*/
     //(strategy = GenerationType.IDENTITY, generator = "native")
-    @Id
-    @Column(name = "user_id",  nullable = false, insertable = true, updatable = false)
-    private Long userId=null;
- /*   @Id
+
+
+
+        @Id
+        @Column(name = "MZuser_id",  nullable = false, updatable = false)
+    private Long MZuser_id ;
+
+
+    @OneToMany(mappedBy = "mzUser", cascade = CascadeType.ALL)
+    private List<User> users = new ArrayList<>();;
+
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public void addUser(User user) {
+        users.add(user);
+        user.setMzUser(this);
+    }
+/*   @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "user_id", unique = true)
@@ -76,31 +86,17 @@ private Match meczUser;*/
 // @Column(name = "DELETED",columnDefinition = "TINYINT")
     //prod \/
 
-    @Enumerated(EnumType.ORDINAL)
-     @Column(name = "role",columnDefinition = "TINYINT")
-  /* @Column(name = "active",columnDefinition = "BIT")*/
-   private Role role;//= false;
-    @Column(name = "email")
-    private String email;
-    @Column(name = "password")
-    private String password;
+
     // getters and setters
-public Role getRole()
-{
-    return  this.role;
-}
-    public void setRole(Role role) {
-        this.role = role;
-    }
 
 
 
 
-    @Column(name = "username")
+
+    @Column(name = "MZusername")
     private String username;
 
-@Column(name = "reliability")
-private long reliability;
+
 
 
 
@@ -109,28 +105,20 @@ private long reliability;
     @Transient
     private String userImage;
 
-    public LeagueParticipation getLeagueParticipation() {
-        return leagueParticipation;
-    }
 
-    public void setLeagueParticipation(LeagueParticipation leagueParticipation) {
-        this.leagueParticipation = leagueParticipation;
-    }
 
-    @Column(name="league_participation", columnDefinition = "TINYINT")
-    @Enumerated(EnumType.ORDINAL)
-private LeagueParticipation leagueParticipation;
 
-    public UserData getOpponentUser() {
+
+    public MZUserData getOpponentUser() {
         return opponentUser;
     }
 
-    public void setOpponentUser(UserData opponentUser) {
+    public void setOpponentUser(MZUserData opponentUser) {
         this.opponentUser = opponentUser;
     }
 
     @Transient
-    private UserData opponentUser;
+    private MZUserData opponentUser;
 
    /* @OneToMany(
             mappedBy = "teamId",
@@ -173,14 +161,13 @@ private List<Team> teamlist= new ArrayList();
 
 
 
-    public UserData(String username, Long userId, String countryShortname, String userImage, List<Team> teamlist, String email,String password) {
+    public MZUserData(String username, Long MZId, String countryShortname, String userImage, List<Team> teamlist, String email, String password) {
         this.username = username;
-        this.userId = userId;
+        this.MZuser_id = MZId;
         this.countryShortname = countryShortname;
         this.userImage = userImage;
         this.teamlist = teamlist;
-this.email=email;
-this.password=password;
+
 
     }
 
@@ -195,8 +182,8 @@ this.password=password;
         this.username = username;
     }
 
-    public void setUserId(Long setUserId) {
-        this.userId = setUserId;
+    public void setMZuser_id(Long setUser_Id) {
+        this.MZuser_id = setUser_Id;
     }
 
     public void setCountryShortname(String countryShortname) {
@@ -211,9 +198,9 @@ this.password=password;
         this.teamlist = teamlist;
     }
 
-    @XmlAttribute
-    public Long getUserId() {
-        return userId;
+    @XmlAttribute(name = "userId")
+    public Long getMZuser_id() {
+        return MZuser_id;
     }
 
 
@@ -232,13 +219,13 @@ this.password=password;
 
 
 
-    public UserData() {
+    public MZUserData() {
     }
     @Override
     public String toString() {
         return "UserData{" +
                 "username='" + username + '\'' +
-                ", userId=" + userId +
+                ", userId=" + MZuser_id +
                 ", countryShortname='" + countryShortname + '\'' +
                 ", userImage='" + userImage + '\'' +
                 ", teamlist=" + teamlist +
@@ -246,27 +233,5 @@ this.password=password;
     }
 
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public long getReliability() {
-        return reliability;
-    }
-
-    public void setReliability(long reliability) {
-        this.reliability = reliability;
-    }
 }

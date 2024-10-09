@@ -2,8 +2,7 @@
 
 
 
-
-Program wykonany z użyciem Spring Boot, umożliwia tworzenie i łatwe zarządzanie rozgrywek klanowych opartych o mecze towarzyskie w managerze internetowym <a href ="https://www.managerzone.com/">Managerzone</a>.
+Program wykonany z użyciem Spring Boot, umożliwia tworzenie i łatwe zarządzanie rozgrywkami klanowymi opartymi na meczach towarzyskich w managerze internetowym <a href ="https://www.managerzone.com/">Managerzone</a>.
 
 
 <details >

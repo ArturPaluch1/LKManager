@@ -127,28 +127,40 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
         roundNumber = cookieManager.saveOrUpdateRoundNumberCookie(roundNumber, chosenSchedule);
         chosenSchedule = cookieManager.saveOrUpdateChosenScheduleCookie(chosenSchedule);
 
-        schedules = scheduleService.getScheduleNamesOngoingOrFinished();
-        schedule = scheduleService.getSchedule_ByName(chosenSchedule);
+        if(chosenSchedule!=null) {
+            schedules = scheduleService.getScheduleNamesOngoingOrFinished();
+            schedule = scheduleService.getSchedule_ByName(chosenSchedule);
+
+            if(schedule==null)
+            {
+                System.out.println("schedule=====================null");
+                schedule=  scheduleService.getSchedule_TheNewestOngoingOrFinished();
+                if(schedule==null ) return "/admin/LK/results";  //nie ma nigdzie schedule
+            }
+            RoundDTO round;
+            try {
+                String finalRoundNumber = roundNumber;
+                round = schedule.getRounds().stream().filter(r -> r.getNr() == Integer.parseInt(finalRoundNumber)).findFirst().orElse(null);
+
+                model.addAttribute("roundNumber", roundNumber);
+                model.addAttribute("schedules", schedules);
+                model.addAttribute("chosenSchedule", schedule);
+                model.addAttribute("round", round);
+                return "/admin/LK/results";
 
 
-        RoundDTO round;
-        try {
-            String finalRoundNumber = roundNumber;
-            round=schedule.getRounds().stream().filter(r->r.getNr()==Integer.parseInt( finalRoundNumber)).findFirst().orElse(null);
+            } catch (Exception exception) {
+                // Obsługa innych ogólnych wyjątków
+                System.err.println("Inny błąd: " + exception.getMessage());
+             //   attributes.addAttribute("errorMessage", "błąd w usuwaniu");
+                return "redirect:/errorMessage";
+            }
+
+
+
+
         }
-        catch (Exception exception) {
-            // Obsługa innych ogólnych wyjątków
-            System.err.println("Inny błąd: " + exception.getMessage());
-            attributes.addAttribute("errorMessage", "błąd w usuwaniu");
-            return "redirect:/errorMessage";
-        }
-
-        model.addAttribute("roundNumber", roundNumber);
-        model.addAttribute("schedules", schedules);
-        model.addAttribute("chosenSchedule", schedule);
-        model.addAttribute("round", round);
-
-        return "/admin/LK/results";
+        else   return "/admin/LK/results";
     }
 
 
@@ -186,15 +198,59 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
          schedules= scheduleDAO.findAll();
          schedule = scheduleDAO.findByScheduleName(chosenSchedule);
          ***************************************/
+        RoundDTO round=null;
+if(chosenSchedule!=null)  //schedule from cookie
+{
+    //  schedules= mzCache.getSchedulesFromCacheOrDatabase();
+    schedules = scheduleService.getScheduleNamesOngoingOrFinished();
+    //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
+    schedule = scheduleService.getSchedule_ByName(chosenSchedule);
+
+if(schedule==null)
+{
+    System.out.println("schedule=====================null");
+    schedule=  scheduleService.getSchedule_TheNewestOngoingOrFinished();
+
+}
+
+    try {
+        //   round = roundDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber)) ;
+        String finalRoundNumber = roundNumber;
+        round=schedule.getRounds().stream().filter(r->r.getNr()==Integer.parseInt( finalRoundNumber)).findFirst().orElse(null);
+
+          model.addAttribute("roundNumber", roundNumber);
+          // model.addAttribute("matches", );
+          model.addAttribute("schedules", schedules);//.stream().sorted((Comparator.comparing(ScheduleNameDTO::getName, new AlphanumericComparator()).reversed())).collect(Collectors.toList()));
+          model.addAttribute("chosenSchedule", schedule);
+          //   model.addAttribute("roundNumbers", roundNumbers);
+          model.addAttribute("round", round);
+        return "/public/LK/results";
+      }
 
 
-        //  schedules= mzCache.getSchedulesFromCacheOrDatabase();
-        schedules = scheduleService.getScheduleNamesOngoingOrFinished();
-        //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
-        schedule = scheduleService.getSchedule_ByName(chosenSchedule);
 
 
 
+    catch (Exception exception) {
+        // Obsługa innych ogólnych wyjątków
+     //   System.err.println("Inny błąd: " + exception.getMessage());
+    //    attributes.addAttribute("errorMessage", "brak bazy danych");
+    //    return "redirect:/errorMessage";
+        return "/public/LK/results";
+
+    }
+}
+   else {
+    model.addAttribute("roundNumber", roundNumber);
+    // model.addAttribute("matches", );
+    model.addAttribute("schedules", schedules);
+    model.addAttribute("chosenSchedule", schedule);
+    //   model.addAttribute("roundNumbers", roundNumbers);
+    model.addAttribute("round", round);
+
+    return "/public/LK/results";
+}
+}
 
 
 
@@ -241,19 +297,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 
         ///ok
 */
-        RoundDTO round=null;
-try {
-  //   round = roundDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber)) ;
-    String finalRoundNumber = roundNumber;
-    round=schedule.getRounds().stream().filter(r->r.getNr()==Integer.parseInt( finalRoundNumber)).findFirst().orElse(null);
-}
-catch (Exception exception) {
-    // Obsługa innych ogólnych wyjątków
-    System.err.println("Inny błąd: " + exception.getMessage());
-    attributes.addAttribute("errorMessage", "błąd w usuwaniu");
-    return "redirect:/errorMessage";
 
-}
 
      /*   List<Round> roundNumbers;
         try{
@@ -277,13 +321,6 @@ catch (Exception exception) {
         model.addAttribute("roundNumbers", roundNumbers);
         model.addAttribute("round", round);*/
 
-
-        model.addAttribute("roundNumber", roundNumber);
-       // model.addAttribute("matches", );
-        model.addAttribute("schedules", schedules);
-        model.addAttribute("chosenSchedule", schedule);
-     //   model.addAttribute("roundNumbers", roundNumbers);
-        model.addAttribute("round", round);
 
 
 
@@ -408,8 +445,7 @@ catch (Exception exception) {
 
 */
 
-        return "/public/LK/results";
-    }
+
 
 
     @GetMapping({"/admin/LK/results/changeSchedule"})
@@ -655,7 +691,7 @@ ScheduleDTO chosenSchedule= scheduleService.getSchedule_ByName(chosenScheduleNam
 
                 //  mzCache.updateRound(round);
 
-                return "redirect:/public/LK/results";
+                return "redirect:/admin/LK/results";
             } else {
                 //todo
                 attributes.addAttribute("errorMessage", "nie udało się zaktualizować rundy");

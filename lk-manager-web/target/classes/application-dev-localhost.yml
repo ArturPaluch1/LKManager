@@ -1,29 +1,51 @@
+spring.mail.host: smtp.poczta.onet.pl
+spring.mail.port: 465 #465
 
+protocol: smtps
+spring.mail.username: ${email-email}
+spring.mail.password: ${email-password}
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: false
+spring.mail.properties.mail.smtp.starttls.required: false
 
+spring.mail.properties.mail.debug: true
+  #   host: smtp.office365.com
 
+  #   host: smtp-mail.outlook.com
+  # host: smtp.interia.pl
 spring:
+  mail:
+    properties:
+      mail:
+        smtp:
+          auth:
+            mechanisms: LOGIN
+          ssl:
+            enable: true
   # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
   redis:
     url: ${redisLocalhost_Url}
     # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
 
 # SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
-      
 
-  mail:
-    host: smtp.office365.com
-    #host: smtp.interia.pl
-    port: 587
-    username: ${email-email}
-    password: ${email-password}
-    properties:
-      mail:
-        debug: true
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
+
+
+
+
+
+     # mail.smtp.ssl.trust: smtp.interia.pl
+    #  mail.smtp.ssl.trust: smtp.office365.com
+
+
+
+    #   mail:
+   #     debug: true
+   #     smtp:
+   #       auth: true
+   #       starttls:
+   #         enable: true
+    #        required: true
 
 
   config:
@@ -35,8 +57,12 @@ spring:
 
   #dbUrl1=jdbc:mysql://localhost:3306/LKM_prod
   #  url: jdbc:sqlserver://LOCALHOST:1433;encrypt=true;trustServerCertificate=true;
-    url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_;trustServerCertificate=true;
-  #  databaseName: ligaklanowmz_
+
+  #glowne testy==============================================================
+  #  url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_tests;trustServerCertificate=true;
+    #glowne testy==============================================================
+    url: jdbc:sqlserver://localhost:1433;databaseName=test2;trustServerCertificate=true;
+
     username: ligaklanowmz_
     password: ligaklanowmz_
 
@@ -54,6 +80,14 @@ spring:
     show-sql: true
     logging.level.org.hibernate.SQL : DEBUG
     logging.level.org.springframework.web: DEBUG
+
+
+
+    properties:
+      hibernate:
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+
+
     #jpa:
     # hibernate:
     #   ddl-auto: validate

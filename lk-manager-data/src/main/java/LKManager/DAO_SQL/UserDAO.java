@@ -1,41 +1,54 @@
 package LKManager.DAO_SQL;
 
 import LKManager.DAO_Redis.CustomUserDAO_Redis;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.LeagueParticipation;
+import LKManager.model.UserMZ.MZUserData;
+import LKManager.model.account.User;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.redis.core.RedisHash;
 
 import java.util.List;
+import java.util.Optional;
 
 //@Repository
 @RedisHash
-public interface UserDAO extends JpaRepository<UserData, Long>, CustomUserDAO, CustomUserDAO_Redis {
+public interface UserDAO extends JpaRepository<User, Long>, CustomUserDAO, CustomUserDAO_Redis  {
 
 
-    @Query("select u from UserData u  where u.role!=0 and u.username!='pauza'")
-    List<UserData> findUsers_ActiveWithoutPause();
-    @Query("select u from UserData u  where u.role!=0 ")
-   List<UserData> findUsers_ActiveWithPause();
+    @Query("select u from User u  where u.role!=0 and u.username!='pauza'")
+    List<User> findUsers_ActiveWithoutPause();
+    @Query("select u from User u  where u.role!=0 ")
+   List<User> findUsers_ActiveWithPause();
 
-    @Query("select u from UserData u where u.username=:userName")
-    UserData findByName(@Param("userName") String userName);
-
+    @Query("select u from MZUserData u where u.username=:userName")
+    MZUserData findMZUserByMZname(@Param("userName") String userName);
+    @Query("select u from User u where u.username=:userName")
+    User findUserByName(@Param("userName") String userName);
     @Modifying
-    @Query("update  UserData  set role = 0 where userId=:id")
+    @Query("update  User  set role = 0 where Id=:id")
     void deactivateUserById(@Param("id") Long id);
-    @Query("select u from UserData u  where u.role=0 ")
-    List<UserData> findUsers_DeactivatedWithPause();
-    @Query("select u from UserData u  where u.role=0 and u.username!='pauza'")
-    List<UserData> findUsers_DeactivatedWithoutPause();
+    @Query("select u from User u  where u.role=0 ")
+    List<User> findUsers_DeactivatedWithPause();
+    @Query("select u from User u  where u.role=0 and u.username!='pauza'")
+    List<User> findUsers_DeactivatedWithoutPause();
 
 
+    @Query("select u from MZUserData u where u.MZuser_id=:userId")
+    Optional<MZUserData> findMzUserById(@Param("userId") Long userId);
+
+    @Query("select u from User u where u.Id=:id")
+    Optional<User> getUserById(@Param("id")Long id);
 
     //  UserData save(UserData user);
 
     //   UserData save(UserData user);
 
-
+    Page<User> findByLeagueParticipation(LeagueParticipation leagueParticipation, Pageable pageable);
+ @Query("select u.email from User u where u.Id=:id")
+    String getUserEmail(Long id);
 }

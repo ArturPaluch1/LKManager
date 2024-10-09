@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Fragments</title>
+</head>
+<body>
+<li th:fragment="menuItem(path, active, title, glyph, text)" th:class="${active == menu ? 'active' : ''}">
+  <a th:href="@{${path}}" th:title="${title}">
+    <span th:class="'fa-solid ' + ${glyph}" aria-hidden="true"></span>
+    <span th:text="${text}">Template</span>
+  </a>
+</li>
+</body>
+</html>

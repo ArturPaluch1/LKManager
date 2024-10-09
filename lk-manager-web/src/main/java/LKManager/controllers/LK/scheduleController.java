@@ -37,6 +37,7 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -300,74 +301,70 @@ public String getScheduleAdminTemp(RedirectAttributes attributes, HttpServletRes
 
 //wybranyTerminarz="ja i kyo";
 
+if(chosenSchedule!=null) {
+    System.out.println("w terminarze scheduleService.getSchedules()");
+    //  var schedules = mzCache.getSchedulesFromCacheOrDatabase();
+    var scheduleNames = scheduleService.getScheduleNamesOngoingOrFinished();
+    //   terminarz= terminarzDAO.findByTerminarzId(106);
+    //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
 
-        System.out.println("w terminarze scheduleService.getSchedules()");
-        //  var schedules = mzCache.getSchedulesFromCacheOrDatabase();
-        var scheduleNames = scheduleService.getScheduleNamesOngoingOrFinished();
-        //   terminarz= terminarzDAO.findByTerminarzId(106);
-        //   var terminarz11=     terminarzDAO.findByTerminarzName("ja i kyo");
-
-        //podano nazwe terminarza
-
-
-        ScheduleDTO schedule = null;
-        if (chosenSchedule != null) {
+    //podano nazwe terminarza
 
 
-            //sprawdzanie czy jest taki terminarz
+    ScheduleDTO schedule = null;
+    if (chosenSchedule != null) {
 
-            //   terminarz = terminarzService.wczytajTerminarz(wybranyTerminarz);
+
+        //sprawdzanie czy jest taki terminarz
+
+        //   terminarz = terminarzService.wczytajTerminarz(wybranyTerminarz);
 
 
-            //            terminarz=     terminarzDAO.findByTerminarzName(wybranyTerminarz);
+        //            terminarz=     terminarzDAO.findByTerminarzName(wybranyTerminarz);
 
-            System.out.println("w mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(wybranyTerminarz);");
-            //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
-            schedule = scheduleService.getSchedule_ByName(chosenSchedule);
+        System.out.println("w mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(wybranyTerminarz);");
+        //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
+        schedule = scheduleService.getSchedule_ByName(chosenSchedule);
 
-            //nie znaleziono przekierowanie do tworzenia
-            if (schedule == null) {
+        //nie znaleziono przekierowanie do tworzenia
+        if (schedule == null) {
 //todo przekierowanie że nie ma takiego terminarza
-                //   return "redirect:/errorMessage";
+            //   return "redirect:/errorMessage";
 
-                model.addAttribute("schedules", scheduleNames);
-           //     return "LK/schedule/schedule";
-
-
-
-              return  "redirect:/admin/LK/schedule/scheduleError";
-            }
+            model.addAttribute("schedules", scheduleNames);
+            //     return "LK/schedule/schedule";
 
 
+            return "redirect:/admin/LK/schedule/scheduleError";
         }
-        //nie podano nazwy terminarza
-        else {
+
+
+    }
+    //nie podano nazwy terminarza
+    else {
 //ostatni wg id
 
 
-            //   mzCache.findLastScheduleByIdFromCacheOrDatabase();
-            //todo tu musi byc: schedule=
-            scheduleService.getSchedule_TheNewestOngoingOrFinished();
-            System.out.println("the newest");
-            //nie ma żadnych terminarzy
-            if (schedule == null) {
-                return "redirect:admin/LK/addSchedule";
-            } else  //był taki terminarz
-            {
-
-            }
+        //   mzCache.findLastScheduleByIdFromCacheOrDatabase();
+        //todo tu musi byc: schedule=
+        schedule = scheduleService.getSchedule_TheNewestOngoingOrFinished();
+        System.out.println("the newest");
+        //nie ma żadnych terminarzy
+        if (schedule == null) {
+            return "redirect:admin/LK/addSchedule";
         }
+    }
 
 
-        //    List<Match> mecze = meczDAO.findAllById(Collections.singleton(terminarz.getId()));
+    //    List<Match> mecze = meczDAO.findAllById(Collections.singleton(terminarz.getId()));
 
-        //  mecze=mzCache.getTerminarze().get(0).getRundy().get(0).getMecze();
-        // model.addAttribute("wybranyTerminarz", terminarze.get(0));
+    //  mecze=mzCache.getTerminarze().get(0).getRundy().get(0).getMecze();
+    // model.addAttribute("wybranyTerminarz", terminarze.get(0));
 //mecze=terminarze.get(0).getRundy().get(0).getMecze();
 
-        //  System.out.println("---cache:  ");
+    //  System.out.println("---cache:  ");
 
-        ScheduleDTO  result=null;
+    ScheduleDTO result = null;
 
 
 /*result=   scheduleService.getSchedule_ByName("swiss2");
@@ -387,24 +384,23 @@ if(result==null)
         {*/
 
 
-            result=   scheduleService.getSchedule_ByName("swiss23");
-            if(result!=null)
-            {
-            Table  table=tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
+    result = scheduleService.getSchedule_ByName("swiss23");
+    if (result != null) {
+        Table table = tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
 
-            scheduleService.calculateNextRoundOfSwissSchedule(scheduleService.getSchedule_ById(result.getId()),table);
-          //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),2);
-
-
-          //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),0+1);
-            for (int round = 1; round < result.getRounds().size(); round++) {
-              //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),round+1);
+        scheduleService.calculateNextRoundOfSwissSchedule(scheduleService.getSchedule_ById(result.getId()), table);
+        //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),2);
 
 
-              //  tableService.createSwissScheduleTable(result);
+        //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),0+1);
+        for (int round = 1; round < result.getRounds().size(); round++) {
+            //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),round+1);
+
+
+            //  tableService.createSwissScheduleTable(result);
 
             //    result=   scheduleService.getSchedule_ByName("swiss1");
-            }
+        }
 
 
           /*  while(result.getRounds().size()<2)
@@ -424,38 +420,36 @@ if(result==null)
             }*/
 
 
+    }
 
 
+    model.addAttribute("chosenSchedule", chosenSchedule);
+    model.addAttribute("schedule", schedule);
 
 
-                 }
-
-
-       model.addAttribute("chosenSchedule", chosenSchedule);
-        model.addAttribute("schedule", schedule);
-
-
-      //  List<Round> rounds = null;//new ArrayList<>(schedule.getRounds());
-   //     rounds.sort(Comparator.comparing(Round::getNr));
+    if(!schedule.getRounds().isEmpty()) //jeśli schedule jest ongoing  czasem może nie byc rund
+    {
+    //  List<Round> rounds = null;//new ArrayList<>(schedule.getRounds());
+    //     rounds.sort(Comparator.comparing(Round::getNr));
     //    model.addAttribute("rounds", rounds);
-        RoundDTO round;
-        //zabezpieczenie przed błędem w cookies
-if(schedule.getRounds().size()<=Integer.parseInt(roundNumber) -1)
-{
-     round=schedule.getRounds().get(0);
-}
-else
-     round=schedule.getRounds().get(Integer.parseInt(roundNumber) - 1);
-       model.addAttribute("round", round);
+    RoundDTO round;
+    //zabezpieczenie przed błędem w cookies
+    if (schedule.getRounds().size() <= Integer.parseInt(roundNumber) - 1) {
+        round = schedule.getRounds().get(0);
+    } else
+        round = schedule.getRounds().get(Integer.parseInt(roundNumber) - 1);
+    model.addAttribute("round", round);
 
-     //   List<Match> matches =round.getMatches();
+    //   List<Match> matches =round.getMatches();
     //    model.addAttribute("matches",schedule.getRounds().get(Integer.parseInt(roundNumber) - 1).getMatchesDTO());
 
-        model.addAttribute("roundNumber", roundNumber);
+    model.addAttribute("roundNumber", roundNumber);
+}
 
-
-        model.addAttribute("schedules", scheduleNames);
-        return "admin/LK/schedule/schedule";
+    model.addAttribute("schedules", scheduleNames);
+    return "admin/LK/schedule/schedule";
+}
+ else  return "admin/LK/schedule/schedule";
 
         /**
          *
@@ -491,11 +485,19 @@ else
 
         //lkUserService.wczytajGraczyZXML();
       //  List<UserData> players = userService.findUsers_NotDeletedWithPause();//userDAO.findUsersFromCache_NotDeletedWithPause();
-        List<UserDataDTO> players = userService.findAllUsers(true,true);//userDAO.findUsersFromCache_NotDeletedWithPause();
-        players = players.stream().sorted(
-                (o1, o2) -> o1.getUsername().compareToIgnoreCase(o2.getUsername())
-        ).collect(Collectors.toList());
+        List<UserDataDTO> players = userService.findAllMZUsers(true,true);//userDAO.findUsersFromCache_NotDeletedWithPause();
+     /*   players = players.stream().filter(p->p.getMZUsername()!=null).sorted(
+                (o1, o2) -> o1.getMZUsername().compareToIgnoreCase(o2.getMZUsername())
+        ).distinct().collect(Collectors.toList());*/
 
+       players = players.stream().filter(p->p.getMZUsername()!=null)
+                .sorted(
+                        (o1, o2) -> o1.getMZUsername().compareToIgnoreCase(o2.getMZUsername()))
+                .collect(Collectors.toMap(UserDataDTO::getMZUsername, player -> player, (existing, replacement) -> existing)) // Wybierz pierwszy wystąpienie
+                .values()
+                .stream()
+               .sorted(Comparator.comparing(UserDataDTO::getMZUsername))
+                .collect(Collectors.toList());
  /*
 List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
 
@@ -530,7 +532,8 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
         model.addAttribute("players", players);
         model.addAttribute("schedule", addScheduleCommand);
 List<String> playerNames = new ArrayList<>();
-        players.forEach(p-> playerNames.add(p.getUsername()));
+        players.forEach(p-> playerNames.add(p.getMZUsername()));
+      playerNames.stream().distinct().sorted().collect(Collectors.toList());
         model.addAttribute("playerNames", playerNames);
 
         return "admin/LK/schedule/addSchedule";
@@ -637,7 +640,11 @@ List<String> playerNames = new ArrayList<>();
     public String addSchedule(HttpServletResponse response, HttpServletRequest request, RedirectAttributes attributes, @ModelAttribute @Valid scheduleController.AddScheduleCommand command, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
 //,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
 
-
+        if(command.getPlayersList().size()==0&&command.getScheduleType().equals(ScheduleType.oneDaySchedule))
+        {
+            attributes.addAttribute("errorMessage","nie zaplanowałeś meczy");
+            return "redirect:/public/LK/error";
+        }
         //todo walidacja  te same nazwy poprawić to
 
 if( scheduleService.getScheduleNamesOngoingOrFinished().contains(command.name.trim()))

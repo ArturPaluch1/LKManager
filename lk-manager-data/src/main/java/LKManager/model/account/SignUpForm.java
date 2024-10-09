@@ -16,7 +16,7 @@ public class SignUpForm {
 /*    @NotEmpty(message = "Password is required")
     private String password;*/
 
-    @NotEmpty(message = "Email is required")
+   // @NotEmpty(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
 

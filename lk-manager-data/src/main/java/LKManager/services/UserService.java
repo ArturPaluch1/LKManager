@@ -5,15 +5,23 @@ package LKManager.services;
 //import LKManager.DAO.Exceptions.GetUsersUserDatabaseAccessFailureException;
 
 import LKManager.model.RecordsAndDTO.UserDataDTO;
+import LKManager.model.account.User;
 import LKManager.model.UserMZ.LeagueParticipation;
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.model.account.SignUpForm;
+import LKManager.model.account.UserSettingsFormModel;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-public interface UserService {
+import java.util.Optional;
+@Transactional
+public interface UserService extends UserDetailsService {
 
 // UserData saveUser(UserData playerMZ);
+ void authenticateUser(User user);
 
+    UserDataDTO getUserByUsername(String username);
 
     /**
      * Marks user entity or list of users with deleted mark. Updates Cache list
@@ -68,7 +76,7 @@ System.out.println("found users in redis");
 }
 */
 
-    List<UserDataDTO> findAllUsers(boolean active, boolean withPause);
+    List<UserDataDTO> findAllMZUsers(boolean active, boolean withPause);
 
     /**
      * Adds user to database and to Cache
@@ -79,17 +87,36 @@ System.out.println("found users in redis");
      */
     UserDataDTO addUser(SignUpForm userToAdd) ;
 
-    UserData getPauseObject();
+    User getPauseObject();
 
-    UserData getUserById(Long userId);
+    MZUserData getMZUserById(Long userId);
     // UserData findUserById(String pauza);
 
 
     //UserDataDTO findUserById(Integer i);
 
-    UserData getUserDataByUsername(String username);
+    MZUserData getMZUserDataByUsername(String username);
 
-    UserData changeUserLeagueParticipation(Long userId, LeagueParticipation leagueParticipation);
+    User changeUserLeagueParticipation(UserSettingsFormModel userSettingsFormModel, LeagueParticipation leagueParticipation);
+
+    public Optional<MZUserData> findMzUserById(Long userId);
+    public UserDataDTO getUserById(Long id);
+
+    boolean setMZUser(String user, String mzUsername);
+
+    void setLeagueSignedUnsigned();
+
+    boolean setUsersEmail(Long userId, String email);
+
+    UserDataDTO addUser(User user);
+
+
+
+   String getUsersEmail(Long id) throws Exception;
+
+   //  boolean removeLeagueParticipant(String mzUsername);
+
+
     //to sie nigdy nie wykonuje bo zawsze dodawany jest tylko jeden gracz na raz
  /*  List< UserData> AddUsers(List<String> usersToAdd)throws AddUsersUserDatabaseAccessFailureException;*/
 

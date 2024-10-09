@@ -19,12 +19,15 @@ private final ResultsService resultsService;
     }
 
     @Scheduled(cron = "0 55 10,11,19,20,23 ? * *" )
+
     public void updateResults() {
         try {
             System.out.println("Update results task performed on: " + new Date() + "\n" + "Thread's name: " + Thread.currentThread().getName());
             // resultsService.updateRoundResultsForDate(LocalDate.now());
             //todo po testach zamienić na to wyżej
             resultsService.updateRoundResultsForDate(LocalDate.now());
+
+
         } catch (Exception e) {
             System.err.println("Błąd podczas aktualizacji wyników: " + e.getMessage());
             e.printStackTrace();

@@ -6,7 +6,8 @@
 <div th:replace="~{public/navbar}"/>
 
 
-
+<div class="container">
+    <div class="row">
 
 <!--
 <form th:object="${users}"  id="userForm" th:action="@{/admin/LK/users/deleteUser}"  method="post">
@@ -17,7 +18,7 @@
 
 
     <input type ="text" name="chosenUser" />
-    <button type="submit" class="btn btn-primary" >Dodaj</button>
+    <button type="submit"  class="btn btn-primary m-1"  >Dodaj</button>
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
 
@@ -29,7 +30,7 @@
     <br>
     <input type ="text" name="chosenUser" />
     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-    <button type="submit" class="btn btn-primary"  >Usuń</button>
+    <button type="submit"  class="btn btn-primary m-1"  >Usuń</button>
 
 <!--
     <input type ="text" name="chosenUser" />
@@ -68,9 +69,13 @@ function submitForm(action) {
         <table class="table table-hover">
             <thead class="thead-inverse">
            <th ></th>
-            <th >Gracz:</th>
-            <th >Drużyna:</th>
-
+           <th >Username:</th>
+            <th >UserId:</th>
+            <th >MZ username:</th>
+           <th >MZ Id:</th>
+           <th >Team:</th>
+           <th >Role:</th>
+           <th >League participation:</th>
             </thead>
 
             <tbody>
@@ -82,13 +87,27 @@ function submitForm(action) {
                         <input type="checkbox" name="chosenUsers" th:value="${user.getUsername()}"/>
                     </td>
 
+                <td>
+                    <label class="form-label m-1" th:text="${user.username}"></label>
+                </td>
+                <td>
+                    <label class="form-label m-1" th:text="${user.userId}"></label>
+                </td>
+                <td>
+                    <label class="form-label m-1" th:text="${user.MZUsername}"></label>
+                </td>
                     <td>
-                        <label th:text="${user.getUsername()}"></label>
+                        <label class="form-label m-1"  th:text="${user.MZuserId}"></label>
                     </td>
                     <td>
-                        <label th:text="${user.getTeamName()}"></label>
+                        <label class="form-label m-1" th:text="${user.getTeamName()}"></label>
                     </td>
-
+                <td>
+                    <label class="form-label m-1" th:text="${user.role}"></label>
+                </td>
+                <td>
+                    <label class="form-label m-1" th:text="${user.leagueParticipation}"></label>
+                </td>
 </tr>
             </tbody>
 
@@ -100,7 +119,8 @@ function submitForm(action) {
     </div>
 </form>
 
-
+    </div>
+</div>
 
 
 

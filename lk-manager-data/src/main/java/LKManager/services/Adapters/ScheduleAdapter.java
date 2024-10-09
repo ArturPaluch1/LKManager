@@ -17,7 +17,7 @@ public class ScheduleAdapter {
         }
         else
         {
-            ScheduleDTO scheduleDTO = new ScheduleDTO(schedule.getId(),schedule.getStartDate(), schedule.getName(),schedule.getScheduleType(),schedule.getScheduleStatus());
+            ScheduleDTO scheduleDTO = new ScheduleDTO(schedule.getId(),schedule.getStartDate(), schedule.getName(),schedule.getScheduleType(),schedule.getScheduleStatus(),schedule.getEndDate());
 
  /*   var t=    schedule.getRounds().stream().map(round -> RoundAdapter.adaptWithScheduleParent(round, scheduleDTO)).collect(Collectors.toList());
         scheduleDTO.setRounds(t);*/

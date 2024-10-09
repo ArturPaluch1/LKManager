@@ -1,5 +1,6 @@
 package LKManager.DAO_SQL;
 
+import LKManager.model.RecordsAndDTO.ScheduleType;
 import LKManager.model.Round;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,7 +31,10 @@ public interface RoundDAO extends JpaRepository<Round,Long> ,CustomRoundDAO{
 )
     List<Round> findRoundsByDate(@Param("matchDate")LocalDate matchDate);
 
-
-
+    @Query(" SELECT  r FROM Round r  " +
+            "   left join Schedule s on s.id=r.schedule"+
+            " left join Match m on m.round=r.id"+
+            "  WHERE (r.date = (SELECT MAX(date) FROM Round) and s.scheduleType=:scheduleType )")
+    List<Round> findLastRoundOFSchedulesOfGivenType(@Param("scheduleType") ScheduleType scheduleType);
 
 }

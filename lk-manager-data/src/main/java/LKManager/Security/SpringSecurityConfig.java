@@ -1,12 +1,12 @@
 package LKManager.Security;
 
-import LKManager.services.CustomUserDetailsService;
+import LKManager.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,11 +19,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Configuration
+@EnableWebSecurity
+
 public class SpringSecurityConfig   {
-private final CustomUserDetailsService customUserDetailsService;
+private final UserService customUserDetailsService;
 private final  CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler= new CustomAuthenticationSuccessHandler();
 
-    public SpringSecurityConfig(CustomUserDetailsService customUserDetailsService) {
+    public SpringSecurityConfig(UserService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
     }
 /*
@@ -53,12 +55,9 @@ private final  CustomAuthenticationSuccessHandler customAuthenticationSuccessHan
                 .passwordEncoder(passwordEncoder());
     }*/
 
-@Bean
-public UserDetailsService userDetailsService() {
-    return new CustomUserDetailsService();
-}
+
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

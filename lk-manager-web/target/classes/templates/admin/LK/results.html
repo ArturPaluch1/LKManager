@@ -8,21 +8,23 @@
 </head>
 <body class="light">
 <div th:replace="~{public/navbar}"/>
+<div class="container">
+    <div class="row justify-content-between" id="wyniki">
 
-<div id="wyniki" >
+<div class="col-1 w-25"></div>
 
+    <div class="col-4">
 
-    <div style="float: right;">
         <form th:action="@{/admin/LK/results/changeSchedule}" method="get" >
-            <select  th:name="chosenSchedule"  onchange="this.form.submit()" >
+            <select class="form-select"  th:name="chosenSchedule"  onchange="this.form.submit()" >
                 <option value="" selected>--Wybierz terminarz--</option>
                 <option th:each="schedule : ${schedules}" th:value="${schedule.getName()}" th:text="${schedule.getName()}" />
 
             </select>
         </form>
         <div>
-            <label>Wybrany terminarz: </label>
-            <label th:text="${chosenSchedule.getName()}"></label>
+            <label class="form-label m-1" >Wybrany terminarz: </label>
+            <label class="form-label m-1"  th:if="${chosenSchedule}!=null" th:text="${chosenSchedule.getName()}"></label>
         </div>
 
     </div>
@@ -61,7 +63,7 @@
              <td  id="matchDate" th:text="${match.getDate()}"style="width: 150px"></td>
                 <td>
                     <form th:action="@{/admin/LK/getRoundResults}" method="get">
-                        <select    class="form-control" id="dropDownList"  th:name="round" onchange="this.form.submit()" onsubmit="myFunction1()">
+                        <select    class="form-select"  id="dropDownList"  th:name="round" onchange="this.form.submit()" onsubmit="myFunction1()">
                             <option selected>Zmień rundę</option>
 
                           <option  th:each="nr : ${chosenSchedule.getRounds()}" th:value="${nr.getNr()}" th:text="Runda+' '+${nr.getNr()}+' '+data+': '+${nr.getDate()}  " ></option>
@@ -73,7 +75,7 @@
 
                 </td>
                 <td>
-                    <button id="bob"  onclick="copy()">Skopiuj</button>
+                    <button id="bob"  class="btn btn-primary m-1"  onclick="copy()">Skopiuj</button>
 
                 </td>
 
@@ -90,8 +92,8 @@
     <div hidden id="editTable" >
 
 
-        <button onclick="saveChanges()" > Zapisz zmiany wyników</button>
-        <button onclick="cancel()" > Anuluj</button>
+        <button  class="btn btn-primary m-1" onclick="saveChanges()" > Zapisz zmiany wyników</button>
+        <button  class="btn btn-primary m-1" onclick="cancel()" > Anuluj</button>
 
         <form id="editTableForm" th:action="@{/editResults}" method="post"  >
             <input  hidden  th:value="${chosenSchedule.getName()}" th:name="chosenSchedule" >
@@ -129,20 +131,20 @@
                 <tr th:each="match : ${round.getMatches}"   th:name="matches">
 <!--                    <td th:text="${match .getUser().getTeamName()().get(0).getTeamName()}">userTeam</td>-->
 
-                    <div th:if="${not #lists.isEmpty(match?.getUserDataDTO()?.getTeamName() )}">
-                    <td th:text="${match.getUserDataDTO()!=null}? ${match.getUserDataDTO().getTeamName()}:'NA'" style="width: 150px">userTeam</td>
+                    <div th:if="${not #lists.isEmpty(match?.UserUserMzDTO?.getTeamName() )}">
+                    <td th:text="${match.UserUserMzDTO!=null}? ${match.UserUserMzDTO.getTeamName()}:'NA'" style="width: 150px">userTeam</td>
                     </div>
-                    <div th:unless="${not #lists.isEmpty(match?.getUserDataDTO()?.getTeamName() )}">
+                    <div th:unless="${not #lists.isEmpty(match?.UserUserMzDTO?.getTeamName() )}">
                         <td text=" "
                         >UserTeam</td>
                     </div>
 
 
 
-                  <!--  <td th:text="${match .getUser().getUsername()}"  >Gracz 1</td>-->
-                    <td th:text="${match.getUserDataDTO()!=null}? ${match .getUserDataDTO().getUsername()}:'NA'" style="width: 150px">user</td>
+                  <!--  <td th:text="${match .getUser().MZUsername}"  >Gracz 1</td>-->
+                    <td th:text="${match.UserUserMzDTO!=null}? ${match .UserUserMzDTO.MZUsername}:'NA'" style="width: 150px">user</td>
 
-                    <input   hidden  th:name="user" th:value="${match.getUserDataDTO().getUsername()}">
+                    <input   hidden  th:name="user" th:value="${match.UserUserMzDTO.MZUsername}">
                     <td  align="center">
                         <input   hidden  th:name="matchId" th:value="${match.getId()}">
                         <input style="width: 25px"
@@ -168,16 +170,16 @@
                                   th:value="${match .getOpponentMatchResult2()}">
                     </td>
 
-                    <td th:text="${match.getOpponentUserDataDTO().getUsername()}"
+                    <td th:text="${match.opponentUserMzDTO.MZUsername}"
                     >1</td>
-                    <input   hidden  th:name="opponentUser" th:value="${match.getOpponentUserDataDTO().getUsername()}">
+                    <input   hidden  th:name="opponentUser" th:value="${match.opponentUserMzDTO.MZUsername}">
 
-<div th:if="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName() )}">
-    <td th:text="${match .getOpponentUserDataDTO().getTeamName()}"
+<div th:if="${not #lists.isEmpty(match?.opponentUserMzDTO?.getTeamName() )}">
+    <td th:text="${match .opponentUserMzDTO.getTeamName()}"
     >opponentUserTeam</td>
 </div>
 
-                    <div th:unless="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName())}">
+                    <div th:unless="${not #lists.isEmpty(match?.opponentUserMzDTO?.getTeamName())}">
                         <td text=" "
                         >opponentUserTeam</td>
                     </div>
@@ -194,7 +196,7 @@
     <div id="table" class="mycontainer"  align="center" >
 
 <div >
-        <button onClick="showEditTable()"  >  Edytuj wyniki</button>
+        <button  class="btn btn-primary m-1" onClick="showEditTable()"  >  Edytuj wyniki</button>
 <!--        <button type="button" id="buttonAktualizuj" onclick="aktualizujClick()">Aktualizuj wyniki</button>
         <button type="button" onclick="aktualizujClick()">Aktualizujwyniki</button>-->
 
@@ -202,7 +204,7 @@
 
         <div align="left" padding-left="20">
             <form  th:action="@{/update}" method="post" id="formUpdate"  >
-                <button type="button" onclick="updateClick()" >Aktualizuj wyniki</button>
+                <button  class="btn btn-primary m-1" type="button" onclick="updateClick()" >Aktualizuj wyniki</button>
                 <input  hidden  th:name="roundNumber" th:value="${roundNumber}"></input>
                 <input hidden   th:name="chosenSchedule" th:value="${chosenSchedule.getName()}"></input>
 
@@ -235,21 +237,21 @@
 
             <tr th:each="match : ${round.getMatches()}"   >
 
-        <!--        <div th:if="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName()() )}">
+        <!--        <div th:if="${not #lists.isEmpty(match?.opponentUserMzDTO?.getTeamName()() )}">
 
-                <td th:text="${match.getUserDataDTO().getTeamName()().get(0).getTeamName()}" >userTeam</td>
+                <td th:text="${match.UserUserMzDTO.getTeamName()().get(0).getTeamName()}" >userTeam</td>
                 </div>-->
 
 
-                <div th:if="${not #lists.isEmpty(match?.getUserDataDTO()?.getTeamName() )}">
-                    <td th:text="${match .getUserDataDTO().getTeamName()}"  ></td>
+                <div th:if="${not #lists.isEmpty(match?.UserUserMzDTO?.getTeamName() )}">
+                    <td th:text="${match .UserUserMzDTO.getTeamName()}"  ></td>
                 </div>
-                <div th:unless="${not #lists.isEmpty(match?.getUserDataDTO()?.getTeamName() )}">
+                <div th:unless="${not #lists.isEmpty(match?.UserUserMzDTO?.getTeamName() )}">
                     <td text=" " ></td>
                 </div>
 
 
-                <td th:text="${match.getUserDataDTO().getUsername()}" >Gracz 1</td>
+                <td th:text="${match.UserUserMzDTO.MZUsername}" >Gracz 1</td>
 
                 <td  style="width: 25px"  th:text="${match.getUserMatchResult1()}" align="right" >
 
@@ -267,13 +269,13 @@
                 <td  >:</td>
                 <td style="width: 25px"  th:text="${match .getOpponentMatchResult2()}" align="left">wynik2</td>
 
-                <td th:text="${match.getOpponentUserDataDTO().getUsername()}">1</td>
+                <td th:text="${match.opponentUserMzDTO.MZUsername}">1</td>
 
 
-                <div th:if="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName() )}">
-                <td th:text="${match .getOpponentUserDataDTO().getTeamName()}"  ></td>
+                <div th:if="${not #lists.isEmpty(match?.opponentUserMzDTO?.getTeamName() )}">
+                <td th:text="${match .opponentUserMzDTO.getTeamName()}"  ></td>
                 </div>
-                <div th:unless="${not #lists.isEmpty(match?.getOpponentUserDataDTO()?.getTeamName() )}">
+                <div th:unless="${not #lists.isEmpty(match?.opponentUserMzDTO?.getTeamName() )}">
                     <td text=" " ></td>
                 </div>
             </tr>
@@ -289,6 +291,7 @@
 </div>
 
 
+    </div>
 
 
 

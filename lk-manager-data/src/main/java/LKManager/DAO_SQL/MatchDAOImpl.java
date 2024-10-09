@@ -429,15 +429,15 @@ query.setParameter("userMatchResult1",userMatchResult1);
 
 
                     //sprawdzanie czy  gospodarzem jest apuza
-                    if (!(match.getUserData().getUsername().equals("pauza") || match.getUserData().getUsername().equals("pauza"))) {
+                    if (!(match.getMZUserData().getUsername().equals("pauza") || match.getMZUserData().getUsername().equals("pauza"))) {
 
 
 
 
 
-                        var user = match.getUserData();
+                        var user = match.getMZUserData();
                         var userTeamId = user.getTeamlist().get(0).getTeamId();
-                        var oponent = match.getOpponentUserData();
+                        var oponent = match.getOpponentMZUserData();
                         var oponentTeamId = oponent.getTeamlist().get(0).getTeamId();
 
                         var played = matchService.findPlayedByUser(user);
@@ -472,10 +472,10 @@ query.setParameter("userMatchResult1",userMatchResult1);
 
 
                                                      //tutaj user ma id =0 oponent 1
-                            if (user1.getUserId().equals(user.getUserId()))
+                            if (user1.getMZuser_id().equals(user.getMZuser_id()))
                             {
                                 //sprawdzanie czy prawidlowy przeciwnik
-                                if (playedMatch.getTeamlist().get(1).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                if (playedMatch.getTeamlist().get(1).getTeamId() == match.getOpponentMZUserData().getTeamlist().get(0).getTeamId()) {
                                     //aktualizacja
                                     //  mecz.setMatchResult1("1");
                                     match.setUserMatchResult1(playedMatch.getTeamlist().get(0).getGoals());
@@ -485,9 +485,9 @@ query.setParameter("userMatchResult1",userMatchResult1);
 
                             }
                             //tutaj user ma id 1  oponent =0
-                            else if (user2.getUserId().equals(user.getUserId())) {
+                            else if (user2.getMZuser_id().equals(user.getMZuser_id())) {
                                 //sprawdzanie czy prawidlowy przeciwnik
-                                if (playedMatch.getTeamlist().get(0).getTeamId() == match.getOpponentUserData().getTeamlist().get(0).getTeamId()) {
+                                if (playedMatch.getTeamlist().get(0).getTeamId() == match.getOpponentMZUserData().getTeamlist().get(0).getTeamId()) {
                                     //aktualizacja
                                     //  mecz.setMatchResult1("1");
                                     match.setUserMatchResult2(playedMatch.getTeamlist().get(1).getGoals());

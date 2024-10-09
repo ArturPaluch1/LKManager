@@ -52,19 +52,19 @@ public class Team implements Serializable {
 
 
    @ManyToOne//( cascade = CascadeType.ALL)//(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    private UserData user;
+    @JoinColumn(name="MZuser_id")
+    private MZUserData user;
 
-    public UserData getUser() {
+    public MZUserData getUser() {
         return user;
     }
 
-    public void setUser(UserData user) {
+    public void setUser(MZUserData user) {
         this.user = user;
     }
 
     @Id
-    @Column(name = "team_id")
+    @Column(name = "MZteam_id")
     private Integer teamId;
     @Transient
     private String seriesName;

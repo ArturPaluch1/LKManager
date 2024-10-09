@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+
+
+//todo to nie potrzebne
 @Data
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {

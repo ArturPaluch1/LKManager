@@ -1,6 +1,6 @@
 package LKManager.services;
 
-import LKManager.model.UserMZ.UserData;
+import LKManager.model.UserMZ.MZUserData;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -17,15 +17,33 @@ public class MZUserServiceImpl implements MZUserService, Serializable {
 
 
     @Override
-    public List<UserData> findAll() {
+    public List<MZUserData> findAll() {
         return null;
     }
 
-    public  UserData findByUsernameInManagerzone(String username) {
+    @Override
+    public MZUserData getMZUserDataById(Long player)  {
+        URL url= null;
+
+
+        try {
+            url = URLs.MakeUserURLwithId(player);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            return URLs.URLtoUserData(url) ;
+        } catch (JAXBException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public MZUserData findByUsernameInManagerzone(String username) {
 
         URL url= null;
         try {
-            url = URLs.MakeUserURL(username);
+            url = URLs.MakeUserURLwithUsername(username);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -36,22 +54,25 @@ public class MZUserServiceImpl implements MZUserService, Serializable {
             throw new RuntimeException(e);
         }
     }
-    @Override
-    public UserData findByTeamId(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {
 
-URL url = URLs.MakeUserURL(Teamid);
+
+
+    @Override
+    public MZUserData findByTeamId(int Teamid) throws IOException, ParserConfigurationException, SAXException, JAXBException {
+
+URL url = URLs.MakeUserURLwithTeamId(Teamid);
 
         return URLs.URLtoUserData(url);
 
     }
 
     @Override
-    public UserData save(UserData object) {
+    public MZUserData save(MZUserData object) {
         return null;
     }
 
     @Override
-    public void delete(UserData object) {
+    public void delete(MZUserData object) {
 
     }
 
