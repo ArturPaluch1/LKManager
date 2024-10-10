@@ -20,6 +20,7 @@ spring:
   # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
   redis:
     url: ${redisProd_Url}
+
     # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
 
   # SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
