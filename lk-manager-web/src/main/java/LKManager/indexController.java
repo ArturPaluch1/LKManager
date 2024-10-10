@@ -20,7 +20,7 @@ public class indexController {
     @GetMapping({ "/","/public/index"})
     public String index(RedirectAttributes attributes, HttpServletResponse response, HttpServletRequest request, Model model, @RequestParam(value = "roundNumber", required = false) String roundNumber, @RequestParam(value = "chosenSchedule", required = false) String chosenSchedule) throws ParserConfigurationException, IOException, SAXException, JAXBException, DatatypeConfigurationException, URISyntaxException
     {
-        return "/public/index";
+        return "public/index";
     }
 
 }
