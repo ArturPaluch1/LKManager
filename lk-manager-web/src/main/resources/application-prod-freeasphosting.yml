@@ -12,6 +12,9 @@ spring.mail.properties.mail.smtp.auth.mechanisms: LOGIN
 spring.mail.properties.mail.smtp.ssl.enable: true
 spring.mail.properties.mail.debug: true
 
+spring.application.server: ${applicationServer}
+spring.application.email: ${email-email}
+
 
 spring:
   # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
@@ -27,9 +30,7 @@ spring:
 
 
 
-  application:
-    server: ${applicationServer}
-    email: ${email-email}
+
 
   datasource:
 

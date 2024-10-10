@@ -12,6 +12,17 @@ spring.mail.properties.mail.smtp.starttls.enable: false
 spring.mail.properties.mail.smtp.starttls.required: false
 
 spring.mail.properties.mail.debug: true
+
+
+
+spring.application.server: ${applicationServer}
+
+
+spring.application.email: ${email-email}
+
+
+
+
   #   host: smtp.office365.com
 
   #   host: smtp-mail.outlook.com
@@ -32,7 +43,7 @@ spring:
 
 # SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
 
-  applicationServer: ${applicationServer}
+
 
 
 
