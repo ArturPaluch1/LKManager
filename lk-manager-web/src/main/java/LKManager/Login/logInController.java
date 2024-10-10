@@ -21,7 +21,7 @@ public class logInController {
             model.addAttribute("logInForm", new LogInForm());
             System.out.println("Wywołano metodę logIn");
 
-            return "/public/logIn";
+            return "public/logIn";
 
 
     }

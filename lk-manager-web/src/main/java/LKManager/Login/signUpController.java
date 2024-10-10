@@ -38,7 +38,7 @@ private final UserDAO userDAO;
             model.addAttribute("signUpForm", new SignUpForm(null, null, null));
         }
 
-        return "/public/signUp";
+        return "public/signUp";
     }
 
     @PostMapping("/public/signUp")

@@ -86,32 +86,32 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="nav navbar-nav navbar-left    " >
-                            <li th:replace="public/fragments/menuitem ::menuItem ('/public/index','home','home','fa-house','')"  ></li>
+                            <li th:replace="public/fragments/menuItem ::menuItem ('/public/index','home','home','fa-house','')"  ></li>
 
 
-                            <li th:replace="public/fragments/menuitem::menuItem ('/public/LK/table','table','table','','Tabela')"  >
+                            <li th:replace="public/fragments/menuItem::menuItem ('/public/LK/table','table','table','','Tabela')"  >
                              <!--   <span class="glyphicon glyphicon-th-list" aria-hidden="true" ></span>
                                 <span></span>-->
                             </li>
 
                             <li
-                                    th:replace="public/fragments/menuitem::menuItem ('/admin/LK/schedule/schedule','schedule','schedule','','Terminarz') "
+                                    th:replace="public/fragments/menuItem::menuItem ('/admin/LK/schedule/schedule','schedule','schedule','','Terminarz') "
                             >
                              <span  class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                             <span></span>
 
                             </li>
-                            <li th:replace="public/fragments/menuitem::menuItem ('/admin/LK/results','results','results','','Wyniki')">
+                            <li th:replace="public/fragments/menuItem::menuItem ('/admin/LK/results','results','results','','Wyniki')">
                                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                                 <span></span>
                             </li>
-                            <li th:replace="public/fragments/menuitem::menuItem ('/admin/temp','temp','temp','','temp')">
+                            <li th:replace="public/fragments/menuItem::menuItem ('/admin/temp','temp','temp','','temp')">
                                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                                 <span>temp</span>
                             </li>
 
                             <li
-                                    th:replace="public/fragments/menuitem::menuItem ('/admin/LK/users','users','users','','gracze') "
+                                    th:replace="public/fragments/menuItem::menuItem ('/admin/LK/users','users','users','','gracze') "
                             >
 
                        <!--     <li th:replace="::menuItem ('','logIn','logIn','','wyloguj się') "
@@ -128,7 +128,7 @@
 <!--                                <span>Error</span>-->
 <!--                            </li>-->
                             <li
-                                    th:replace="public/fragments/menuitem::menuItem ('/user/settings','userSettings','userSettings','fa-gear',' Ustawienia konta') "
+                                    th:replace="public/fragments/menuItem::menuItem ('/user/settings','userSettings','userSettings','fa-gear',' Ustawienia konta') "
                             > </li>
                             <li>
                                 <form id="logoutForm" th:action="@{/logout}" method="post">

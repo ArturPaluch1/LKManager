@@ -100,9 +100,9 @@
     <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="nav navbar-nav navbar-left "       >
 
-            <li th:replace="public/fragments/menuitem ::menuItem ('/public/index','home','home','fa-house','')"  ></li>
+            <li th:replace="public/fragments/menuItem ::menuItem ('/public/index','home','home','fa-house','')"  ></li>
 
-            <li th:replace="public/fragments/menuitem::menuItem ('/public/LK/table','table','table','','Tabela')"  >
+            <li th:replace="public/fragments/menuItem::menuItem ('/public/LK/table','table','table','','Tabela')"  >
                 <span class="glyphicon glyphicon-th-list" aria-hidden="true" ></span>
                 <span></span>
             </li>
@@ -115,7 +115,7 @@
 
               </li>
               -->
-            <li th:replace="public/fragments/menuitem::menuItem ('/public/LK/results','results','results','','Wyniki')" >
+            <li th:replace="public/fragments/menuItem::menuItem ('/public/LK/results','results','results','','Wyniki')" >
                 <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
                 <span></span>
             </li>
@@ -133,7 +133,7 @@
                     th:replace="::menuItem ('/public/signUp','signUp','signUp','','załóż konto') "
             > </li>-->
             <li
-                    th:replace="public/fragments/menuitem::menuItem ('/user/settings','userSettings','userSettings','fa-gear',' Ustawienia konta') "
+                    th:replace="public/fragments/menuItem::menuItem ('/user/settings','userSettings','userSettings','fa-gear',' Ustawienia konta') "
             > </li>
             <li  >
                 <form id="logoutForm" th:action="@{/logout}" method="post">
