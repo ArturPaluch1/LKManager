@@ -45,7 +45,7 @@ model.addAttribute("model",mainModel);
 
 
 
-    return "/user/settings/userSettings";
+    return "user/settings/userSettings";
 }
     @PostMapping("/userSettings/setMZUsername")
     public String setMZUsername(Model model, @ModelAttribute("model") UserSettingsFormModel formModel , @RequestParam("username") String username)

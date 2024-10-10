@@ -135,7 +135,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
             {
                 System.out.println("schedule=====================null");
                 schedule=  scheduleService.getSchedule_TheNewestOngoingOrFinished();
-                if(schedule==null ) return "/admin/LK/results";  //nie ma nigdzie schedule
+                if(schedule==null ) return "admin/LK/results";  //nie ma nigdzie schedule
             }
             RoundDTO round;
             try {
@@ -146,7 +146,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
                 model.addAttribute("schedules", schedules);
                 model.addAttribute("chosenSchedule", schedule);
                 model.addAttribute("round", round);
-                return "/admin/LK/results";
+                return "admin/LK/results";
 
 
             } catch (Exception exception) {
@@ -160,7 +160,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
 
 
         }
-        else   return "/admin/LK/results";
+        else   return "admin/LK/results";
     }
 
 
@@ -224,7 +224,7 @@ if(schedule==null)
           model.addAttribute("chosenSchedule", schedule);
           //   model.addAttribute("roundNumbers", roundNumbers);
           model.addAttribute("round", round);
-        return "/public/LK/results";
+        return "public/LK/results";
       }
 
 
@@ -236,7 +236,7 @@ if(schedule==null)
      //   System.err.println("Inny błąd: " + exception.getMessage());
     //    attributes.addAttribute("errorMessage", "brak bazy danych");
     //    return "redirect:/errorMessage";
-        return "/public/LK/results";
+        return "public/LK/results";
 
     }
 }
@@ -248,7 +248,7 @@ if(schedule==null)
     //   model.addAttribute("roundNumbers", roundNumbers);
     model.addAttribute("round", round);
 
-    return "/public/LK/results";
+    return "public/LK/results";
 }
 }
 

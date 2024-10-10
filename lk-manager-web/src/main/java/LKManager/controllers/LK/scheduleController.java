@@ -85,7 +85,7 @@ public String scheduleError(Model model )
     var scheduleNames = scheduleService.getScheduleNamesOngoingOrFinished();
     model.addAttribute("schedules", scheduleNames);
 
-    return"/admin/LK/schedule/scheduleError";
+    return"admin/LK/schedule/scheduleError";
 }
 
 
@@ -542,7 +542,7 @@ List<String> playerNames = new ArrayList<>();
 
     @GetMapping(value = "/admin/LK/schedule/chose")
     public String pickSchedule() {
-        return "/admin/LK/schedule/choseSchedule";
+        return "admin/LK/schedule/choseSchedule";
     }
 
 
