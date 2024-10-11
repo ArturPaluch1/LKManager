@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Ustawienia</title>
@@ -49,6 +49,8 @@
         <br>
     </div>
     <div class="row">
+
+
         <form  method="post" th:action="@{/setEmail}" th:object="${model}">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 
@@ -87,6 +89,10 @@
 
 
         </form>
+
+
+
+
         <br>
     </div>
 </div>

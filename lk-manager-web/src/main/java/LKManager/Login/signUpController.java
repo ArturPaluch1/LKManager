@@ -71,7 +71,7 @@ String email=signUpForm.getEmail();
                 if (!email.equals("")) {
 
 
-                       if( emailService.sendEmail(user.getUserId(),email)==false)
+                       if( emailService.sendEmail_SimpleMailMessage(user.getUserId(),email)==false)
                     {
                         userService.authenticateUser(userDAO.getUserById(user.getUserId()).get());
                         redirectAttributes.addFlashAttribute("message","Konto zostało założone, ale podałeś błędny mail. Możesz ustawić go w opcjach konta.");

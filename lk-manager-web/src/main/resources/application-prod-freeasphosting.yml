@@ -10,11 +10,13 @@ spring.mail.properties.mail.smtp.starttls.required: false
 
 spring.mail.properties.mail.smtp.auth.mechanisms: LOGIN
 spring.mail.properties.mail.smtp.ssl.enable: true
-spring.mail.properties.mail.debug: true
+spring.mail.properties.mail.debug: false
 
 spring.application.server: ${applicationServer}
 spring.application.email: ${email-email}
-
+mailjet:
+  api-key: ${mailjetApiKey}
+  apiSecretKey: ${mailjetSecretKey}
 
 spring:
   # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
@@ -53,8 +55,8 @@ spring:
     database-platform: org.hibernate.dialect.SQLServerDialect
     database: sql_server
     show-sql: false
-    logging.level.org.hibernate.SQL : DEBUG
-    logging.level.org.springframework.web: DEBUG
+    logging.level.org.hibernate.SQL : INFO
+    logging.level.org.springframework.web: INFO
     #jpa:
     # hibernate:
     #   ddl-auto: validate

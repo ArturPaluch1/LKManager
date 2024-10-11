@@ -138,6 +138,7 @@ public String leaveLeague()
         public String setEmail(@ModelAttribute("model") UserSettingsFormModel formModel,RedirectAttributes redirectAttributes ) {
 
 
+
           try {
               //String activationLink = "http://localhost:8080/confirmEmail?token=" + accountService.generateActivationToken(formModel.getUser().getUserId().toString()) + "&email=" + formModel.getUser().getEmail();
 
@@ -155,7 +156,7 @@ public String leaveLeague()
 
 
 
-              redirectAttributes.addFlashAttribute("emailMessage", "Do dokończenia aktywacji wejdź w link w mailu.");
+              redirectAttributes.addFlashAttribute("emailMessage", "Do dokończenia aktywacji wejdź w link w mailu (mz_helper@op.pl).<br>(Czasem mail może trafić do spamu.)");
           }
           catch (Exception e)
           {
@@ -165,27 +166,12 @@ public String leaveLeague()
               return"redirect:/user/settings";
 
           }
-    /*
-        String username= redisUserService.getActivationTokenUsername(token);
-        UserDataDTO activatedUser=userService.activateUser(username);
 
-        if (activatedUser!=null) {
-            return "Konto zostało aktywowane pomyślnie!";
-        } else {
-            return "Nieprawidłowy lub wygasły token.";
-        }*/
+
+
+
+
     }
-
-
-
-
-    //todo temp\/
-
-
-
-
-
-
 
 
 
