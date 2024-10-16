@@ -1,6 +1,10 @@
 
 
 
+
+
+
+
         document.addEventListener('DOMContentLoaded', function() {
                const tableBody = document.querySelector('#options-table tbody');
                let draggedRow = null;
@@ -70,14 +74,29 @@ alert(a.getAttribute("th:field"));
 */
 
 
+//single day schedule
+ let  selection1SingleDaySchedule=  document.getElementById('selection1-SingleDaySchedule')
+  let  selection2SingleDaySchedule=  document.getElementById('selection2-SingleDaySchedule')
 
- let  selection1=  document.getElementById('selection1')
-  let  selection2=  document.getElementById('selection2')
+//multi day schedule
+ let  selectionMultiDaySchedule=  document.getElementsByClassName('selection-MultiDaySchedule')
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*  var cc = [[${schedule.playersList}]];*/
 
 
- let selectionOptionsBackup = document.getElementById('selection1').cloneNode( true );
+ let selectionOptionsBackup = document.getElementById('selection1-SingleDaySchedule').cloneNode( true );
 
 //let matchMap= new Map();
 let  removedOptions=[];
@@ -87,8 +106,41 @@ let  removedOptions=[];
 
 //let matchPairs=Array.from(playersList)
 
+function fillPlayersOnSubmit()
+{
+
+//multi day schedule   
+if(playersList.length===0)
+{
+// Tablica do przechowywania zaznaczonych użytkowników
+let selectedPlayers = [];
+
+// Iteracja przez wszystkie wiersze
+for (let row of selectionMultiDaySchedule) {
+    // Znajdowanie checkboxa w wierszu
+    let checkbox = row.querySelector('input[name="chosenPlayers"]');
+    
+    // Sprawdzanie, czy checkbox jest zaznaczony
+    if (checkbox && checkbox.checked) {
+        // Dodawanie wartości do tablicy
+        selectedPlayers.push(checkbox.value);
+    }
+}
+
+// Teraz selectedPlayers zawiera wartości zaznaczonych checkboxów
+console.log(selectedPlayers);
+
+let matchPairs=document.getElementById('playersListInput');
+matchPairs.setAttribute("value", selectedPlayers )
+
+}
+else
+{
+    matchPairs.setAttribute("value", playersList )
+}
 
 
+}
 
 function undo()
 {
@@ -127,8 +179,8 @@ console.log("del "+player1 + " i " + player2)
       let text2 = document.createTextNode(player2 );
      option2.appendChild(text2)
 
-       selection1.appendChild(option1)
-   selection1.appendChild(option2)
+       selection1SingleDaySchedule.appendChild(option1)
+   selection1SingleDaySchedule.appendChild(option2)
 
      let  option3 = document.createElement("option");
      option3.value=player1;
@@ -141,8 +193,8 @@ console.log("del "+player1 + " i " + player2)
      option4.appendChild(text4)
 
 
-     selection2.appendChild(option3)
-     selection2.appendChild(option4)
+     selection2SingleDaySchedule.appendChild(option3)
+     selection2SingleDaySchedule.appendChild(option4)
 
    //console.log(player1)
   // console.log("r1 " +removedOptions)
@@ -154,10 +206,10 @@ console.log("del "+player1 + " i " + player2)
     removedOptions.forEach( a=> console.log(a==player1))
 
  //  console.log("r2 " +removedOptions)
-   //console.log(selection2)
-    // console.log(selection2.children)
-     sortSelection(selection1)
-    sortSelection(selection2)
+   //console.log()
+    // console.log(selection2SingleDaySchedule.children)
+     sortSelection(selection1SingleDaySchedule)
+    sortSelection(selection2SingleDaySchedule)
 
 
     let matchPairs=document.getElementById('playersListInput');
@@ -207,19 +259,19 @@ console.log(matchPairs.value)
 
 
 
-  //  const selectionBackup=document.getElementById('selection1') ;
+  //  const selectionBackup=document.getElementById('selection1SingleDaySchedule') ;
 
-    let  selection1=  document.getElementById('selection1')
-    let  selection2=  document.getElementById('selection2')
+    let  selection1SingleDaySchedule=  document.getElementById('selection1-SingleDaySchedule')
+    let  selection2SingleDaySchedule=  document.getElementById('selection2-SingleDaySchedule')
 
     selectionBackup2= selectionOptionsBackup.cloneNode( true );
      selectionBackup1= selectionOptionsBackup.cloneNode( true );
-  //  document.getElementById('selection1').
-  //  document.getElementById('selection1').childNodes.appendChild(selectionBackup.childNodes)
-  selection1.  replaceChildren(...selectionBackup1.children)
-  selection1[0].selected=true;
-  selection2.  replaceChildren(...selectionBackup2.children)
-  selection2[0].selected=true;
+  //  document.getElementById('selection1SingleDaySchedule').
+  //  document.getElementById('selection1SingleDaySchedule').childNodes.appendChild(selectionBackup.childNodes)
+  selection1SingleDaySchedule.  replaceChildren(...selectionBackup1.children)
+  selection1SingleDaySchedule[0].selected=true;
+  selection2SingleDaySchedule.  replaceChildren(...selectionBackup2.children)
+  selection2SingleDaySchedule[0].selected=true;
  // selectionBackup=null;
 
 //alert("i");
@@ -230,34 +282,61 @@ console.log(matchPairs.value)
 
 function scheduleChange(value)
 {
+
+   
+
    var schedule1=  document.getElementById("singleSchedule")
    var schedule2=  document.getElementById("multiSchedule")
      var roundsNumber= document.getElementById("roundsNumber")
      var matches =  document.getElementById('matches').innerHTML="";
 
+
+
+
+
+
     if(value=='oneDaySchedule')
     {
-schedule1.hidden=false;
-schedule2.hidden=true;
-matches.hidden=false;
-   roundsNumber.hidden=true;
+       //clearing multi day options
+        for (let row of selectionMultiDaySchedule) {
+
+            let checkbox = row.querySelector('input[name="chosenPlayers"]');
+            if (checkbox && checkbox.checked) {
+                checkbox.checked = false; 
+            }
+        }
+
+
+
+schedule1.style.display = 'block';
+schedule2.style.display = 'none';
+matches.style.display = 'block';
+   roundsNumber.style.display = 'none';
     }
     else if(value=='swissSchedule')
     {
-    schedule1.hidden=true;
-    schedule2.hidden=false;
 
-     roundsNumber.hidden=false;
-matches.hidden=true;
+matchPairs=[]
+clearAll()
+
+
+    schedule1.style.display = 'none';
+    schedule2.style.display = 'block';
+
+     roundsNumber.style.display = 'block';
+matches.style.display = 'none';
     }
     else//multi schedule
     {
-schedule1.hidden=true;
-schedule2.hidden=false;
+        matchPairs=[]
+        clearAll()
+        
+schedule1.style.display = 'none';
+schedule2.style.display = 'block';
 
 
-   roundsNumber.hidden=true;
-   matches.hidden=true;
+   roundsNumber.style.display = 'none';
+   matches.style.display = 'none';
     }
 
 }
@@ -331,22 +410,23 @@ alert( "y" +f);
 
 /*  if(selectionBackup==null)
   {
-   // selectionBackup= structuredClone(selection1)
- //   selectionBackup = document.getElementById('selection1').cloneNode( true );
-  //  selectionBackup = JSON.parse(JSON.stringify(selection1));
-    // selectionBackup = document.getElementById('selection1')
+   // selectionBackup= structuredClone(selection1SingleDaySchedule)
+ //   selectionBackup = document.getElementById('selection1SingleDaySchedule').cloneNode( true );
+  //  selectionBackup = JSON.parse(JSON.stringify(selection1SingleDaySchedule));
+    // selectionBackup = document.getElementById('selection1SingleDaySchedule')
   }*/
 /*
 if(gracze1==null)
 {
-    gracze1=document.getElementById('selection1')
+    gracze1=document.getElementById('selection1SingleDaySchedule')
 }
 */
 
   let user1,user2, index1,index2;
 
-  Array.from(selection1).forEach(element => {
- /*   if(
+  Array.from(selection1SingleDaySchedule).forEach(element => {
+ 
+    /*   if(
         (element.selected==true)
     &&(element.text!='&#45;&#45;Wybierz terminarz&#45;&#45;' )
     )
@@ -363,7 +443,7 @@ if(
         index1=element.index;
     }
 });
-Array.from(selection2).forEach(element => {
+Array.from(selection2SingleDaySchedule).forEach(element => {
    /* if(element.selected==true&&element.text!='&#45;&#45;Wybierz terminarz&#45;&#45;'&&element.index!=index1)
     {
         user2=element;
@@ -441,7 +521,7 @@ else
          //   gracze1.remove(user1)
          //   gracze1.remove(user2)
 
-         Array.from(selection1).forEach(element => {
+         Array.from(selection1SingleDaySchedule).forEach(element => {
             if(element.text==user2.text)
             {
                element.remove();
@@ -449,7 +529,7 @@ else
             }
 
         });
-        Array.from(selection2).forEach(element => {
+        Array.from(selection2SingleDaySchedule).forEach(element => {
             if(element.text==user1.text)
             {
                element.remove();
@@ -578,3 +658,31 @@ function sortSelection(selection) {
 
 
 
+   /*document.addEventListener('DOMContentLoaded', function () {
+   alert( "y" );
+         // Sprawdzenie, czy istnieją przyciski radio o nazwie "rodzajTerminarza"
+         var radios = document.querySelectorAll('input[name="rodzajTerminarza"]');
+         if (radios.length > 0) {
+             toggleScheduleType(); // Wywołanie funkcji na początku
+alert( "y" );
+             // Dodanie nasłuchiwaczy zdarzeń do wszystkich przycisków radiowych
+             radios.forEach(function (radio) {
+                 radio.addEventListener('change', toggleScheduleType);
+             });
+         }
+     });
+
+    function toggleScheduleType() {
+        var selectedScheduleType = document.querySelector('input[name="rodzajTerminarza"]:checked').value;
+alert( "y" );
+        if (selectedScheduleType) {
+            var value = selectedScheduleType.value;
+
+            // Wyświetlanie odpowiedniej sekcji w zależności od wybranego rodzaju terminarza
+            if (value === 'oneDaySchedule') {
+                document.getElementById('singleSchedule').style.display = 'block';
+            } else {
+                document.getElementById('multiSchedule').style.display = 'block';
+            }
+        }
+    }*/

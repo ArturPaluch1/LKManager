@@ -64,7 +64,7 @@ private final UserService userService;
            if(round!=null)
            {
                //updatuj tylko które nie były rozegrane
-               if(round.getMatches().get(0).getOpponentMZUserData()!=null)
+               if(round.getMatches().stream().toList().get(0).getOpponentMZUserData()!=null)
                {
                    for (var match:round.getMatches()
                    ) {

@@ -9,10 +9,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @RedisHash
 public interface RoundDAO extends JpaRepository<Round,Long> ,CustomRoundDAO{
 
-    @Query("SELECT distinct r FROM Round r LEFT JOIN Schedule s ON r.schedule = s join fetch r.matches m  WHERE s.name = :scheduleName order by r.date")
+    @Query("SELECT distinct r FROM Round r  JOIN Schedule s ON r.schedule = s left join fetch r.matches m  WHERE s.name = :scheduleName order by r.date")
     List<Round> findAllRoundsOfSchedule(@Param("scheduleName")String scheduleName);
 
     @Query("SELECT distinct r FROM Round r LEFT JOIN Schedule s ON r.schedule = s join fetch r.matches m WHERE s.name = :scheduleName and r.nr=:roundNumber")

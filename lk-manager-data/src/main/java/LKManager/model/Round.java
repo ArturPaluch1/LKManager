@@ -5,15 +5,17 @@ import LKManager.model.RecordsAndDTO.RoundDTO;
 import LKManager.model.UserMZ.MZUserData;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
 import javax.persistence.Table;
+import javax.persistence.*;
 import javax.xml.bind.annotation.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 
 @Entity
@@ -54,7 +56,10 @@ private int nr;
     @OneToMany(mappedBy = "round",
             cascade = { CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.REMOVE},
         //    orphanRemoval = true,)
+        //    orphanRemoval = true,
             fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
+
       /*      @JoinTable
                     (
                             name="mecze",
@@ -63,7 +68,7 @@ private int nr;
                     )
 */
 
-private List<Match> matches;
+private Set<Match> matches;
 
 
 
@@ -98,7 +103,7 @@ private boolean played;
     public Round(int nr, LocalDate date) {
         this.nr = nr;
         this.date = date;
-        matches = new ArrayList<>();
+        matches = new LinkedHashSet<>();
     }
 
     public Round() {
@@ -122,11 +127,11 @@ public Round(RoundDTO roundDto)
 
     @XmlElement(name = "Match")
 
-    public List<Match> getMatches() {
+    public Set<Match> getMatches() {
         return matches;
     }
 
-    public void setMatches(List<Match> matches) {
+    public void setMatches(Set<Match> matches) {
         this.matches = matches;
     }
 

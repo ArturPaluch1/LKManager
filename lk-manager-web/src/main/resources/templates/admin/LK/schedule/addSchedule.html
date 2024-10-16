@@ -18,10 +18,12 @@
 
 <div th:replace="~{public/navbar}"></div>
 
+
+
 <div class="container-flex">
     <div class="d-flex justify-content-around">
       <!--  <div class="p-3 mb-2 bg-primary text-white">Item 1</div>-->
-        <div style="float:left" class="calendar p-3 mb-2  ">
+        <div class="calendar p-3 mb-2  " style="float:left">
             <div class="calendar-header">
                 <span class="month-picker" id="month-picker"></span>
                 <div class="year-picker">
@@ -50,31 +52,60 @@
             <div class="month-list"></div>
         </div>
        <!-- <div class="p-3 mb-2 bg-secondary text-white"></div>-->
-        <form th:object="${schedule}" th:action="@{/admin/LK/schedule/schedule/addSchedule/}" method="post" modelAttribute="schedule">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <form method="post" modelAttribute="schedule" th:action="@{/admin/LK/schedule/schedule/addSchedule/}" th:object="${schedule}" onsubmit="fillPlayersOnSubmit()">
+            <input name="${_csrf.parameterName}" type="hidden" value="${_csrf.token}"/>
+
+
+
+
+
+
+
+
+
+
+
 
 
             <div class="p-3 mb-2 "style="float:left; margin-right: 5px;"   >
 
                 <br>
-                <label class="form-label m-1"  >Data rozpoczęcia:</label>
-                <label  class="form-label m-1" id="labelData"  ></label><br>
-                <input type ="text" id="inputData" class="notDisplay" th:field="*{date}" />
-                <br>
-                <label  class="form-label m-1" for="fname">Nazwa:</label><br>
-                <input type="text" id="fname" name="fname" th:field="*{name}" ><br>
-                <br>
-                <div hidden="true" id="roundsNumber">
-                    <label  class="form-label m-1" for="roundsNumber" >Liczba rund:</label><br>
-                    <input type="text"  name="roundsNumber" th:field="*{roundsNumber}" >
+                <div>
+
+                    <label class="form-label m-1"  >Data rozpoczęcia:</label>
+                    <div  th:object="${errorMessages}" th:if="${errorMessages!=null && errorMessages.containsKey('date')}"  th:text="${errorMessages.get('date')}" class="text-danger"> <br></div>
+
+                    <label  class="form-label m-1" id="labelData"  ></label><br>
+                <input class="notDisplay" id="inputData" th:field="*{date}" type ="text" />
+
                 </div>
 
                 <br>
-                <button type="submit"  class="btn btn-primary m-1"  >Utwórz terminarz</button>
+                <div>
+                <label  class="form-label m-1" for="fname">Nazwa:</label><br>
+
+                    <div  th:object="${errorMessages}" th:if="${errorMessages!=null && errorMessages.containsKey('name')}"  th:text="${errorMessages.get('name')}" class="text-danger"> <br></div>
+                <input id="fname" name="fname" th:field="*{name}" type="text" >
+
+                </div>
+                <br>
+                <br>
+
+                <div th:attr="style='display:none;'"   id="roundsNumber">
+                    <div  th:object="${errorMessages}" th:if="${errorMessages!=null && errorMessages.containsKey('addScheduleDTO')}"  th:text="${errorMessages.get('addScheduleDTO')}" class="text-danger"> <br></div>
+
+                    <label  class="form-label m-1"  >Liczba rund:</label><br>
+                    <input name="roundsNumber"  th:field="*{roundsNumber}" type="text" >
+                </div>
+
+                <br>
+
+                <button class="btn btn-primary m-1"  type="submit"  >Utwórz terminarz</button>
                 <br>
 
                 <!--<input id="bob1"  name="schedule" th:value="${schedule.lista}">-->
-                <input id="playersListInput" hidden  th:field="*{playersList}">
+
+                <input hidden id="playersListInput"  th:field="*{playersList}">
 
             </div>
 
@@ -82,39 +113,47 @@
 
 
             <div class="p-3 mb-2 "style="float:left; margin-left: 5px;">
-                <input type="radio" id="single" value="oneDaySchedule" name="rodzajTerminarza" checked onchange="scheduleChange(value)" th:field="*{scheduleType}" >
+
+
+
+
+                <input  id="single" name="rodzajTerminarza"    onchange="scheduleChange(this.value)" th:field="*{scheduleType}" type="radio" value='oneDaySchedule' >
                 <label  class="form-label m-1" for="single">Terminarz jednodniowy</label>
                 <br>
-                <input type="radio" id="multi" value="standardSchedule" name="rodzajTerminarza" onchange="scheduleChange(value)" th:field="*{scheduleType}">
+                <input id="multi" name="rodzajTerminarza"   onchange="scheduleChange(this.value)" th:field="*{scheduleType}" type="radio" value="standardSchedule">
                 <label  class="form-label m-1" for="multi">Terminarz wielodniowy</label>
                 <br>
-                <input type="radio" id="swiss" value="swissSchedule" name="rodzajTerminarza" onchange="scheduleChange(value)" th:field="*{scheduleType}">
+                <input id="swiss" name="rodzajTerminarza"   th:checked="${ schedule.scheduleType == T(LKManager.model.RecordsAndDTO.ScheduleType).swissSchedule}" onchange="scheduleChange(this.value)" th:field="*{scheduleType}" type="radio" value='swissSchedule'>
                 <label  class="form-label m-1" for="multi">Terminarz w systemie szwajcarskim</label>
                 <br>
 
+                <div  th:object="${errorMessages}" th:if="${errorMessages!=null && errorMessages.containsKey('scheduleType')}"  th:text="${errorMessages.get('scheduleType')}" class="text-danger"> <br></div>
 
 
 
 
 
 
-                <div   id="singleSchedule">
+               <!-- <div th:attr="style='display:none;'"  id="singleSchedule" >-->
+                <div  th:attr="style='display:none;'"   id="singleSchedule" >
                     <br>        <br>
-                    <button onclick="add()"  class="btn btn-primary m-1"  >dodaj mecz</button>
-                    <button onclick="undo()"  class="btn btn-primary m-1" >cofnij</button>
-                    <button onclick="clearAll()"  class="btn btn-primary m-1" >wyczyść</button>
+                    <button class="btn btn-primary m-1" onclick="add()" type="button"  >dodaj mecz</button>
+                    <button class="btn btn-primary m-1" onclick="undo()" type="button" >cofnij</button>
+                    <button class="btn btn-primary m-1" onclick="clearAll()" type="button" >wyczyść</button>
                     <br>        <br>
-                    <form th:action="@{/wyniki}" method="get" >
+                    <div  th:object="${errorMessages}" th:if="${errorMessages!=null && errorMessages.containsKey('playersList')}"  th:text="${errorMessages.get('playersList')}" class="text-danger"> <br></div>
+
+                    <form method="get" th:action="@{/wyniki}" >
                         <!-- th:onchange="bob(value,[[${gracze}]])"-->
-                        <select  th:name="wybranyTerminarz"  id="selection1" >
-                            <option value="" selected>--Wybierz gracza--</option>
-                            <option th:each="player : ${players}" th:value="${player.MZUsername}" th:text="${player.MZUsername}" />
+                        <select  id="selection1-SingleDaySchedule"  th:name="wybranyTerminarz" >
+                            <option selected value="">--Wybierz gracza--</option>
+                            <option th:each="player : ${players}" th:text="${player.MZUsername}" th:value="${player.MZUsername}" />
 
                         </select>
                         <!--  onchange="sam(value)"-->
-                        <select  th:name="wybranyTerminarz"  id="selection2">
-                            <option value="" selected>--Wybierz gracza--</option>
-                            <option th:each="player : ${players}" th:value="${player.MZUsername}" th:text="${player.MZUsername}" />
+                        <select  id="selection2-SingleDaySchedule"  th:name="wybranyTerminarz">
+                            <option selected value="">--Wybierz gracza--</option>
+                            <option th:each="player : ${players}" th:text="${player.MZUsername}" th:value="${player.MZUsername}" />
 
                         </select>
 
@@ -146,7 +185,7 @@
 
 
                 </div>
-                <div  id="multiSchedule" hidden>
+                <div   id="multiSchedule" th:attr="style='display:none;'"  >
                     <label class="form-label m-1"  >Gracze:</label><br>
                     <div class="table-responsive" th:if="${not #lists.isEmpty(schedule)}">
                         <table class="table table-hover" id="options-table">
@@ -161,11 +200,11 @@
                                    </tr>-->
 
                             <tbody >
-                            <tr th:each="item : ${players}"   >
-                                <td  draggable="true"  class="draggable">
+                            <tr th:each="item : ${players}" class="selection-MultiDaySchedule"  >
+                                <td  class="draggable"  draggable="true">
 
-                                    <input type="checkbox" name="chosenPlayers" th:value="${item.MZUsername}"/>
-                                    <label  class="form-label m-1" th:text="${item.MZUsername}"></label>
+                                    <input id="user" name="chosenPlayers" th:value="${item.MZUsername}" type="checkbox"/>
+                                    <label for="user" class="form-label m-1" th:text="${item.MZUsername}"></label>
 
 
                                 </td>
@@ -577,7 +616,11 @@ Zmienna pobrana z thymeleafa musi być th:inline="javascript".  nie da się dać
 *******************************
 -->
 </div>
-<script type="text/javascript" th:inline="javascript" >
+
+
+
+
+<script th:inline="javascript" type="text/javascript" >
     var playersList = [[${schedule.playersList}]];
 var s =[[${schedule}]];
 
@@ -590,9 +633,9 @@ var s =[[${schedule}]];
 
 </script>
 
-<script  type="text/javascript" th:src="@{/js/temp.js}"></script>
-<script type="text/javascript" th:src="@{/js/calendar.js}"></script>
-<script type="text/javascript" th:src="@{/js/addSchedule.js}"></script>
+<script  th:src="@{/js/temp.js}" type="text/javascript"></script>
+<script th:src="@{/js/calendar.js}" type="text/javascript"></script>
+<script th:src="@{/js/addSchedule.js}" type="text/javascript"></script>
 
 </body>
 </html>

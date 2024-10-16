@@ -6,6 +6,8 @@ import LKManager.model.RecordsAndDTO.ScheduleType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.collection.internal.PersistentBag;
 
@@ -56,7 +58,10 @@ private LocalDate startDate;
 
     @OneToMany(mappedBy = "schedule",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE},
+         //   orphanRemoval = true,
             fetch = FetchType.LAZY)
+    @Fetch(FetchMode.SUBSELECT)
+
     private List<Round> rounds = new ArrayList<>();
 
 /*    public Schedule(List<Round> rounds, String name,ScheduleType scheduleType ) {

@@ -1,13 +1,14 @@
 package LKManager.services.Comparators;
 
 import LKManager.model.RecordsAndDTO.UserMzDTO;
+import LKManager.model.UserMZ.MZUserData;
 import LKManager.model.account.User;
 import LKManager.services.UserService;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class UserMzDTOReliabilityComparator implements Comparator<UserMzDTO> {
+public class UserMzDTOReliabilityComparator implements Comparator<MZUserData> {
 
     private final UserService userService;
 
@@ -16,7 +17,7 @@ public class UserMzDTOReliabilityComparator implements Comparator<UserMzDTO> {
     }
 
     @Override
-    public int compare(UserMzDTO o1, UserMzDTO o2) {
+    public int compare(MZUserData o1, MZUserData o2) {
         //todo do zrobienia
    /*     if(o1.getSumaPunktow()=="")o1.setSumaPunktow("0");
         if(o2.getSumaPunktow()=="")o2.setSumaPunktow("0");*/

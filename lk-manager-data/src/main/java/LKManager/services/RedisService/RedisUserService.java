@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Data
@@ -328,6 +329,8 @@ if(userToAdd instanceof User)
     {
 
         List<UserDataDTO> usersActiveWithPause=this.getUsers(true,true);
+
+
         usersActiveWithPause.add(UserAdapter.convertUserToUserDataDTO(MZUserDataToadd));
         this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
 
@@ -473,16 +476,27 @@ else return null;
 
 
                 List<UserDataDTO> usersActiveWithPause=this.getUsers(true,true);
-                UserDataDTO  userInActiveWithPause= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-                List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
-                UserDataDTO  userInActiveWithoutPause= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                 int userInActiveWithPauseIndex = IntStream.range(0, usersActiveWithPause.size())
+                .filter(i -> usersActiveWithPause.get(i).getUserId().equals(((User) editedUser).getId()))
+                .findFirst()
+                .orElse(-1); 
 
-                if(userInActiveWithPause==null||userInActiveWithoutPause==null)
+                List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
+               int userInActiveWithoutPauseIndex = IntStream.range(0, usersActiveWithoutPause.size())
+    .filter(i -> usersActiveWithoutPause.get(i).getUserId().equals(((User) editedUser).getId()))
+    .findFirst()
+    .orElse(-1); 
+
+
+
+
+                //usera nie było w żadnej z list, dodawanie
+                if(userInActiveWithPauseIndex==-1 && userInActiveWithoutPauseIndex==-1)
                 {
                     this.addUserToUserLists(editedUser);
 
                     //todo te 2 linijki nie wiem czy potrzebne , sprawdzic jeszcze raz
-                  usersActiveWithPause=this.getUsers(true,true);
+       /*           usersActiveWithPause=this.getUsers(true,true);
                     usersActiveWithoutPause   =    this.getUsers(true,false);
 
 
@@ -490,58 +504,73 @@ else return null;
 
                     userInActiveWithPause= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
                     userInActiveWithoutPause= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-
+*/
+return   this.getUsers(true,true)  ;  
                 }
+else//usuwanie usera z list
+{
+    if(userInActiveWithPauseIndex!=-1)
+    {
+        
+usersActiveWithPause.remove(userInActiveWithPauseIndex);
+usersActiveWithPause.add(UserAdapter.convertUserToUserDataDTO((User)editedUser));
+this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
 
-                //  UserDataDTO  userInRedis= usersActiveWithPause.get(((UserData) editedUser).getUserId());
-                userInActiveWithPause.setRole(((User) editedUser).getRole());
-                userInActiveWithPause.setReliability(((User) editedUser).getReliability());
-                userInActiveWithPause.setLeagueParticipation(((User) editedUser).getLeagueParticipation());
-         //       userInActiveWithPause.setTeamName(((User) editedUser).getMzUser().getTeamlist().get(0).getTeamName());
-                this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
+    }
+    if(userInActiveWithoutPauseIndex!=-1)
+{
+    usersActiveWithoutPause.remove(userInActiveWithoutPauseIndex);
+    usersActiveWithoutPause.add(UserAdapter.convertUserToUserDataDTO((User)editedUser));
+    this.addAllUsers(usersActiveWithoutPause,UserDataDTO.class,true,false);
+
+}
+            return   this.getUsers(true,true)  ;  
+
+}
 
 
-             
-                //    UserDataDTO  userInRedis1= usersActiveWithoutPause.get(((UserData) editedUser).getUserId());
-                userInActiveWithoutPause.setRole(((User) editedUser).getRole());
-                userInActiveWithoutPause.setReliability(((User) editedUser).getReliability());
-                userInActiveWithoutPause.setLeagueParticipation(((User) editedUser).getLeagueParticipation());
-           //     userInActiveWithoutPause.setTeamName(((User) editedUser).getMzUser().getTeamlist().get(0).getTeamName());
-                return        this.addAllUsers(usersActiveWithoutPause,UserDataDTO.class,true,false);
-            }
+             }
             else {
 
                 List<UserDataDTO>    usersDeactivatedWithPause=   this.getUsers(false,true);
-                UserDataDTO  userInactiveWithPause= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+               int userInactiveWithPauseIndex = IntStream.range(0, usersDeactivatedWithPause.size())
+                .filter(i -> usersDeactivatedWithPause.get(i).getUserId().equals(((User) editedUser).getId()))
+                .findFirst()
+                .orElse(-1); 
+              
                 List<UserDataDTO>    usersDeactivatedWithoutPause  =  this.getUsers(false,false);
-                UserDataDTO  userInactiveWithoutPause= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
+                  int userInactiveWithoutPauseIndex = IntStream.range(0, usersDeactivatedWithoutPause.size())
+                .filter(i -> usersDeactivatedWithoutPause.get(i).getUserId().equals(((User) editedUser).getId()))
+                .findFirst()
+                .orElse(-1); 
 
-                if(userInactiveWithPause==null||userInactiveWithoutPause==null)
+                if(userInactiveWithPauseIndex==-1||userInactiveWithoutPauseIndex==-1)
                 {
                     this.addUserToUserLists(editedUser);
-                    userInactiveWithPause= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-                    userInactiveWithoutPause= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-
+                    return   this.getUsers(true,true)  ;
                 }
                 
                 
-         
-          //      UserDataDTO  userInRedis= usersDeactivatedWithPause.get(((UserData) editedUser).getUserId());
-                userInactiveWithPause.setRole(((User) editedUser).getRole());
-                userInactiveWithPause.setReliability(((User) editedUser).getReliability());
-                userInactiveWithPause.setLeagueParticipation(((User) editedUser).getLeagueParticipation());
-        //        userInactiveWithPause.setTeamName(((User) editedUser).getMzUser().getTeamlist().get(0).getTeamName());
-                this.addAllUsers(usersDeactivatedWithPause,UserDataDTO.class,false,true);
-
-               
-         
-            //    UserDataDTO  userInRedis1= usersDeactivatedWithoutPause.get(((UserData) editedUser).getUserId());
-                userInactiveWithoutPause.setLeagueParticipation(((User) editedUser).getLeagueParticipation());
-                userInactiveWithoutPause.setRole(((User) editedUser).getRole());
-                userInactiveWithoutPause.setReliability(((User) editedUser).getReliability());
-           //     userInactiveWithoutPause.setTeamName(((User) editedUser).getMzUser().getTeamlist().get(0).getTeamName());
-                return     this.addAllUsers(usersDeactivatedWithoutPause,UserDataDTO.class,false,false);
-
+                else//usuwanie usera z list
+                {
+                    if(userInactiveWithPauseIndex!=-1)
+                    {
+                        
+                        usersDeactivatedWithPause.remove(userInactiveWithPauseIndex);
+                        usersDeactivatedWithPause.add(UserAdapter.convertUserToUserDataDTO((User)editedUser));
+                this.addAllUsers(usersDeactivatedWithPause,UserDataDTO.class,true,true);
+                
+                    }
+                    if(userInactiveWithoutPauseIndex!=-1)
+                {
+                    usersDeactivatedWithoutPause.remove(userInactiveWithoutPauseIndex);
+                    usersDeactivatedWithoutPause.add(UserAdapter.convertUserToUserDataDTO((User)editedUser));
+                    this.addAllUsers(usersDeactivatedWithoutPause,UserDataDTO.class,true,false);
+                
+                }
+                            return   this.getUsers(true,true)  ;  
+                
+                }
             }
 
 
@@ -550,62 +579,108 @@ else return null;
             if(((UserDataDTO)editedUser).getRole()!=Role.DEACTIVATED_USER
             )
             {
-                List<UserDataDTO> usersActiveWithPause=this.getUsers(true,true);
-                UserDataDTO  userInActiveWithPause= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-                List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
-                UserDataDTO  userInActiveWithoutPause= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
 
-                if(userInActiveWithPause==null||userInActiveWithoutPause==null)
+
+
+
+
+
+                List<UserDataDTO> usersActiveWithPause=this.getUsers(true,true);
+                 int userInActiveWithPauseIndex = IntStream.range(0, usersActiveWithPause.size())
+                .filter(i -> usersActiveWithPause.get(i).getUserId().equals(((UserDataDTO) editedUser).getUserId()))
+                .findFirst()
+                .orElse(-1); 
+
+                List<UserDataDTO>     usersActiveWithoutPause   =    this.getUsers(true,false);
+               int userInActiveWithoutPauseIndex = IntStream.range(0, usersActiveWithoutPause.size())
+    .filter(i -> usersActiveWithoutPause.get(i).getUserId().equals(((UserDataDTO) editedUser).getUserId()))
+    .findFirst()
+    .orElse(-1); 
+
+
+
+
+                //usera nie było w żadnej z list, dodawanie
+                if(userInActiveWithPauseIndex==-1 && userInActiveWithoutPauseIndex==-1)
                 {
                     this.addUserToUserLists(editedUser);
+
+                    //todo te 2 linijki nie wiem czy potrzebne , sprawdzic jeszcze raz
+       /*           usersActiveWithPause=this.getUsers(true,true);
+                    usersActiveWithoutPause   =    this.getUsers(true,false);
+
+
+                    System.out.println("saveOrUpdateUserInUserLists - "+((User) editedUser).getUsername());
+
                     userInActiveWithPause= usersActiveWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
                     userInActiveWithoutPause= usersActiveWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-
+*/
+return   this.getUsers(true,true)  ;  
                 }
+else//usuwanie usera z list
+{
+    if(userInActiveWithPauseIndex!=-1)
+    {
+        
+usersActiveWithPause.remove(userInActiveWithPauseIndex);
+usersActiveWithPause.add((UserDataDTO)editedUser);
+this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
 
-                  //      UserDataDTO  userInRedis= usersActiveWithPause.get(((UserDataDTO) editedUser).getUserId());
-                userInActiveWithPause.setRole(((UserDataDTO) editedUser).getRole());
-                userInActiveWithPause.setReliability(((UserDataDTO) editedUser).getReliability());
-                userInActiveWithPause.setLeagueParticipation(((UserDataDTO) editedUser).getLeagueParticipation());
-           //     userInActiveWithPause.setTeamName(((UserDataDTO) editedUser).getTeamName());
-                this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
+    }
+    if(userInActiveWithoutPauseIndex!=-1)
+{
+    usersActiveWithoutPause.remove(userInActiveWithoutPauseIndex);
+    usersActiveWithoutPause.add((UserDataDTO)editedUser);
+    this.addAllUsers(usersActiveWithoutPause,UserDataDTO.class,true,false);
 
-                 //     UserDataDTO  userInRedis1= usersActiveWithoutPause.get(((UserDataDTO) editedUser).getUserId());
-                userInActiveWithoutPause.setRole(((UserDataDTO) editedUser).getRole());
-                userInActiveWithoutPause.setReliability(((UserDataDTO) editedUser).getReliability());
-                userInActiveWithoutPause.setLeagueParticipation(((UserDataDTO) editedUser).getLeagueParticipation());
-        //        userInActiveWithoutPause.setTeamName(((UserDataDTO) editedUser).getTeamName());
-                return    this.addAllUsers(usersActiveWithoutPause,UserDataDTO.class,true,false);
+}
+            return   this.getUsers(true,true)  ;  
 
-            }
+}
+
+
+             }
             else {
-                List<UserDataDTO>    usersDeactivatedWithPause=   this.getUsers(false,true);
-                UserDataDTO  userInactiveWithPause= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-                List<UserDataDTO>    usersDeactivatedWithoutPause  =  this.getUsers(false,false);
-                UserDataDTO  userInactiveWithoutPause= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
 
-                if(userInactiveWithPause==null||userInactiveWithoutPause==null)
+                List<UserDataDTO>    usersDeactivatedWithPause=   this.getUsers(false,true);
+               int userInactiveWithPauseIndex = IntStream.range(0, usersDeactivatedWithPause.size())
+                .filter(i -> usersDeactivatedWithPause.get(i).getUserId().equals(((UserDataDTO) editedUser).getUserId()))
+                .findFirst()
+                .orElse(-1); 
+              
+                List<UserDataDTO>    usersDeactivatedWithoutPause  =  this.getUsers(false,false);
+                  int userInactiveWithoutPauseIndex = IntStream.range(0, usersDeactivatedWithoutPause.size())
+                .filter(i -> usersDeactivatedWithoutPause.get(i).getUserId().equals(((UserDataDTO) editedUser).getUserId()))
+                .findFirst()
+                .orElse(-1); 
+
+                if(userInactiveWithPauseIndex==-1||userInactiveWithoutPauseIndex==-1)
                 {
                     this.addUserToUserLists(editedUser);
-                    userInactiveWithPause= usersDeactivatedWithPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-                    userInactiveWithoutPause= usersDeactivatedWithoutPause.stream().filter(u->u.getUserId().equals(((User) editedUser).getId())).findFirst().orElse(null);
-
+                    return   this.getUsers(true,true)  ;
                 }
-
-             //      UserDataDTO  userInRedis= usersDeactivatedWithPause.get(((UserDataDTO) editedUser).getUserId());
-                userInactiveWithPause.setRole(((UserDataDTO) editedUser).getRole());
-                userInactiveWithPause.setReliability(((UserDataDTO) editedUser).getReliability());
-                userInactiveWithPause.setLeagueParticipation(((UserDataDTO) editedUser).getLeagueParticipation());
-           //     userInactiveWithPause.setTeamName(((UserDataDTO) editedUser).getTeamName());
-                this.addAllUsers(usersDeactivatedWithPause,UserDataDTO.class,false,true);
-
-              //   UserDataDTO  userInRedis1= usersDeactivatedWithoutPause.get(((UserDataDTO) editedUser).getUserId());
-                userInactiveWithoutPause.setRole(((UserDataDTO) editedUser).getRole());
-                userInactiveWithoutPause.setReliability(((UserDataDTO) editedUser).getReliability());
-                userInactiveWithoutPause.setLeagueParticipation(((UserDataDTO) editedUser).getLeagueParticipation());
-         //       userInactiveWithoutPause.setTeamName(((UserDataDTO) editedUser).getTeamName());
-                return   this.addAllUsers(usersDeactivatedWithoutPause,UserDataDTO.class,false,false);
-
+                
+                
+                else//usuwanie usera z list
+                {
+                    if(userInactiveWithPauseIndex!=-1)
+                    {
+                        
+                        usersDeactivatedWithPause.remove(userInactiveWithPauseIndex);
+                        usersDeactivatedWithPause.add((UserDataDTO)editedUser);
+                this.addAllUsers(usersDeactivatedWithPause,UserDataDTO.class,true,true);
+                
+                    }
+                    if(userInactiveWithoutPauseIndex!=-1)
+                {
+                    usersDeactivatedWithoutPause.remove(userInactiveWithoutPauseIndex);
+                    usersDeactivatedWithoutPause.add((UserDataDTO)editedUser);
+                    this.addAllUsers(usersDeactivatedWithoutPause,UserDataDTO.class,true,false);
+                
+                }
+                            return   this.getUsers(true,true)  ;  
+                
+                }
             }
 
         } else {

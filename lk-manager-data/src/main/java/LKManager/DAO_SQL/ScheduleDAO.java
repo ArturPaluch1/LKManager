@@ -2,7 +2,9 @@ package LKManager.DAO_SQL;
 
 
 import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
+import LKManager.model.RecordsAndDTO.ScheduleType;
 import LKManager.model.Schedule;
+import LKManager.model.ScheduleStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.redis.core.RedisHash;
@@ -46,6 +48,20 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, CustomSchedu
     List<ScheduleNameDTO> getScheduleNamesOngoingOrFinished();
     @Query("SELECT distinct s FROM Schedule s left JOIN FETCH s.rounds r where s.id=:scheduleId ")
     Schedule findByIdAndFetchMatchesEagerly(@Param("scheduleId") long scheduleId);
+    @Query("SELECT distinct s FROM Schedule s " +
+            "right JOIN FETCH s.rounds r " +
+        //    "left JOIN FETCH r.matches m " +
+            "WHERE ( (s.scheduleStatus=1 or s.scheduleStatus=2) and  "+
+            "s.scheduleType=:scheduleType  and s.scheduleStatus=:scheduleStatus)"
+
+    )
+  //  @EntityGraph(attributePaths = {"rounds", "rounds.matches"})
+
+    List<Schedule> getScheduleByTypeAndStatus(@Param("scheduleType")ScheduleType scheduleType, @Param("scheduleStatus")ScheduleStatus scheduleStatus);
+
+
+    @Query("select new LKManager.model.RecordsAndDTO.ScheduleNameDTO(id, name) from Schedule ")
+    List<ScheduleNameDTO> getScheduleNames();
 
 
 

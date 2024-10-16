@@ -1,13 +1,17 @@
 package LKManager.services;
 
-import LKManager.model.*;
+import LKManager.model.LeagueParticipants;
 import LKManager.model.RecordsAndDTO.*;
+import LKManager.model.Schedule;
+import LKManager.model.ScheduleStatus;
+import LKManager.model.Table;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import java.time.LocalDate;
 import java.util.List;
+
 @Transactional
 public interface ScheduleService {
 
@@ -47,7 +51,9 @@ public interface ScheduleService {
     public void calculateNextRoundOfSwissSchedule(ScheduleDTO schedule, Table table);
    // public CreateScheduleResult planSchedule(LocalDate startDate, LocalDate endDate, String scheduleName, ScheduleType scheduleType);
     public CreateScheduleResult planSchedule(LocalDate startDate,  String scheduleName, ScheduleType scheduleType);
-  //  boolean addLeagueParticipant(User  user);
-//public List<LeagueParticipants> getLeagueParticipants();
 
+    List<Schedule> getScheduleByTypeAndStatus(ScheduleType scheduleType, ScheduleStatus scheduleStatus);
+    //  boolean addLeagueParticipant(User  user);
+//public List<LeagueParticipants> getLeagueParticipants();
+ List<ScheduleNameDTO> getScheduleNames();
 }

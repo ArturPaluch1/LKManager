@@ -26,6 +26,7 @@ import javax.annotation.PreDestroy;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
+
 @SpringBootApplication
 public class LKManagerApplication {
 
@@ -179,8 +180,6 @@ private final RoundDAO roundDAO;
 
 	@Bean
 	ApplicationRunner applicationRunner(Environment environment) throws NoSuchAlgorithmException {
-
-
 
 
 		return args -> {

@@ -46,17 +46,11 @@ public String showUsers(Model model, RedirectAttributes attributes )
    var gracze= lkUserService.wczytajGraczyZXML();
 ***************************************************/
     List<UserDataDTO>users=null;
-try{
+
     users=userService.findAllMZUsers(true,false);
 
    // users=userService.findUsers_NotDeletedWithoutPause();
-}
-catch (Exception e)
-{
-  //  failedDatabaseOperationRepository. addFailedOperation(new GetUsersFailedDatabaseOperation(SQLOperation.GetUsersDatabaseAccessFailureException));
-/*e.handleDataAccessResourceFailureException();
-e.redirectToErrorPage(attributes,"Błąd dostępu do bazy danych - Users");*/
-}
+
 
 
 if(users!=null){

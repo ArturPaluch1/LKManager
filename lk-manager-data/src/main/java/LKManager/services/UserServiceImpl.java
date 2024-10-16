@@ -798,7 +798,8 @@ else
 User userToAdd= new User();
 userToAdd.setUsername(userFromForm.getUsername());
 userToAdd.setEmail(userFromForm.getEmail());
-if(userFromForm.getUsername().contains("temp_"))
+//bez hasła tylko w dodawaniu "temp" graczy z zakładki user u admina
+if(userFromForm.getUsername().contains("temp_")||userFromForm.getPassword()==null)
 {
 
     userToAdd.setPassword(SpringSecurityConfig.passwordEncoder().encode("temp123" ));
@@ -814,7 +815,7 @@ userToAdd.setReliability(0);
 userToAdd.setLeagueParticipation(LeagueParticipation.UNSIGNED);
 
 
-        User addedUser = userDAO.saveUser(userToAdd);
+        User addedUser = null;
 
 
 
@@ -823,7 +824,11 @@ userToAdd.setLeagueParticipation(LeagueParticipation.UNSIGNED);
             this.setMZUser(addedUser.getUsername(), addedUser.getUsername().trim().substring(5));
             //  return redisUserService.addUserToRedis(user1);
             System.out.println("subs="+addedUser.getUsername().trim().substring(5));
-             addedUser = userDAO.saveUser(userToAdd);
+         //    addedUser = userDAO.saveUser(userToAdd);
+        }
+        else
+        {
+            addedUser  = userDAO.saveUser(userToAdd);
         }
    //     user1=userDAO.findUserByName(addedUser.getUsername());
 

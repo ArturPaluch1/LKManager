@@ -22,6 +22,7 @@ public class ScheduleAdapter {
  /*   var t=    schedule.getRounds().stream().map(round -> RoundAdapter.adaptWithScheduleParent(round, scheduleDTO)).collect(Collectors.toList());
         scheduleDTO.setRounds(t);*/
 
+
             List<RoundDTO> t=    schedule.getRounds().stream().map(round -> RoundAdapter.adapt(round)).sorted(new RoundDTOByDateComparator()).collect(Collectors.toList());
             scheduleDTO.setRounds(t);
 

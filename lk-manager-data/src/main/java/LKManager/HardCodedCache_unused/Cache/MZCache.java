@@ -142,7 +142,7 @@ public class MZCache {
         this.schedules = schedules;
     }
 
-    public void updateScheduleMatchesCache(Schedule schedule) {
+/*    public void updateScheduleMatchesCache(Schedule schedule) {
         //check if matches initialized
         if(schedule.checkMatchesInitialization()) {
             Schedule foundSchedule=this.getSchedules().stream().filter(a->a.getId()==schedule.getId()).findFirst().orElse(null);
@@ -154,5 +154,5 @@ public class MZCache {
 
         }
 
-    }
+    }*/
 }

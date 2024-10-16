@@ -167,14 +167,17 @@ try{
     {
         schedule.getRounds().forEach(round -> {
             round.setSchedule(schedule); // Ustawienie Schedule w Round
+            if(round.getMatches().size()!=0)
             round.getMatches().forEach(match -> {
+
                 match.setRound(round); // Ustawienie Round w Match
             });
         });
     }
 
     System.out.println("opening session");
-         sessionFactory.openSession().saveOrUpdate(schedule);
+    entityManager.persist(schedule);
+    //     sessionFactory.openSession().saveOrUpdate(schedule);
 
     } catch (Exception e) {
         System.out.println("Błąd aktualizacji terminarza: " + e.getMessage());
@@ -190,6 +193,7 @@ finally {
     /*        s.saveOrUpdate(schedule);
 
 s.getTransaction().commit();*/
+
 
 
 /*
@@ -215,6 +219,8 @@ s.getTransaction().commit();*/
     }
 
     public boolean deleteByName(String objectName) {
+ objectName=  objectName.replace(" ","_");
+
        var scheduleToDelete= findByScheduleName(objectName);
 
 // todo jesli nie znajduje po nazwie albo >1
@@ -491,6 +497,7 @@ return true;
 
   public List<MZUserData>  findAllParticipantsOfSchedule(String scheduleName)
     {
+        scheduleName=scheduleName.replace(" ","_");
         Session session = sessionFactory.openSession();
         List<MZUserData>users= null;
         try
@@ -499,9 +506,9 @@ return true;
             session.beginTransaction();
 
             Query querryUser= session.createQuery(
-                    "select u from  UserData u " +
+                    "select u from  MZUserData u " +
 
-                            "  inner join Match m on u.userId=m.userData"+
+                            "  inner join Match m on u.MZuser_id=m.MZUserData"+
                             " inner join Round r on m.round=r.id "+
                             " inner join Schedule s on r.schedule=s.id " +
                             "   where (s.name=:ScheduleName and r.nr=1)");
@@ -509,9 +516,9 @@ return true;
              users= (ArrayList<MZUserData>) querryUser.getResultList();
 
            Query querryOpponent= session.createQuery(
-                    "select u from  UserData u " +
+                    "select u from  MZUserData u " +
 
-                            "  inner join Match m on u.userId=m.opponentUserData"+
+                            "  inner join Match m on u.MZuser_id=m.opponentMZUserData"+
                             " inner join Round r on m.round=r.id "+
                             " inner join Schedule s on r.schedule=s.id " +
                             "   where (s.name=:ScheduleName and r.nr=1)");

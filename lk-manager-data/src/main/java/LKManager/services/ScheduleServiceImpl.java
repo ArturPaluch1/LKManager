@@ -11,14 +11,11 @@ import LKManager.model.RecordsAndDTO.*;
 import LKManager.model.UserMZ.MZUserData;
 import LKManager.services.Adapters.MatchAdapter;
 import LKManager.services.Adapters.ScheduleAdapter;
-import LKManager.services.Adapters.UserAdapter;
 import LKManager.services.Comparators.AlphanumericComparator;
-import LKManager.services.Comparators.UserMzDTOReliabilityComparator;
 import LKManager.services.RedisService.RedisScheduleService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +39,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ScheduleServiceImpl implements ScheduleService {
 
-    @Autowired
-    private SessionFactory sessionFactory;
+  
 
 private final ScheduleDAO scheduleDAO;
     @Autowired
@@ -115,7 +111,7 @@ return schedule;
     //todo usunac\/ bo jest uzywane query na interfejsie
 
     public ScheduleDTO getSchedule_ByName(String scheduleName) {
-
+scheduleName.replace(" ","_");
         System.out.println("temp in getsch by name");
         if(scheduleName.equals(null))
         {
@@ -350,10 +346,28 @@ schedule.setScheduleStatus(ScheduleStatus.PLANNED);
 return new CreateScheduleResult(savedSchedule,null);
     }
 
+    @Override
+    @Transactional
+    public  List<Schedule> getScheduleByTypeAndStatus(ScheduleType scheduleType,ScheduleStatus scheduleStatus) {
+List<Schedule>result=new ArrayList<>();
+        List<Schedule> filteredSchedules= scheduleDAO.getScheduleByTypeAndStatus(scheduleType,scheduleStatus);
+        for (Schedule schedule:filteredSchedules
+             ) {
+        List<Round> rounds=   roundDAO.findAllRoundsOfSchedule(schedule.getName());
+       schedule.setRounds(rounds);
+       result.add(schedule);
+        }
+
+        return result;
+    }
+
 
     @Override
     @Transactional
     public CreateScheduleResult createMultiDaySchedule(LocalDate startDate, List<String> chosenPlayers, String scheduleName, ScheduleType scheduleType, ScheduleStatus scheduleStatus) throws DatatypeConfigurationException, DatatypeConfigurationException {
+     
+     
+     
         List<MZUserData> playersNotInMZ= new ArrayList<>();
         List<MZUserData> playersForSchedule= new ArrayList<>();
         chosenPlayers.stream().forEach(
@@ -739,18 +753,13 @@ else
         List<MZUserData> playersInMZ= new ArrayList<>();
                chosenPlayers.stream().forEach(
                 player-> {
-                    if(player.equals("pauza"))
-                    {
-                        playersInMZ.add(userService.getPauseObject().getMzUser());
-                    }
-                    else
-                    {
+               
                        MZUserData  foundPlayer= mzUserService.findByUsernameInManagerzone(player);
 
                         if(foundPlayer==null)
                             playersNotInMZ.add(foundPlayer);
                         else playersInMZ.add(foundPlayer);
-                    }
+                    
 
 
                 }
@@ -761,6 +770,7 @@ else
         }
         else
         {
+            AddPauseForParity(playersInMZ);
             List<Round> rounds = new ArrayList<>();
 
 /////////tworzenie terminarza/////////////////
@@ -1077,18 +1087,7 @@ players.add(userService.getPauseObject().getMzUser());
 
 
 
-    public ScheduleDTO createSwissSystemSchedule (List<UserDAO> users)
-    {
 
-return null;
-
-
-
-
-
-
-
-    }
 
   /*  @Getter
     @Setter
@@ -1112,10 +1111,7 @@ return null;
     }
 */
 
-    public RoundDTO createPairingsForNextRound(List<UserDAO> players, int roundNr, List<RoundDAO> rounds, LocalDate startDate)
-    {
-return null;
-    }
+
 
 
     @Service
@@ -1129,45 +1125,65 @@ return null;
 
         }*/
     }
-
+    @Transactional
     public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber, ScheduleType scheduleType, ScheduleStatus scheduleStatus) {
-if(signedPlayers!=null)
+
+//CHECKING IF the name is already used
+ScheduleDTO scheduleInDB=this.getSchedule_ByName(scheduleName);
+if(scheduleInDB==null)
 {
-  //  List<UserDataDTO> signedPlayersData= signedPlayers.stream().forEach(p-> userService.get);
-
-
-    List<UserMzDTO> playersInMZ= new ArrayList<>();
-    List<UserMzDTO> playersNotInMZ= new ArrayList<>();
-    signedPlayers.stream().forEach(
-            player-> {
-                if(player.equals("pauza"))
-                {
-                    playersInMZ.add(UserAdapter.convertMZUserDataToUserMzDTO(userService.getPauseObject().getMzUser()));
-                }
-                else
-                {
-                    UserMzDTO foundPlayer= UserAdapter.convertMZUserDataToUserMzDTO(userService.getMZUserDataByUsername(player));
-                    if(foundPlayer==null)
-                        playersNotInMZ.add(foundPlayer);
-                    else playersInMZ.add(foundPlayer);
-                }
-
-
-            }
-    );
-
-    if(playersNotInMZ.size()==0)
+    if(signedPlayers!=null)
     {
+    
+        List<MZUserData> playersInMZ= new ArrayList<>();
+        List<MZUserData> playersNotInMZ= new ArrayList<>();
+        signedPlayers.stream().forEach(
+                player-> {
+                    MZUserData foundPlayer=   mzUserService.findByUsernameInManagerzone(player);
+                        //UserMzDTO foundPlayer= UserAdapter.convertMZUserDataToUserMzDTO(userService.getMZUserDataByUsername(player));
+                        if(foundPlayer==null)
+                            playersNotInMZ.add(foundPlayer);
+                        else playersInMZ.add(foundPlayer);
+                    }
+    
+    
 
-        return createSwissScheduleWithPlayerData(startDate,playersInMZ,scheduleName,roundsNumber,scheduleType,scheduleStatus);
+        );
+        AddPauseForParity(playersInMZ);
+        if(playersNotInMZ.size()==0)
+        {
+    
+            return createSwissScheduleWithPlayerData(startDate,playersInMZ,scheduleName,roundsNumber,scheduleType,scheduleStatus);
+        }
+        else return null;
+    
     }
     else return null;
-
 }
+
 else return null;
 
     }
-        public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserMzDTO> signedPlayers, String scheduleName,Integer roundsNumber, ScheduleType scheduleType, ScheduleStatus scheduleStatus) {
+       
+    @Override
+    public List<ScheduleNameDTO> getScheduleNames() {
+         List<ScheduleNameDTO> scheduleNames=null;
+      
+//not from redis because there are stored only ongoing and finished!
+       
+            System.out.println("from sql");
+            scheduleNames= scheduleDAO.getScheduleNames();
+     
+
+        
+        return scheduleNames.stream().sorted(Comparator.comparing(ScheduleNameDTO::getName,new AlphanumericComparator()).reversed()).collect(Collectors.toList());
+ 
+    }
+
+
+
+    @Transactional
+    private CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<MZUserData> signedPlayers, String scheduleName,Integer roundsNumber, ScheduleType scheduleType, ScheduleStatus scheduleStatus) {
        ScheduleNameDTO scheduleInDB=this.getScheduleNamesOngoingOrFinished().stream().filter(schedule->schedule.getName().equals(scheduleName)).findFirst().orElse(null);
        if(scheduleInDB==null)
        {
@@ -1180,23 +1196,23 @@ else return null;
 
            if(signedPlayers.size()%2!=0)
            {
-               signedPlayers.add(UserAdapter.convertMZUserDataToUserMzDTO( userService.getPauseObject().getMzUser()));
+               signedPlayers.add(userService.getPauseObject().getMzUser());
            }
 
 
 
 
-
-           Collections.sort(signedPlayers, new UserMzDTOReliabilityComparator(userService));
+//todo?
+          // Collections.sort(signedPlayers, new UserMzDTOReliabilityComparator(userService));
 
            //todo tutaj wziac pod uwage regularnosc
            signedPlayers.stream().forEach(
                    player -> {
-                       if (player.getMZuserId()== 0) {
+                       if (player.getMZuser_id()== 0) {
                            playersInMZ.add(userService.getPauseObject().getMzUser());
                        } else {
                            // UserData foundPlayer = mzUserService.findByUsernameInManagerzone(player.getUsername());
-                           MZUserData foundPlayer = userService.getMZUserDataByUsername(player.getMZUsername());
+                           MZUserData foundPlayer = userService.getMZUserDataByUsername(player.getUsername());
                            if (foundPlayer == null)
                                playersNotInMZ.add(foundPlayer);
                            else playersInMZ.add(foundPlayer);
@@ -1247,7 +1263,7 @@ else return null;
 
                Schedule savedSchedule = scheduleDAO.saveSchedule(schedule);
 
-redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(savedSchedule.getId(),savedSchedule.getName()));
+//redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(savedSchedule.getId(),savedSchedule.getName()));
                redisScheduleService.setSchedule(ScheduleAdapter.adapt(savedSchedule));
 
 
@@ -1273,7 +1289,7 @@ void calculateSwissScheduleTable()
 public void calculateNextRoundOfSwissSchedule(ScheduleDTO schedule,Table table) {
   //  LocalDate startDate = schedule.getRounds().get(schedule.getRounds().size() - 1).getDate().plusDays(7);
     LocalDate startDate =     LocalDate.now().plusDays(6);
-RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate().equals(LocalDate.now().plusDays(6))).findFirst().orElse(null);
+RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate().equals(startDate)).findFirst().orElse(null);
 //todo /\ to są temp opcje
 
       //  RoundDTO foundRound=schedule.getRounds().stream().filter(r->r.getDate().equals(LocalDate.now())).findFirst().orElse(null);
@@ -1406,20 +1422,20 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
                     int lastIndex = round.getMatches().size() - 1;
                     for (int j = lastIndex; j >= 0; j--) {
                         //player1 -> nowy player1
-                        PlayerSummary tempPlayer1n1 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getMZUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer1n1 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().stream().toList().get(j).getMZUserData()))), schedule.getRounds());
                         //player1 -> nowy player2
-                        PlayerSummary tempPlayer1n2 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getOpponentMZUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer1n2 = findOpponent(player1, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().stream().toList().get(j).getOpponentMZUserData()))), schedule.getRounds());
 
-                        PlayerSummary tempPlayer2n1 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getMZUserData()))), schedule.getRounds());
-                        PlayerSummary tempPlayer2n2 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().get(j).getOpponentMZUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer2n1 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().stream().toList().get(j).getMZUserData()))), schedule.getRounds());
+                        PlayerSummary tempPlayer2n2 = findOpponent(player2, new ArrayList<>(List.of(new PlayerSummary(round.getMatches().stream().toList().get(j).getOpponentMZUserData()))), schedule.getRounds());
 
 
                         if (tempPlayer1n1 != null && tempPlayer2n2 != null) {
                             //wcześniejsza para //todo to zamienic tak jak niżej ? \/
                             System.out.println("zamiana1 " + player1.getPlayer().getMZUsername() + " " + tempPlayer1n1.getPlayer().getMZUsername() + " / " + player2.getPlayer().getMZUsername() + " " + tempPlayer2n2.getPlayer().getMZUsername());
 
-                            round.getMatches().get(j).setMZUserData(userService.getMZUserById(player1.getPlayer().getMZuserId()));
-                            round.getMatches().get(j).setOpponentMZUserData(userService.getMZUserById(tempPlayer1n1.getPlayer().getMZuserId()));
+                            round.getMatches().stream().toList().get(j).setMZUserData(userService.getMZUserById(player1.getPlayer().getMZuserId()));
+                            round.getMatches().stream().toList().get(j).setOpponentMZUserData(userService.getMZUserById(tempPlayer1n1.getPlayer().getMZuserId()));
                             //ost para
                             //  round.matches.get(lastIndex).setPlayer1(player2);
                             //    round.matches.get(lastIndex).setPlayer2(tempPlayer2n2);
@@ -1435,8 +1451,8 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
                         } else if (tempPlayer1n2 != null && tempPlayer2n1 != null) {
 //wcześniejsza para
                             PlayerSummary finalPlayer = player1;
-                            round.getMatches().get(j).setMZUserData(userService.getMZUserById(player1.getPlayer().getMZuserId()));
-                            round.getMatches().get(j).setOpponentMZUserData(userService.getMZUserById(tempPlayer1n2.getPlayer().getMZuserId()));
+                            round.getMatches().stream().toList().get(j).setMZUserData(userService.getMZUserById(player1.getPlayer().getMZuserId()));
+                            round.getMatches().stream().toList().get(j).setOpponentMZUserData(userService.getMZUserById(tempPlayer1n2.getPlayer().getMZuserId()));
 
                             //       round.getMatches().get(j).setUserData(allParticipants.stream().filter(u -> u.getUserId() == finalPlayer.player.getUserId()).findFirst().orElse(null));
                             //       round.getMatches().get(j).setOpponentUserData(allParticipants.stream().filter(u -> u.getUserId() == tempPlayer1n2.player.getUserId()).findFirst().orElse(null));
@@ -1505,7 +1521,7 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
     scheduleInDB.getRounds().add(round);
     this.updateSchedule(scheduleInDB);*/
            Schedule updatedSchedule= scheduleDAO.findByScheduleId(schedule.getId());
-            scheduleDAO.refresh(updatedSchedule);
+         //   scheduleDAO.refresh(updatedSchedule);
             ScheduleDTO updatedScheduleDTO=ScheduleAdapter.adapt(updatedSchedule );
  //  todo /\ jak to nie działa to to na dole to bkp działający !!
       //     ScheduleDTO updatedSchedule=this.getSchedule_ById(schedule.getId());

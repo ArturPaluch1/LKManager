@@ -54,9 +54,9 @@ model.addAttribute("model",mainModel);
 userService.setMZUser(formModel.getUser().getUsername(),username);
     //    User userInDB= userService.getUserById(formModel.user.getUserId());
 
-            userService.getMZUserDataByUsername(username);
+          //  userService.getMZUserDataByUsername(username);
 
-          //  model.addAttribute("message", "You have successfully joined the league!");
+
             return"redirect:/user/settings";
         }
 

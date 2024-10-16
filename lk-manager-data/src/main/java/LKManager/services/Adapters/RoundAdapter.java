@@ -10,9 +10,8 @@ public class RoundAdapter {
     public static RoundDTO adapt(Round round )
     {
 
-
-
         return new RoundDTO(round.getId(),round.getNr(),round.getSchedule().getId(),round.getDate(),round.getMatches().stream().map(match->MatchAdapter.adapt(match)).collect(Collectors.toList()));
+
 
 
     }

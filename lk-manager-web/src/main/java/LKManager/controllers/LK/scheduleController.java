@@ -6,16 +6,17 @@ import LKManager.DAO_SQL.RoundDAOImpl;
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.RecordsAndDTO.*;
 import LKManager.model.ScheduleStatus;
-import LKManager.model.Table;
 import LKManager.services.*;
 import LKManager.services.FilesService_unused.PlikiService;
+import LKManager.services.Scheduling.SwissScheduleResultsService;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,18 +28,13 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller @RequiredArgsConstructor
@@ -65,7 +61,7 @@ public class scheduleController {
     private final ResultsService resultsService;
     private final TableService tableService;
     ////////////////
-
+private final SwissScheduleResultsService swissScheduleResultsService;
 
 
     /*  public Integer getNumerRundy() {
@@ -364,7 +360,7 @@ if(chosenSchedule!=null) {
 
     //  System.out.println("---cache:  ");
 
-    ScheduleDTO result = null;
+
 
 
 /*result=   scheduleService.getSchedule_ByName("swiss2");
@@ -384,43 +380,6 @@ if(result==null)
         {*/
 
 
-    result = scheduleService.getSchedule_ByName("swiss23");
-    if (result != null) {
-        Table table = tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
-
-        scheduleService.calculateNextRoundOfSwissSchedule(scheduleService.getSchedule_ById(result.getId()), table);
-        //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),2);
-
-
-        //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),0+1);
-        for (int round = 1; round < result.getRounds().size(); round++) {
-            //  resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),round+1);
-
-
-            //  tableService.createSwissScheduleTable(result);
-
-            //    result=   scheduleService.getSchedule_ByName("swiss1");
-        }
-
-
-          /*  while(result.getRounds().size()<2)
-
-                     {
-
-                       Table  table=tableService.createSwissScheduleTable(scheduleService.getSchedule_ById(result.getId()));
-                         scheduleService.calculateNextRoundOfSwissSchedule(scheduleService.getSchedule_ById(result.getId()),table);
-
-
-//resultsService.updateResults()
-                resultsService.simulateResults(scheduleService.getSchedule_ById(result.getId()),);
-              tableService.createSwissScheduleTable(result);
-
-                         result=   scheduleService.getSchedule_ByName("swiss1");
-
-            }*/
-
-
-    }
 
 
     model.addAttribute("chosenSchedule", chosenSchedule);
@@ -509,12 +468,12 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
     }
 
 */
+        AddScheduleDTO addScheduleCommand= (AddScheduleDTO) model.getAttribute("schedule");
+ if(addScheduleCommand ==null) {
+     addScheduleCommand = new AddScheduleDTO();
+     addScheduleCommand.setPlayersList( new ArrayList<String>());
 
-
-        var addScheduleCommand = new AddScheduleCommand();
-
-
-
+ }
         //  Bob b= new Bob();
 
 
@@ -525,16 +484,37 @@ List<graczOpakowanie>graczeOpakowani = new ArrayList<>();
     wybraniGracze1.put("bob1","sam1");
 
     terminarzCommand.mapa=wybraniGracze1;*/
-        addScheduleCommand.playersList = new ArrayList<String>();
+
 
         //terminarzCommand.bob=b;
       //  model.addAttribute("userListWrapper", terminarzCommand);
+
+
+  /*      if(addScheduleCommand.getScheduleType()==null)
+            addScheduleCommand.setScheduleType(ScheduleType.standardSchedule);//ScheduleType.standardSchedule.name());
+
+*/
+        if(addScheduleCommand.getScheduleType()!=null)
+            addScheduleCommand.setScheduleType(null);//ScheduleType.standardSchedule.name());
+
+
         model.addAttribute("players", players);
         model.addAttribute("schedule", addScheduleCommand);
 List<String> playerNames = new ArrayList<>();
         players.forEach(p-> playerNames.add(p.getMZUsername()));
       playerNames.stream().distinct().sorted().collect(Collectors.toList());
         model.addAttribute("playerNames", playerNames);
+
+
+
+
+
+
+        if ( model.getAttribute("errorMessages")!=null) {
+//model.getAttribute("scheduleType");
+            model.addAttribute("errorMessages", model.getAttribute("errorMessages"));
+        }
+
 
         return "admin/LK/schedule/addSchedule";
     }
@@ -637,17 +617,52 @@ List<String> playerNames = new ArrayList<>();
     }
 
     @PostMapping("/admin/LK/schedule/schedule/addSchedule")
-    public String addSchedule(HttpServletResponse response, HttpServletRequest request, RedirectAttributes attributes, @ModelAttribute @Valid scheduleController.AddScheduleCommand command, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
+    public String addSchedule(HttpServletResponse response, HttpServletRequest request,Model model, RedirectAttributes attributes, @ModelAttribute @Valid AddScheduleDTO addScheduleDTO, BindingResult bindingResult, @RequestParam(value = "chosenPlayers", required = false) List<String> chosenPlayers) throws DatatypeConfigurationException, JsonProcessingException {
 //,@CookieValue(value = "wybranyTerminarz", defaultValue = "null") String wybranyTerminarzCookie,@CookieValue(value = "numerRundy", defaultValue = "1") String numerRundyCookie
 
-        if(command.getPlayersList().size()==0&&command.getScheduleType().equals(ScheduleType.oneDaySchedule))
+
+
+        if (bindingResult.hasErrors()) {
+            List<String> errorMessages1 = bindingResult.getAllErrors().stream()
+                    .map(error -> error.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+
+
+
+
+
+            Map<String, String> errorMessages = bindingResult.getAllErrors().stream()
+                    .collect(Collectors.toMap(
+                            error -> {
+                                if (error instanceof FieldError) {
+                                    return ((FieldError) error).getField();
+                                } else if (error instanceof ObjectError) {
+                                    return ((ObjectError) error).getObjectName();
+                                }else return null;
+
+                            },
+                            error -> error.getDefaultMessage()
+                    ));
+
+            attributes.addFlashAttribute("errorMessages", errorMessages);
+
+         // attributes.addFlashAttribute("org.springframework.validation.BindingResult.addScheduleDTO", bindingResult);
+
+
+            attributes.addFlashAttribute("schedule", addScheduleDTO);
+//model.addAttribute("org.springframework.validation.BindingResult.addScheduleDTO", bindingResult);
+            return "redirect:/admin/LK/schedule/schedule/addSchedule"; // Nazwa widoku formularza
+        }
+ /*       if(command.getPlayersList().size()==0&&command.getScheduleType().equals(ScheduleType.oneDaySchedule))
         {
             attributes.addAttribute("errorMessage","nie zaplanowałeś meczy");
             return "redirect:/public/LK/error";
-        }
+        }*/
         //todo walidacja  te same nazwy poprawić to
-
-if( scheduleService.getScheduleNamesOngoingOrFinished().contains(command.name.trim()))
+        ScheduleDTO scheduleInDB=scheduleService.getSchedule_ByName(addScheduleDTO.getName().trim());
+        if(scheduleInDB!=null)
+//if( scheduleService.getScheduleNames().contains(addScheduleDTO.getName().trim()))
 {
     System.out.println("error in addSchedule - post  - schedule name already exists");
     attributes.addAttribute("errorMessage","error in addSchedule - post - schedule name already exists");
@@ -670,7 +685,7 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
         data.setDay(Integer.parseInt(command.data.split("-")[2]));
 */
 
-  String[] dateParts=  command.date.trim().split("-");
+  String[] dateParts=  addScheduleDTO.getDate().trim().split("-");
         for (int i = 0; i < dateParts.length; i++) {
             if (dateParts[i].length() == 1) {
                 dateParts[i] = "0" + dateParts[i];
@@ -699,21 +714,21 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
 
 
         //todo sprawdzic czy może być null
-        switch (command.scheduleType)
+        switch (addScheduleDTO.getScheduleType())
         {
             case oneDaySchedule:
             {
-                if (command.getPlayersList().size() == 0) {
+                if (addScheduleDTO.getPlayersList().size() == 0) {
                     //todo nie wybrano tez pojedynczych meczy
                     int tt = 0;
                 } else {
-                    if (command.getPlayersList().size() % 2 != 0) {
+                    if (addScheduleDTO.getPlayersList().size() % 2 != 0) {
                         //todo brakuje pary dla grajka  ewentuanie w js wybierzgrajka-> pauza
                     } else {
 
 //////////////////////////////
 
-                        createScheduleResult= scheduleService.createOneDayShedule(date, command.playersList, command.name,command.getScheduleType(),ScheduleStatus.ONGOING);
+                        createScheduleResult= scheduleService.createOneDayShedule(date, addScheduleDTO.getPlayersList(), addScheduleDTO.getName(),addScheduleDTO.getScheduleType(),ScheduleStatus.ONGOING);
 
 
                     }
@@ -723,18 +738,18 @@ if(Arrays.stream(terminarze).anyMatch(a->a.getName().trim().equals(command.getNa
             }
             case standardSchedule:
             {
-                createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, command.name,command.getScheduleType(),ScheduleStatus.ONGOING);
+                createScheduleResult=  scheduleService.createMultiDaySchedule(date, chosenPlayers, addScheduleDTO.getName(),addScheduleDTO.getScheduleType(),ScheduleStatus.ONGOING);
 
                 break;
             }
             case  swissSchedule:
             {
-                createScheduleResult=  scheduleService.createSwissScheduleWithPlayerNames(date, chosenPlayers, command.name,command.roundsNumber,command.getScheduleType(),ScheduleStatus.ONGOING);
-
+                createScheduleResult=  scheduleService.createSwissScheduleWithPlayerNames(date, chosenPlayers, addScheduleDTO.getName(),addScheduleDTO.getRoundsNumber(),addScheduleDTO.getScheduleType(),ScheduleStatus.ONGOING);
+                //creating first round of swiss schedule
+         //       swissScheduleResultsService.calculateNewRound();
                 break;
             }
         }
-
 
 
 
@@ -839,29 +854,7 @@ else
         return "redirect:/admin/LK/schedule/schedule";
     }
 
-   @Getter
-    @Setter
-    @NoArgsConstructor
-    public class AddScheduleCommand {
-/*todo walidacja
-https://blog.mloza.pl/java-bean-validation-spring-boot-sprawdzanie-poprawnosci-danych-w-spring-boocie/
 
-*/
-
-        @NotNull
-        private String date;
-        @NotBlank
-        private String name;
-        private List<String> playersList;
-private Integer roundsNumber;
-private ScheduleType scheduleType;
-
-      public void setListaGraczy() {
-
-        }
-
-
-    }
 
 
 /*

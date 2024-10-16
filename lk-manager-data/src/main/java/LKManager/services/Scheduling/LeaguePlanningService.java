@@ -102,7 +102,7 @@ private final UserService userService;
 
     //boolean temp po testach na void
  @Transactional
-  @Scheduled(cron = "0 15,55 0 * * 3")
+  @Scheduled(cron = "0 15,55 2 * * *")  //2:15, 2:55 codziennie
 
 public void manageLeague()
 {

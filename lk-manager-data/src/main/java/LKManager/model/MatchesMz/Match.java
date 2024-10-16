@@ -25,9 +25,11 @@ public class Match implements Serializable {
 
     @Transient
     private final List<MatchTeam> teamlist = new ArrayList();
+
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "runda")
     private Round round;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
