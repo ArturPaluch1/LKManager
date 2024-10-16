@@ -8,6 +8,7 @@ Program wykonany z użyciem Spring Boot, umożliwia tworzenie i łatwe zarządza
 <a href="https://ibb.co/Fw73RyL"><img src="https://i.ibb.co/fp0Fjyz/mz.png" alt="mz" border="0" /></a>
 </details>
 Główna baza danych (SQL) znajduje sę na serwerze. Dodatkowo, żeby usprawnić działanie programu (zapytania sql na serwerze produkcyjnym realizowane są z lekkim opóźnieniem) część najczęściej używanych danych (lista użytkowników, tabela, terminarz) są zapisywane także w bazie danych no-sql Redis. Ostatnio odwiedzony terminarz i runda zapisywane są w plikach cookie, aby w razie większej ilości terminarzy użytkownik nie był pogubiony.
+<br>
 Rozgrywki odbywają się co wtorek. Codziennie program sprawdza, czy jest zaplanowana kolejny terminarz ligowy, jeśli nie to go tworzy. Sprawdza czy obecna liga dobiegłą końca, jeśli tak to zaplanowany terminarz uzupełnia rundami stworzonymi dla graczy którzy wcześniej się zapisali się do gry. We wtorek o 10:55, 11:55, 19:55, 20:55 i 23:55 podejmowane są próby pobrania wyników meczów z MZ (api Managerzone pozwala pobierać wyniki w formacie XML), następnie uzupełniana jest runda i zapisywana w bazie danych. Przy każdej aktualizacji wyników tworzona jest też aktualna tabela i zapisywana w bazie Redis. Użytkownicy mogą je przeglądać na stronie HTML. 
 
 Serwis jest ze względu na 3 rodzaje użytkowników. Niezalogowanych, zalogowanych i admina.
