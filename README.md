@@ -3,13 +3,56 @@
 
 
 Program wykonany z użyciem Spring Boot, umożliwia tworzenie i łatwe zarządzanie rozgrywkami klanowymi opartymi na meczach towarzyskich w managerze internetowym <a href ="https://www.managerzone.com/">Managerzone</a>.
-
-
 <details >
  <summary>Managerzone</summary>
 <a href="https://ibb.co/Fw73RyL"><img src="https://i.ibb.co/fp0Fjyz/mz.png" alt="mz" border="0" /></a>
-
 </details>
+Główna baza danych (SQL) znajduje sę na serwerze. Dodatkowo, żeby usprawnić działanie programu (zapytania sql na serwerze produkcyjnym realizowane są z lekkim opóźnieniem) część najczęściej używanych danych (lista użytkowników, tabela, terminarz) są zapisywane także w bazie danych no-sql Redis. Ostatnio odwiedzony terminarz i runda zapisywane są w plikach cookie, aby w razie większej ilości terminarzy użytkownik nie był pogubiony.
+Rozgrywki odbywają się co wtorek. Codziennie program sprawdza, czy jest zaplanowana kolejny terminarz ligowy, jeśli nie to go tworzy. Sprawdza czy obecna liga dobiegłą końca, jeśli tak to zaplanowany terminarz uzupełnia rundami stworzonymi dla graczy którzy wcześniej się zapisali się do gry. We wtorek o 10:55, 11:55, 19:55, 20:55 i 23:55 podejmowane są próby pobrania wyników meczów z MZ (api Managerzone pozwala pobierać wyniki w formacie XML), następnie uzupełniana jest runda i zapisywana w bazie danych. Przy każdej aktualizacji wyników tworzona jest też aktualna tabela i zapisywana w bazie Redis. Użytkownicy mogą je przeglądać na stronie HTML. 
+
+Serwis jest ze względu na 3 rodzaje użytkowników. Niezalogowanych, zalogowanych i admina.
+Niezalogowany użytkownik może przeglądać stronę główną:
+
+Przeglądać tabele:
+
+I wyniki:
+
+A także założyć konto:
+
+
+Albo się zalogować:
+
+
+Zalogowany użytkownik ma dodatkowo możliwość ustawić swoje konto:
+
+Ustawić nazwę swojego konta w MZ, które będzie uwzględniane do tworzenia terminarzy:
+
+Po dodaniu konta MZ użytkownik dostaje możliwość dołączenia do przyszłej ligi, ją zasubskrybować do odwołania, albo się wypisać.
+
+Ustawić email, żeby móc przypomnieć swoje hasło (jeszcze niedostępna opcja). Po wpisaniu emaila dostaje mail z linkiem potwierdzającym prawdziwość maila.
+
+
+Admin poza opcjami zalogowanego użytkownika może przeglądać zarejestrowanych użytkowników, dodawać nowych (głównie było wykorzystywane do tworzenia użytkowników tekstowych zanim poja wiła się opcja tworzena konta) i usuwać.
+
+
+W zakładce wyniki może bezpośrednio (poza zaprogramowanym automatycznym zbieraniem wyników o konkretnych godzinach) aktualizować wyniki. 
+
+A także je edytować.
+
+Zakłądka terminarz pozwala przeglądać stworzone terminarze.
+
+Usuwać je:
+
+I dodawać nowe - 3 rodzaje, jednodniowy:
+
+Wielodniowy:
+
+Ta opcja tworzy terminarz uwzględniający wszystkich wskazanych graczy 
+
+W systemie szwajcarskim:
+
+W tym rodzaju tworzona jest tylko pierwsza runda rozgrywek, a kolejne są tworzone zgodnie z harmonogramem dzień po rozegraniu poprzedniej kolejki. Kiedy dzień meczowy mija program oblicza na podstawie sum punktów graczy z wcześniej rozegranych kolejek tabelę, a następnie tworzy pary na następny tydzień. Gracz z największą liczbą punktów gra z kolejnym, i tak dalej, przy czym jeśli dana para już wystąpła, to dobierana jest para z większą różnicą punktów między graczami.
+
 Użytkownik w zakładce "Gracze" dodaje i usuwa graczy, automatycznie weryfikując poprawność nicku.
 <details >
  <summary>Gracze</summary>
