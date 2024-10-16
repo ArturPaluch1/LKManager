@@ -11,47 +11,115 @@ Główna baza danych (SQL) znajduje sę na serwerze. Dodatkowo, żeby usprawnić
 Rozgrywki odbywają się co wtorek. Codziennie program sprawdza, czy jest zaplanowana kolejny terminarz ligowy, jeśli nie to go tworzy. Sprawdza czy obecna liga dobiegłą końca, jeśli tak to zaplanowany terminarz uzupełnia rundami stworzonymi dla graczy którzy wcześniej się zapisali się do gry. We wtorek o 10:55, 11:55, 19:55, 20:55 i 23:55 podejmowane są próby pobrania wyników meczów z MZ (api Managerzone pozwala pobierać wyniki w formacie XML), następnie uzupełniana jest runda i zapisywana w bazie danych. Przy każdej aktualizacji wyników tworzona jest też aktualna tabela i zapisywana w bazie Redis. Użytkownicy mogą je przeglądać na stronie HTML. 
 
 Serwis jest ze względu na 3 rodzaje użytkowników. Niezalogowanych, zalogowanych i admina.
-Niezalogowany użytkownik może przeglądać stronę główną:
 
-Przeglądać tabele:
+<details >
+ <summary>Niezalogowany użytkownik może przeglądać stronę główną:</summary>
+<a href="https://ibb.co/T0Cr9CZ"><img src="https://i.ibb.co/M1X9FXb/Screenshot-2024-10-17-at-00-01-05-LK-Manager.png" alt="Screenshot-2024-10-17-at-00-01-05-LK-Manager" border="0"></a>
 
-I wyniki:
+</details>
+<details >
+ <summary>Przeglądać tabele:
+</summary>
+<a href="https://ibb.co/51tQdsf"><img src="https://i.ibb.co/6yVK2Df/Screenshot-2024-10-17-at-00-02-23-Title.png" alt="Screenshot-2024-10-17-at-00-02-23-Title" border="0"></a>
 
-A także założyć konto:
+</details>
+<details >
+ <summary>I wyniki:
+</summary>
+<a href="https://ibb.co/T4rX2wd"><img src="https://i.ibb.co/BywD3fF/Screenshot-2024-10-17-at-00-02-37-Navbar.png" alt="Screenshot-2024-10-17-at-00-02-37-Navbar" border="0"></a>
+
+</details>
+<details >
+ <summary>A także założyć konto:
+</summary>
+<a href="https://ibb.co/JH16rkN"><img src="https://i.ibb.co/QMgSYmZ/Screenshot-2024-10-17-at-00-02-49-Sign-up.png" alt="Screenshot-2024-10-17-at-00-02-49-Sign-up" border="0"></a>
+
+</details>
+
+<details >
+ <summary>Albo się zalogować:
+</summary>
+<a href="https://ibb.co/ZgX7pYP"><img src="https://i.ibb.co/bvmDM2Z/Screenshot-2024-10-17-at-00-02-59-Log-in.png" alt="Screenshot-2024-10-17-at-00-02-59-Log-in" border="0"></a>
+
+</details>
+
+<details >
+ <summary>Zalogowany użytkownik ma dodatkowo możliwość ustawić swoje konto:
+</summary>
 
 
-Albo się zalogować:
+</details>
+<details >
+ <summary>Ustawić nazwę swojego konta w MZ, które będzie uwzględniane do tworzenia terminarzy:
+</summary>
 
 
-Zalogowany użytkownik ma dodatkowo możliwość ustawić swoje konto:
-
-Ustawić nazwę swojego konta w MZ, które będzie uwzględniane do tworzenia terminarzy:
-
+</details>
 Po dodaniu konta MZ użytkownik dostaje możliwość dołączenia do przyszłej ligi, ją zasubskrybować do odwołania, albo się wypisać.
 
-Ustawić email, żeby móc przypomnieć swoje hasło (jeszcze niedostępna opcja). Po wpisaniu emaila dostaje mail z linkiem potwierdzającym prawdziwość maila.
+<details >
+ <summary>Ustawić email, żeby móc przypomnieć swoje hasło (jeszcze niedostępna opcja). Po wpisaniu emaila dostaje mail z linkiem potwierdzającym prawdziwość maila.
+</summary>
 
 
-Admin poza opcjami zalogowanego użytkownika może przeglądać zarejestrowanych użytkowników, dodawać nowych (głównie było wykorzystywane do tworzenia użytkowników tekstowych zanim poja wiła się opcja tworzena konta) i usuwać.
+</details>
+
+<details >
+ <summary>Admin poza opcjami zalogowanego użytkownika może przeglądać zarejestrowanych użytkowników, dodawać nowych (głównie było wykorzystywane do tworzenia użytkowników tekstowych zanim poja wiła się opcja tworzena konta) i usuwać.
+</summary>
 
 
-W zakładce wyniki może bezpośrednio (poza zaprogramowanym automatycznym zbieraniem wyników o konkretnych godzinach) aktualizować wyniki. 
+</details>
 
-A także je edytować.
+<details >
+ <summary>W zakładce wyniki może bezpośrednio (poza zaprogramowanym automatycznym zbieraniem wyników o konkretnych godzinach) aktualizować wyniki. 
+</summary>
 
-Zakłądka terminarz pozwala przeglądać stworzone terminarze.
 
-Usuwać je:
+</details>
+<details >
+ <summary>A także je edytować.
+</summary>
 
-I dodawać nowe - 3 rodzaje, jednodniowy:
 
-Wielodniowy:
+</details>
+<details >
+ <summary>Zakłądka terminarz pozwala przeglądać stworzone terminarze.
+</summary>
 
+
+</details>
+<details >
+ <summary>Usuwać je:
+</summary>
+
+
+</details>
+<details >
+ <summary>I dodawać nowe - 3 rodzaje, jednodniowy:
+</summary>
+
+
+</details>
+<details >
+ <summary>Wielodniowy:
+</summary>
+
+
+</details>
 Ta opcja tworzy terminarz uwzględniający wszystkich wskazanych graczy 
 
-W systemie szwajcarskim:
+<details >
+ <summary>W systemie szwajcarskim:
+</summary>
 
+
+</details>
 W tym rodzaju tworzona jest tylko pierwsza runda rozgrywek, a kolejne są tworzone zgodnie z harmonogramem dzień po rozegraniu poprzedniej kolejki. Kiedy dzień meczowy mija program oblicza na podstawie sum punktów graczy z wcześniej rozegranych kolejek tabelę, a następnie tworzy pary na następny tydzień. Gracz z największą liczbą punktów gra z kolejnym, i tak dalej, przy czym jeśli dana para już wystąpła, to dobierana jest para z większą różnicą punktów między graczami.
+
+
+
+
 
 Użytkownik w zakładce "Gracze" dodaje i usuwa graczy, automatycznie weryfikując poprawność nicku.
 <details >
