@@ -1,19 +1,24 @@
 package LKManager.Security;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import lombok.AllArgsConstructor;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 
+@AllArgsConstructor
 public class EmailEncryption {
+    private  final String SECRET_KEY ;
+private final String INIT_VECTOR;
 
 
-    private static final Dotenv dotenv = Dotenv.load();
-    private static final String SECRET_KEY = dotenv.get("AES_SECRET_KEY");
-    private static final String INIT_VECTOR = dotenv.get("AES_INIT_VECTOR");
-    public static String encrypt(String email) throws Exception {
+
+
+
+   // private  final String SECRET_KEY ;
+  //  private  final String INIT_VECTOR ;
+    public static String encrypt(String email, String SECRET_KEY, String INIT_VECTOR) throws Exception {
         IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes("UTF-8"));
         SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes("UTF-8"), "AES");
 
@@ -25,7 +30,7 @@ public class EmailEncryption {
     }
 
     // Funkcja odszyfrowywania
-    public static String decrypt(String encryptedEmail) throws Exception {
+    public static String decrypt(String encryptedEmail, String SECRET_KEY, String INIT_VECTOR) throws Exception {
         IvParameterSpec iv = new IvParameterSpec(INIT_VECTOR.getBytes("UTF-8"));
         SecretKeySpec key = new SecretKeySpec(SECRET_KEY.getBytes("UTF-8"), "AES");
 

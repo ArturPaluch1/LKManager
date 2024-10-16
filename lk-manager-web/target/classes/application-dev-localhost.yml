@@ -33,7 +33,9 @@ mailjet:
   api-key: ${mailjetApiKey}
   apiSecretKey: ${mailjetSecretKey}
 
-
+encrypt:
+  AES_SECRET_KEY: ${AES_SECRET_KEY}
+  AES_INIT_VECTOR: ${AES_INIT_VECTOR}
 
   #   host: smtp.office365.com
 

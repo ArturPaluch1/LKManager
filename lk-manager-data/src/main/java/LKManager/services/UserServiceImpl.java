@@ -7,16 +7,16 @@ import LKManager.Security.SpringSecurityConfig;
 import LKManager.model.LeagueParticipants;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
 import LKManager.model.RecordsAndDTO.UserMzDTO;
-import LKManager.model.account.User;
 import LKManager.model.UserMZ.LeagueParticipation;
 import LKManager.model.UserMZ.MZUserData;
-import LKManager.model.account.Role;
 import LKManager.model.UserMZ.Team;
+import LKManager.model.account.Role;
 import LKManager.model.account.SignUpForm;
+import LKManager.model.account.User;
 import LKManager.model.account.UserSettingsFormModel;
 import LKManager.services.RedisService.RedisScheduleService;
 import LKManager.services.RedisService.RedisUserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+
 
 //@AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -50,9 +50,21 @@ private final PasswordEncoder passwordEncoder;
 private final GsonService gsonService;
 private final RedisScheduleService redisScheduleService;
 private final EntityManager entityManager;
+    private final String aesSecretKey;
+    private final String  aesInitVector;
 
-
-
+    public UserServiceImpl(UserDAO userDAO, MZUserService mzUserService, RedisUserService redisUserService, LeagueParticipantsDAO leagueParticipantsDAO, PasswordEncoder passwordEncoder, GsonService gsonService, RedisScheduleService redisScheduleService, EntityManager entityManager,  @Value("${encrypt.AES_SECRET_KEY}")  String aesSecretKey, @Value("${encrypt.AES_INIT_VECTOR}")  String aesInitVector) {
+        this.userDAO = userDAO;
+        this.mzUserService = mzUserService;
+        this.redisUserService = redisUserService;
+        this.leagueParticipantsDAO = leagueParticipantsDAO;
+        this.passwordEncoder = passwordEncoder;
+        this.gsonService = gsonService;
+        this.redisScheduleService = redisScheduleService;
+        this.entityManager = entityManager;
+        this.aesSecretKey = aesSecretKey;
+        this.aesInitVector = aesInitVector;
+    }
 
     @Override
     @Transactional
@@ -240,7 +252,7 @@ else
     public String getUsersEmail(Long id) throws Exception {
         String email= userDAO.getUserEmail(id);
      if(email!=null)
-        return EmailEncryption.decrypt(email);
+        return EmailEncryption.decrypt(email,aesSecretKey,aesInitVector);
      else return null;
     }
 

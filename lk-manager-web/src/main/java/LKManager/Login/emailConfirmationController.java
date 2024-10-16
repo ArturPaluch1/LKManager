@@ -6,6 +6,7 @@ import LKManager.model.account.User;
 import LKManager.services.RedisService.RedisUserService;
 import LKManager.services.UserService;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,10 +25,23 @@ public class emailConfirmationController {
 private final UserService userService;
 private final RedisUserService redisUserService;
     private final UserDAO userDAO;
-@Transactional
+private final String aesSecretKey;
+private final String  aesInitVector;
+    public emailConfirmationController(UserService userService, RedisUserService redisUserService, UserDAO userDAO, @Value("${encrypt.AES_SECRET_KEY}")  String aesSecretKey, @Value("${encrypt.AES_INIT_VECTOR}")  String aesInitVector) {
+        this.userService = userService;
+        this.redisUserService = redisUserService;
+        this.userDAO = userDAO;
+        this.aesSecretKey = aesSecretKey;
+        this.aesInitVector = aesInitVector;
+    }
+
+    @Transactional
     @GetMapping(value = "/confirmEmail")
     public String confirmEmail(@RequestParam("token") String token,
                                @RequestParam(value = "email",required = false) String email, RedirectAttributes redirectAttributes, HttpSession session) throws Exception {
+
+
+
 
        Long userId= redisUserService.getActivationTokenUsername(token);
 //UserDataDTO activatedUser=userService.activateUser(username);
@@ -42,7 +56,7 @@ private final RedisUserService redisUserService;
             Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            email= EmailEncryption.encrypt(email);
+            email= EmailEncryption.encrypt(email,aesSecretKey,aesInitVector);
             if( userService.setUsersEmail(userId,email))
                {
                    redirectAttributes.addFlashAttribute("message", "Email został ustawiony pomyślnie!");
