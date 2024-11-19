@@ -805,7 +805,7 @@ else
         }
        else
         {
-            String errorMessage="Schedule creation failed. Those players do not exist in MZ:\n"+createScheduleResult.playersNotInMZ();
+            String errorMessage="Schedule creation failed. Those players do not exist in MZ:\n"+createScheduleResult.playersNotInMZ().toString();
             attributes.addAttribute("errorMessage",errorMessage);
             return "redirect:/public/LK/error";
         }

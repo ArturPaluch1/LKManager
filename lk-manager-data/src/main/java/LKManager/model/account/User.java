@@ -3,6 +3,7 @@ package LKManager.model.account;
 import LKManager.model.UserMZ.LeagueParticipation;
 import LKManager.model.UserMZ.MZUserData;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Filter;
 import org.hibernate.annotations.FilterDef;
@@ -19,6 +20,7 @@ import java.util.Collections;
 @Table(name="users", schema="lkm_dev")
 @Getter
 @Setter
+@NoArgsConstructor
 @FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 @Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id=?")
@@ -42,7 +44,7 @@ private String username;
     @Column(name = "reliability")
     private long reliability;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "MZuser_id")
     private MZUserData mzUser;
 

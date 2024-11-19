@@ -1,10 +1,9 @@
 package LKManager.DAO_SQL;
 
-import LKManager.model.RecordsAndDTO.UserMzDTO;
-import LKManager.model.account.User;
 import LKManager.model.UserMZ.MZUserData;
-import LKManager.model.account.Role;
 import LKManager.model.UserMZ.Team;
+import LKManager.model.account.Role;
+import LKManager.model.account.User;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Filter;
 import org.hibernate.Session;
@@ -217,8 +216,13 @@ finally {
         }
 
 */
-
-          entityManager.persist(user);
+try{
+    entityManager.persist(user);
+}
+         catch (Exception e)
+         {
+         System.out.println(e);
+         }
 
 
 
@@ -230,9 +234,10 @@ finally {
     }
 
     @Override
-    public UserMzDTO saveMZUser(MZUserData mzUser) {
+    public MZUserData saveMZUser(MZUserData mzUser) {
        MZUserData result= entityManager.merge(mzUser);
-        return new UserMzDTO(result.getMZuser_id(),result.getUsername(),result.getTeamlist().get(0).getTeamId(),result.getTeamlist().get(0).getTeamName());
+       return result;
+      //  return new UserMzDTO(result.getMZuser_id(),result.getUsername(),result.getTeamlist().get(0).getTeamId(),result.getTeamlist().get(0).getTeamName());
     }
 
     @Override

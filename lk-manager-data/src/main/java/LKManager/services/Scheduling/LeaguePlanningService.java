@@ -103,7 +103,7 @@ private final UserService userService;
     //boolean temp po testach na void
  @Transactional
   @Scheduled(cron = "0 15,55 2 * * *")  //2:15, 2:55 codziennie
-
+// @Scheduled(cron = "16 31,58 * * * *")
 public void manageLeague()
 {
     System.out.println("******starts manageleague********");
@@ -122,9 +122,9 @@ public void manageLeague()
 
         System.out.println("- ongoing sh: "+ongoingLeague.get().getName());
 
-        if(checkIfFinishLeague(ongoingLeague)) {
+        if(checkIfFinishLeague(ongoingLeague.get())) {
             System.out.println("finishing");
-            finishLeague(ongoingLeague);
+            finishLeague(ongoingLeague.get());
 
                  startPlannedLeague();
             System.out.println("finished");
@@ -211,7 +211,7 @@ else  //planned empty
         }
     }
 
-    private boolean checkIfFinishLeague(Optional<Schedule> ongoingLeague) {
+    private boolean checkIfFinishLeague(Schedule ongoingLeague) {
 /*     if( LocalDateTime.now().isBefore(LocalDateTime.of(LocalDate.now(), LocalTime.of(19,42,00)))&&
              LocalDateTime.now().isAfter(LocalDateTime.of(LocalDate.now(), LocalTime.of(19,35,00))))//skończyła się liga, jest dzień po ostatniej kolejce
 //if(1==1)
@@ -219,7 +219,7 @@ else  //planned empty
     return true;
 }*/
 
-        if(ongoingLeague.get().getEndDate().equals(LocalDate.now().minusDays(1)))//skończyła się liga, jest dzień po ostatniej kolejce
+        if(ongoingLeague.getEndDate().equals(LocalDate.now().minusDays(1)))//skończyła się liga, jest dzień po ostatniej kolejce
         {
       //      System.out.println("godzina < 21:35");
            return true;
@@ -243,10 +243,10 @@ else  //planned empty
             return false;
     }
 
-    private void finishLeague(Optional<Schedule> ongoingLeague) {
-        ongoingLeague.get().setScheduleStatus(ScheduleStatus.FINISHED);
+    private void finishLeague(Schedule ongoingLeague) {
+        ongoingLeague.setScheduleStatus(ScheduleStatus.FINISHED);
         System.out.println("ongoing status=finished");
-        scheduleService.updateSchedule(ongoingLeague.get());
+        scheduleService.updateSchedule(ongoingLeague);
         System.out.println("ongoing =finished");
     }
 

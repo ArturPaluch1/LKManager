@@ -753,13 +753,13 @@ else
         List<MZUserData> playersInMZ= new ArrayList<>();
                chosenPlayers.stream().forEach(
                 player-> {
-               
-                       MZUserData  foundPlayer= mzUserService.findByUsernameInManagerzone(player);
+                    if (!player.equals("pauza"))
+                    {     MZUserData foundPlayer = mzUserService.findByUsernameInManagerzone(player);
 
-                        if(foundPlayer==null)
-                            playersNotInMZ.add(foundPlayer);
-                        else playersInMZ.add(foundPlayer);
-                    
+                    if (foundPlayer == null)
+                        playersNotInMZ.add(foundPlayer);
+                    else playersInMZ.add(foundPlayer);
+                }
 
 
                 }

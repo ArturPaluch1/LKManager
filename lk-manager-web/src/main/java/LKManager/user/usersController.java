@@ -89,7 +89,16 @@ public String addUser(@RequestParam(value = "chosenUser" , required = false) Str
             try {
 
             UserDataDTO user=    userService.addUser( new SignUpForm(chosenUser,null,null));
+                if(user.getUsername().contains("temp_"))
+                {
 
+//userToAdd.setUsername(userFromForm.getUsername());
+
+                    userService.setMZUser(user.getUsername(),user.getUsername().trim().substring(5));
+                }
+            else{
+                    userService.setMZUser(user.getUsername(),user.getMZUsername());
+                }
             } catch (Exception e) {
 //failedDatabaseOperationRepository.addFailedOperation(new AddUserFailedDatabaseOperation(SQLOperation.AddUserDatabaseAccessFailureException,chosenUser));
                 }

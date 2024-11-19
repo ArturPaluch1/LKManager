@@ -89,7 +89,7 @@ spring:
   #glowne testy==============================================================
   #  url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_tests;trustServerCertificate=true;
     #glowne testy==============================================================
-    url: jdbc:sqlserver://localhost:1433;databaseName=test2;trustServerCertificate=true;
+    url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_local;trustServerCertificate=true;
 
     username: ligaklanowmz_
     password: ligaklanowmz_

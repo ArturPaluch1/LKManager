@@ -3,6 +3,7 @@ package LKManager.model.UserMZ;
 
 import LKManager.model.account.User;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -15,6 +16,7 @@ import java.util.List;
 @XmlRootElement(name = "UserData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @AllArgsConstructor
+@NoArgsConstructor
 public class MZUserData implements Serializable{
 
 
@@ -219,8 +221,7 @@ private List<Team> teamlist= new ArrayList();
 
 
 
-    public MZUserData() {
-    }
+
     @Override
     public String toString() {
         return "UserData{" +

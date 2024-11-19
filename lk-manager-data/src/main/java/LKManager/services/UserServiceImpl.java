@@ -6,7 +6,6 @@ import LKManager.Security.EmailEncryption;
 import LKManager.Security.SpringSecurityConfig;
 import LKManager.model.LeagueParticipants;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
-import LKManager.model.RecordsAndDTO.UserMzDTO;
 import LKManager.model.UserMZ.LeagueParticipation;
 import LKManager.model.UserMZ.MZUserData;
 import LKManager.model.UserMZ.Team;
@@ -161,10 +160,12 @@ private final EntityManager entityManager;
     public boolean setMZUser(String user, String mzUsername) {
         try {
             MZUserData userInMZ=  userDAO.findMZUserByMZname(mzUsername);
-            if(userInMZ==null)userInMZ= mzUserService.findByUsernameInManagerzone(mzUsername);
+            if(userInMZ==null)
+                userInMZ= mzUserService.findByUsernameInManagerzone(mzUsername);
 
 
-            if(userInMZ.getTeamlist().size()>1) {  userInMZ.getTeamlist().remove(1);}
+            if(userInMZ.getTeamlist().size()>1) {
+                userInMZ.getTeamlist().remove(1);}
             userInMZ.getTeamlist().get(0).setUser(userInMZ);
 
 
@@ -295,7 +296,7 @@ else
 
     }
     @Transactional
-    private UserMzDTO saveMZUser(MZUserData playerMZ) {
+    private MZUserData saveMZUser(MZUserData playerMZ) {
         //dwustronny dostęp: user->team, team->user
 
             playerMZ.getTeamlist().get(0).setUser(playerMZ);
@@ -811,14 +812,20 @@ User userToAdd= new User();
 userToAdd.setUsername(userFromForm.getUsername());
 userToAdd.setEmail(userFromForm.getEmail());
 //bez hasła tylko w dodawaniu "temp" graczy z zakładki user u admina
+
+        //zmienna pomocnicza w razie jakby był temp_user to username to user
+String mzUsername;
+
 if(userFromForm.getUsername().contains("temp_")||userFromForm.getPassword()==null)
 {
-
+mzUsername=userFromForm.getUsername().trim().substring(5);
+//userToAdd.setUsername(userFromForm.getUsername());
     userToAdd.setPassword(SpringSecurityConfig.passwordEncoder().encode("temp123" ));
 userToAdd.setRole(Role.ACTIVATED_CLUB_USER);
 }
 else
 {
+    mzUsername=userFromForm.getUsername();
     userToAdd.setPassword(userFromForm.getPassword());
 }
 
@@ -826,25 +833,39 @@ userToAdd.setRole(Role.UNACTIVATED_CLUB_USER);
 userToAdd.setReliability(0);
 userToAdd.setLeagueParticipation(LeagueParticipation.UNSIGNED);
 
+        MZUserData playerMZ= mzUserService.findByUsernameInManagerzone(mzUsername);
+        if(playerMZ==null)
+        {
+            //todo return że nie ma takiego usera w MZ
+            System.out.println("nie ma takiego usera w mz");
+            return null;
+        }
+        else {
+   //     User userInDB=    userDAO.findUserByName(mzUsername);
+ /*       if(userInDB==null) {
+            MZUserData savedMZUser = userDAO.saveMZUser(playerMZ);
+            // userInDB=    userDAO.findUserByName(username);
 
-        User addedUser = null;
-
-
-
-//jeśli tempuser, to przypoisuje od razu mz team, zeby nie dodawać ręcznie
-        if(userFromForm.getUsername().contains("temp_")) {
-            this.setMZUser(addedUser.getUsername(), addedUser.getUsername().trim().substring(5));
-            //  return redisUserService.addUserToRedis(user1);
-            System.out.println("subs="+addedUser.getUsername().trim().substring(5));
-         //    addedUser = userDAO.saveUser(userToAdd);
+            userToAdd.setMzUser(savedMZUser);
         }
         else
         {
-            addedUser  = userDAO.saveUser(userToAdd);
+          //  userToAdd.setMzUser(userInDB.getMzUser());
+        }*/
         }
+
+        User addedUser = null;
+            addedUser  = userDAO.saveUser(userToAdd);
+
    //     user1=userDAO.findUserByName(addedUser.getUsername());
 
 redisUserService.saveOrUpdateUserInUserLists(addedUser);
+
+/*if(addedUser.getMzUser()==null)
+{
+    addedUser.setMzUser(playerMZ);
+    addedUser  = userDAO.saveUser(userToAdd);
+}*/
 
         User finalUser = addedUser;
         System.out.println("here u1="+addedUser.getUsername()+" uf= "+finalUser.getUsername());
