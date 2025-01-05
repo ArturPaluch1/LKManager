@@ -64,11 +64,11 @@
             <version>2.0.5.RELEASE</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
+      <!--  <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.tomcat.embed</groupId>
             <artifactId>tomcat-embed-core</artifactId>

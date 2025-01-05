@@ -198,17 +198,24 @@ if(savedUser.isPresent())
         Page<User> page;
 
         do {
+
+            //todo tutaj nie ma Querry w findByLeagueParticipation  !!!
             page = userDAO.findByLeagueParticipation(LeagueParticipation.SIGNED, pageable);
             List<User> usersToChange = page.getContent();
 
 
             usersToChange.forEach(u -> u.setLeagueParticipation(LeagueParticipation.UNSIGNED));
-            List<User> savedUsers = userDAO.saveAll(usersToChange);
-            savedUsers.forEach(u -> redisUserService.saveOrUpdateUserInUserLists(u));
+            userDAO.saveAll(usersToChange);
+          //  List<User> savedUsers = userDAO.saveAll(usersToChange);
+        //    savedUsers.forEach(u -> redisUserService.saveOrUpdateUserInUserLists(u));
 
             pageable = page.nextPageable();
         } while (page.hasNext());
-
+//upadating users lists
+       List<User> usersToUpdate=userDAO.findAll();
+       redisUserService.addAllUsers(usersToUpdate,User.class,true,true);
+       usersToUpdate.removeIf( user->Integer.valueOf(1).equals(user.getId()));//pause
+        redisUserService.addAllUsers(usersToUpdate,User.class,true,false);
 
 
 /*
@@ -833,14 +840,16 @@ userToAdd.setRole(Role.UNACTIVATED_CLUB_USER);
 userToAdd.setReliability(0);
 userToAdd.setLeagueParticipation(LeagueParticipation.UNSIGNED);
 
-        MZUserData playerMZ= mzUserService.findByUsernameInManagerzone(mzUsername);
+
+// \/ to nie potrzebne, a nawet nie może być tutaj, bo mzname jest teraz w MZUserData!!!
+    /*    MZUserData playerMZ= mzUserService.findByUsernameInManagerzone(mzUsername);
         if(playerMZ==null)
         {
             //todo return że nie ma takiego usera w MZ
             System.out.println("nie ma takiego usera w mz");
             return null;
         }
-        else {
+        else {*/
    //     User userInDB=    userDAO.findUserByName(mzUsername);
  /*       if(userInDB==null) {
             MZUserData savedMZUser = userDAO.saveMZUser(playerMZ);
@@ -852,7 +861,7 @@ userToAdd.setLeagueParticipation(LeagueParticipation.UNSIGNED);
         {
           //  userToAdd.setMzUser(userInDB.getMzUser());
         }*/
-        }
+    //    }
 
         User addedUser = null;
             addedUser  = userDAO.saveUser(userToAdd);
@@ -1216,6 +1225,15 @@ return userFromRedis;
         }
 
     }*/
+
+
+    @Override
+    public void refreshActiveUsers() {
+     List<User> users=   userDAO.findUsers_ActiveWithoutPause();
+        redisUserService.deleteActivatedUserLists();
+        redisUserService.addAllUsers(users,User.class,true,true);
+        redisUserService.addAllUsers(users,User.class,true,false);
+    }
 }
 
 

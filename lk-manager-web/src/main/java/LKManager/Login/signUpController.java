@@ -45,20 +45,19 @@ private final UserDAO userDAO;
     public String signUp(@ModelAttribute("signUpForm") @Valid SignUpForm signUpForm,  BindingResult result,RedirectAttributes redirectAttributes) throws Exception {
         if (result.hasErrors()) {
             // Jeśli są błędy walidacji, wróć do formularza
-         //   redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.signUpForm", result);
+            //   redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.signUpForm", result);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.signUpForm", result);
             redirectAttributes.addFlashAttribute("signUpForm", signUpForm);
             return "redirect:/public/signUp";
-           // return"/public/signUp";
-        }
-        else {
+            // return"/public/signUp";
+        } else {
             // UserData user= accountService.createAccount(signUpForm);
 
 
             //todo error
             //    return "/public/signUp";
 
-String email=signUpForm.getEmail();
+            String email = signUpForm.getEmail();
 
 
             //checking if chosen username already exists in database
@@ -68,43 +67,43 @@ String email=signUpForm.getEmail();
                 signUpForm.setEmail(null);
                 UserDataDTO user = userService.addUser(signUpForm);
 
-                if (!email.equals("")) {
+
+                if (user != null) {
+                    if (!email.equals("")) {
 
 
-                       if( emailService.sendEmail(user.getUserId(),email)==false)
-                    {
-                        userService.authenticateUser(userDAO.getUserById(user.getUserId()).get());
-                        redirectAttributes.addFlashAttribute("message","Konto zostało założone, ale podałeś błędny mail. Możesz ustawić go w opcjach konta.");
-                        return "redirect:/user/settings";
+                        if (emailService.sendEmail(user.getUserId(), email) == false) {
+                            userService.authenticateUser(userDAO.getUserById(user.getUserId()).get());
+                            redirectAttributes.addFlashAttribute("message", "Konto zostało założone, ale podałeś błędny mail. Możesz ustawić go w opcjach konta.");
+                            return "redirect:/user/settings";
+                        } else {
+                            userService.authenticateUser(userDAO.getUserById(user.getUserId()).get());
+                            redirectAttributes.addFlashAttribute("message", "Konto zostało założone. Sprawdź email żeby potwierdzić maila.");
+                            return "redirect:/user/settings";
+                        }
+
+
                     }
-                    else
-                       {
-                           userService.authenticateUser(userDAO.getUserById(user.getUserId()).get());
-                           redirectAttributes.addFlashAttribute("message","Konto zostało założone. Sprawdź email żeby potwierdzić maila.");
-                           return "redirect:/user/settings";
-                       }
 
-
-
-                }
-
-                           Optional<User> userToAuthentication=  userDAO.getUserById(user.getUserId());
-                 if(userToAuthentication.isPresent())
-                    {
+                    Optional<User> userToAuthentication = userDAO.getUserById(user.getUserId());
+                    if (userToAuthentication.isPresent()) {
                         userService.authenticateUser(userToAuthentication.get());
-                   //     redirectAttributes.addFlashAttribute( "success","Zarejestrowano! Email możesz aktywować w opcjach.");
+                        //     redirectAttributes.addFlashAttribute( "success","Zarejestrowano! Email możesz aktywować w opcjach.");
                         return "redirect:/user/settings";
-                    }
-                    else
-                    {
-                        redirectAttributes.addFlashAttribute("message","wystąpił błąd z autentykacją");
+                    } else {
+                        redirectAttributes.addFlashAttribute("message", "wystąpił błąd z autentykacją");
                         return "redirect:/public/signUp";
                     }
+                } else {
+                    // nie zapisany user
+                    redirectAttributes.addFlashAttribute("message", "Błąd w zapisywaniu usera");
+                    return "redirect:/public/signUp";
+                }
 
 
             } else {
 
-redirectAttributes.addFlashAttribute("message","Taka nazwa jest już zajęta");
+                redirectAttributes.addFlashAttribute("message", "Taka nazwa jest już zajęta");
                 return "redirect:/public/signUp";
             }
 
@@ -112,6 +111,6 @@ redirectAttributes.addFlashAttribute("message","Taka nazwa jest już zajęta");
         }
 
 
-
     }
+
 }

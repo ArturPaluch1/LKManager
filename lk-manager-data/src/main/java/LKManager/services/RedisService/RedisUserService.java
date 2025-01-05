@@ -782,4 +782,10 @@ this.addAllUsers(usersActiveWithPause,UserDataDTO.class,true,true);
 
         return user;
     }
+
+    public void  deleteActivatedUserLists()
+    {
+        redisTemplate.delete("usersActiveWithPause");
+        redisTemplate.delete("usersActiveWithoutPause");
+    }
 }

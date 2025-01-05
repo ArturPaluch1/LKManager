@@ -114,6 +114,8 @@ System.out.println("found users in redis");
 
    String getUsersEmail(Long id) throws Exception;
 
+   void refreshActiveUsers();
+
    //  boolean removeLeagueParticipant(String mzUsername);
 
 

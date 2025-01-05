@@ -21,7 +21,7 @@ public interface LeagueParticipantsDAO extends JpaRepository<LeagueParticipants,
     @Modifying
     @Query("delete from LeagueParticipants lp where lp.user.id in " +
             "(select u.id from User u where u.leagueParticipation =:leagueParticipation)")
-    void deleteByLeagueParticipation(@Param("leagueParticipation") LeagueParticipation leagueParticipation);
+    void deleteParticipantsByLeagueParticipation(@Param("leagueParticipation") LeagueParticipation leagueParticipation);
 
 
 /*   @Modifying

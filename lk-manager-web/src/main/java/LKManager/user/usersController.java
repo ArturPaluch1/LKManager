@@ -148,6 +148,11 @@ else
 
 
 
-
+    @PostMapping(value="/admin/LK/users/refreshUsers")
+    public String refreshUsers(RedirectAttributes attributes)
+    {
+        userService.refreshActiveUsers();
+        return "redirect:/admin/LK/users";
+    }
 
 }

@@ -147,7 +147,7 @@ public void manageLeague()
             throw new RuntimeException(e);
         }
         System.out.println("deleting participants");
-        leagueParticipantsDAO.deleteByLeagueParticipation(LeagueParticipation.SIGNED);
+        leagueParticipantsDAO.deleteParticipantsByLeagueParticipation(LeagueParticipation.SIGNED);
         userService.setLeagueSignedUnsigned();
 
        // startPlannedLeague();
@@ -203,7 +203,7 @@ else  //planned empty
 
             scheduleService.updatePlannedSchedule(plannedSchedule.get(),leagueParticipantsDAO.findAll());
 
-     leagueParticipantsDAO.deleteByLeagueParticipation(LeagueParticipation.SIGNED);
+     leagueParticipantsDAO.deleteParticipantsByLeagueParticipation(LeagueParticipation.SIGNED);
      userService.setLeagueSignedUnsigned();
    //  manageLeague();
         } catch (DatatypeConfigurationException e) {

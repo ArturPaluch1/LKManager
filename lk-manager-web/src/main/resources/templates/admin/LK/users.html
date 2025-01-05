@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.w3.org/1999/xhtml">
+<html lang="pl"  xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
 </head>
 <body class="light">
@@ -7,6 +7,17 @@
 
 
 <div class="container">
+    <div class="row">
+        <form th:object="${users}" th:action="@{/admin/LK/users/refreshUsers}" method="post">
+
+            <button type="submit"  class="btn btn-primary m-1"  >Odśwież Redis users</button>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+
+            <br>
+
+        </form>
+    </div>
     <div class="row">
 
 <!--
@@ -120,6 +131,7 @@ function submitForm(action) {
 </form>
 
     </div>
+
 </div>
 
 
