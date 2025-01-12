@@ -210,3 +210,81 @@ tempString+=" Runda: "+round.textContent +"   "+date.textContent+"\r\n";
 
 
 }
+
+
+
+
+
+
+
+
+const alertElement = document.getElementById("seasonEndAlert");
+    const today = new Date();
+
+      const endDateString = alertElement.getAttribute("data-end-date");
+
+     const endDate  =new Date( endDateString);
+const endDateMinus15= new Date(endDate);
+ endDateMinus15.setDate(endDateMinus15.getDate() - 15);
+
+
+const leagueParticipation = alertElement.getAttribute("data-league-participation");
+
+
+
+
+    if (today > endDateMinus15 && today<= endDate ) {
+
+     console.log(leagueParticipation);
+
+
+
+   switch(leagueParticipation)
+    {
+    case "UNSIGNED":
+    {
+    alertElement.innerText = "Nie jesteś zapisany do kolejnego sezonu, a obecny kończy się. Przypominam, że zapisy do następnego trwają cały czas podczas rozgrywania bieżącego.";
+
+break;
+    }
+      case "SIGNED":
+    {
+    alertElement.innerText = "Kończy się sezon. Jesteś zapisany do następnego.";
+alertElement.style.backgroundColor = "lightgreen";
+alertElement.style.color = "darkgreen";
+break;
+    }
+      case "SUBBED":
+    {
+   alertElement.innerText = "Kończy się sezon. Jesteś zapisany do kolejnych.";
+    alertElement.style.backgroundColor = "lightgreen";
+    alertElement.style.color = "darkgreen";
+break;
+    }
+    default:
+        {
+    alertElement.innerText = "Kończy się sezon. Przypominam, że zapisy do następnego trwają cały czas podczas rozgrywania bieżącego.";
+break;
+    }
+    }
+
+
+        }
+
+ if (!alertElement.innerText) {
+        alertElement.style.display = 'none';
+    }
+else {
+        alertElement.style.display = 'block';
+    }
+
+
+
+
+
+
+
+
+
+
+

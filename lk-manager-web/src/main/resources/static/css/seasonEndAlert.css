@@ -1,0 +1,18 @@
+ /* Stylizacja alertu */
+    .seasonEndAlert {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 15px;
+        margin: 10px 0;
+         width: 100%;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        font-weight: bold;
+        font-family: Arial, sans-serif;
+        display: inline-block;
+    }
+
+
+    .alert:hover {
+        background-color: #f1b0b7;
+    }

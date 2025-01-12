@@ -1,5 +1,6 @@
 package LKManager.user;
 
+import LKManager.Security.UserAuthenticationDetailsService;
 import LKManager.model.RecordsAndDTO.UserDataDTO;
 import LKManager.model.Schedule;
 import LKManager.model.ScheduleStatus;
@@ -8,8 +9,6 @@ import LKManager.model.account.User;
 import LKManager.model.account.UserSettingsFormModel;
 import LKManager.services.*;
 import lombok.Data;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -25,11 +24,14 @@ private final ScheduleService scheduleService;
 private  final MZUserService mzUserService;
 private final EmailService emailService;
 private final AccountService accountService;
+private final UserAuthenticationDetailsService userAuthenticationDetailsService;
     @GetMapping("/user/settings")
 public String getSettings( Model model) throws Exception {
 //todo to przenieść do jakiegoś serwisu?
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    User customUserDetails = (User)authentication.getPrincipal();  // Pobiera nazwę użytkownika (username)
+ //   Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+  //  User customUserDetails = (User)authentication.getPrincipal();  // Pobiera nazwę użytkownika (username)
+
+        User customUserDetails =userAuthenticationDetailsService.getCustomUserDetails();
 
 
 UserDataDTO userDataDTO=  userService.getUserById(customUserDetails.getId());
@@ -91,7 +93,9 @@ public String joinLeague(Model model, @ModelAttribute("model") UserSettingsFormM
 
 
    if (success) {
-        model.addAttribute("message", "You have successfully joined the league!");
+       User customUserDetails =userAuthenticationDetailsService.getCustomUserDetails();
+
+       model.addAttribute("message", "You have successfully joined the league!");
     } else {
         model.addAttribute("error", "There was a problem joining the league.");
     }

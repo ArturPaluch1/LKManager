@@ -3,15 +3,14 @@ package LKManager.controllers.LK;
 import LKManager.DAO_SQL.MatchDAO;
 import LKManager.DAO_SQL.RoundDAO;
 import LKManager.DAO_SQL.ScheduleDAO;
+import LKManager.Security.UserAuthenticationDetailsService;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.RecordsAndDTO.RoundDTO;
 import LKManager.model.RecordsAndDTO.ScheduleDTO;
 import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
-import LKManager.services.CookieManager;
+import LKManager.model.account.User;
+import LKManager.services.*;
 import LKManager.services.FilesService_unused.PlikiService;
-import LKManager.services.MatchService;
-import LKManager.services.ResultsService;
-import LKManager.services.ScheduleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +51,7 @@ public class resultsController {
     //  private List<Terminarz> terminarze;
     private File[] terminarzeFiles;
     private List<ScheduleNameDTO> schedules;
-
+private final UserAuthenticationDetailsService userAuthenticationDetailsService;
 
     private final ScheduleDAO scheduleDAO;
 
@@ -107,7 +106,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
     //, @RequestParam (value="wybranyTerminarz", required = false)String wybranyTerminarz, @RequestParam (value="numerRundy", required = false)String nrRundy
 
 
-    public resultsController(ScheduleService scheduleService, MatchService matchService, LKManager.services.MZUserService MZUserService, RoundDAO roundDAO, MatchDAO meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, ScheduleDAO scheduleDAO) {
+    public resultsController(ScheduleService scheduleService, MatchService matchService, LKManager.services.MZUserService MZUserService, RoundDAO roundDAO, MatchDAO meczDAO, PlikiService plikiService, ResultsService resultsService, CookieManager cookieManager, UserAuthenticationDetailsService userAuthenticationDetailsService, ScheduleDAO scheduleDAO) {
         this.MZUserService = MZUserService;
         this.matchService = matchService;
         this.scheduleService = scheduleService;
@@ -116,6 +115,7 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
         this.plikiService = plikiService;
         this.resultsService = resultsService;
         this.cookieManager = cookieManager;
+        this.userAuthenticationDetailsService = userAuthenticationDetailsService;
         this.scheduleDAO = scheduleDAO;
     }
 
@@ -138,6 +138,9 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
                 if(schedule==null ) return "admin/LK/results";  //nie ma nigdzie schedule
             }
             RoundDTO round;
+
+
+            addLeagueParticipationModelAttribute(model);
             try {
                 String finalRoundNumber = roundNumber;
                 round = schedule.getRounds().stream().filter(r -> r.getNr() == Integer.parseInt(finalRoundNumber)).findFirst().orElse(null);
@@ -206,6 +209,7 @@ if(chosenSchedule!=null)  //schedule from cookie
     //  schedule = mzCache.findChosenScheduleByScheduleNameFromCacheOrDatabase(chosenSchedule);
     schedule = scheduleService.getSchedule_ByName(chosenSchedule);
 
+
 if(schedule==null)
 {
     System.out.println("schedule=====================null");
@@ -213,10 +217,17 @@ if(schedule==null)
 
 }
 
+
+    addLeagueParticipationModelAttribute(model);
+//customUserDetails.getLeagueParticipation();
     try {
         //   round = roundDAO.findByScheduleIdAndRoundId(schedule.getId(), Integer.parseInt(roundNumber)) ;
         String finalRoundNumber = roundNumber;
         round=schedule.getRounds().stream().filter(r->r.getNr()==Integer.parseInt( finalRoundNumber)).findFirst().orElse(null);
+
+    /*    if(LocalDate.now().isAfter(schedule.getEndDate().minusDays(15)))
+            model.addAttribute("seasonEndAlert","Kończy się sezon")
+*/
 
           model.addAttribute("roundNumber", roundNumber);
           // model.addAttribute("matches", );
@@ -224,6 +235,7 @@ if(schedule==null)
           model.addAttribute("chosenSchedule", schedule);
           //   model.addAttribute("roundNumbers", roundNumbers);
           model.addAttribute("round", round);
+
         return "public/LK/results";
       }
 
@@ -251,6 +263,15 @@ if(schedule==null)
     return "public/LK/results";
 }
 }
+
+    private void addLeagueParticipationModelAttribute(Model model) {
+        User customUserDetails =userAuthenticationDetailsService.getCustomUserDetails();
+        if(customUserDetails!=null)
+        {
+            model.addAttribute("leagueParticipation", customUserDetails.getLeagueParticipation());
+
+        }
+    }
 
 
 

@@ -1,6 +1,7 @@
 package LKManager.services;
 
 import LKManager.DAO_SQL.LeagueParticipantsDAO;
+import LKManager.Security.UserAuthenticationDetailsService;
 import LKManager.model.account.User;
 import LKManager.model.UserMZ.LeagueParticipation;
 import LKManager.model.account.UserSettingsFormModel;
@@ -16,6 +17,7 @@ private final ScheduleService scheduleService;
 private final UserService userService;
 private final RedisUserService redisUserService;
 private final LeagueParticipantsDAO leagueParticipantsDAO;
+private final UserAuthenticationDetailsService userAuthenticationDetailsService;
 boolean joinLeague()
 {
 //scheduleService.addToLeagueListOfParticipants();
@@ -27,9 +29,11 @@ return true;
     public boolean joinLeague(UserSettingsFormModel userSettingsFormModel) {
 
     User changedUser=null;
-    boolean success=false;
+
 
          changedUser =userService.changeUserLeagueParticipation(userSettingsFormModel,LeagueParticipation.SIGNED);
+
+
          //  success=  scheduleService.addLeagueParticipant(username);
 
 
@@ -39,9 +43,11 @@ return true;
 
 if(changedUser!=null)
 {
+
     //todo tu moznaby dodac add user to redis, ale nie jest używane to aktualizuje tylko listy userów
 redisUserService.saveOrUpdateUserInUserLists(changedUser);
-    return success;
+userAuthenticationDetailsService.updateAuthentication(changedUser);
+    return true;
 }
 else
     return false;
@@ -85,6 +91,7 @@ else
             //todo tu moznaby dodac add user to redis, ale nie jest używane to aktualizuje tylko listy userów
 
             redisUserService.saveOrUpdateUserInUserLists(changedUser);
+            userAuthenticationDetailsService.updateAuthentication(changedUser);
             return success;
         }
         else
@@ -103,6 +110,7 @@ else
         {
             //todo tu moznaby dodac add user to redis, ale nie jest używane to aktualizuje tylko listy userów
             redisUserService.saveOrUpdateUserInUserLists(changedUser);
+            userAuthenticationDetailsService.updateAuthentication(changedUser);
             return true;
         }
         else

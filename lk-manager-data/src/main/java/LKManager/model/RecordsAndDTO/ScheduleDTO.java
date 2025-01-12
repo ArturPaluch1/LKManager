@@ -1,6 +1,7 @@
 package LKManager.model.RecordsAndDTO;
 
 import LKManager.model.ScheduleStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -17,7 +18,11 @@ private String name;
     private ScheduleType scheduleType;
 private List<RoundDTO> rounds;
 private ScheduleStatus scheduleStatus;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+
 private LocalDate startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+
     private LocalDate endDate;
    public ScheduleDTO(long id,LocalDate startDate, String name, List<RoundDTO> rounds, ScheduleType scheduleType,ScheduleStatus scheduleStatus, LocalDate endDate) {
         this.id = id;
