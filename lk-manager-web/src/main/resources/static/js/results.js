@@ -219,6 +219,8 @@ tempString+=" Runda: "+round.textContent +"   "+date.textContent+"\r\n";
 
 
 const alertElement = document.getElementById("seasonEndAlert");
+
+
     const today = new Date();
 
       const endDateString = alertElement.getAttribute("data-end-date");
@@ -263,6 +265,7 @@ break;
     }
     default:
         {
+
     alertElement.innerText = "Kończy się sezon. Przypominam, że zapisy do następnego trwają cały czas podczas rozgrywania bieżącego.";
 break;
     }
@@ -270,6 +273,8 @@ break;
 
 
         }
+
+
 
  if (!alertElement.innerText) {
         alertElement.style.display = 'none';

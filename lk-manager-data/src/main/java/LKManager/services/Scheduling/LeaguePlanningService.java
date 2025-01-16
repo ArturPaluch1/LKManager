@@ -2,7 +2,6 @@ package LKManager.services.Scheduling;
 
 import LKManager.DAO_SQL.LeagueParticipantsDAO;
 import LKManager.DAO_SQL.RoundDAO;
-import LKManager.model.RecordsAndDTO.CreateScheduleResult;
 import LKManager.model.RecordsAndDTO.ScheduleType;
 import LKManager.model.Schedule;
 import LKManager.model.ScheduleStatus;
@@ -125,9 +124,16 @@ public void manageLeague()
         if(checkIfFinishLeague(ongoingLeague.get())) {
             System.out.println("finishing");
             finishLeague(ongoingLeague.get());
-
-                 startPlannedLeague();
             System.out.println("finished");
+            System.out.println("checking whether to start the season");
+if(checkIfStartPlannedLeague())
+{
+    System.out.println("next season starting");
+    startPlannedLeague(plannedSchedule.get());
+
+}
+
+
       //     manageLeague();
 
         }
@@ -135,13 +141,18 @@ public void manageLeague()
     else
     {
         System.out.println("- ongoing sh: is null");
+        System.out.println("checking whether to start the season");
+        if(checkIfStartPlannedLeague())
+        {
+            System.out.println("next season starting");
+            startPlannedLeague(plannedSchedule.get());
 
+        }
 
-        CreateScheduleResult result;
-        try {
+     /*   try {
             System.out.println("planned schedule->ongoing");
 
-             result = scheduleService.updatePlannedSchedule(plannedSchedule.get(), leagueParticipantsDAO.findAll());
+              scheduleService.updatePlannedSchedule(plannedSchedule.get(), leagueParticipantsDAO.findAll());
 
         } catch (DatatypeConfigurationException e) {
             throw new RuntimeException(e);
@@ -149,7 +160,7 @@ public void manageLeague()
         System.out.println("deleting participants");
         leagueParticipantsDAO.deleteParticipantsByLeagueParticipation(LeagueParticipation.SIGNED);
         userService.setLeagueSignedUnsigned();
-
+*/
        // startPlannedLeague();
        // manageLeague();
 
@@ -192,18 +203,30 @@ else  //planned empty
 
 
 }
-@Transactional
-    private void startPlannedLeague() {
+
+
+
+    @Transactional
+    private void startPlannedLeague(Schedule plannedSchedule) {
         try {
-            List<Schedule> leagueSchedules=	scheduleService.getSchedules().stream().filter(s->s.getName().contains("Liga")).collect(Collectors.toList());
+         //   List<Schedule> leagueSchedules=	scheduleService.getSchedules().stream().filter(s->s.getName().contains("Liga")).collect(Collectors.toList());
 
 
-            Optional<Schedule> plannedSchedule=  leagueSchedules.stream().filter(s->s.getScheduleStatus().equals(ScheduleStatus.PLANNED)).findFirst();
+          //  Optional<Schedule> plannedSchedule=  leagueSchedules.stream().filter(s->s.getScheduleStatus().equals(ScheduleStatus.PLANNED)).findFirst();
 
-
-            scheduleService.updatePlannedSchedule(plannedSchedule.get(),leagueParticipantsDAO.findAll());
-
+            if(plannedSchedule.getStartDate().isBefore(LocalDate.now()))
+            {
+                System.out.println("updating season start date");
+         //       System.out.println("1");
+                LocalDate newStartDate = LocalDate.now().plusDays(6);
+                plannedSchedule.setStartDate(newStartDate);
+            }
+          //  System.out.println("2");
+            System.out.println("updating planned schedule");
+            scheduleService.updatePlannedSchedule(plannedSchedule,leagueParticipantsDAO.findAll());
+            System.out.println("cleaning league participant list");
      leagueParticipantsDAO.deleteParticipantsByLeagueParticipation(LeagueParticipation.SIGNED);
+            System.out.println("updating signs/subs in users");
      userService.setLeagueSignedUnsigned();
    //  manageLeague();
         } catch (DatatypeConfigurationException e) {
@@ -211,6 +234,11 @@ else  //planned empty
         }
     }
 
+
+    private boolean checkIfStartPlannedLeague() {
+        return leagueParticipantsDAO.count() >= 4 && LocalDate.now().getDayOfWeek().equals(DayOfWeek.WEDNESDAY);
+
+    }
     private boolean checkIfFinishLeague(Schedule ongoingLeague) {
 /*     if( LocalDateTime.now().isBefore(LocalDateTime.of(LocalDate.now(), LocalTime.of(19,42,00)))&&
              LocalDateTime.now().isAfter(LocalDateTime.of(LocalDate.now(), LocalTime.of(19,35,00))))//skończyła się liga, jest dzień po ostatniej kolejce

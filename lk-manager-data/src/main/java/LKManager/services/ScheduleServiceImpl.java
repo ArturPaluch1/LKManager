@@ -1601,27 +1601,12 @@ boolean warunek1=u1==u2;
     }
 
 
+    @Override
+    public boolean getOngoingStandardSchedule() {
+       List<Schedule>foundOngoingSchedules=  this.getScheduleByTypeAndStatus(ScheduleType.standardSchedule,ScheduleStatus.ONGOING);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      if(foundOngoingSchedules.size()==0)
+        return false;
+      else return true;
+    }
 }

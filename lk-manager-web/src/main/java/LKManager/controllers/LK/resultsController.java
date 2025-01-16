@@ -149,6 +149,11 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
                 model.addAttribute("schedules", schedules);
                 model.addAttribute("chosenSchedule", schedule);
                 model.addAttribute("round", round);
+
+                if(!scheduleService.getOngoingStandardSchedule())
+                {
+                    model.addAttribute("seasonStartProblem","Brakuje minimalnej liczby graczy, żeby zacząć sezon. Wystartuje jak będzie co najmniej 4 chętnych. (Pary będą podanę w środę). ");
+                }
                 return "admin/LK/results";
 
 
@@ -236,7 +241,12 @@ if(schedule==null)
           //   model.addAttribute("roundNumbers", roundNumbers);
           model.addAttribute("round", round);
 
-        return "public/LK/results";
+
+          if(!scheduleService.getOngoingStandardSchedule())
+          {
+              model.addAttribute("seasonStartProblem","Brakuje minimalnej liczby graczy, żeby zacząć sezon. Wystartuje jak będzie co najmniej 4 chętnych. (Pary będą podanę w środę). ");
+          }
+           return "public/LK/results";
       }
 
 

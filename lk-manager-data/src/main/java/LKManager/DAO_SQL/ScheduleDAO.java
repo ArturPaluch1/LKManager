@@ -65,6 +65,8 @@ public interface ScheduleDAO extends JpaRepository<Schedule, Long>, CustomSchedu
 
 
 
+
+
   /*  @Query("SELECT DISTINCT s FROM Schedule s " +
             "LEFT JOIN FETCH s.rounds r " +
             "LEFT JOIN FETCH r.matches m " +

@@ -43,7 +43,7 @@
 
 <div style="float: center;">
 
-
+    <div class="seasonEndAlert" th:if="${seasonStartProblem}" th:text="${seasonStartProblem}"></div>
     <div id="seasonEndAlert" class="seasonEndAlert"  th:data-end-date="${chosenSchedule.endDate}"
          th:data-league-participation="${leagueParticipation}"></div>
 

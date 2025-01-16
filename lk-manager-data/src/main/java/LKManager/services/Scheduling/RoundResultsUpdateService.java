@@ -18,7 +18,7 @@ private final ResultsService resultsService;
 
     }
 
-    @Scheduled(cron = "0 55 10,11,19,20,23 ? * *" )
+    @Scheduled(cron = "0 55 10,11,18,19,20,21,23 ? * *" )
 
     public void updateResults() {
         try {

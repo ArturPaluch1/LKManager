@@ -56,4 +56,6 @@ public interface ScheduleService {
     //  boolean addLeagueParticipant(User  user);
 //public List<LeagueParticipants> getLeagueParticipants();
  List<ScheduleNameDTO> getScheduleNames();
+
+    boolean getOngoingStandardSchedule();
 }
