@@ -99,8 +99,11 @@
 
 </div>
 <br>
-<div class="container-lg my-1 "  th:if="${ model.user.role!=T(LKManager.model.account.Role).DEACTIVATED_USER and
-  model.user.role!=T(LKManager.model.account.Role).UNACTIVATED_CLUB_USER
+
+    <div class="container-lg my-1 "  th:if="${
+    model.user.role==T(LKManager.model.account.Role).ACTIVATED_CLUB_USER or
+  model.user.role==T(LKManager.model.account.Role).ADMIN or
+  model.user.role==T(LKManager.model.account.Role).CAPITAN
  }">
     <div class="row">
         <b> Rozgrywki:</b>
