@@ -2,7 +2,7 @@ package LKManager.services.RedisService;
 
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.RecordsAndDTO.ScheduleDTO;
-import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
+import LKManager.model.RecordsAndDTO.ScheduleSettingsDTO;
 import LKManager.services.GsonService;
 import lombok.Data;
 import org.springframework.data.redis.core.ListOperations;
@@ -34,7 +34,7 @@ private final ScheduleDAO scheduleDAO;
         this.listOperations = this.getRedisListTemplate().opsForList();
     }
 
-    public List<ScheduleNameDTO> getScheduleNames()
+    public List<ScheduleSettingsDTO> getScheduleNames()
     {
 
         List<String> jsonList = listOperations.range("scheduleNames", 0, -1);
@@ -49,9 +49,9 @@ private final ScheduleDAO scheduleDAO;
         return scheduleNames;*/
 
 
-        return gsonService.jsonToList(jsonList, ScheduleNameDTO.class);
+        return gsonService.jsonToList(jsonList, ScheduleSettingsDTO.class);
     }
-    public Long setScheduleNames(List<ScheduleNameDTO> scheduleNames)
+    public Long setScheduleNames(List<ScheduleSettingsDTO> scheduleNames)
     {
         redisTemplate.delete("scheduleNames");
     //  String json=  gsonService.listToJson(scheduleNames);
@@ -67,7 +67,7 @@ private final ScheduleDAO scheduleDAO;
     {
  //       scheduleName.replace(" ","_");
 
-        Optional<ScheduleNameDTO> scheduleNameDTO= this.getScheduleNames().stream().filter(schedule-> schedule.getName().equals(scheduleName)).findFirst();
+        Optional<ScheduleSettingsDTO> scheduleNameDTO= this.getScheduleNames().stream().filter(schedule-> schedule.getName().equals(scheduleName)).findFirst();
 
   //     String scheduleJson=(String) valueOperations.get("schedule:"+scheduleName.replace(" ","_"));
         String scheduleJson=null;
@@ -106,7 +106,7 @@ private final ScheduleDAO scheduleDAO;
         if(scheduleJson!=null)
         {
 
-           List<ScheduleNameDTO>scheduleNames= this.getScheduleNames();
+           List<ScheduleSettingsDTO>scheduleNames= this.getScheduleNames();
            if(scheduleNames.isEmpty())
            {
 
@@ -119,9 +119,9 @@ private final ScheduleDAO scheduleDAO;
            }
            else
            {
-               if(!scheduleNames.contains(new ScheduleNameDTO(schedule.getId(),schedule.getName())))
+               if(!scheduleNames.contains(new ScheduleSettingsDTO(schedule.getId(),schedule.getName())))
                {
-                   scheduleNames.add(new ScheduleNameDTO(schedule.getId(),schedule.getName()));
+                   scheduleNames.add(new ScheduleSettingsDTO(schedule.getId(),schedule.getName()));
                    this.setScheduleNames(scheduleNames);
                }
 
@@ -145,14 +145,14 @@ private final ScheduleDAO scheduleDAO;
     }
 
 
-    public boolean deleteScheduleByName(ScheduleNameDTO scheduleNameDTO) {
+    public boolean deleteScheduleByName(ScheduleSettingsDTO scheduleSettingsDTO) {
 try {
 
 //Schedule schedule=scheduleDAO.findByScheduleName(scheduleToDeleteName);
 
-    redisTemplate.delete("schedule:"+scheduleNameDTO.getId());//.replace(" ", "_"));
-    List<ScheduleNameDTO> scheduleNames = this.getScheduleNames();
-    scheduleNames.remove(scheduleNameDTO);//.replace(" ", "_"));
+    redisTemplate.delete("schedule:"+ scheduleSettingsDTO.getId());//.replace(" ", "_"));
+    List<ScheduleSettingsDTO> scheduleNames = this.getScheduleNames();
+    scheduleNames.remove(scheduleSettingsDTO);//.replace(" ", "_"));
     this.setScheduleNames(scheduleNames);
     return true;
 }

@@ -38,9 +38,9 @@ private final RedisTableService redisTableService;
         {
 
                 //todo zrobić wyjątek jeśli nie ma terminarza o danej nazwie
-                List<ScheduleNameDTO> scheduleNameDTOList = scheduleService.getScheduleNamesOngoingOrFinished();
+                List<ScheduleSettingsDTO> scheduleSettingsDTOList = scheduleService.getScheduleNamesOngoingOrFinished();
                 String finalChosenscheduleName = chosenscheduleName;
-               ScheduleNameDTO scheduleName =scheduleNameDTOList.stream().filter(s-> s.getName().equals(finalChosenscheduleName)).findFirst().orElse(null);
+               ScheduleSettingsDTO scheduleName = scheduleSettingsDTOList.stream().filter(s-> s.getName().equals(finalChosenscheduleName)).findFirst().orElse(null);
            if(scheduleName== null )return null;//todo info ze nie ma takiego schedule
            else
             table= this.createTable( scheduleName.getId());

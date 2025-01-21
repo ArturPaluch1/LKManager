@@ -51,11 +51,11 @@
 
 
 
-        <div class="seasonEndAlert" th:if="${seasonStartProblem}" th:text="${seasonStartProblem}"></div>
+        <div class="seasonEndAlert" th:if="${seasonStartMessage}" th:text="${seasonStartMessage}"></div>
 
         <div id="seasonEndAlert" class="seasonEndAlert"
 
-             th:data-end-date="${chosenSchedule.endDate}"
+             th:data-ongoingSchedule-end-date="${ongoingScheduleEndDate}"
              th:data-league-participation="${leagueParticipation}"></div>
 
 

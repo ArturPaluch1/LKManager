@@ -6,7 +6,7 @@ import LKManager.DAO_SQL.RoundDAO;
 import LKManager.DAO_SQL.ScheduleDAO;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.RecordsAndDTO.ScheduleDTO;
-import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
+import LKManager.model.RecordsAndDTO.ScheduleSettingsDTO;
 import LKManager.model.Round;
 import LKManager.model.Schedule;
 import LKManager.model.UserMZ.MZUserData;
@@ -148,7 +148,7 @@ private final UserService userService;
      //   roundDAO.saveRound(round);
     round=    roundDAO.save(round);
 
-        redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(round.getSchedule().getId(), round.getSchedule().getName()));
+        redisScheduleService.deleteScheduleByName(new ScheduleSettingsDTO(round.getSchedule().getId(), round.getSchedule().getName()));
        ScheduleDTO updatedSchedule= redisScheduleService.setSchedule(scheduleService.getSchedule_ById(round.getSchedule().getId()));
 redisTableService.setTable(tableService.createTable(updatedSchedule));
 
@@ -192,7 +192,7 @@ List<Round>resultsList=  roundsForDate.stream().map( round-> {
         Round tempRound = getResultsFromMZ(round);
          tempRound= roundDAO.save(tempRound);
 
-        redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(tempRound.getSchedule().getId(), tempRound.getSchedule().getName()));
+        redisScheduleService.deleteScheduleByName(new ScheduleSettingsDTO(tempRound.getSchedule().getId(), tempRound.getSchedule().getName()));
         redisScheduleService.setSchedule(scheduleService.getSchedule_ById(tempRound.getSchedule().getId()));
 
 
@@ -301,7 +301,7 @@ return tempRound;
          */
          System.out.println("saved");
 
-         redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(schedule.getId(), schedule.getName()));
+         redisScheduleService.deleteScheduleByName(new ScheduleSettingsDTO(schedule.getId(), schedule.getName()));
          ScheduleDTO updatedSchedule=   redisScheduleService.setSchedule(scheduleService.getSchedule_ById(schedule.getId()));
  redisTableService.setTable(tableService.createTable(updatedSchedule));
 

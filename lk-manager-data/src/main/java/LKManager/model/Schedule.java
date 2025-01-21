@@ -1,7 +1,7 @@
 package LKManager.model;
 
 import LKManager.model.MatchesMz.MatchTeam;
-import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
+import LKManager.model.RecordsAndDTO.ScheduleSettingsDTO;
 import LKManager.model.RecordsAndDTO.ScheduleType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -122,7 +122,7 @@ private LocalDate startDate;
     }
 
 
-    public int compareTo(ScheduleNameDTO o) {
+    public int compareTo(ScheduleSettingsDTO o) {
         return this.name.compareTo(o.getName());
     }
 }

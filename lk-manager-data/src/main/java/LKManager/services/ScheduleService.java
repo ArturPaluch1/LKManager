@@ -44,7 +44,7 @@ public interface ScheduleService {
     void updateSchedule(Schedule schedule, String nazwaPliku);
 
     boolean updateSchedule(Schedule schedule);
-    List<ScheduleNameDTO> getScheduleNamesOngoingOrFinished();
+    List<ScheduleSettingsDTO> getScheduleNamesOngoingOrFinished();
 
     public CreateScheduleResult createSwissScheduleWithPlayerNames(LocalDate startDate, List<String> signedPlayers, String scheduleName, Integer roundsNumber , ScheduleType scheduleType, ScheduleStatus scheduleStatus);
   //  public CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<UserDataDTO> signedPlayers, String scheduleName, Integer roundsNumber , ScheduleType scheduleType, ScheduleStatus scheduleStatus) ;
@@ -55,7 +55,7 @@ public interface ScheduleService {
     List<Schedule> getScheduleByTypeAndStatus(ScheduleType scheduleType, ScheduleStatus scheduleStatus);
     //  boolean addLeagueParticipant(User  user);
 //public List<LeagueParticipants> getLeagueParticipants();
- List<ScheduleNameDTO> getScheduleNames();
+ List<ScheduleSettingsDTO> getScheduleNames();
 
-    boolean getOngoingStandardSchedule();
+    List<Schedule> getOngoingStandardSchedule();
 }

@@ -530,7 +530,7 @@ List<String> playerNames = new ArrayList<>();
     public String deleteSchedule(Model model)//@RequestParam (value = "wybranyTerminarz", required = true)String terminarzDoUsuniecia)
     {
       //  List<Schedule> schedules = mzCache.getSchedulesFromCacheOrDatabase();
-        List<ScheduleNameDTO> schedules = scheduleService.getScheduleNamesOngoingOrFinished();
+        List<ScheduleSettingsDTO> schedules = scheduleService.getScheduleNamesOngoingOrFinished();
         //plikiService.pobierzPlikiZFolderu(PlikiService.folder.terminarze);
 
 //this.wybranyTerminarz=null;

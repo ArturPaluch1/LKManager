@@ -7,7 +7,8 @@ import LKManager.Security.UserAuthenticationDetailsService;
 import LKManager.model.MatchesMz.Match;
 import LKManager.model.RecordsAndDTO.RoundDTO;
 import LKManager.model.RecordsAndDTO.ScheduleDTO;
-import LKManager.model.RecordsAndDTO.ScheduleNameDTO;
+import LKManager.model.RecordsAndDTO.ScheduleSettingsDTO;
+import LKManager.model.Schedule;
 import LKManager.model.account.User;
 import LKManager.services.*;
 import LKManager.services.FilesService_unused.PlikiService;
@@ -50,7 +51,7 @@ public class resultsController {
 
     //  private List<Terminarz> terminarze;
     private File[] terminarzeFiles;
-    private List<ScheduleNameDTO> schedules;
+    private List<ScheduleSettingsDTO> schedules;
 private final UserAuthenticationDetailsService userAuthenticationDetailsService;
 
     private final ScheduleDAO scheduleDAO;
@@ -150,9 +151,24 @@ https://teamtreehouse.com/community/if-the-username-contains-a-whitespace-charac
                 model.addAttribute("chosenSchedule", schedule);
                 model.addAttribute("round", round);
 
-                if(!scheduleService.getOngoingStandardSchedule())
+                List<Schedule>ongoingSchedules=scheduleService.getOngoingStandardSchedule();
+                switch(ongoingSchedules.size())
                 {
-                    model.addAttribute("seasonStartProblem","Brakuje minimalnej liczby graczy, żeby zacząć sezon. Wystartuje jak będzie co najmniej 4 chętnych. (Pary będą podanę w środę). ");
+                    case 0:
+                    {
+                        model.addAttribute("seasonStartMessage","Brakuje minimalnej liczby graczy, żeby zacząć sezon. Wystartuje jak będzie co najmniej 4 chętnych. (Pary będą podanę w środę). ");
+                        break;
+                    }
+                    case 1:
+                    {
+                        model.addAttribute("ongoingScheduleEndDate",ongoingSchedules.get(0).getEndDate());
+                        break;
+                    }
+                    default:
+                    {
+                        //todo tutaj jakby był błąd i byłoby więcej niż 1 ongoing schedule
+                        break;
+                    }
                 }
                 return "admin/LK/results";
 
@@ -241,11 +257,30 @@ if(schedule==null)
           //   model.addAttribute("roundNumbers", roundNumbers);
           model.addAttribute("round", round);
 
+          List<Schedule>ongoingSchedules=scheduleService.getOngoingStandardSchedule();
+switch(ongoingSchedules.size())
+{
+    case 0:
+    {
+        model.addAttribute("seasonStartMessage","Brakuje minimalnej liczby graczy, żeby zacząć sezon. Wystartuje jak będzie co najmniej 4 chętnych. (Pary będą podanę w środę). ");
+        break;
+    }
+    case 1:
+    {
+        model.addAttribute("ongoingScheduleEndDate",ongoingSchedules.get(0).getEndDate());
+        break;
+    }
+    default:
+    {
+        //todo tutaj jakby był błąd i byłoby więcej niż 1 ongoing schedule
+        break;
+    }
+}
 
-          if(!scheduleService.getOngoingStandardSchedule())
+
+        if(scheduleService.getOngoingStandardSchedule().size()==0)
           {
-              model.addAttribute("seasonStartProblem","Brakuje minimalnej liczby graczy, żeby zacząć sezon. Wystartuje jak będzie co najmniej 4 chętnych. (Pary będą podanę w środę). ");
-          }
+                      }
            return "public/LK/results";
       }
 

@@ -212,7 +212,7 @@ else return null;
 
     @Override
     public boolean deleteSchedule(String scheduleToDeleteName) {
-        ScheduleNameDTO tempSchedule=this.getScheduleNamesOngoingOrFinished().stream().filter(s->s.getName().equals(scheduleToDeleteName)).findFirst().orElse(null);
+        ScheduleSettingsDTO tempSchedule=this.getScheduleNamesOngoingOrFinished().stream().filter(s->s.getName().equals(scheduleToDeleteName)).findFirst().orElse(null);
      if(tempSchedule!=null)
      {
          boolean result=  scheduleDAO.deleteByName(scheduleToDeleteName);
@@ -921,8 +921,8 @@ players.add(userService.getPauseObject().getMzUser());
     }
 
     @Override
-    public List<ScheduleNameDTO> getScheduleNamesOngoingOrFinished() {
-        List<ScheduleNameDTO> scheduleNames=null;
+    public List<ScheduleSettingsDTO> getScheduleNamesOngoingOrFinished() {
+        List<ScheduleSettingsDTO> scheduleNames=null;
         try{
           scheduleNames=  redisScheduleService.getScheduleNames();
         }
@@ -938,7 +938,7 @@ players.add(userService.getPauseObject().getMzUser());
        if(scheduleNames.size()!=0) redisScheduleService.setScheduleNames(scheduleNames);
 
         }
-        return scheduleNames.stream().sorted(Comparator.comparing(ScheduleNameDTO::getName,new AlphanumericComparator()).reversed()).collect(Collectors.toList());
+        return scheduleNames.stream().sorted(Comparator.comparing(ScheduleSettingsDTO::getName,new AlphanumericComparator()).reversed()).collect(Collectors.toList());
     }
 
 
@@ -1166,8 +1166,8 @@ else return null;
     }
        
     @Override
-    public List<ScheduleNameDTO> getScheduleNames() {
-         List<ScheduleNameDTO> scheduleNames=null;
+    public List<ScheduleSettingsDTO> getScheduleNames() {
+         List<ScheduleSettingsDTO> scheduleNames=null;
       
 //not from redis because there are stored only ongoing and finished!
        
@@ -1176,7 +1176,7 @@ else return null;
      
 
         
-        return scheduleNames.stream().sorted(Comparator.comparing(ScheduleNameDTO::getName,new AlphanumericComparator()).reversed()).collect(Collectors.toList());
+        return scheduleNames.stream().sorted(Comparator.comparing(ScheduleSettingsDTO::getName,new AlphanumericComparator()).reversed()).collect(Collectors.toList());
  
     }
 
@@ -1184,7 +1184,7 @@ else return null;
 
     @Transactional
     private CreateScheduleResult createSwissScheduleWithPlayerData(LocalDate startDate, List<MZUserData> signedPlayers, String scheduleName,Integer roundsNumber, ScheduleType scheduleType, ScheduleStatus scheduleStatus) {
-       ScheduleNameDTO scheduleInDB=this.getScheduleNamesOngoingOrFinished().stream().filter(schedule->schedule.getName().equals(scheduleName)).findFirst().orElse(null);
+       ScheduleSettingsDTO scheduleInDB=this.getScheduleNamesOngoingOrFinished().stream().filter(schedule->schedule.getName().equals(scheduleName)).findFirst().orElse(null);
        if(scheduleInDB==null)
        {
            List<Round> rounds = new ArrayList<>();
@@ -1528,7 +1528,7 @@ RoundDTO foundRound=schedule.getRounds().stream().filter(round-> round.getDate()
 
 
             //todo to naprawic bo chyba nie usuwa. Najlepiej zamienić na po id
-            redisScheduleService.deleteScheduleByName(new ScheduleNameDTO(updatedSchedule.getId(), updatedSchedule.getName()));
+            redisScheduleService.deleteScheduleByName(new ScheduleSettingsDTO(updatedSchedule.getId(), updatedSchedule.getName()));
 
 
             redisScheduleService.setSchedule(updatedScheduleDTO);
@@ -1602,11 +1602,9 @@ boolean warunek1=u1==u2;
 
 
     @Override
-    public boolean getOngoingStandardSchedule() {
+    public List<Schedule> getOngoingStandardSchedule() {
        List<Schedule>foundOngoingSchedules=  this.getScheduleByTypeAndStatus(ScheduleType.standardSchedule,ScheduleStatus.ONGOING);
 
-      if(foundOngoingSchedules.size()==0)
-        return false;
-      else return true;
+    return foundOngoingSchedules;
     }
 }
