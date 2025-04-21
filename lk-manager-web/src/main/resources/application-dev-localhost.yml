@@ -92,8 +92,9 @@ spring:
 
 
 
-  #  url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_local;trustServerCertificate=true;
-    url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_tests;trustServerCertificate=true;
+   # url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_local;trustServerCertificate=true;
+    #url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_tests;trustServerCertificate=true;
+    url: jdbc:sqlserver://localhost:1433;databaseName=testimport;trustServerCertificate=true;
     username: ligaklanowmz_
     password: ligaklanowmz_
 
@@ -106,7 +107,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    database-platform: org.hibernate.dialect.SQLServerDialect
+  #  database-platform: org.hibernate.dialect.SQLServerDialect
+    database-platform: org.hibernate.dialect.SQLServer2012Dialect
     database: sql_server
     show-sql: true
     logging.level.org.hibernate.SQL : DEBUG
@@ -116,6 +118,7 @@ spring:
 
     properties:
       hibernate:
+        id.new_generator_mappings: true
         current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
 
 

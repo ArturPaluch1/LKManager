@@ -11,7 +11,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Data
 @Service
@@ -22,12 +25,14 @@ public class RefreshSiteService  {
         i=0;
     }
 
-    @Scheduled(cron = "0 */12 * * * ?")// Co 12 minut
+    @Scheduled(cron = "0 */12 * * * ?", zone = "Europe/Warsaw")// Co 12 minut
     public void RefreshSite() {
 
 
+        ZonedDateTime warsawTime = ZonedDateTime.now(ZoneId.of("Europe/Warsaw"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z", Locale.ENGLISH);
 
-                System.out.println("Update site task performed on: " + new Date() + "\n" +
+        System.out.println("Update site task performed on: " + warsawTime.format(formatter) + "\n" +
                         "Thread's name: " + Thread.currentThread().getName());
                 if (i == 2147482999)
                     i = 0;
@@ -39,9 +44,13 @@ public class RefreshSiteService  {
 
 
                 } catch (MalformedURLException e) {
-                    //	throw new RuntimeException(e);
+                 //   throw new RuntimeException("Niepoprawny URL", e);
+                    System.err.println("Błąd odświeżania strony: " + e.getMessage());
+
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                   // throw new RuntimeException("Błąd połączenia", e);
+                    System.err.println("Błąd odświeżania strony: " + e.getMessage());
+
                 }
 
                 URLConnection urlConnection = null;

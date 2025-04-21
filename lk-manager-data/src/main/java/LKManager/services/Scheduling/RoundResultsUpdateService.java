@@ -5,8 +5,10 @@ import lombok.Data;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Data
 @Service
@@ -18,14 +20,17 @@ private final ResultsService resultsService;
 
     }
 
-    @Scheduled(cron = "0 55 10,11,18,19,20,21,23 ? * *" )
+    @Scheduled(cron = "0 55 10,11,18,19,20,21,23 ? * *" , zone = "Europe/Warsaw")
 
     public void updateResults() {
         try {
-            System.out.println("Update results task performed on: " + new Date() + "\n" + "Thread's name: " + Thread.currentThread().getName());
+            ZonedDateTime warsawTime = ZonedDateTime.now(ZoneId.of("Europe/Warsaw"));
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z", Locale.ENGLISH);
+
+            System.out.println("Update results task performed on: " + warsawTime.format(formatter) + "\n" + "Thread's name: " + Thread.currentThread().getName());
             // resultsService.updateRoundResultsForDate(LocalDate.now());
             //todo po testach zamienić na to wyżej
-            resultsService.updateRoundResultsForDate(LocalDate.now());
+            resultsService.updateRoundResultsForDate(warsawTime.toLocalDate());
 
 
         } catch (Exception e) {

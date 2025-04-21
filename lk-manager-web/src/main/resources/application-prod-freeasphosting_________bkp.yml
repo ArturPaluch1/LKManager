@@ -1,0 +1,87 @@
+spring.mail.host: smtp.poczta.onet.pl
+spring.mail.port: 465 #465
+protocol: smtps
+spring.mail.username: ${email-email}
+spring.mail.password: ${email-password}
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: false
+spring.mail.properties.mail.smtp.starttls.required: false
+
+spring.mail.properties.mail.smtp.auth.mechanisms: LOGIN
+spring.mail.properties.mail.smtp.ssl.enable: true
+spring.mail.properties.mail.debug: false
+
+spring.application.server: ${applicationServer}
+spring.application.email: ${email-email}
+mailjet:
+  api-key: ${mailjetApiKey}
+  apiSecretKey: ${mailjetSecretKey}
+
+encrypt:
+  AES_SECRET_KEY: ${AES_SECRET_KEY}
+  AES_INIT_VECTOR: ${AES_INIT_VECTOR}
+
+spring:
+  # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
+  redis:
+    url: ${redisLocalhost_Url}
+
+    # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
+
+  # SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
+
+  config:
+    import: optional:file:.env[.properties]
+  spring.jpa.show-sql: false
+
+
+
+
+
+  datasource:
+
+
+
+    url: jdbc:sqlserver://sql.bsite.net\MSSQL2016;encrypt=true;trustServerCertificate=true;
+
+    databaseName: ${databaseName-freeasphosting_bkp}
+    username: ${dbUsername-freeasphosting_bkp}
+    password: ${dbPassword-freeasphosting_bkp}
+
+
+
+
+
+
+  jpa:
+
+
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.SQLServer2012Dialect
+  #  database-platform: org.hibernate.dialect.SQLServerDialect
+    database: sql_server
+    show-sql: false
+    logging.level.org.hibernate.SQL : INFO
+    logging.level.org.springframework.web: INFO
+
+
+
+    #jpa:
+    # hibernate:
+    #   ddl-auto: validate
+    #  database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    #  database: mysql
+    # show-sql: true
+    #  logging.level.org.hibernate.SQL : DEBUG
+    #  logging.level.org.springframework.web: DEBUG
+
+
+
+
+
+    #org:
+    # hibernate:
+    #  dialect:
+    #   MySQLDialect:

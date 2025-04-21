@@ -1,0 +1,107 @@
+spring.mail.host: poczta.interia.pl
+spring.mail.port: 465
+spring.mail.username: ${email-email}
+spring.mail.password: ${email-password}
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: false
+spring.mail.properties.mail.smtp.starttls.required: false
+
+spring.mail.properties.mail.debug: true
+  #   host: smtp.office365.com
+
+  #   host: smtp-mail.outlook.com
+  # host: smtp.interia.pl
+spring:
+  mail:
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
+  # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
+  redis:
+    url: ${redisLocalhost_Url}
+    # Redis | Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |   Redis |
+
+# SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
+
+
+
+
+
+
+     # mail.smtp.ssl.trust: smtp.interia.pl
+    #  mail.smtp.ssl.trust: smtp.office365.com
+
+
+
+    #   mail:
+   #     debug: true
+   #     smtp:
+   #       auth: true
+   #       starttls:
+   #         enable: true
+    #        required: true
+
+
+  config:
+    import: optional:file:.env[.properties]
+  spring.jpa.show-sql: true
+
+  datasource:
+
+
+  #dbUrl1=jdbc:mysql://localhost:3306/LKM_prod
+  #  url: jdbc:sqlserver://LOCALHOST:1433;encrypt=true;trustServerCertificate=true;
+    url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_local;trustServerCertificate=true;
+  #  databaseName: ligaklanowmz_
+    username: ligaklanowmz_
+    password: ligaklanowmz_
+
+
+ #   url: jdbc:sqlserver://localhost\SQLEXPRESS;encrypt=true;trustServerCertificate=true;
+  #  databaseName: ${databaseName-freeasphosting}
+  #  username: ${dbUsername-freeasphosting}
+  #  password: ${dbPassword-freeasphosting}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    database-platform: org.hibernate.dialect.SQLServerDialect
+    database: sql_server
+    show-sql: true
+    logging.level.org.hibernate.SQL : DEBUG
+    logging.level.org.springframework.web: DEBUG
+
+
+
+    properties:
+      hibernate:
+        current_session_context_class: org.springframework.orm.hibernate5.SpringSessionContext
+
+
+    #jpa:
+    # hibernate:
+    #   ddl-auto: validate
+    #  database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+    #  database: mysql
+    # show-sql: true
+    #  logging.level.org.hibernate.SQL : DEBUG
+    #  logging.level.org.springframework.web: DEBUG
+
+
+
+
+
+    #org:
+    # hibernate:
+    #  dialect:
+    #   MySQLDialect:
+# SQL Database | SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database |  SQL Database
+
+
+
+
+
+

@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.collection.internal.PersistentBag;
 
 import javax.persistence.Table;
@@ -32,12 +31,21 @@ public class Schedule implements Serializable  {
 
 
 
-    @Id
+ /*   @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "terminarz_id")
-    private long id;
+    private long id;*/
+   @Id
+   @SequenceGenerator(
+           name = "scheduleId_seq",
+           sequenceName = "lkm_dev.scheduleid_seq",
+           allocationSize = 1
+   )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "scheduleId_seq")
 
+    @Column(name = "terminarz_id")
+    private long id;
     @Column(name = "nazwa")
     private String name;
 

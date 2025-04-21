@@ -222,22 +222,23 @@ const alertElement = document.getElementById("seasonEndAlert");
 
 
     const today = new Date();
+today.setHours(0, 0, 0, 0);
 
-      const endDateString = alertElement.getAttribute("data-end-date");
+      const endDateString = alertElement.getAttribute("data-ongoingSchedule-end-date");
 
      const endDate  =new Date( endDateString);
+     endDate.setHours(0, 0, 0, 0);
+
 const endDateMinus15= new Date(endDate);
  endDateMinus15.setDate(endDateMinus15.getDate() - 15);
-
+endDateMinus15.setHours(0, 0, 0, 0);
 
 const leagueParticipation = alertElement.getAttribute("data-league-participation");
 
-
-
-
+   //  console.log(today > endDateMinus15 && today<= endDate );
     if (today > endDateMinus15 && today<= endDate ) {
 
-     console.log(leagueParticipation);
+
 
 
 

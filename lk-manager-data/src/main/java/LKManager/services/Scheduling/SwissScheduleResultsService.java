@@ -20,7 +20,7 @@ public class SwissScheduleResultsService {
 private final ScheduleService scheduleService;
 private final TableService tableService;
 
- @Scheduled(cron = "0 55 0 * * *")// 0:55 codziennie
+ @Scheduled(cron = "0 55 0 * * *", zone = "Europe/Warsaw")// 0:55 codziennie
 public boolean calculateNewRound()
 {
 

@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Table;
 import javax.persistence.*;
@@ -36,12 +35,24 @@ public class Round implements Serializable {
     public void setId(long id) {
         this.id = id;
     }
-
+/*
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "runda_id")
     private long id;
+*/
+@SequenceGenerator(
+        name = "roundid_seq",
+        sequenceName = "lkm_dev.roundid_seq",
+        allocationSize = 1
+)
+@Id
+@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "roundid_seq")
+
+@Column(name = "runda_id")
+private long id;
+
 
   //  @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 @ManyToOne( cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE})

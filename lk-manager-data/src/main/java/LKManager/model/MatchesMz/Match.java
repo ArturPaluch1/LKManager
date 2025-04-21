@@ -4,7 +4,6 @@ import LKManager.model.Round;
 import LKManager.model.UserMZ.MZUserData;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.*;
@@ -29,14 +28,26 @@ public class Match implements Serializable {
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "runda")
     private Round round;
-
+/*
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "mecz_id")
     private Long id;
+*/
+    @SequenceGenerator(
+            name = "matchid_seq",
+            sequenceName = "lkm_dev.matchid_seq",
+            allocationSize = 1
+    )
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "matchid_seq")
+    @Column(name = "mecz_id")
+    private Long id;
 
-      @Transient
+
+
+    @Transient
 /*    @Column(name = "data", updatable = false, insertable = false)*/
 
     private String date;

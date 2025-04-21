@@ -13,8 +13,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
+
 @Data
 @Service
 public class RoundMatchesUpdateService {
@@ -35,11 +39,14 @@ private final TableService tableService;
     }
 
 
-    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(cron = "0 0 1 * * ?", zone = "Europe/Warsaw")
             public void updateRoundMatches() {
-                System.out.println("Update round matches task performed on: " + new Date()  + "\n" +"Thread's name: " + Thread.currentThread().getName());
+        ZonedDateTime warsawTime = ZonedDateTime.now(ZoneId.of("Europe/Warsaw"));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z", Locale.ENGLISH);
 
-               List<RoundDTO> foundRounds= roundService.getRoundsByDate(LocalDate.now().plusDays(6));
+        System.out.println("Update round matches task performed on: " + warsawTime.format(formatter) + "\n" +"Thread's name: " + Thread.currentThread().getName());
+
+               List<RoundDTO> foundRounds= roundService.getRoundsByDate(warsawTime.toLocalDate().plusDays(6));
                if(foundRounds!=null)
                {
                    foundRounds.removeIf(r->r.getMatches().size()!=0);

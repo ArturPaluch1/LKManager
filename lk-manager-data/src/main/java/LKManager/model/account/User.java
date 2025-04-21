@@ -24,10 +24,19 @@ import java.util.Collections;
 @FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 @Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
 @SQLDelete(sql = "UPDATE users SET deleted = true WHERE user_id=?")
+
+
 public class User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(
+            name = "userid_seq",
+            sequenceName = "lkm_dev.userid_seq",
+            allocationSize = 1
+    )
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userid_seq")
+
     @Column(name = "user_id")
             private Long Id;
 @Column(name = "username")

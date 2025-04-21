@@ -45,22 +45,29 @@ spring:
 
     url: jdbc:sqlserver://sql.bsite.net\MSSQL2016;encrypt=true;trustServerCertificate=true;
 
-    databaseName: ${databaseName-freeasphosting}
-    username: ${dbUsername-freeasphosting}
-    password: ${dbPassword-freeasphosting}
+    databaseName: ${databaseName-freeasphosting_seq}
+    username: ${dbUsername-freeasphosting_seq}
+    password: ${dbPassword-freeasphosting_seq}
+
 
 
 
 
 
   jpa:
+
+
     hibernate:
       ddl-auto: validate
-    database-platform: org.hibernate.dialect.SQLServerDialect
+    database-platform: org.hibernate.dialect.SQLServer2012Dialect
+  #  database-platform: org.hibernate.dialect.SQLServerDialect
     database: sql_server
     show-sql: false
     logging.level.org.hibernate.SQL : INFO
     logging.level.org.springframework.web: INFO
+
+
+
     #jpa:
     # hibernate:
     #   ddl-auto: validate
