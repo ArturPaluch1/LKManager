@@ -191,7 +191,7 @@ public String leaveLeague()
 
 
 
-              redirectAttributes.addFlashAttribute("emailSuccessMessage", "Do dokończenia aktywacji wejdź w link w mailu. (Prawdopodobnie mail trafi do spamu...)");
+              redirectAttributes.addFlashAttribute("checkMailboxMessage", "Do dokończenia aktywacji wejdź w link w mailu. (Prawdopodobnie mail trafi do spamu...)");
           }
           catch (Exception e)
           {

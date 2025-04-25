@@ -90,8 +90,8 @@
                         <div th:if="${emailErrorMessage}" class="alert alert-warning col-md-12  m-1 justify-content-center">
                             <span th:text="${emailErrorMessage}"></span>
                         </div>
-                        <div th:if="${emailSuccessMessage}" class="alert alert-info col-md-12  m-1 justify-content-center ">
-                            <span th:text="${emailSuccessMessage}"></span>
+                        <div th:if="${checkMailboxMessage}" class="alert alert-info col-md-12  m-1 justify-content-center ">
+                            <span th:text="${checkMailboxMessage}"></span>
                         </div>
                         <div th:if="${message}" class="alert alert-success col-md-12  m-1 justify-content-center ">
                             <p th:text="${message}"></p>
@@ -120,8 +120,8 @@
 
 
 
-                            <div th:if="${emailSuccessMessage}" class="alert alert-info col-md-12 m-1">
-                                <span th:text="${emailSuccessMessage}"></span>
+                            <div th:if="${checkMailboxMessage}" class="alert alert-info col-md-12 m-1">
+                                <span th:text="${checkMailboxMessage}"></span>
                             </div>
 
 
