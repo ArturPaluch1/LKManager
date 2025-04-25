@@ -122,8 +122,12 @@ System.out.println("found users in redis");
     //to sie nigdy nie wykonuje bo zawsze dodawany jest tylko jeden gracz na raz
  /*  List< UserData> AddUsers(List<String> usersToAdd)throws AddUsersUserDatabaseAccessFailureException;*/
 
+   Optional<String> getUserEmail(String username);
 
 
+   User getEntityByUsername(String username);
+
+    boolean setPassword(UserDataDTO user, String password);
 }
 
 

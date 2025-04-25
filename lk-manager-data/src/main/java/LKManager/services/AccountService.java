@@ -2,6 +2,7 @@ package LKManager.services;
 
 import LKManager.model.UserMZ.MZUserData;
 import LKManager.model.account.SignUpForm;
+import com.mailjet.client.errors.MailjetException;
 
 public interface AccountService {
 
@@ -70,6 +71,10 @@ public interface AccountService {
                return hashedPassword;
            }*/
 
-     String generateActivationToken(String userName);
+   //  String generateActivationToken(String userName);
     /*    boolean sendPasswordToUser(UserData user);*/
+
+    boolean checkUserAndSendConfirmationEmail(String username, String email) throws Exception;
+
+
 }

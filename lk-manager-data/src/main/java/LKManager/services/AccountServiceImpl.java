@@ -1,20 +1,21 @@
 package LKManager.services;
 
+import LKManager.Security.EmailEncryption;
 import LKManager.model.UserMZ.MZUserData;
 import LKManager.model.account.SignUpForm;
 import LKManager.services.RedisService.RedisUserService;
 import lombok.Data;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Service
 @Data
 public class AccountServiceImpl implements AccountService{
    private final UserService userService ;
-   private final PasswordEncoder passwordEncoder;
+   private final EmailEncryption emailEncryption;
 private final RedisUserService redisUserService;
+private final EmailService emailService;
     @Override
     public MZUserData createAccount(SignUpForm signUpForm) {
         MZUserData user = userService.getMZUserDataByUsername(signUpForm.getUsername());
@@ -30,12 +31,7 @@ private final RedisUserService redisUserService;
     }
 
 
-    public String generateActivationToken(String user) {
-        String token = UUID.randomUUID().toString();
-        redisUserService.setActivationToken(token,user);
 
-        return token;
-    }
  /*   private String generatePassword()
     {
         final String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -99,6 +95,23 @@ private final RedisUserService redisUserService;
         return hashedPassword;
     }*/
 
+    @Override
+    public boolean checkUserAndSendConfirmationEmail(String username, String email) throws Exception {
+        Optional<String> userEmail = userService.getUserEmail(username);
+        if (userEmail.isPresent()) {
+            if(!userEmail.get().equals("")&& emailEncryption.decrypt(userEmail.get()).equals(email))
+            {
+                if(emailService.sendPasswordChangeEmail(username,email))
+                {
+                    return true;
+                }
+                else return false;
+            }
+            else return false;
 
+        } else
 
+            return false;
+
+    }
 }

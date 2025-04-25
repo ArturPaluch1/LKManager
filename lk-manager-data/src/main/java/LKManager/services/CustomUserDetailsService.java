@@ -18,13 +18,13 @@ import java.util.Collections;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserDAO UserDAO;
+    private UserDAO userDAO;
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         System.out.println("Loading user by username: " + username);
 
-        User user = UserDAO.findUserByName(username);
+        User user = userDAO.findUserByName(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found with username: " + username);
         }

@@ -92,9 +92,10 @@ spring:
 
 
 
-   # url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_local;trustServerCertificate=true;
-    #url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_tests;trustServerCertificate=true;
-    url: jdbc:sqlserver://localhost:1433;databaseName=testimport;trustServerCertificate=true;
+  #  url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_local;trustServerCertificate=true;
+    url: jdbc:sqlserver://localhost:1433;databaseName=ligaklanowmz_tests;trustServerCertificate=true;
+ #\/tu jest backup prod
+  #  url: jdbc:sqlserver://localhost:1433;databaseName=testimport;trustServerCertificate=true;
     username: ligaklanowmz_
     password: ligaklanowmz_
 

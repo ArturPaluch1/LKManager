@@ -23,6 +23,7 @@
         <div th:if="${success}" class="alert alert-success w-25 justify-content-center"  role="alert">
             <span th:text="${success}"></span>
         </div>
+
         <form th:object="${logInForm}" method="post" th:action="@{/public/logIn}"class="needs-validation container text-left ">
             <input type="hidden" name="_csrf" th:value="${_csrf.token}" th:name="${_csrf.parameterName}">
             <div th:if="${errorMessage}">
@@ -33,10 +34,29 @@
             <label class="form-label" > Password: </label> <input th:field="*{password}" type="password" class="form-control  w-25" >
             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span><br>
 
-            <button  class="btn btn-primary m-1"  type="submit">Zaloguj</button>
+            <label>
+                Zapamiętaj mnie:
+                <input type="checkbox" name="remember-me" >
+            </label>
+            <br>
+
+            <button  class="btn btn-primary m-1 mr-4"  type="submit">Zaloguj</button>
+
+            <a href="/public/forgot-password" class="btn btn-link m-1">Zapomniałem hasła</a>
+
+
+
+
+
+
         </form>
+
     </div>
 </div>
 </div>
+
+
+
+
 </body>
 </html>

@@ -15,7 +15,7 @@ import LKManager.model.account.User;
 import LKManager.model.account.UserSettingsFormModel;
 import LKManager.services.RedisService.RedisScheduleService;
 import LKManager.services.RedisService.RedisUserService;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Data;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-
+@Data
 
 //@AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -49,21 +49,9 @@ private final PasswordEncoder passwordEncoder;
 private final GsonService gsonService;
 private final RedisScheduleService redisScheduleService;
 private final EntityManager entityManager;
-    private final String aesSecretKey;
-    private final String  aesInitVector;
+ private final EmailEncryption emailEncryption;
 
-    public UserServiceImpl(UserDAO userDAO, MZUserService mzUserService, RedisUserService redisUserService, LeagueParticipantsDAO leagueParticipantsDAO, PasswordEncoder passwordEncoder, GsonService gsonService, RedisScheduleService redisScheduleService, EntityManager entityManager,  @Value("${encrypt.AES_SECRET_KEY}")  String aesSecretKey, @Value("${encrypt.AES_INIT_VECTOR}")  String aesInitVector) {
-        this.userDAO = userDAO;
-        this.mzUserService = mzUserService;
-        this.redisUserService = redisUserService;
-        this.leagueParticipantsDAO = leagueParticipantsDAO;
-        this.passwordEncoder = passwordEncoder;
-        this.gsonService = gsonService;
-        this.redisScheduleService = redisScheduleService;
-        this.entityManager = entityManager;
-        this.aesSecretKey = aesSecretKey;
-        this.aesInitVector = aesInitVector;
-    }
+
 
     @Override
     @Transactional
@@ -263,7 +251,7 @@ else
     public String getUsersEmail(Long id) throws Exception {
         String email= userDAO.getUserEmail(id);
      if(email!=null)
-        return EmailEncryption.decrypt(email,aesSecretKey,aesInitVector);
+        return emailEncryption.decrypt(email);
      else return null;
     }
 
@@ -1237,6 +1225,36 @@ return userFromRedis;
         redisUserService.addAllUsers(users,User.class,true,true);
         redisUserService.addAllUsers(users,User.class,true,false);
     }
+
+
+   public Optional<String> getUserEmail(String username)
+    {
+        return userDAO.getUserEmail(username);
+    }
+
+    @Override
+    public User getEntityByUsername(String username) {
+      return  userDAO.findUserByName(username);
+
+    }
+
+    @Override
+    public boolean setPassword(UserDataDTO user, String password) {
+     Optional<User>userInDB =userDAO.getUserById(user.getUserId());
+
+       if(userInDB.isPresent())
+       {
+           userInDB.get().setPassword(passwordEncoder.encode(password));
+           this.addUser(userInDB.get());
+           return true;
+       }
+       else
+       {
+           return false;
+       }
+
+    }
+
 }
 
 

@@ -39,7 +39,7 @@ public class User implements UserDetails {
 
     @Column(name = "user_id")
             private Long Id;
-@Column(name = "username")
+@Column(name = "username",unique = true)
 private String username;
 
     @Enumerated(EnumType.ORDINAL)

@@ -12,36 +12,211 @@
 <body>
 <div th:replace="~{public/navbar}"/>
 
+<div class="container">
+    <div class="row">
+        <div class="col-md-2  m-1"> <b>Konto:</b></div>
+        <div class="col-md-4 m-1"></div>
+        <div class="col-md-5 m-1"></div>
+    </div>
+    <div class="row">
+        <div class=" col-md-1 m-1">
+            <label class="form-label ">Nazwa konta</label>
+        </div>
+            <div class="col-md-6 m-1">
+                <label class="form-label " th:text="${model.user.username}"> username here</label>
+            </div>
 
 
-<div class="container-lg my-1 " th:object="${model}" >
+    </div>
+<div class="row">
+
+        <form method="post" th:action="@{/userSettings/setMZUsername}">
+            <div th:if="${ #strings.isEmpty(model.user.MZUsername)}" >
+                <div class="row">
+                    <div class="bg-warning col-md-7 m-1">
+                <span  class="  bg-warning col-md-12 m-1"  >Aby dołączyć do ligi musisz podać username twojego konta w MZ</span><br>
+                    </div>
+
+                </div>
+                <div class="row ">
+                <div class="col-md-1 m-1  ">
+                    <label class="form-label  " for="username">Nick MZ</label>
+                </div>
+                <div class="col-md-4 m-1 ">
+                    <input  class="form-control align-bottom"  name="username" id="username">
+                </div>
+                <div class="col-md-4 m-1  ">
+                    <button   class="btn btn-primary w-75 "  for="username" th:if="${ #strings.isEmpty(model.user.MZUsername)}" >Ustaw</button>
+                </div>
+            </div>
+            </div>
+
+            <div th:if="${not #strings.isEmpty(model.user.MZUsername)}" >
+                <label class="form-label col-md-1 m-1" >Nick MZ</label>
+                <label class="form-label col-md-4 m-1" th:text="${model.user.MZUsername}"> MZUsername
+                    here</label>
+                <div class="col-md-4 m-1"></div>
+            </div>
+        </form>
+</div>
+    <div class="row">
+            <form  method="post" th:action="@{/setEmail}" th:object="${model}">
+                <input type="hidden" name="${_csrf.parameterName}"  value="${_csrf.token}"/>
+
+
+
+
+                <div class="row">
+                    <div th:if="${model.userEmail==null}"  class="bg-warning col-md-7 m-1">
+                        <span  class="bg-warning col-md-12 m-1" >Nie masz ustawionego maila. Jeśli zapomnisz hasła, nie będziesz miał opcji przypomnienia.</span>
+
+                    </div>
+                </div>
+                <div   th:if="${ model.userEmail==null }" class="row">
+                    <div th:if="${checkMailboxMessage}" class="alert alert-info col-md-12  m-1 justify-content-center ">
+                        <span th:text="${checkMailboxMessage}"></span>
+                    </div>
+                    <div class=" col-md-1 m-1">
+                        <label class="form-label" for="missingEmail">Email</label>
+                    </div>
+                    <div class="col-md-4  m-1 ">
+                        <input class="form-control" id="missingEmail" type="email" th:field="*{userEmail}"  >
+                    </div>
+                    <div class="col-md-4  m-1">
+                        <button class=" btn btn-primary w-75"  th:if="${#strings.isEmpty(model.userEmail)}">Ustaw</button>
+                    </div>
+                </div>
+                    <div   th:if="${ model.userEmail!=null }" id="email" >
+                        <div th:if="${emailErrorMessage}" class="alert alert-warning col-md-12  m-1 justify-content-center">
+                            <span th:text="${emailErrorMessage}"></span>
+                        </div>
+                        <div th:if="${emailSuccessMessage}" class="alert alert-info col-md-12  m-1 justify-content-center ">
+                            <span th:text="${emailSuccessMessage}"></span>
+                        </div>
+                        <div th:if="${message}" class="alert alert-success col-md-12  m-1 justify-content-center ">
+                            <p th:text="${message}"></p>
+                        </div>
+                        <div th:if="${error}" class="alert alert-warning col-md-12  m-1 justify-content-center">
+                            <p th:text="${error}"></p>
+                        </div>
+
+                       <div class="row">
+                        <div class="col-md-1 m-1">
+
+                        <label class="form-label " >Email</label>
+                        </div>
+                        <div class="col-md-4 m-1">
+                        <label class="form-label " th:text="${model.userEmail}"> email here</label>
+                    </div>
+                        <div class="col-md-4 m-1">
+                        <button class="btn btn-primary w-75" th:if="${not #strings.isEmpty(model.userEmail)}" type="button" onclick="changeEmail()">Zmień</button>
+                        <!-- changing email-->
+                        <!-- email is null-->
+                    </div>
+                    </div>
+                    </div>
+
+                    <div   id="actualizationForm"  th:if="${ model.userEmail!=null}" style="display: none;" >
+
+
+
+                            <div th:if="${emailSuccessMessage}" class="alert alert-info col-md-12 m-1">
+                                <span th:text="${emailSuccessMessage}"></span>
+                            </div>
+
+
+                        <div class="row">
+                        <div class="m-1 col-md-1 "><label class="form-label " for="updateEmail">Email</label>
+                        </div>
+                        <div class="m-1 col-md-4"><input class="form-control   form-control" type="email" id="updateEmail" th:field="*{userEmail}" >
+                        </div>
+                        <div class="m-1 col-md-3"> <button class="btn btn-primary  w-75 " th:if="${not #strings.isEmpty(model.userEmail)}" >Aktualizuj</button>
+                        </div>
+                        <div class="m-1 col-md-3">  <button class="btn btn-primary  w-75 " th:if="${not #strings.isEmpty(model.userEmail)}" type="button" onclick="cancel()">Anuluj</button>
+                        </div>
+                    </div>
+
+            </div>
+
+
+
+            </form>
+    </div>
+
+
+
+
+
+
+
+
+        <div th:if="${passwordChangeSuccess}" class="alert alert-success col-md-3  m-1 justify-content-center"  role="alert">
+            <span th:text="${passwordChangeSuccess}"></span>
+        </div>
+        <div th:if="${passwordChangeError}" class="alert alert-warning w-25 col-md-3  m-1 justify-content-center"  role="alert">
+            <span th:text="${passwordChangeError}"></span>
+        </div>
+
+
+
+        <form  th:object="${model}"  method="post" th:action="@{/userSettings/setPassword}"  class="needs-validation  " novalidate>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <p th:if="${passwordChangePermissionMessage}"
+               th:text="${passwordChangePermissionMessage}"
+               class="alert alert-success"
+               role="alert"></p>  <div class="row">
+
+
+
+                <div class="col-md-1 m-1 ">
+
+            <label for="password" class="form-label " >Hasło</label>
+
+</div>
+                <div class="col-md-4 m-1">
+            <input id="password" type="password"
+                   th:field="*{password}"
+                   class="form-control  "
+                   th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
+                   onfocus="this.select();">
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('password')}"
+                 th:errors="*{password}" >
+
+            </div>
+                </div>
+
+                <div class="col-md-4 m-1 ">
+            <button class="  btn btn-primary w-75"  >Zmień</button>
+                </div>
+                </div>
+
+
+
+
+
+        </form>
+    </div>
+    </div>
+
+
+<!--<div class="container-lg my-1 " th:object="${model}" >
     <div th:if="${message}" class="alert alert-warning w-25 justify-content-center"  role="alert">
         <span th:text="${message}"></span>
     </div>
 
     <div class="row">
-        <b>Konto:</b>
 
-        <label class="form-label m-1 col-md-2 ">Nazwa konta</label><label class="form-label m-1 col-md-3" th:text="${model.user.username}"> username here</label><label
-            class="col-md-4"></label>
+
+
+        <label class="col-md-4"></label>
     </div>
 
     <div class="row">
-<form method="post" th:action="@{/userSettings/setMZUsername}">
-    <div th:if="${ #strings.isEmpty(model.user.MZUsername)}">
-        <label class="form-label m-1 col-md-2" >Nick MZ</label>
 
 
-    <input  class="col-md-3 m-1"  name="username" >
-        <button   class="btn btn-primary m-1 col-md-1"   th:if="${ #strings.isEmpty(model.user.MZUsername)}" >Ustaw</button>
-        <span >Aby dołączyć do ligi musisz podać username twojego konta w MZ</span>
-    </div>
 
-    <div th:if="${not #strings.isEmpty(model.user.MZUsername)}" >
-        <label class="form-label m-1 col-md-2" >Nick MZ</label>
-        <label class="form-label m-1 col-md-3" th:text="${model.user.MZUsername}"> MZUsername
-            here</label>
-    </div>
+
 
 </form>
 
@@ -51,53 +226,16 @@
     <div class="row">
 
 
-        <form  method="post" th:action="@{/setEmail}" th:object="${model}">
-            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
-
-            <!-- email not null-->
-            <div th:if="${emailMessage}" class="alert alert-info">
-                <span th:text="${emailMessage}"></span>
-            </div>
-            <div th:if="${model.userEmail==null}"  >
-                <span  class="bg-warning" >Nie masz ustawionego maila. Jeśli zapomnisz hasła, nie będziesz miał opcji przypomnienia.</span>
-            </div>
-<div  th:if="${ model.userEmail!=null }" id="email">
-    <label class="form-label m-1 col-md-2">Email</label>
-    <label class="form-label m-1 col-md-3" th:text="${model.userEmail}"> email here</label>
-
-    <button class="btn btn-primary m-1 col-md-1 my-1" th:if="${not #strings.isEmpty(model.userEmail)}" type="button" onclick="changeEmail()">Zmień</button>
-    <!-- changing email-->
-    <!-- email is null-->
-
-</div>
-            <div   id="actualizationForm"  th:if="${ model.userEmail!=null}" style="display: none;">
-                <label class="form-label m-1 col-md-2">Email</label>
-                <input class="form-label m-1 col-md-2" type="email" th:field="*{userEmail}" >
-                <button class="btn btn-primary m-1 col-md-2 my-1" th:if="${not #strings.isEmpty(model.userEmail)}" >Aktualizuj</button>
-                <button class="btn btn-primary m-1 col-md-2 my-1" th:if="${not #strings.isEmpty(model.userEmail)}" type="button" onclick="cancel()">Anuluj</button>
-            </div>
-            <div   th:if="${ model.userEmail==null }">
-                <label class="form-label m-1 col-md-2">Email</label>
-                <input class="col-md-3" type="email" th:field="*{userEmail}"  >
-                <button class="col-md-1 my-1  btn btn-primary m-1"  th:if="${#strings.isEmpty(model.userEmail)}">Ustaw</button>
-
-            </div>
-
-
-
-
-
-        </form>
-
-
-
 
         <br>
     </div>
-</div>
 
-</div>
+
+
+
+</div>-->
+
+
 <br>
 
     <div class="container-lg my-1 "  th:if="${
@@ -134,12 +272,7 @@
     <!--     <input type="checkbox" class="col-md-1 my-1">-->
 <br>
 <!-- todo dodać obsługę klasy success i error np kolor czerwony i zelony-->
-    <div th:if="${message}" class="success">
-        <p th:text="${message}"></p>
-    </div>
-    <div th:if="${error}" class="error">
-        <p th:text="${error}"></p>
-    </div>
+
     <div class="row" name="league_title">
         <label class="form-label m-1 col-md-1 my-1 "  ></label>
 
@@ -174,12 +307,12 @@
             </div>
 
 
-       <form class="col-md-2 my-1" th:action="@{/userSettings/joinLeague}" method="post" th:if="${model.user.leagueParticipation == null or model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).UNSIGNED  }">
+       <form class="col-md-3 my-1" th:action="@{/userSettings/joinLeague}" method="post" th:if="${model.user.leagueParticipation == null or model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).UNSIGNED  }">
 
-        <button   class="btn btn-primary m-1"  type="submit">Zapisz się</button>
+        <button   class="btn btn-primary m-1 w-75 "  type="submit">Zapisz się</button>
        </form>
-        <form class="col-md-2 my-1"  th:action="@{/userSettings/leaveLeague}" method="post"  th:if="${ model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SIGNED or model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SUBBED}">
-        <button class="btn btn-primary m-1"  >Wypisz się</button>
+        <form class="col-md-3 my-1"  th:action="@{/userSettings/leaveLeague}" method="post"  th:if="${ model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SIGNED or model.user.leagueParticipation==T(LKManager.model.UserMZ.LeagueParticipation).SUBBED}">
+        <button class="btn btn-primary m-1 w-75"  >Wypisz się</button>
         </form>
     </div>
     <br>
@@ -215,6 +348,16 @@ let emaildiv=document.getElementById("email")
    emaildiv.style.display = "block";
   //console.log(hiddendiv)
 }
+
+
+
+
+//hiding password input dots on click
+ const passwordInput = document.getElementById("password");
+    passwordInput.addEventListener("click", function() {
+        this.value="";
+    });
+
 
 </script>
 </body>

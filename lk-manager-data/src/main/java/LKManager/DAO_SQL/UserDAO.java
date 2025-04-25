@@ -53,4 +53,7 @@ public interface UserDAO extends JpaRepository<User, Long>, CustomUserDAO, Custo
     Page<User> findByLeagueParticipation(LeagueParticipation leagueParticipation, Pageable pageable);
  @Query("select u.email from User u where u.Id=:id")
     String getUserEmail(Long id);
+
+    @Query("select u.email from User u where u.username=:username")
+    Optional<String> getUserEmail(String username);
 }

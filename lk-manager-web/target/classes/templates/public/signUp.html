@@ -25,11 +25,11 @@
     <label for="username"  class="form-label  w-25" > Username: </label> <input id="username" class="form-control  w-25" th:field="*{username}"  th:classappend="${#fields.hasErrors('username')}? 'is-invalid' : ''" required >
     <span class="invalid-feedback" th:if="${#fields.hasErrors('username')}"  th:errors="*{username}" ></span>
     <br>
-    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color:red;"></span>
-    <label  for="password"  class="form-label  w-25"> Password: </label> <input id="password" class="form-control  w-25" type="password" th:field="*{password}">
+    <label  for="password"  class="form-label  w-25"> Password: </label>
+    <input id="password" class="form-control  w-25" type="password" th:field="*{password}"  th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''">
     <span class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span><br>
 
-    <label for="email"  class="form-label  w-25"> Email: </label> <input id="email" class="form-control  w-50" th:field="*{email}" type="email" placeholder="(opcjonalnie - do odzyskiwania hasła)">
+    <label for="email"  class="form-label  w-25"> Email: </label> <input id="email" class="form-control  w-50" th:field="*{email}" type="email" placeholder="(opcjonalnie - do odzyskiwania hasła)" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''">
     <span class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" ></span><br>
     <input type="hidden" name="_csrf" th:value="${_csrf.token}" th:name="${_csrf.parameterName}">
 

@@ -1,6 +1,7 @@
 package LKManager.Security;
 
 import LKManager.services.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,6 +24,8 @@ import java.io.IOException;
 
 public class SpringSecurityConfig   {
 private final UserService customUserDetailsService;
+    @Value("${spring.security.rememberme.key}")
+    private  String rememberMeKey;
 private final  CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler= new CustomAuthenticationSuccessHandler();
 
     public SpringSecurityConfig(UserService customUserDetailsService) {
@@ -70,12 +73,12 @@ private final  CustomAuthenticationSuccessHandler customAuthenticationSuccessHan
                 .and()
                 .authorizeRequests()
                // .antMatchers("/**").permitAll()
-                .antMatchers("/js/**", "/css/**","/webjars/**","/fonts/**","/images/**").permitAll()
-                .antMatchers("/","/index", "/public/**","/confirmEmail").permitAll()
+                    .antMatchers("/js/**", "/css/**","/webjars/**","/fonts/**","/images/**").permitAll()
+                    .antMatchers("/","/index", "/public/**","/confirmEmail","/passwordChangeConfirmEmail").permitAll()
 
 
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                    .antMatchers("/admin/**").hasRole("ADMIN")
+                    .anyRequest().authenticated()
                 .and()
                 .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())//.ignoringAntMatchers("/api/**")
                .and()
@@ -86,21 +89,29 @@ private final  CustomAuthenticationSuccessHandler customAuthenticationSuccessHan
 
              //   .loginPage("/").permitAll()
                 .loginPage("/public/logIn").permitAll()
-                .successHandler(customAuthenticationSuccessHandler)
+                    .successHandler(customAuthenticationSuccessHandler)
              //   .defaultSuccessUrl("/public/LK/schedule/schedule", true)
              //   .defaultSuccessUrl("/admin/LK/schedule/schedule", true)
 
-                .failureUrl("/public/logIn?error=true")
+                    .failureUrl("/public/logIn?error=true")
                 .and()
                 .logout()
-                .logoutUrl("/logout") // URL do wylogowania
-                .logoutSuccessUrl("/public/logIn?logout=true") // przekierowanie po wylogowaniu
-                .invalidateHttpSession(true) // unieważnia sesję
-                .deleteCookies("JSESSIONID") // usuwa cookie sesji
-                .permitAll()
+                    .logoutUrl("/logout") // URL do wylogowania
+                    .logoutSuccessUrl("/public/logIn?logout=true") // przekierowanie po wylogowaniu
+                    .invalidateHttpSession(true) // unieważnia sesję
+                    .deleteCookies("JSESSIONID") // usuwa cookie sesji
+                    .permitAll()
                 .and()
+                .rememberMe()
+                    .userDetailsService(customUserDetailsService)
+                    .rememberMeParameter("remember-me")
+                    .key(rememberMeKey)
+                    .tokenValiditySeconds(1296000)// 2 weeks and one day
 
+                .and()
                 .userDetailsService(customUserDetailsService);
+
+
 
         return http.build();
     }

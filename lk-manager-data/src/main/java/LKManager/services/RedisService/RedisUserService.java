@@ -54,7 +54,7 @@ public boolean setActivationToken(String token, String username )
         return false;
     }
 }
-public Long getActivationTokenUsername(String token)
+public Long getActivationTokenUserId(String token)
 {
     try{
 
@@ -68,6 +68,20 @@ public Long getActivationTokenUsername(String token)
         return null;
     }
 }
+    public String getActivationTokenUsername(String token)
+    {
+        try{
+
+
+            String jsonUser=  (String) valueOperations.get(token);
+            redisTemplate.delete(token);
+            return jsonUser;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+    }
     public <T> List<UserDataDTO> addAllUsers(List<T> users, Class<T> userType, boolean active,boolean withPause)
     {
 

@@ -72,13 +72,13 @@ private final UserDAO userDAO;
                     if (!email.equals("")) {
 
 
-                        if (emailService.sendEmail(user.getUserId(), email) == false) {
+                        if (emailService.sendActivationEmail(user.getUserId(), email) == false) {
                             userService.authenticateUser(userDAO.getUserById(user.getUserId()).get());
                             redirectAttributes.addFlashAttribute("message", "Konto zostało założone, ale podałeś błędny mail. Możesz ustawić go w opcjach konta.");
                             return "redirect:/user/settings";
                         } else {
                             userService.authenticateUser(userDAO.getUserById(user.getUserId()).get());
-                            redirectAttributes.addFlashAttribute("message", "Konto zostało założone. Sprawdź email żeby potwierdzić maila.");
+                            redirectAttributes.addFlashAttribute("checkMailboxMessage", "Konto zostało założone. Sprawdź email żeby potwierdzić maila.");
                             return "redirect:/user/settings";
                         }
 
