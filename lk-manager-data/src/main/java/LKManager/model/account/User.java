@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity
-@Table(name="users")
+@Table(name="users", schema="dbo")
 @Getter
 @Setter
 @NoArgsConstructor

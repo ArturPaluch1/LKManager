@@ -15,7 +15,7 @@ import java.io.Serializable;
 
 
 @Entity
-@Table(name = "teams")
+@Table(name = "teams", schema="dbo")
 /*@FilterDef(name = "deletedTeamFilter", parameters = @ParamDef(name = "isDeleted", type = "boolean"))
 @Filter(name = "deletedTeamFilter", condition = "deleted = :isDeleted")*/
 //@Where(clause = "DELETED = 0")

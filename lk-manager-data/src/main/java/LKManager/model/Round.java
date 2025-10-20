@@ -18,7 +18,7 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "rundy")
+@Table(name = "rundy", schema="dbo")
 @Getter
 @Setter
 @XmlRootElement

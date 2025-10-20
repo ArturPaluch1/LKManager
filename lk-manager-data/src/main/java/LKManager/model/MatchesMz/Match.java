@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "mecze")
+@Table(name = "mecze", schema="dbo")
 @Getter
 @Setter
 @XmlRootElement(name = "Match")
