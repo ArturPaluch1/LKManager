@@ -26,7 +26,6 @@ import javax.annotation.PreDestroy;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
-
 @SpringBootApplication
 public class LKManagerApplication {
 
@@ -167,8 +166,6 @@ private final RoundDAO roundDAO;
 
 
 			SpringApplication.run(LKManagerApplication.class, args);
-
-
 
 
 
@@ -480,10 +477,13 @@ mzCache.getSchedules().get(0).getRounds().forEach(r->r.getMatches().forEach(m-> 
 		System.out.println("Saved pause object in Redis");
 	}
 
-
 	@PostConstruct
 	public void init() {
+
+
+
 		System.out.println("Initialized...");
+
 
 
 //AppConfig appConfig = new AppConfig();

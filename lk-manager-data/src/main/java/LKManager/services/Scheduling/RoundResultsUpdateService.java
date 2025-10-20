@@ -20,7 +20,7 @@ private final ResultsService resultsService;
 
     }
 
-    @Scheduled(cron = "0 55 10,11,18,19,20,21,23 ? * *" , zone = "Europe/Warsaw")
+    @Scheduled(cron = "0 55 11,12,13,18,19,20,23 ? * *" , zone = "Europe/Warsaw")
 
     public void updateResults() {
         try {

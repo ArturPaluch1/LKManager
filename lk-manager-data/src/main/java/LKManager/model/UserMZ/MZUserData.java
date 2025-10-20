@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name="MZusers", schema="lkm_dev")
+@Table(name="mzusers")
 @XmlRootElement(name = "UserData")
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @AllArgsConstructor

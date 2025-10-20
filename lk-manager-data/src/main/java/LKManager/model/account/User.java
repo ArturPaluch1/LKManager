@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity
-@Table(name="users", schema="lkm_dev")
+@Table(name="users")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -32,7 +32,7 @@ public class User implements UserDetails {
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @SequenceGenerator(
             name = "userid_seq",
-            sequenceName = "lkm_dev.userid_seq",
+            sequenceName = "dbo.userid_seq",
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userid_seq")

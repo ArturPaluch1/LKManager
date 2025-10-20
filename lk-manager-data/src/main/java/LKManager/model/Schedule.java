@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "terminarze", schema="lkm_dev")
+@Table(name = "terminarze")
 @NoArgsConstructor
 @Getter
 @Setter
@@ -39,7 +39,7 @@ public class Schedule implements Serializable  {
    @Id
    @SequenceGenerator(
            name = "scheduleId_seq",
-           sequenceName = "lkm_dev.scheduleid_seq",
+           sequenceName = "dbo.scheduleid_seq",
            allocationSize = 1
    )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "scheduleId_seq")

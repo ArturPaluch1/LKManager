@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "leagueParticipants", schema="lkm_dev")
+@Table(name = "league_participants", schema="dbo")
  @NoArgsConstructor @AllArgsConstructor
 public class LeagueParticipants implements Serializable {
 

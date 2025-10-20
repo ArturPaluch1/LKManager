@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "mecze", schema="lkm_dev")
+@Table(name = "mecze")
 @Getter
 @Setter
 @XmlRootElement(name = "Match")
@@ -37,7 +37,7 @@ public class Match implements Serializable {
 */
     @SequenceGenerator(
             name = "matchid_seq",
-            sequenceName = "lkm_dev.matchid_seq",
+            sequenceName = "dbo.matchid_seq",
             allocationSize = 1
     )
     @Id

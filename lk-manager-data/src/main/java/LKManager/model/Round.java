@@ -18,7 +18,7 @@ import java.util.Set;
 
 
 @Entity
-@Table(name = "rundy", schema="lkm_dev")
+@Table(name = "rundy")
 @Getter
 @Setter
 @XmlRootElement
@@ -44,7 +44,7 @@ public class Round implements Serializable {
 */
 @SequenceGenerator(
         name = "roundid_seq",
-        sequenceName = "lkm_dev.roundid_seq",
+        sequenceName = "dbo.roundid_seq",
         allocationSize = 1
 )
 @Id
