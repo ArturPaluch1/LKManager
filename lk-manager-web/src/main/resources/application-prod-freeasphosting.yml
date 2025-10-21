@@ -63,11 +63,11 @@ spring:
     database-platform: org.hibernate.dialect.SQLServer2016Dialect
   #  database-platform: org.hibernate.dialect.SQLServerDialect
     database: sql_server
-    show-sql: true
+    show-sql: false
 
 
-    logging.level.org.hibernate.SQL : INFO
-    logging.level.org.springframework.web: INFO
+  #  logging.level.org.hibernate.SQL : INFO
+   # logging.level.org.springframework.web: INFO
 
 
     properties:
