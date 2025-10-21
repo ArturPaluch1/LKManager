@@ -59,7 +59,7 @@ spring:
 
     hibernate:
   #    ddl-auto: validate
-        ddl-auto: none
+        ddl-auto: validate
     database-platform: org.hibernate.dialect.SQLServer2016Dialect
   #  database-platform: org.hibernate.dialect.SQLServerDialect
     database: sql_server
@@ -71,15 +71,11 @@ spring:
 
 
     properties:
-      hibernate.format_sql: true
-      hibernate.use_sql_comments: true
+    #  hibernate.format_sql: true
+     # hibernate.use_sql_comments: true
   hibernate.dialect: org.hibernate.dialect.SQLServer2016Dialect
  # hibernate.globally_quoted_identifiers: true
 
-logging:
-  level:
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 
     #jpa:

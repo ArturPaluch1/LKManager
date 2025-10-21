@@ -483,10 +483,7 @@ mzCache.getSchedules().get(0).getRounds().forEach(r->r.getMatches().forEach(m-> 
 
 
 
-List<Object[]> l=userDAO.checkConnection();
-		for (Object[] row : l) {
-			System.out.println("Database: " + row[0] + ", Schema: " + row[1]);
-		}
+
 
 //AppConfig appConfig = new AppConfig();
 //appConfig.myService();
