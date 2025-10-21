@@ -21,7 +21,8 @@ import java.util.Optional;
 @Repository
 public interface UserDAO extends JpaRepository<User, Long>, CustomUserDAO, CustomUserDAO_Redis  {
 
-
+    @Query(value = "SELECT DB_NAME() AS CurrentDatabase, SCHEMA_NAME() AS CurrentSchema", nativeQuery = true)
+    List<Object[]> checkConnection();
     @Query("select u from User u  where u.role!=0 and u.username!='pauza'")
     List<User> findUsers_ActiveWithoutPause();
     @Query("select u from User u  where u.role!=0 ")
